@@ -4,12 +4,13 @@ import { navItems } from './_nav';
 
 @Component({
   selector: 'app-dashboard',
-  templateUrl: './default-layout.component.html',
-  styleUrls: ['./default-layout.component.scss'],
+  templateUrl: './dashboard.component.html',
+  styleUrl: './dashboard.component.scss'
 })
-export class DefaultLayoutComponent {
+export class DashboardComponent {
 
   public navItems = navItems;
 
   constructor() {}
+
 }

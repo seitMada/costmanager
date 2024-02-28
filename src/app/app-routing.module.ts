@@ -1,8 +1,8 @@
-import { NgModule } from '@angular/core';
+import { NgModule, CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-import { DefaultLayoutComponent } from './containers';
 import { LoginComponent } from "./login/login.component";
+import { DashboardComponent } from "./dashboard";
 
 const routes: Routes = [
   {
@@ -37,7 +37,10 @@ const routes: Routes = [
       // relativeLinkResolution: 'legacy'
     })
   ],
-  exports: [RouterModule]
+  exports: [RouterModule],
+  schemas: [
+    CUSTOM_ELEMENTS_SCHEMA
+  ],
 })
 export class AppRoutingModule {
 }
