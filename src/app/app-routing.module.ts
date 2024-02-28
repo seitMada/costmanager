@@ -2,16 +2,24 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { DefaultLayoutComponent } from './containers';
+import { LoginComponent } from "./login/login.component";
 
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
+    path: 'dashboard',
+    component: DashboardComponent,
+    data: {
+      title: 'Costmanager'
+    }
+  },
+  {
     path: '',
-    component: DefaultLayoutComponent,
+    component: LoginComponent,
     data: {
       title: 'Home'
     },
