@@ -7,7 +7,7 @@ import { DashboardComponent } from "./dashboard";
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dashboard',
+    redirectTo: 'dash',
     pathMatch: 'full'
   },
   {
@@ -24,20 +24,14 @@ const routes: Routes = [
       },
     ]
   },
-  // {
-  //   path: 'article',
-  //   component: ArticleComponent,
-  //   data: {
-  //     title: 'Article'
-  //   }
-  // },
   {
-    path: '',
+    path: 'login',
     component: LoginComponent,
     data: {
       title: 'Home'
     }
-  }
+  },
+  {path: '**', redirectTo: 'dash'}
 ];
 
 @NgModule({
