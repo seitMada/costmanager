@@ -3,19 +3,19 @@ import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
 // // views
-import { DashComponent } from "./dash/dash.component";
+import { DashComponent } from "./dash.component";
 
 // Components Routing
-import { BaseRoutingModule } from './dash-routing.module';
+import { DashRoutingModule } from './dash-routing.module';
 
 @NgModule({
   imports: [
     CommonModule,
-    BaseRoutingModule,
+    DashRoutingModule,
     DashComponent
   ],
   declarations: [
     
   ],
 })
-export class BaseModule {}
+export class DashModule {}

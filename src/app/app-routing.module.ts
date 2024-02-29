@@ -7,11 +7,11 @@ import { DashboardComponent } from "./dashboard";
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'dash',
+    redirectTo: 'login',
     pathMatch: 'full'
   },
   {
-    path: 'dashboard',
+    path: '',
     component: DashboardComponent,
     data: {
       title: 'Costmanager'
@@ -22,6 +22,11 @@ const routes: Routes = [
         loadChildren: () =>
           import('./views/donnee_de_base/base.module').then((m) => m.BaseModule)
       },
+      {
+        path: 'dash',
+        loadChildren: () =>
+          import('./views/dash/dash.module').then((m) => m.DashModule)
+      },
     ]
   },
   {
@@ -31,7 +36,7 @@ const routes: Routes = [
       title: 'Home'
     }
   },
-  {path: '**', redirectTo: 'dash'}
+  {path: '**', redirectTo: 'login'}
 ];
 
 @NgModule({
