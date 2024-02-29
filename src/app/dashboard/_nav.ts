@@ -1,93 +1,97 @@
 import { INavData } from '@coreui/angular';
 
 export const navItems: INavData[] = [
+  // {
+  //   title: true,
+  //   name: 'Donnée de base'
+  // },
+  // {
+  //   name: 'Articles',
+  //   url: '/articles',
+  //   iconComponent: { name: 'cil-speedometer' },
+  //   // badge: {
+  //   //   color: 'info',
+  //   //   text: 'NEW'
+  //   // }
+  // },
+  // {
+  //   title: true,
+  //   name: 'Theme'
+  // },
+  // {
+  //   name: 'Colors',
+  //   url: '/theme/colors',
+  //   iconComponent: { name: 'cil-drop' }
+  // },
+  // {
+  //   name: 'Donnée de base',
+  //   title: true
+  // },
   {
-    name: 'Articles',
-    url: '/article',
-    iconComponent: { name: 'cil-speedometer' },
-    // badge: {
-    //   color: 'info',
-    //   text: 'NEW'
-    // }
-  },
-  {
-    title: true,
-    name: 'Theme'
-  },
-  {
-    name: 'Colors',
-    url: '/theme/colors',
-    iconComponent: { name: 'cil-drop' }
-  },
-  {
-    name: 'Components',
-    title: true
-  },
-  {
-    name: 'Base',
-    url: '/base',
+    name: 'Donnée de base',
+    url: '/donnee_de_base',
     iconComponent: { name: 'cil-puzzle' },
     children: [
       {
-        name: 'Accordion',
-        url: '/base/accordion'
+        name: 'Articles',
+        url: 'donnee_de_base/articles'
       },
-      {
-        name: 'Breadcrumbs',
-        url: '/base/breadcrumbs'
-      },
-      {
-        name: 'Cards',
-        url: '/base/cards'
-      },
-      {
-        name: 'Carousel',
-        url: '/base/carousel'
-      },
-      {
-        name: 'Collapse',
-        url: '/base/collapse'
-      },
-      {
-        name: 'List Group',
-        url: '/base/list-group'
-      },
-      {
-        name: 'Navs & Tabs',
-        url: '/base/navs'
-      },
-      {
-        name: 'Pagination',
-        url: '/base/pagination'
-      },
-      {
-        name: 'Placeholder',
-        url: '/base/placeholder'
-      },
-      {
-        name: 'Popovers',
-        url: '/base/popovers'
-      },
-      {
-        name: 'Progress',
-        url: '/base/progress'
-      },
-      {
-        name: 'Spinners',
-        url: '/base/spinners'
-      },
-      {
-        name: 'Tables',
-        url: '/base/tables'
-      },
-      {
-        name: 'Tabs',
-        url: '/base/tabs'
-      },
-      {
-        name: 'Tooltips',
-        url: '/base/tooltips'
-      }
+      // {
+      //   name: 'Breadcrumbs',
+      //   url: '/base/breadcrumbs'
+      // },
+      // {
+      //   name: 'Cards',
+      //   url: '/base/cards'
+      // },
+      // {
+      //   name: 'Carousel',
+      //   url: '/base/carousel'
+      // },
+      // {
+      //   name: 'Collapse',
+      //   url: '/base/collapse'
+      // },
+      // {
+      //   name: 'List Group',
+      //   url: '/base/list-group'
+      // },
+      // {
+      //   name: 'Navs & Tabs',
+      //   url: '/base/navs'
+      // },
+      // {
+      //   name: 'Pagination',
+      //   url: '/base/pagination'
+      // },
+      // {
+      //   name: 'Placeholder',
+      //   url: '/base/placeholder'
+      // },
+      // {
+      //   name: 'Popovers',
+      //   url: '/base/popovers'
+      // },
+      // {
+      //   name: 'Progress',
+      //   url: '/base/progress'
+      // },
+      // {
+      //   name: 'Spinners',
+      //   url: '/base/spinners'
+      // },
+      // {
+      //   name: 'Tables',
+      //   url: '/base/tables'
+      // },
+      // {
+      //   name: 'Tabs',
+      //   url: '/base/tabs'
+      // },
+      // {
+      //   name: 'Tooltips',
+      //   url: '/base/tooltips'
+      // }
     ]
   },
   {
