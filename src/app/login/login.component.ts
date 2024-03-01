@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
+import { ExploitationService } from "../shared/service/exploitation.service";
 
 @Component({
   selector: 'app-login',
@@ -11,10 +12,20 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 export class LoginComponent implements OnInit {
 
-  constructor(public router: Router,
-    public route: ActivatedRoute,) { }
+  constructor(
+    public router: Router,
+    public route: ActivatedRoute,
+    private exploitationService: ExploitationService) { }
 
   ngOnInit(): void {
+    this.exploitationService.getExploitation().subscribe({
+      next: (data) => {
+        console.log(data);
+      },
+      error: (error) => {
+        alert('ERREUR');
+      }
+    });
   }
 
   public onLogin() {
