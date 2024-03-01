@@ -1,11 +1,13 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ExploitationService } from "../shared/service/exploitation.service";
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [],
+  imports: [FormsModule,CommonModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss'
 })
@@ -17,10 +19,14 @@ export class LoginComponent implements OnInit {
     public route: ActivatedRoute,
     private exploitationService: ExploitationService) { }
 
+  public idExploitation = 0;
+  public exploitations: any;
+
   ngOnInit(): void {
     this.exploitationService.getExploitation().subscribe({
-      next: (data) => {
-        console.log(data);
+      next: (exploitation) => {
+        this.exploitations = exploitation;
+        console.log(this.exploitations)
       },
       error: (error) => {
         alert('ERREUR');
@@ -30,6 +36,10 @@ export class LoginComponent implements OnInit {
 
   public onLogin() {
     this.router.navigate(['dash'])
+  }
+
+  public selectCR() {
+    console.log(this.idExploitation);
   }
 
 }
