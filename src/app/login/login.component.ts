@@ -1,8 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ExploitationService } from "../shared/service/exploitation.service";
+import { CentreRevenuService } from "../shared/service/centre-revenu.service";
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { InterfaceOperateur } from "../shared/model/interfaceOperateur";
+import { LoginService } from "../shared/service/login.service";
 
 @Component({
   selector: 'app-login',
@@ -17,29 +20,56 @@ export class LoginComponent implements OnInit {
   constructor(
     public router: Router,
     public route: ActivatedRoute,
-    private exploitationService: ExploitationService) { }
+    private exploitationService: ExploitationService,
+    private centreRevenuService: CentreRevenuService,
+    private loginService: LoginService) { }
 
-  public idExploitation = 0;
+  public operateurData: InterfaceOperateur = {
+    id:                 0,
+    nom:                '',
+    prenom:             '',
+    nomConnexion:       '',
+    email:              '',
+    mdp:                '',
+    connecter:          0,
+    actif:              0,
+    loginError:         0,
+    exploitationId:     0,
+    centreId:           0
+  }
+
+  // public idExploitation = 0;
+  // public idCR = 0;
   public exploitations: any;
+  public centreRevenus: any;
 
   ngOnInit(): void {
     this.exploitationService.getExploitation().subscribe({
       next: (exploitation) => {
         this.exploitations = exploitation;
-        console.log(this.exploitations)
       },
       error: (error) => {
-        alert('ERREUR');
+        alert('ERREUR EXP');
       }
     });
   }
 
   public onLogin() {
-    this.router.navigate(['dash'])
+    // this.router.navigate(['dash'])
+    console.log(this.operateurData.exploitationId,this.operateurData.centreId,this.operateurData.nomConnexion,this.operateurData.mdp);
+    this.loginService.auth(this.operateurData);
   }
 
   public selectCR() {
-    console.log(this.idExploitation);
+    this.centreRevenus = [];
+    this.centreRevenuService.getCrExploitation(this.operateurData.exploitationId).subscribe({
+      next: (centreRevenu) => {
+        this.centreRevenus = centreRevenu;
+      },
+      error: (error) => {
+        alert('ERREUR CR');
+      }
+    })
   }
 
 }

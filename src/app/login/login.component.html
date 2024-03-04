@@ -22,18 +22,14 @@ background-repeat: no-repeat;">
                     <div class="form mb-2">
                       <div class="row">
                         <div class="col">
-                          <select name="loginExploitaion" id="loginExploitaion" [(ngModel)] = "idExploitation" class="form-select form-select-sm" (change)="selectCR()">
-                            <!-- <option selected>Exploitation</option> -->
+                          <select name="loginExploitaion" id="loginExploitaion" [(ngModel)] = "operateurData.exploitationId" class="form-select form-select-sm" (change)="selectCR()">
                             <option [ngValue]="line.id" *ngFor="let line of exploitations" >{{line.libelle}}</option>
                           </select>
                           <label class="small fw-lighter" for="logincode">Exploitation</label>
                         </div>
                         <div class="col">
-                          <select name="loginCR" id="loginCR" class="form-select form-select-sm">
-                            <option selected>Centre de revenu</option>
-                            <option value="1">One</option>
-                            <option value="2">Two</option>
-                            <option value="3">Three</option>
+                          <select name="loginCR" id="loginCR" [(ngModel)] = "operateurData.centreId" class="form-select form-select-sm">
+                            <option [ngValue]="line.id" *ngFor="let line of centreRevenus" >{{line.libelle}}</option>
                           </select>
                           <label class="small fw-lighter" for="logincode">Centre de revenu</label>
                         </div>
@@ -43,12 +39,12 @@ background-repeat: no-repeat;">
                     <h5 class="fw-bolder mt-3 mb-1 pb-1" style="letter-spacing: 1px;">Connectez-vous à votre compte</h5>
   
                     <div class="form-outline mb-2">
-                      <input type="text" id="logincode" class="form-control form-control-md" />
-                      <label class="small fw-lighter" for="logincode">Code utilisateur</label>
+                      <input type="text" name="loginUser" id="logincode" class="form-control form-control-md" [(ngModel)] = "operateurData.nomConnexion"/>
+                      <label class="small fw-lighter" for="logincode">Utilisateur</label>
                     </div>
   
                     <div class="form-outline mb-1">
-                      <input type="password" id="loginmdp" class="form-control form-control-md" />
+                      <input type="password" name="loginMdp" id="loginmdp" class="form-control form-control-md" [(ngModel)] = "operateurData.mdp"/>
                       <label class="small fw-lighter" for="loginmdp">Mot de passe</label>
                     </div>
   
