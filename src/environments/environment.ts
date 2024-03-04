@@ -5,4 +5,5 @@ export const environment = {
     APIGETEXPLOITATION: endPoint + 'exploitation',
     APIGETCREXPLOITATION: endPoint + 'centre-revenu/exploitation/',
     APILOGIN: endPoint + 'auth',
+    APIGETARTICLE : endPoint + 'articles',
 };
