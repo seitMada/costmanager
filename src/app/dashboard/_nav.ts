@@ -2,6 +2,11 @@ import { INavData } from '@coreui/angular';
 
 export const navItems: INavData[] = [
   {
+    name: 'Tableau de bord',
+    url: 'dash',
+    iconComponent: { name: 'cil-browser' }
+  },
+  {
     name: 'Donnée de base',
     url: '/donnee_de_base',
     iconComponent: { name: 'cil-puzzle' },
@@ -86,7 +91,80 @@ export const navItems: INavData[] = [
         url: 'productions/preparations'
       }
     ]
+  },
+  {
+    name: 'Transferts',
+    url: '/transferts',
+    iconComponent: { name: 'cil-puzzle' },
+    children: [
+      {
+        name: 'Commandes',
+        url: 'transferts/commande_transferts'
+      },
+      {
+        name: 'Bons de Commandes',
+        url: 'transferts/bon_commandes'
+      },
+      {
+        name: 'Bon de Livraisons',
+        url: 'transferts/bon_livraisons'
+      },
+      {
+        name: 'Bon de retours',
+        url: 'transferts/bon_retours'
+      },
+      {
+        name: 'Suivi des transferts',
+        url: 'transferts/suivi_transferts'
+      }
+    ]
+  },
+  {
+    name: 'Inventaires',
+    url: '/inventaires',
+    iconComponent: { name: 'cil-puzzle' },
+    children: [
+      {
+        name: 'Listes inventaires',
+        url: 'inventaires/inventaires'
+      },
+      {
+        name: 'Creations inventaires',
+        url: 'inventaires/creations_inventaires'
+      }
+    ]
+  },
+  {
+    name: 'Pertes',
+    url: '/ppo',
+    iconComponent: { name: 'cil-puzzle' },
+    children: [
+      {
+        name: 'Listes et creations Pertes',
+        url: 'ppo/ppo'
+      },
+      {
+        name: 'Synthese pertes',
+        url: 'ppo/synthese_ppo'
+      }
+    ]
+  },
+  {
+    name: 'Paramétres',
+    url: '/settings',
+    iconComponent: { name: 'cil-puzzle' },
+    children: [
+      {
+        name: 'Utilisateurs',
+        url: 'settings/users'
+      },
+      {
+        name: 'Prix articles',
+        url: 'settings/articles'
+      }
+    ]
   }
+
   // {
   //   name: 'Buttons',
   //   url: '/buttons',

@@ -37,6 +37,26 @@ const routes: Routes = [
         loadChildren: () =>
           import('./views/productions/productions.module').then((m) => m.ProductionsModule)
       },
+      {
+        path: 'transferts',
+        loadChildren: () =>
+          import('./views/transferts/transferts.module').then((m) => m.TransfertsModule)
+      },
+      {
+        path: 'inventaires',
+        loadChildren: () =>
+          import('./views/inventaires/inventaires.module').then((m) => m.InventairesModule)
+      },
+      {
+        path: 'ppo',
+        loadChildren: () =>
+          import('./views/ppos/ppos.module').then((m) => m.PposModule)
+      },
+      {
+        path: 'settings',
+        loadChildren: () =>
+          import('./views/administrateurs/administrateurs.module').then((m) => m.AdministrateursModule)
+      },
     ]
   },
   {
