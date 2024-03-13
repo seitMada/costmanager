@@ -1,32 +1,6 @@
 import { INavData } from '@coreui/angular';
 
 export const navItems: INavData[] = [
-  // {
-  //   title: true,
-  //   name: 'Donnée de base'
-  // },
-  // {
-  //   name: 'Articles',
-  //   url: '/articles',
-  //   iconComponent: { name: 'cil-speedometer' },
-  //   // badge: {
-  //   //   color: 'info',
-  //   //   text: 'NEW'
-  //   // }
-  // },
-  // {
-  //   title: true,
-  //   name: 'Theme'
-  // },
-  // {
-  //   name: 'Colors',
-  //   url: '/theme/colors',
-  //   iconComponent: { name: 'cil-drop' }
-  // },
-  // {
-  //   name: 'Donnée de base',
-  //   title: true
-  // },
   {
     name: 'Donnée de base',
     url: '/donnee_de_base',
@@ -37,11 +11,63 @@ export const navItems: INavData[] = [
         url: 'donnee_de_base/articles'
       },
       {
-        name: 'Fiche Techniques',
+        name: 'Fiches Techniques',
         url: 'donnee_de_base/fichetechnique'
+      },
+      {
+        name: 'Fournisseurs',
+        url: 'donnee_de_base/fournisseurs'
+      },
+      {
+        name: 'Gestions de stocks',
+        url: 'donnee_de_base/gestion_stock',
+        iconComponent: { name: 'cil-puzzle' },
+        children: [{
+          name: 'Mouvements de stocks',
+          url: 'donnee_de_base/gestion_stock/mouvement_stock'
+        },
+        {
+          name: 'Gestion de stock minimum',
+          url: 'donnee_de_base/gestion_stock/gestion_stock_minimum'
+        },
+        {
+          name: 'Stock minimum',
+          url: 'donnee_de_base/gestion_stock/stock_minimum'
+        },
+        {
+          name: 'Zones de stockage',
+          url: 'donnee_de_base/gestion_stock/zones_stockages'
+        }]
       },
     ]
   },
+  {
+    name: 'Achats',
+    url: '/achats',
+    iconComponent: { name: 'cil-puzzle' },
+    children: [
+      {
+        name: 'Simulations',
+        url: 'achats/simulations'
+      },
+      {
+        name: 'Mercuriales',
+        url: 'achats/mercuriales'
+      },
+      {
+        name: 'Bon de commande',
+        url: 'achats/bon_commande'
+      },
+      {
+        name: 'Bon de livraison',
+        url: 'achats/bon_livraison'
+      },
+      {
+        name: 'Factures',
+        url: 'achats/factures'
+      },
+    ]
+  }
   // {
   //   name: 'Buttons',
   //   url: '/buttons',

@@ -6,7 +6,6 @@ export class Operateur implements InterfaceOperateur {
     id?: number | undefined;
     nom: string;
     prenom: string;
-    nomConnexion: string;
     email: string;
     mdp: string;
     connecter: number;
@@ -18,9 +17,8 @@ export class Operateur implements InterfaceOperateur {
     constructor (operateurInterface: InterfaceOperateur = {
         nom: '',
         prenom: '',
-        nomConnexion: '',
         email: '',
-        mdp: '123456',
+        mdp: '123456789',
         connecter: 0,
         actif: 0,
         loginError: 3,
@@ -29,7 +27,6 @@ export class Operateur implements InterfaceOperateur {
     }) {
         this.nom = operateurInterface.nom.toUpperCase();
         this.prenom = operateurInterface.prenom.charAt(0).toUpperCase + operateurInterface.prenom.slice(1);
-        this.nomConnexion = operateurInterface.nomConnexion.toLowerCase();
         this.email = operateurInterface.email;
         this.mdp = operateurInterface.mdp;
         this.connecter = operateurInterface.connecter;

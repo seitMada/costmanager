@@ -16,7 +16,6 @@ export class LoginService {
     id:                 0,
     nom:                '',
     prenom:             '',
-    nomConnexion:       '',
     email:              '',
     mdp:                '',
     connecter:          0,

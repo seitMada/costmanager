@@ -28,7 +28,6 @@ export class LoginComponent implements OnInit {
     id:                 0,
     nom:                '',
     prenom:             '',
-    nomConnexion:       '',
     email:              '',
     mdp:                '',
     connecter:          0,
@@ -56,7 +55,7 @@ export class LoginComponent implements OnInit {
 
   public onLogin() {
     // this.router.navigate(['dash'])
-    console.log(this.operateurData.exploitationId,this.operateurData.centreId,this.operateurData.nomConnexion,this.operateurData.mdp);
+    console.log(this.operateurData.exploitationId,this.operateurData.centreId,this.operateurData.email,this.operateurData.mdp);
     this.loginService.auth(this.operateurData);
   }
 

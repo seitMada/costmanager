@@ -27,6 +27,11 @@ const routes: Routes = [
         loadChildren: () =>
           import('./views/dash/dash.module').then((m) => m.DashModule)
       },
+      {
+        path: 'achats',
+        loadChildren: () =>
+          import('./views/achats/achats.module').then((m) => m.AchatsModule)
+      },
     ]
   },
   {
