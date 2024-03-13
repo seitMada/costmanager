@@ -1,7 +1,46 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
-const routes: Routes = [];
+import { CommandeProductionsComponent } from "./commande-productions/commande-productions.component";
+import { LivraisonProductionsComponent } from "./livraison-productions/livraison-productions.component";
+import { PreparationProductionsComponent } from "./preparation-productions/preparation-productions.component";
+
+const routes: Routes = [
+  {
+    path: '',
+    data: {
+      title: 'Productions',
+    },
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        redirectTo: 'productions',
+      },
+      {
+        path: 'commandes',
+        component: CommandeProductionsComponent,
+        data: {
+          title: 'Commandes productions',
+        }
+      },
+      {
+        path: 'livraisons',
+        component: LivraisonProductionsComponent,
+        data: {
+          title: 'Livraisons productions',
+        }
+      },
+      {
+        path: 'preparations',
+        component: PreparationProductionsComponent,
+        data: {
+          title: 'Preparations productions',
+        }
+      },
+    ]
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

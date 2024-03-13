@@ -67,6 +67,25 @@ export const navItems: INavData[] = [
         url: 'achats/factures'
       },
     ]
+  },
+  {
+    name: 'Productions',
+    url: '/productions',
+    iconComponent: { name: 'cil-puzzle' },
+    children: [
+      {
+        name: 'Commandes',
+        url: 'productions/commandes'
+      },
+      {
+        name: 'Livraisons',
+        url: 'productions/livraisons'
+      },
+      {
+        name: 'Preparations',
+        url: 'productions/preparations'
+      }
+    ]
   }
   // {
   //   name: 'Buttons',
