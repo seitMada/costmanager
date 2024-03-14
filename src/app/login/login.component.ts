@@ -24,21 +24,10 @@ export class LoginComponent implements OnInit {
     private centreRevenuService: CentreRevenuService,
     private loginService: LoginService) { }
 
-  public operateurData: InterfaceOperateur = {
-    id:                 0,
-    nom:                '',
-    prenom:             '',
-    email:              '',
-    mdp:                '',
-    connecter:          0,
-    actif:              0,
-    loginError:         0,
-    exploitationId:     0,
-    centreId:           0
-  }
+  public operateurData: InterfaceOperateur[];
 
-  // public idExploitation = 0;
-  // public idCR = 0;
+  public exploitationsId = 0;
+  public centreId = 0;
   public exploitations: any;
   public centreRevenus: any;
 
@@ -55,13 +44,14 @@ export class LoginComponent implements OnInit {
 
   public onLogin() {
     // this.router.navigate(['dash'])
-    console.log(this.operateurData.exploitationId,this.operateurData.centreId,this.operateurData.email,this.operateurData.mdp);
-    this.loginService.auth(this.operateurData);
+   
+    this.loginService.auth(this.operateurData.email,this.operateurData.mdp,this.exploitationsId,this.centreId);
+    console.log(this.operateurData.email,this.operateurData.mdp,this.exploitationsId,this.centreId);
   }
 
   public selectCR() {
     this.centreRevenus = [];
-    this.centreRevenuService.getCrExploitation(this.operateurData.exploitationId).subscribe({
+    this.centreRevenuService.getCrExploitation(this.exploitationsId).subscribe({
       next: (centreRevenu) => {
         this.centreRevenus = centreRevenu;
       },

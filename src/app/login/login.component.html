@@ -22,13 +22,13 @@ background-repeat: no-repeat;">
                     <div class="form mb-2">
                       <div class="row">
                         <div class="col">
-                          <select name="loginExploitaion" id="loginExploitaion" [(ngModel)] = "operateurData.exploitationId" class="form-select form-select-sm" (change)="selectCR()">
+                          <select name="loginExploitaion" id="loginExploitaion" [(ngModel)] = "exploitationsId" class="form-select form-select-sm" (change)="selectCR()">
                             <option [ngValue]="line.id" *ngFor="let line of exploitations" >{{line.libelle}}</option>
                           </select>
                           <label class="small fw-lighter" for="logincode">Exploitation</label>
                         </div>
                         <div class="col">
-                          <select name="loginCR" id="loginCR" [(ngModel)] = "operateurData.centreId" class="form-select form-select-sm">
+                          <select name="loginCR" id="loginCR" [(ngModel)] = "centreId" class="form-select form-select-sm">
                             <option [ngValue]="line.id" *ngFor="let line of centreRevenus" >{{line.libelle}}</option>
                           </select>
                           <label class="small fw-lighter" for="logincode">Centre de revenu</label>

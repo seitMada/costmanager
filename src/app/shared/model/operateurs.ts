@@ -7,32 +7,35 @@ export class Operateur implements InterfaceOperateur {
     nom: string;
     prenom: string;
     email: string;
-    mdp: string;
-    connecter: number;
-    actif: number;
-    loginError: number;
-    exploitationId: number;
-    centreId: number;
-    
+    mdp:  string;
+    compteConnecte: boolean;
+    actif: boolean;
+    login_count: number;
+    code: string;
+    adresseId: number;
+    contactId: number;
+
     constructor (operateurInterface: InterfaceOperateur = {
         nom: '',
         prenom: '',
         email: '',
         mdp: '123456789',
-        connecter: 0,
-        actif: 0,
-        loginError: 3,
-        exploitationId: 1,
-        centreId: 1,
+        compteConnecte: false,
+        actif: true,
+        login_count: 0,
+        code: '',
+        adresseId: 1,
+        contactId:1
     }) {
         this.nom = operateurInterface.nom.toUpperCase();
         this.prenom = operateurInterface.prenom.charAt(0).toUpperCase + operateurInterface.prenom.slice(1);
         this.email = operateurInterface.email;
         this.mdp = operateurInterface.mdp;
-        this.connecter = operateurInterface.connecter;
+        this.compteConnecte = operateurInterface.compteConnecte;
         this.actif = operateurInterface.actif;
-        this.loginError = operateurInterface.loginError;
-        this.exploitationId = operateurInterface.exploitationId;
-        this.centreId = operateurInterface.centreId;
+        this.login_count = operateurInterface.login_count;
+        this.code = operateurInterface.code;
+        this.adresseId = operateurInterface.adresseId;
+        this.contactId = operateurInterface.contactId;
     }
 }
