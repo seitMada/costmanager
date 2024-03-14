@@ -4,12 +4,12 @@ export const navItems: INavData[] = [
   {
     name: 'Tableau de bord',
     url: 'dash',
-    iconComponent: { name: 'cil-browser' }
+    iconComponent: { name: 'cil-browser' },
   },
   {
     name: 'Donnée de base',
     url: '/donnee_de_base',
-    iconComponent: { name: 'cil-puzzle' },
+    iconComponent: { name: 'cil-layers' },
     children: [
       {
         name: 'Articles',
@@ -24,9 +24,9 @@ export const navItems: INavData[] = [
         url: 'donnee_de_base/fournisseurs'
       },
       {
-        name: 'Gestions de stocks',
+        name: 'Gestions des stocks',
         url: 'donnee_de_base/gestion_stock',
-        iconComponent: { name: 'cil-puzzle' },
+        iconComponent: { name: 'cil-clipboard' },
         children: [{
           name: 'Mouvements de stocks',
           url: 'donnee_de_base/gestion_stock/mouvement_stock'
@@ -49,7 +49,7 @@ export const navItems: INavData[] = [
   {
     name: 'Achats',
     url: '/achats',
-    iconComponent: { name: 'cil-puzzle' },
+    iconComponent: { name: 'cil-cart' },
     children: [
       {
         name: 'Simulations',
@@ -76,7 +76,7 @@ export const navItems: INavData[] = [
   {
     name: 'Productions',
     url: '/productions',
-    iconComponent: { name: 'cil-puzzle' },
+    iconComponent: { name: 'cil-fastfood' },
     children: [
       {
         name: 'Commandes',
@@ -95,7 +95,7 @@ export const navItems: INavData[] = [
   {
     name: 'Transferts',
     url: '/transferts',
-    iconComponent: { name: 'cil-puzzle' },
+    iconComponent: { name: 'cil-transfer' },
     children: [
       {
         name: 'Commandes',
@@ -122,7 +122,7 @@ export const navItems: INavData[] = [
   {
     name: 'Inventaires',
     url: '/inventaires',
-    iconComponent: { name: 'cil-puzzle' },
+    iconComponent: { name: 'cil-folder' },
     children: [
       {
         name: 'Listes inventaires',
@@ -137,7 +137,7 @@ export const navItems: INavData[] = [
   {
     name: 'Pertes',
     url: '/ppo',
-    iconComponent: { name: 'cil-puzzle' },
+    iconComponent: { name: 'cil-trash' },
     children: [
       {
         name: 'Listes et creations Pertes',
@@ -152,7 +152,7 @@ export const navItems: INavData[] = [
   {
     name: 'Paramétres',
     url: '/settings',
-    iconComponent: { name: 'cil-puzzle' },
+    iconComponent: { name: 'cil-settings' },
     children: [
       {
         name: 'Utilisateurs',

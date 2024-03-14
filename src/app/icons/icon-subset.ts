@@ -1,4 +1,5 @@
 import {
+  cilBrowser,
   cibCcAmex,
   cibCcApplePay,
   cibCcMastercard,
@@ -88,10 +89,18 @@ import {
   cilUser,
   cilUserFemale,
   cilUserFollow,
-  cilUserUnfollow
+  cilUserUnfollow,
+  cilClipboard,
+  cilCart,
+  cilFastfood,
+  cilTransfer,
+  cilFolder,
+  cilJustifyLeft,
+  cilPlus
 } from '@coreui/icons';
 
 export const iconSubset = {
+  cilBrowser,
   cibCcAmex,
   cibCcApplePay,
   cibCcMastercard,
@@ -181,10 +190,18 @@ export const iconSubset = {
   cilUser,
   cilUserFemale,
   cilUserFollow,
-  cilUserUnfollow
+  cilUserUnfollow,
+  cilClipboard,
+  cilCart,
+  cilFastfood,
+  cilTransfer,
+  cilFolder,
+  cilJustifyLeft,
+  cilPlus
 };
 
 export enum IconSubset {
+  cilBrowser = 'cilBrowser',
   cibCcAmex = 'cibCcAmex',
   cibCcApplePay = 'cibCcApplePay',
   cibCcMastercard = 'cibCcMastercard',
@@ -275,4 +292,11 @@ export enum IconSubset {
   cilUserFemale = 'cilUserFemale',
   cilUserFollow = 'cilUserFollow',
   cilUserUnfollow = 'cilUserUnfollow',
+  cilClipboard = 'cilClipboard',
+  cilCart = 'cilCart',
+  cilFastfood = 'cilFastfood',
+  cilTransfer = 'cilTransfer',
+  cilFolder = 'cilFolder',
+  cilJustifyLeft = 'cilJustifyLeft',
+  cilPlus = 'cilPlus'
 }
