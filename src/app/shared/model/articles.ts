@@ -23,7 +23,7 @@ export class Article implements InterfaceArticle{
     dateModif:              string;
     famillesId:             number;
     categoriesId:           number;
-    visibilite:             number;
+    actif:             number;
 
     constructor(articleInterface: InterfaceArticle = {
         codeArticle: "",
@@ -47,7 +47,7 @@ export class Article implements InterfaceArticle{
         dateModif:  "",
         famillesId: 1,
         categoriesId: 1,
-        visibilite: 1,
+        actif: 1,
     }){
         this.codeArticle = articleInterface.codeArticle;
         this.libelle = articleInterface.libelle;
@@ -70,6 +70,6 @@ export class Article implements InterfaceArticle{
         this.dateModif = articleInterface.dateModif;
         this.famillesId = articleInterface.famillesId;
         this.categoriesId = articleInterface.categoriesId;
-        this.visibilite = articleInterface.visibilite;
+        this.actif = articleInterface.actif;
     }
 }

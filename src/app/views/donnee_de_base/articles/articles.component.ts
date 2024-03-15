@@ -2,11 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ArticleService } from "../../../shared/service/article.service";
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-articles',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './articles.component.html',
   styleUrl: './articles.component.scss'
 })
@@ -17,13 +18,13 @@ export class ArticlesComponent implements OnInit {
     private articleService: ArticleService
   ) { }
 
-  public visible = false;
+  public toggle = true;
 
   toggleModal() {
-    this.visible = !this.visible;
+    this.toggle = !this.toggle;
   }
 
-  public idArticle = 0;
+  public article: any;
   public articles: any;
 
   ngOnInit(): void {
@@ -36,6 +37,12 @@ export class ArticlesComponent implements OnInit {
         alert('ERREUR')
       }
     })
+  }
+
+  showArticle(art: any) {
+    this.article = art;
+    console.log(this.article)
+    this.toggleModal();
   }
 
 }
