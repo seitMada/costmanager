@@ -24,12 +24,27 @@ export class LoginComponent implements OnInit {
     private centreRevenuService: CentreRevenuService,
     private loginService: LoginService) { }
 
-  public operateurData: InterfaceOperateur[];
+  public operateurData: InterfaceOperateur= {
+    id:0,
+    nom: '',
+    prenom: '',
+    email: '',
+    mdp:  '',
+    compteConnecte: false,
+    actif: true,
+    login_count: 0,
+    code: '',
+    adresseId: 0,
+    contactId: 0,
+    exploitationId:     0,
+    centreId:           0
+  };
 
   public exploitationsId = 0;
   public centreId = 0;
   public exploitations: any;
   public centreRevenus: any;
+
 
   ngOnInit(): void {
     this.exploitationService.getExploitation().subscribe({
@@ -43,12 +58,10 @@ export class LoginComponent implements OnInit {
   }
 
   public onLogin() {
-    // this.router.navigate(['dash'])
-   
-    this.loginService.auth(this.operateurData.email,this.operateurData.mdp,this.exploitationsId,this.centreId);
-    console.log(this.operateurData.email,this.operateurData.mdp,this.exploitationsId,this.centreId);
+    this.loginService.auth(this.operateurData);
   }
 
+  
   public selectCR() {
     this.centreRevenus = [];
     this.centreRevenuService.getCrExploitation(this.exploitationsId).subscribe({

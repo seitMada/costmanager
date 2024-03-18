@@ -117,8 +117,9 @@
         <hr cDropdownDivider/>
       </li> -->
       <li>
-        <a routerLink="./" cDropdownItem>
+        <a (click)="onLogout()" cDropdownItem>
           <svg cIcon class="me-2" name="cilLockLocked"></svg>
+          <input type="hidden" name="operateurId" class="form-control form-control-md" [(ngModel)] = "operateurData.id"/>
           Se deconnecter
         </a>
       </li>
@@ -126,4 +127,5 @@
     </ul>
   </c-dropdown>
 </ng-template>
+
 

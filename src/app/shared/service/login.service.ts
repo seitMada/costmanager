@@ -19,19 +19,26 @@ export class LoginService {
   ) { }
 
   operateurId: Pick<InterfaceOperateur,"id">;
-  
-  httpOptions: { headers:HttpHeaders} ={
-    headers: new HttpHeaders({ "Content-Type": "application/json" }),
-  };
 
+  public auth(operateurData:any) {
+    return this.https.post(this.apiAuth, operateurData).subscribe(
+      response => {
+        if(response==true){
+          this.router.navigate(['dash']);
+        }
+      }
+    )
+  }
 
-  public auth(email:Pick<InterfaceOperateur,"email">,mdp:Pick<InterfaceOperateur,"mdp">,exploitationId:number,centreId:number):Observable<{operateurId:Pick<InterfaceOperateur,"id">}> {
-    const data = [email,mdp,exploitationId,centreId];
-    return this.https.post<{operateurId:Pick<InterfaceOperateur,"id">}>(this.apiAuth, data,this.httpOptions).pipe(
-      first(),
-      tap(() =>{
-        this.router.navigate(['dash']);
-      })
+  public logout(operateurData:any){
+    return this.https.post(this.apiAuth,operateurData).subscribe(
+      response=>{
+        if (response==true) {
+          this.router.navigate(['login']);
+        } else {
+          
+        }
+      }
     )
   }
 }

@@ -10,4 +10,6 @@ export interface InterfaceOperateur {
     code: string;
     adresseId: number;
     contactId: number;
+    exploitationId: number;
+    centreId: number;
 }
