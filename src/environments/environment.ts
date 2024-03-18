@@ -6,4 +6,8 @@ export const environment = {
     APIGETCREXPLOITATION: endPoint + 'centre-revenu/exploitation/',
     APILOGIN: endPoint + 'auth',
     APIGETARTICLE : endPoint + 'articles',
+    APIGETUNITE: endPoint + 'unites',
+    APIGETCATEGORIES: endPoint + 'categories',
+    APIGETGROUPE: endPoint + 'groupe_analytique',
+    APIGETFAMILLEBYGROUPE: endPoint + 'familles/groupe_article/'
 };

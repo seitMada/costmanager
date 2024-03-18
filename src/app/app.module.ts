@@ -43,6 +43,7 @@ import {
 } from '@coreui/angular';
 
 import { IconModule, IconSetService } from '@coreui/icons-angular';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
 
 const APP_CONTAINERS = [
   DefaultFooterComponent,
@@ -81,7 +82,8 @@ const APP_CONTAINERS = [
     NgScrollbarModule,
     HttpClientModule,
     FormsModule,
-    CommonModule
+    CommonModule,
+    NgbModule
   ],
   providers: [
     {
