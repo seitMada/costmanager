@@ -21,5 +21,5 @@ export interface InterfaceArticle{
     dateModif:              string;
     famillesId:             number;
     categoriesId:           number;
-    visibilite:             number;
+    actif:             number;
 }
