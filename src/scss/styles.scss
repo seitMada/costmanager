@@ -23,3 +23,6 @@ $enable-rtl: true;
 @import "custom";
 
 @import "@fortawesome/fontawesome-free/css/all.css";
+
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';

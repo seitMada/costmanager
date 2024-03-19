@@ -7,4 +7,8 @@ export const environment = {
     APILOGIN: endPoint + 'api/login',
     APIGETARTICLE : endPoint + 'articles',
     APILOGOUT: endPoint + 'api/logout',
+    APIGETUNITE: endPoint + 'unites',
+    APIGETCATEGORIES: endPoint + 'categories',
+    APIGETGROUPE: endPoint + 'groupe_analytique',
+    APIGETFAMILLEBYGROUPE: endPoint + 'familles/groupe_article/'
 };
