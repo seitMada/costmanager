@@ -11,7 +11,7 @@ background-repeat: no-repeat;">
               </div>
               <div class="col-md-4 col-lg-5 d-flex align-items-center">
                 <div class="card-body p-4 p-lg-5 text-black">
-                  <form>
+                  <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)">
                     <div class="d-flex align-items-center mb-3 pb-1">
                       <div>
                         <img src="../../assets/img/logo.PNG"
@@ -22,13 +22,13 @@ background-repeat: no-repeat;">
                     <div class="form mb-2">
                       <div class="row">
                         <div class="col">
-                          <select name="loginExploitaion" id="loginExploitaion" [(ngModel)] = "exploitationsId" class="form-select form-select-sm" (change)="selectCR()">
+                          <select name="loginExploitaion" id="loginExploitaion" [(ngModel)] = "operateurData.exploitationId" class="form-select form-select-sm" (change)="selectCR()" [required]="true">
                             <option [ngValue]="line.id" *ngFor="let line of exploitations" >{{line.libelle}}</option>
                           </select>
                           <label class="small fw-lighter" for="logincode">Exploitation</label>
                         </div>
                         <div class="col">
-                          <select name="loginCR" id="loginCR" [(ngModel)] = "centreId" class="form-select form-select-sm">
+                          <select name="loginCR" id="loginCR" [(ngModel)] = "operateurData.centreId" class="form-select form-select-sm" [required]="true">
                             <option [ngValue]="line.id" *ngFor="let line of centreRevenus" >{{line.libelle}}</option>
                           </select>
                           <label class="small fw-lighter" for="logincode">Centre de revenu</label>
@@ -39,17 +39,17 @@ background-repeat: no-repeat;">
                     <h5 class="fw-bolder mt-3 mb-1 pb-1" style="letter-spacing: 1px;">Connectez-vous à votre compte</h5>
   
                     <div class="form-outline mb-2">
-                      <input type="text" name="loginUser" id="logincode" class="form-control form-control-md" [(ngModel)] = "operateurData.email"/>
+                      <input type="text" name="loginUser" id="logincode" class="form-control form-control-md" [(ngModel)] = "operateurData.email" [required]="true" [email]="true"/>
                       <label class="small fw-lighter" for="logincode">Email</label>
                     </div>
   
                     <div class="form-outline mb-1">
-                      <input type="password" name="loginMdp" id="loginmdp" class="form-control form-control-md" [(ngModel)] = "operateurData.mdp"/>
+                      <input type="password" name="loginMdp" id="loginmdp" class="form-control form-control-md" [(ngModel)] = "operateurData.mdp" [required]="true" [minlength]="5"/>
                       <label class="small fw-lighter" for="loginmdp">Mot de passe</label>
                     </div>
   
                     <div class="pt-1 mb-4">
-                      <button class="btn btn-dark btn-md btn-block col-md-12 col-lg-12" type="button" (click)="onLogin()">Login</button>
+                      <button class="btn btn-dark btn-md btn-block col-md-12 col-lg-12" type="submit" [disabled]="!loginForm.valid">Login</button>
                     </div>
   
                     <a class="small text-muted" href="#!">Mot de passe oublié?</a>

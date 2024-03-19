@@ -39,9 +39,10 @@ export class DefaultHeaderComponent extends HeaderComponent {
     centreId:           0
   };
 
+  public operateurId = localStorage.getItem('operateurId');
+
   public onLogout(){
-    alert(this.operateurData);
-    // this.loginService.logout(this.operateurData);
+    this.loginService.logout(this.operateurId);
   }
 
 }

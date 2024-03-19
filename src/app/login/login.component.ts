@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { ExploitationService } from "../shared/service/exploitation.service";
 import { CentreRevenuService } from "../shared/service/centre-revenu.service";
-import { FormsModule } from '@angular/forms';
+import { FormBuilder, FormControl, FormGroup, FormsModule, NgForm, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { InterfaceOperateur } from "../shared/model/interfaceOperateur";
 import { LoginService } from "../shared/service/login.service";
@@ -16,13 +16,25 @@ import { LoginService } from "../shared/service/login.service";
 })
 
 export class LoginComponent implements OnInit {
+  public loginForm:FormGroup;
 
   constructor(
     public router: Router,
     public route: ActivatedRoute,
     private exploitationService: ExploitationService,
     private centreRevenuService: CentreRevenuService,
-    private loginService: LoginService) { }
+    private loginService: LoginService,
+    formBuilder:FormBuilder
+  ) { 
+    this.loginForm = formBuilder.group({
+      email:["", Validators.required,Validators.email],
+      mdp: ["", Validators.required,Validators.minLength(5)],
+      exploitationId: ["", Validators.required],
+      centreId: ["", Validators.required]
+    });
+  }
+
+  
 
   public operateurData: InterfaceOperateur= {
     id:0,
@@ -40,8 +52,7 @@ export class LoginComponent implements OnInit {
     centreId:           0
   };
 
-  public exploitationsId = 0;
-  public centreId = 0;
+  
   public exploitations: any;
   public centreRevenus: any;
 
@@ -57,14 +68,14 @@ export class LoginComponent implements OnInit {
     });
   }
 
-  public onLogin() {
+  public onLogin(form:NgForm) {    
     this.loginService.auth(this.operateurData);
   }
 
   
   public selectCR() {
     this.centreRevenus = [];
-    this.centreRevenuService.getCrExploitation(this.exploitationsId).subscribe({
+    this.centreRevenuService.getCrExploitation(this.operateurData.exploitationId).subscribe({
       next: (centreRevenu) => {
         this.centreRevenus = centreRevenu;
       },
