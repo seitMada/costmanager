@@ -2,8 +2,7 @@
   <div class="d-flex bd-highlight">
     <div class="flex-grow-1 bd-highlight">
       <button type="button" class="btn btn-success btn-sm mx-1" *ngIf="!modifToggle">Enregistrer</button>
-      <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle"
-        (click)="modifToggleModal()">Annuler</button>
+      <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
     </div>
     <div class="bd-highlight">
       <button class="btn btn-outline-primary btn-sm me-1" title="Liste articles" (click)="toggleModal()" *ngIf="!toggle"
@@ -41,7 +40,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let line of articles" (click)="showArticle(line)">
+        <tr *ngFor="let line of articles" (click)="showArticle(line); toggleModal()">
           <td class=""></td>
           <td class="col-1">{{line.codeArticle}}</td>
           <td class="col-3">{{line.libelle}}</td>
@@ -156,8 +155,14 @@
               <input type="text" class="form-control bg-white" aria-label="sousfamille" aria-describedby="basic-addon1"
                 [(ngModel)]="article.sousfamilles.libelle" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
                 [disabled]="modifToggle">
-              <span class="btn btn-outline-secondary input-group-text col-1" id="basic-addon1"
-                *ngIf="!modifToggle">...</span>
+              <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
+                <span class="visually-hidden">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" *ngIf="!modifToggle">
+                <li *ngFor="let line of sousFamilles"><span (click)="selectSousFamille(line)">{{line.libelle}}</span>
+                </li>
+              </ul>
             </div>
           </div>
         </div>
@@ -169,7 +174,7 @@
           <button ngbNavLink>IMPORT - EXPORT</button>
           <ng-template ngbNavContent></ng-template>
         </li> -->
-        <li [ngbNavItem]="2" *ngIf="modifToggle">
+        <!-- <li [ngbNavItem]="2" *ngIf="modifToggle">
           <button ngbNavLink>STOCK VALORISEE PAR EXPLOITATION</button>
           <ng-template ngbNavContent>
             <div ngbDropdown class="d-inline-block">
@@ -183,11 +188,11 @@
               </div>
             </div>
           </ng-template>
-        </li>
-        <li [ngbNavItem]="3">
+        </li> -->
+        <!-- <li [ngbNavItem]="3">
           <button ngbNavLink>EXPLOITATION</button>
           <ng-template ngbNavContent></ng-template>
-        </li>
+        </li> -->
         <li [ngbNavItem]="4">
           <button ngbNavLink>STOCKAGE</button>
           <ng-template ngbNavContent></ng-template>
@@ -218,10 +223,26 @@
                 <tbody>
                   <tr *ngFor="let line of article.articlefournisseur">
                     <td class="col-3">{{line.fournisseur.raison_social}}</td>
-                    <td class="col-2">---</td>
-                    <td class="col-3">---</td>
-                    <td class="col-2">---</td>
-                    <td class="col-2">---</td>
+                    <td class="col-2">
+                  <tr *ngFor="let lines of line.conditionnement">
+                    <td>{{lines.coefficientAchatCommande}} {{lines.uniteCommande.libelle}}</td>
+                  </tr>
+                  </td>
+                  <td class="col-3">
+                    <tr *ngFor="let lines of line.conditionnement">
+                      <td>{{line.prixReference / lines.coefficientAchatCommande | number: '1.2-2'}}   €</td>
+                    </tr>
+                  </td>
+                  <td class="col-2">
+                    <tr *ngFor="let lines of line.conditionnement">
+                      <td>{{(lines.coefficientAchatCommande * lines.coefficientInventaireAchat * lines.coefficientInventaire)}} {{lines.uniteFt.libelle}}</td>
+                    </tr>
+                  </td>
+                  <td class="col-2">
+                    <tr *ngFor="let lines of line.conditionnement">
+                      <td>{{line.prixReference / (lines.coefficientAchatCommande * lines.coefficientInventaireAchat * lines.coefficientInventaire) | number: '1.2-2'}}   €</td>
+                    </tr>
+                  </td>
                   </tr>
                 </tbody>
               </table>
@@ -253,13 +274,20 @@
         <li [ngbNavItem]="4">
           <button ngbNavLink>ALLERGENES</button>
           <ng-template ngbNavContent>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col" class="">Allérgenes</th>
-                </tr>
-              </thead>
-            </table>
+            <div class="card-body overflow-y-scroll py-1" style="height: 190px;">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col" class="">Allérgenes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of article.allergeneArticle">
+                    <td>{{line.allergene.libelle}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </ng-template>
         </li>
         <li [ngbNavItem]="5" *ngIf="modifToggle">

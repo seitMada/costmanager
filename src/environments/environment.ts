@@ -4,12 +4,25 @@ export const environment = {
     production: false,
     APIGETEXPLOITATION: endPoint + 'exploitation',
     APIGETCREXPLOITATION: endPoint + 'centre-revenu/exploitation/',
-    APILOGIN: endPoint + 'api/login',
-    APIGETARTICLE : endPoint + 'articles',
+    
     APILOGOUT: endPoint + 'api/logout',
+    APILOGIN: endPoint + 'auth',
+    APIOPERATEURCONNECTE: endPoint + 'operateur/connecte',
+
+
+    APIGETARTICLE : endPoint + 'articles',
+    APIGETARTICLEBYID: endPoint + 'articles/',
+
+
     APIGETUNITE: endPoint + 'unites',
+
+
     APIGETCATEGORIES: endPoint + 'categories',
+
+
     APIGETGROUPE: endPoint + 'groupe_analytique',
     APIGETFAMILLEBYGROUPE: endPoint + 'familles/groupe_article/',
-    APIOPERATEURCONNECTE: endPoint + 'operateur/connecte',
+
+
+    APIGETSOUSFAMILLEBYGROUPE: endPoint + 'sousfamilles/famille/'
 };
