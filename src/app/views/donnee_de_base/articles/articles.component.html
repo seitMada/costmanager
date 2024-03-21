@@ -1,108 +1,302 @@
-<div class="card d-flex py-1 flex-row-reverse mb-2">
-  <button [disabled]="true" class="btn btn-outline-danger btn-sm me-1" title="Supprimer article">
-    <i class="fas fa-trash"></i>
-  </button>
-  <button class="btn btn-outline-success btn-sm me-1" title="Ajouter article">
-    <i class="fas fa-plus"></i>
-  </button>
-  <button class="btn btn-outline-primary btn-sm me-1" title="Liste articles" (click)="toggleModal()" *ngIf="!toggle">
-    <i class="fas fa-list"></i>
-  </button>
+<div class="card d-flex py-1 mb-2">
+  <div class="d-flex bd-highlight">
+    <div class="flex-grow-1 bd-highlight">
+      <button type="button" class="btn btn-success btn-sm mx-1" *ngIf="!modifToggle">Enregistrer</button>
+      <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
+    </div>
+    <div class="bd-highlight">
+      <button class="btn btn-outline-primary btn-sm me-1" title="Liste articles" (click)="toggleModal()" *ngIf="!toggle"
+        [disabled]="!modifToggle">
+        <i class="fas fa-list"></i>
+      </button>
+      <button class="btn btn-outline-info btn-sm me-1" title="Modifier article" (click)="modifToggleModal()"
+        *ngIf="!toggle" [disabled]="!modifToggle">
+        <i class="fas fa-pencil"></i>
+      </button>
+      <button class="btn btn-outline-success btn-sm me-1" title="Ajouter article" (click)="modifToggleModal()"
+        [disabled]="!modifToggle">
+        <i class="fas fa-plus"></i>
+      </button>
+      <button [disabled]="true" class="btn btn-outline-danger btn-sm me-1" title="Supprimer article">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+  </div>
 </div>
 
 <div class="card d-flex" *ngIf="toggle">
-  <div class="card-header">Titre</div>
-  <div class="card-body overflow-scroll py-1" style="height: 650px;">
+  <div class="card-body overflow-y-scroll py-1" style="height: 650px;">
     <table class="table table-striped table-hover">
       <thead>
-      <tr>
-        <th scope="col" class="">#</th>
-        <th scope="col" class="col-1">Code</th>
-        <th scope="col" class="col-3">Désignation</th>
-        <th scope="col" class="col-1">Unite</th>
-        <th scope="col" class="col-2">Groupe analytique</th>
-        <th scope="col" class="col-2">Famille</th>
-        <th scope="col" class="col-2">Sous-famille</th>
-        <th scope="col" class="col-1 text-overflow">Coéfficient pondération</th>
-      </tr>
+        <tr>
+          <th scope="col" class="">#</th>
+          <th scope="col" class="col-1">Code</th>
+          <th scope="col" class="col-3">Désignation</th>
+          <th scope="col" class="col-1">Unite</th>
+          <th scope="col" class="col-2">Groupe analytique</th>
+          <th scope="col" class="col-2">Famille</th>
+          <th scope="col" class="col-2">Sous-famille</th>
+          <th scope="col" class="col-1 text-overflow">Coéfficient pondération</th>
+        </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let line of articles" (click)="showArticle(line)">
-        <td class=""></td>
-        <td class="col-1">{{line.codeArticle}}</td>   
-        <td class="col-3">{{line.libelle}}</td>
-        <td class="col-1">{{line.unite.abreviation}}</td>
-        <td class="col-2">{{line.groupeanalytique.groupe}}</td>
-        <td class="col-2 text-overflow">{{line.familles.libelle}}</td>
-        <td class="col-2">{{line.sousfamilles.libelle}}</td>
-        <td class="col-1">{{line.coefficientPonderation * 100}} %</td>
-      </tr>
+        <tr *ngFor="let line of articles" (click)="showArticle(line); toggleModal()">
+          <td class=""></td>
+          <td class="col-1">{{line.codeArticle}}</td>
+          <td class="col-3">{{line.libelle}}</td>
+          <td class="col-1">{{line.unite.abreviation}}</td>
+          <td class="col-2">{{line.groupeanalytique.groupe}}</td>
+          <td class="col-2 text-overflow">{{line.familles.libelle}}</td>
+          <td class="col-2">{{line.sousfamilles.libelle}}</td>
+          <td class="col-1">{{line.coefficientPonderation * 100}} %</td>
+        </tr>
       </tbody>
     </table>
   </div>
 </div>
 
 <div class="card d-flex" *ngIf="!toggle">
-  <div class="card-header text-center fs-3 fw-bold">{{article.libelle}}</div>
-  <div class="card-body py-1" style="height: 600px;">
-    <div class="row m-2">
-      <div class="col-sm-6">
-        <div class="input-group">
-          <span class="input-group-text col-5" id="basic-addon1">Code article</span>
-          <input type="text" class="form-control col-7" aria-label="Code" aria-describedby="basic-addon1" [(ngModel)]="article.codeArticle">
+  <div class="card-header text-center fs-5 fw-bold">{{article.libelle}}</div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">
+      <div class="card-body py-1">
+        <div class="row m-2">
+          <div class="col-sm-6">
+            <div class="input-group">
+              <span class="input-group-text col-5" id="basic-addon1">Code article</span>
+              <input type="text" class="form-control col-7 bg-white" aria-label="Code" aria-describedby="basic-addon1"
+                [(ngModel)]="article.codeArticle" [disabled]="modifToggle">
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="input-group">
+              <span class="input-group-text col-5" id="basic-addon1">Désignation</span>
+              <input type="text" class="form-control col-7 bg-white" aria-label="Designation"
+                aria-describedby="basic-addon1" [(ngModel)]="article.libelle" [disabled]="modifToggle">
+            </div>
+          </div>
+        </div>
+        <div class="row m-2">
+          <div class="col-sm-6">
+            <div class="input-group">
+              <span class="input-group-text col-5" id="basic-addon1">Unite</span>
+              <input type="text" class="form-control bg-white" aria-label="unite" aria-describedby="basic-addon1"
+                [(ngModel)]="article.unite.libelle" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
+                [disabled]="modifToggle">
+              <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
+                <span class="visually-hidden">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" *ngIf="!modifToggle">
+                <li *ngFor="let line of unites"><span (click)="selectUnite(line)">{{line.libelle}}</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="input-group">
+              <span class="input-group-text col-5" id="basic-addon1">Coéfficient de pondération</span>
+              <input type="text" class="form-control col-6 bg-white" aria-label="coefficientPonderation"
+                aria-describedby="basic-addon1" [(ngModel)]="article.coefficientPonderation" [disabled]="modifToggle">
+              <span class="input-group-text col-1" id="basic-addon1">%</span>
+            </div>
+          </div>
+        </div>
+        <div class="row m-2">
+          <div class="col-sm-6">
+            <div class="input-group">
+              <span class="input-group-text col-5" id="basic-addon1">Catégorie</span>
+              <input type="text" class="form-control bg-white" aria-label="categorie" aria-describedby="basic-addon1"
+                [(ngModel)]="article.categories.libelle" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
+                [disabled]="modifToggle">
+              <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
+                <span class="visually-hidden">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" *ngIf="!modifToggle">
+                <li *ngFor="let line of categories"><span (click)="selectCategorie(line)">{{line.libelle}}</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="input-group">
+              <span class="input-group-text col-5" id="basic-addon1">Groupe analytique</span>
+              <input type="text" class="form-control bg-white" aria-label="groupeanalytique"
+                aria-describedby="basic-addon1" [(ngModel)]="article.groupeanalytique.groupe"
+                [ngClass]="modifToggle ? 'col-6' : 'col-7'" [disabled]="modifToggle">
+              <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
+                <span class="visually-hidden">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" *ngIf="!modifToggle">
+                <li *ngFor="let line of groupeAnalytique"><span (click)="selectGroupe(line)">{{line.groupe}}</span></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <div class="row m-2">
+          <div class="col-sm-6">
+            <div class="input-group">
+              <span class="input-group-text col-5" id="basic-addon1">Famille</span>
+              <input type="text" class="form-control bg-white" aria-label="famille" aria-describedby="basic-addon1"
+                [(ngModel)]="article.familles.libelle" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
+                [disabled]="modifToggle">
+              <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
+                <span class="visually-hidden">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" *ngIf="!modifToggle">
+                <li *ngFor="let line of familles"><span (click)="selectFamille(line)">{{line.libelle}}</span></li>
+              </ul>
+            </div>
+          </div>
+          <div class="col-sm-6">
+            <div class="input-group">
+              <span class="input-group-text col-5" id="basic-addon1">Sous famille</span>
+              <input type="text" class="form-control bg-white" aria-label="sousfamille" aria-describedby="basic-addon1"
+                [(ngModel)]="article.sousfamilles.libelle" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
+                [disabled]="modifToggle">
+              <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
+                <span class="visually-hidden">Toggle Dropdown</span>
+              </button>
+              <ul class="dropdown-menu dropdown-menu-end" *ngIf="!modifToggle">
+                <li *ngFor="let line of sousFamilles"><span (click)="selectSousFamille(line)">{{line.libelle}}</span>
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </div>
-      <div class="col-sm-6">
-        <div class="input-group">
-          <span class="input-group-text col-5" id="basic-addon1">Désignation</span>
-          <input type="text" class="form-control col-7" aria-label="Designation" aria-describedby="basic-addon1" [(ngModel)]="article.libelle">
-        </div>
-      </div>
-    </div>
-    <div class="row m-2">
-      <div class="col-sm-6">
-        <div class="input-group">
-          <span class="input-group-text col-5" id="basic-addon1">Unite</span>
-          <input type="text" class="form-control col-7" aria-label="Code" aria-describedby="basic-addon1" [(ngModel)]="article.unite.libelle">
-        </div>
-      </div>
-      <div class="col-sm-6">
-        <div class="input-group">
-          <span class="input-group-text col-5" id="basic-addon1">Coéfficient de pondération</span>
-          <input type="text" class="form-control col-6" aria-label="Designation" aria-describedby="basic-addon1" [(ngModel)]="article.coefficientPonderation">
-          <span class="input-group-text col-1" id="basic-addon1">%</span>
-        </div>
-      </div>
-    </div>
-    <div class="row m-2">
-      <div class="col-sm-6">
-        <div class="input-group">
-          <span class="input-group-text col-5" id="basic-addon1">Catégorie</span>
-          <input type="text" class="form-control col-7" aria-label="Code" aria-describedby="basic-addon1" [(ngModel)]="article.categories.libelle">
-        </div>
-      </div>
-      <div class="col-sm-6">
-        <div class="input-group">
-          <span class="input-group-text col-5" id="basic-addon1">Groupe analytique</span>
-          <input type="text" class="form-control col-7" aria-label="Designation" aria-describedby="basic-addon1" [(ngModel)]="article.groupeanalytique.groupe">
-        </div>
-      </div>
-    </div>
-    <div class="row m-2">
-      <div class="col-sm-6">
-        <div class="input-group">
-          <span class="input-group-text col-5" id="basic-addon1">Famille</span>
-          <input type="text" class="form-control col-7" aria-label="Code" aria-describedby="basic-addon1" [(ngModel)]="article.familles.libelle">
-        </div>
-      </div>
-      <div class="col-sm-6">
-        <div class="input-group">
-          <span class="input-group-text col-5" id="basic-addon1">Sous famille</span>
-          <input type="text" class="form-control col-7" aria-label="Designation" aria-describedby="basic-addon1" [(ngModel)]="article.sousfamilles.libelle">
-        </div>
-      </div>
-    </div>
-  </div>
-
-  
+    </li>
+    <li class="list-group-item" style="height: 150px;">
+      <ul ngbNav #nav1="ngbNav" [(activeId)]="active_1" class="nav-tabs">
+        <!-- <li [ngbNavItem]="1" *ngIf="modifToggle">
+          <button ngbNavLink>IMPORT - EXPORT</button>
+          <ng-template ngbNavContent></ng-template>
+        </li> -->
+        <!-- <li [ngbNavItem]="2" *ngIf="modifToggle">
+          <button ngbNavLink>STOCK VALORISEE PAR EXPLOITATION</button>
+          <ng-template ngbNavContent>
+            <div ngbDropdown class="d-inline-block">
+              <button type="button" class="btn btn-sm btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>
+                Toggle dropdown
+              </button>
+              <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                <button ngbDropdownItem>Action - 1</button>
+                <button ngbDropdownItem>Another Action</button>
+                <button ngbDropdownItem>Something else is here</button>
+              </div>
+            </div>
+          </ng-template>
+        </li> -->
+        <!-- <li [ngbNavItem]="3">
+          <button ngbNavLink>EXPLOITATION</button>
+          <ng-template ngbNavContent></ng-template>
+        </li> -->
+        <li [ngbNavItem]="4">
+          <button ngbNavLink>STOCKAGE</button>
+          <ng-template ngbNavContent></ng-template>
+        </li>
+        <li [ngbNavItem]="5" *ngIf="modifToggle">
+          <button ngbNavLink>GESTION DES UNITES</button>
+          <ng-template ngbNavContent></ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav1" class="mt-2"></div>
+    </li>
+    <li class="list-group-item" style="height: 250px;">
+      <ul ngbNav #nav2="ngbNav" [(activeId)]="active_2" class="nav-tabs">
+        <li [ngbNavItem]="1">
+          <button ngbNavLink>FOURNISSEUR</button>
+          <ng-template ngbNavContent>
+            <div class="card-body overflow-y-scroll py-1" style="height: 190px;">
+              <table class="table table-striped table-hover" *ngIf="modifToggle">
+                <thead>
+                  <tr>
+                    <th scope="col" class="col-3">Fournisseur</th>
+                    <th scope="col" class="col-2">Unité Commande</th>
+                    <th scope="col" class="col-3">Prix en unité commande</th>
+                    <th scope="col" class="col-2">Unité fiche technique</th>
+                    <th scope="col" class="col-2">Prix en unité FT</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of article.articlefournisseur">
+                    <td class="col-3">{{line.fournisseur.raison_social}}</td>
+                    <td class="col-2">
+                  <tr *ngFor="let lines of line.conditionnement">
+                    <td>{{lines.coefficientAchatCommande}} {{lines.uniteCommande.libelle}}</td>
+                  </tr>
+                  </td>
+                  <td class="col-3">
+                    <tr *ngFor="let lines of line.conditionnement">
+                      <td>{{line.prixReference / lines.coefficientAchatCommande | number: '1.2-2'}}   €</td>
+                    </tr>
+                  </td>
+                  <td class="col-2">
+                    <tr *ngFor="let lines of line.conditionnement">
+                      <td>{{(lines.coefficientAchatCommande * lines.coefficientInventaireAchat * lines.coefficientInventaire)}} {{lines.uniteFt.libelle}}</td>
+                    </tr>
+                  </td>
+                  <td class="col-2">
+                    <tr *ngFor="let lines of line.conditionnement">
+                      <td>{{line.prixReference / (lines.coefficientAchatCommande * lines.coefficientInventaireAchat * lines.coefficientInventaire) | number: '1.2-2'}}   €</td>
+                    </tr>
+                  </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="2" *ngIf="modifToggle">
+          <button ngbNavLink>ACHATS</button>
+          <ng-template ngbNavContent>
+            <div class="d-grid gap-2">
+              <button type="button" class="btn btn-primary">Liste des achats des {{article.libelle}}</button>
+            </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="3" *ngIf="modifToggle">
+          <button ngbNavLink>REFERENCE CROISEE</button>
+          <ng-template ngbNavContent>
+            <table class="table table-striped">
+              <thead>
+                <tr>
+                  <th scope="col" class="col-6">Désignation</th>
+                  <th scope="col" class="col-3">Quantité</th>
+                  <th scope="col" class="col-3">Quantité préparée</th>
+                </tr>
+              </thead>
+            </table>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="4">
+          <button ngbNavLink>ALLERGENES</button>
+          <ng-template ngbNavContent>
+            <div class="card-body overflow-y-scroll py-1" style="height: 190px;">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col" class="">Allérgenes</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of article.allergeneArticle">
+                    <td>{{line.allergene.libelle}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="5" *ngIf="modifToggle">
+          <button ngbNavLink>EVOLUTION DES PRIX</button>
+          <ng-template ngbNavContent>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav2" class="mt-2"></div>
+    </li>
+  </ul>
 </div>

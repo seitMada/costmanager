@@ -2,3 +2,16 @@
 table {
     cursor: pointer;
 }
+
+.nav-tabs {
+    font-size: smaller;
+}
+
+.dropdown-menu li {
+    cursor: pointer;
+    text-align: center;
+}
+
+.dropdown-menu li:hover {
+    font-weight: bolder;
+}
