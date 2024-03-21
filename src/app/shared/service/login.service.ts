@@ -14,7 +14,7 @@ export class LoginService {
   private apiLogout = environment.APILOGOUT;
 
 
-  isLoggedIn:boolean = false;
+  isLoggedIn:boolean = true;
   redirectUrl:string | null =null;
 
   constructor(
@@ -41,8 +41,8 @@ export class LoginService {
     )
   }
 
-  public logout(operateurId:any){
-    return this.https.post(this.apiAuth,operateurId).subscribe(
+  public logout(){
+    return this.https.post(this.apiLogout,this.operateurId).subscribe(
       response=>{
         if (response==true) {
           localStorage.removeItem('operateurId');

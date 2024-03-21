@@ -8,4 +8,6 @@ export const environment = {
     APIGETARTICLE : endPoint + 'articles',
     APILOGOUT: endPoint + 'api/logout',
     APIOPERATEURCONNECTE: endPoint + 'operateur/connecte',
+    APIGETFOURNISSEUR: endPoint + 'fournisseur',
+    APIGETCOMMANDE: endPoint + 'commande',
 };

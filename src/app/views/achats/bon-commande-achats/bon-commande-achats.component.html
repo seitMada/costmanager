@@ -1,1 +1,109 @@
-<p>bon-commande-achats works!</p>
+<div class="card d-flex py-1 flex-row-reverse mb-2">
+    <button [disabled]="true" class="btn btn-outline-danger btn-sm me-1" title="Supprimer bon de commande">
+      <i class="fas fa-trash"></i>
+    </button>
+    <button class="btn btn-outline-success btn-sm me-1" title="Ajouter bon de commande">
+      <i class="fas fa-plus"></i>
+    </button>
+    <button class="btn btn-outline-primary btn-sm me-1" title="Liste bon de commande" (click)="toggleModal()" *ngIf="!toggle">
+      <i class="fas fa-list"></i>
+    </button>
+  </div>
+  
+  <div class="card d-flex" *ngIf="toggle">
+    <div class="card-header">Titre</div>
+    <div class="card-body overflow-scroll py-1" style="height: 650px;">
+      <table class="table table-striped table-hover">
+        <thead>
+        <tr>
+          <th scope="col" class="">#</th>
+          <th scope="col" class="col-1 text-overflow">Date Commande</th>
+          <th scope="col" class="col-2">Désignation</th>
+          <th scope="col" class="col-1">Qté Commandée</th>
+          <th scope="col" class="col-2">Unité de Commande </th>
+          <th scope="col" class="col-2">Prix Unitaire</th>
+          <th scope="col" class="col-2">Montant HT</th>
+          <th scope="col" class="col-2">Rémise</th>
+          
+        </tr>
+        </thead>
+        <tbody>
+        <tr *ngFor="let line of commandes" (click)="showCommande(line)">
+          <td class=""></td>  
+          <td class="col-1">{{line.dateCommande}}</td>
+          <td class="col-2">{{line.libelle}}</td>
+          <td class="col-1">{{line.quantiteCommande}}</td>
+          <td class="col-2 text-overflow">{{line.unite.abreviation}}</td>
+          <td class="col-2">{{line.prixUnitaire}}</td>
+          <td class="col-2">{{line.montantHT}}</td>
+          <td class="col-2">{{line.remise}} </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="card d-flex" >
+    <div class="card-header text-center fs-3 fw-bold"></div>
+    <div class="card-body py-1" style="height: 600px;">
+      <div class="row m-2">
+        <div class="col-sm-6">
+          <div class="input-group">
+            <span class="input-group-text col-5" id="basic-addon1">Famille</span>
+            <input type="text" class="form-control col-7" aria-label="Code" aria-describedby="basic-addon1">
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="input-group">
+            <span class="input-group-text col-5" id="basic-addon1">Désignation</span>
+            <input type="text" class="form-control col-7" aria-label="Designation" aria-describedby="basic-addon1">
+          </div>
+        </div>
+      </div>
+      <div class="row m-2">
+        <div class="col-sm-6">
+          <div class="input-group">
+            <span class="input-group-text col-5" id="basic-addon1">Qté Commandée</span>
+            <input type="text" class="form-control col-7" aria-label="Code" aria-describedby="basic-addon1">
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="input-group">
+            <span class="input-group-text col-5" id="basic-addon1">Prix Unitaire HT</span>
+            <input type="text" class="form-control col-6" aria-label="Designation" aria-describedby="basic-addon1">
+            <span class="input-group-text col-1" id="basic-addon1"></span>
+          </div>
+        </div>
+      </div>
+      <div class="row m-2">
+        <div class="col-sm-6">
+          <div class="input-group">
+            <span class="input-group-text col-5" id="basic-addon1">Unité de Commande</span>
+            <input type="text" class="form-control col-7" aria-label="Code" aria-describedby="basic-addon1" >
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="input-group">
+            <span class="input-group-text col-5" id="basic-addon1">Montant HT</span>
+            <input type="text" class="form-control col-7" aria-label="Designation" aria-describedby="basic-addon1">
+          </div>
+        </div>
+      </div>
+      <div class="row m-2">
+        <div class="col-sm-6">
+          <div class="input-group">
+            <span class="input-group-text col-5" id="basic-addon1">Rémise</span>
+            <input type="text" class="form-control col-7" aria-label="Code" aria-describedby="basic-addon1" >
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="input-group">
+            <span class="input-group-text col-5" id="basic-addon1">Coéfficient pondération</span>
+            <input type="text" class="form-control col-7" aria-label="Designation" aria-describedby="basic-addon1" >
+          </div>
+        </div>
+      </div>
+    </div>
+  
+    
+  </div>
