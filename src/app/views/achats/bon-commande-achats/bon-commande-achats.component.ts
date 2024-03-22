@@ -17,7 +17,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     public router: Router,
     public route: ActivatedRoute,
     private fournisseurService:FournisseurService,
-    private commandeService : CommandeService
+    private commandeService : CommandeService,
   ){}
   public toggle = true;
 

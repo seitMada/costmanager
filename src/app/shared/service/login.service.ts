@@ -47,7 +47,6 @@ export class LoginService {
         if (response==true) {
           localStorage.removeItem('operateurId');
           this.router.navigate(['login']);
-
           this.isLoggedIn = false;
         } else {
           
