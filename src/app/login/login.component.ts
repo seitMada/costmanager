@@ -4,7 +4,7 @@ import { ExploitationService } from "../shared/service/exploitation.service";
 import { CentreRevenuService } from "../shared/service/centre-revenu.service";
 import { FormBuilder, FormControl, FormGroup, FormsModule, NgForm, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { InterfaceOperateur } from "../shared/model/interfaceOperateur";
+import { InterfaceOperateur } from "../shared/model/interface-operateur";
 import { LoginService } from "../shared/service/login.service";
 
 @Component({
@@ -30,7 +30,7 @@ export class LoginComponent implements OnInit {
       email:["", Validators.required,Validators.email],
       mdp: ["", Validators.required,Validators.minLength(5)],
       exploitationId: ["", Validators.required],
-      centreId: ["", Validators.required]
+      // centreId: ["", Validators.required]
     });
   }
 

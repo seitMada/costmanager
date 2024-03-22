@@ -22,50 +22,42 @@ const routes: Routes = [
       {
         path: 'donnee_de_base',
         loadChildren: () =>
-          import('./views/donnee_de_base/base.module').then((m) => m.BaseModule),
-        canActivate:[loginGuard]
+          import('./views/donnee_de_base/base.module').then((m) => m.BaseModule)
       },
       {
         path: 'dash',
         loadChildren: () =>
-          import('./views/dash/dash.module').then((m) => m.DashModule),
-        canActivate:[loginGuard]
+          import('./views/dash/dash.module').then((m) => m.DashModule)
       },
       {
         path: 'achats',
         loadChildren: () =>
-          import('./views/achats/achats.module').then((m) => m.AchatsModule),
-        canActivate:[loginGuard]
+          import('./views/achats/achats.module').then((m) => m.AchatsModule)
       },
       {
         path: 'productions',
         loadChildren: () =>
-          import('./views/productions/productions.module').then((m) => m.ProductionsModule),
-        canActivate:[loginGuard]
+          import('./views/productions/productions.module').then((m) => m.ProductionsModule)
       },
       {
         path: 'transferts',
         loadChildren: () =>
-          import('./views/transferts/transferts.module').then((m) => m.TransfertsModule),
-        canActivate:[loginGuard]
+          import('./views/transferts/transferts.module').then((m) => m.TransfertsModule)
       },
       {
         path: 'inventaires',
         loadChildren: () =>
-          import('./views/inventaires/inventaires.module').then((m) => m.InventairesModule),
-        canActivate:[loginGuard]
+          import('./views/inventaires/inventaires.module').then((m) => m.InventairesModule)
       },
       {
         path: 'ppo',
         loadChildren: () =>
-          import('./views/ppos/ppos.module').then((m) => m.PposModule),
-        canActivate:[loginGuard]
+          import('./views/ppos/ppos.module').then((m) => m.PposModule)
       },
       {
         path: 'settings',
         loadChildren: () =>
-          import('./views/administrateurs/administrateurs.module').then((m) => m.AdministrateursModule),
-        canActivate:[loginGuard]
+          import('./views/administrateurs/administrateurs.module').then((m) => m.AdministrateursModule)
       },
     ]
   },

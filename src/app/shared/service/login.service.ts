@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { environment } from "../../../environments/environment";
 import { HttpClient } from '@angular/common/http';
-import { InterfaceOperateur } from "../model/interfaceOperateur";
+import { InterfaceOperateur } from "../model/interface-operateur";
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -13,44 +13,40 @@ export class LoginService {
   private apiOperateurConnecte = environment.APIOPERATEURCONNECTE
   private apiLogout = environment.APILOGOUT;
 
-
-  isLoggedIn:boolean = false;
-  redirectUrl:string | null =null;
+  redirectUrl: string | null = null;
 
   constructor(
     private https: HttpClient,
     private router: Router
   ) { }
 
-  operateurId: Pick<InterfaceOperateur,"id">;
+  operateurId: Pick<InterfaceOperateur, "id">;
 
-  public auth(operateurData:any) {
+  public auth(operateurData: any) {
+    console.log(operateurData)
     this.https.post(this.apiAuth, operateurData).subscribe(
-      response => {
-        if(response==true){
-         this.https.get(this.apiOperateurConnecte,operateurData.email).subscribe(
-            data =>{
-              operateurData = data;
-              this.isLoggedIn = true;
-              this.router.navigate(['dash']);
-              localStorage.setItem('operateurId',operateurData.id);
-            }
-          )
+      (response: any) => {
+        if (response.connect === true) {
+          sessionStorage.setItem('exploitation', operateurData.exploitationId);
+          // this.https.get(this.apiOperateurConnecte, operateurData.email).subscribe(
+          //   (data: any) => {
+          sessionStorage.setItem('id', response.id);
+          this.router.navigate(['dash']);
+          //   }
+          // )
         }
       }
     )
   }
 
-  public logout(operateurId:any){
-    return this.https.post(this.apiAuth,operateurId).subscribe(
-      response=>{
-        if (response==true) {
-          localStorage.removeItem('operateurId');
+  public logout(operateurId: any) {
+    return this.https.post(this.apiLogout, operateurId).subscribe(
+      response => {
+        if (response == true) {
+          sessionStorage.removeItem('id');
+          sessionStorage.removeItem('centre');
+          sessionStorage.removeItem('exploitation');
           this.router.navigate(['login']);
-
-          this.isLoggedIn = false;
-        } else {
-          
         }
       }
     )

@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { loginGuard } from "../../login/login.guard";
 
 import { ArticlesComponent } from "./articles/articles.component";
 import { FicheTechniqueComponent } from "./fiche_technique/fiche-technique.component";
@@ -21,7 +22,7 @@ const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'articles',
+        redirectTo: 'articles'
       },
       {
         path: 'articles',
@@ -29,6 +30,7 @@ const routes: Routes = [
         data: {
           title: 'Articles',
         },
+        canActivate:[loginGuard]
       },
       {
         path: 'fichetechnique',
@@ -36,6 +38,7 @@ const routes: Routes = [
         data: {
           title: 'Fiche techniques',
         },
+        canActivate:[loginGuard]
       },
       {
         path: 'fournisseurs',
@@ -43,6 +46,7 @@ const routes: Routes = [
         data: {
           title: 'Fournisseurs',
         },
+        canActivate:[loginGuard]
       },
       {
         path: 'gestion_stock',
@@ -55,6 +59,7 @@ const routes: Routes = [
           data: {
             title: 'Mouvements stocks',
           },
+          canActivate:[loginGuard]
         },
         {
           path: 'gestion_stock_minimum',
@@ -62,6 +67,7 @@ const routes: Routes = [
           data: {
             title: 'Gestions Stock Minimum',
           },
+          canActivate:[loginGuard]
         },
         {
           path: 'stock_minimum',
@@ -69,6 +75,7 @@ const routes: Routes = [
           data: {
             title: 'Stock Minimum',
           },
+          canActivate:[loginGuard]
         },
         {
           path: 'zones_stockages',
@@ -76,6 +83,7 @@ const routes: Routes = [
           data: {
             title: 'Zones de stockages',
           },
+          canActivate:[loginGuard]
         }]
       },
       {
@@ -84,6 +92,7 @@ const routes: Routes = [
         data: {
           title: 'Synthese Fiche Techniques',
         },
+        canActivate:[loginGuard]
       },
       {
         path: 'matrice_saisie',
@@ -91,6 +100,7 @@ const routes: Routes = [
         data: {
           title: 'Matrices de saisie',
         },
+        canActivate:[loginGuard]
       }
     ],
   },

@@ -6,12 +6,13 @@ export const environment = {
     APIGETCREXPLOITATION: endPoint + 'centre-revenu/exploitation/',
     
     APILOGOUT: endPoint + 'api/logout',
-    APILOGIN: endPoint + 'auth',
+    APILOGIN: endPoint + 'api/login',
     APIOPERATEURCONNECTE: endPoint + 'operateur/connecte',
 
 
     APIGETARTICLE : endPoint + 'articles',
     APIGETARTICLEBYID: endPoint + 'articles/',
+    APIGETARTICLEBYEXPLOITATION: endPoint + 'articles/exploitation/',
 
 
     APIGETUNITE: endPoint + 'unites',
@@ -21,7 +22,7 @@ export const environment = {
 
 
     APIGETGROUPE: endPoint + 'groupe_analytique',
-    APIGETFAMILLEBYGROUPE: endPoint + 'familles/groupe_article/',
+    APIGETFAMILLEBYGROUPE: endPoint + 'familles/groupe/',
 
 
     APIGETSOUSFAMILLEBYGROUPE: endPoint + 'sousfamilles/famille/'
