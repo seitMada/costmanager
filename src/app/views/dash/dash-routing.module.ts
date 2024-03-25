@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { loginGuard } from "../../login/login.guard";
 
 import { DashComponent } from "./dash.component";
 
@@ -9,7 +10,8 @@ const routes: Routes = [
     component: DashComponent,
     data: {
       title: $localize`Dashboard`
-    }
+    },
+    canActivate:[loginGuard]
   }
 ];
 

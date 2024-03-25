@@ -1,6 +1,6 @@
 
 import { environment } from '../../../environments/environment';
-import { InterfaceOperateur } from "./interfaceOperateur";
+import { InterfaceOperateur } from "./interface-operateur";
 
 export class Operateur implements InterfaceOperateur {
     id?: number | undefined;
@@ -25,7 +25,9 @@ export class Operateur implements InterfaceOperateur {
         login_count: 0,
         code: '',
         adresseId: 1,
-        contactId:1
+        contactId: 1,
+        exploitationId: 0,
+        centreId: 0
     }) {
         this.nom = operateurInterface.nom.toUpperCase();
         this.prenom = operateurInterface.prenom.charAt(0).toUpperCase + operateurInterface.prenom.slice(1);
@@ -38,4 +40,6 @@ export class Operateur implements InterfaceOperateur {
         this.adresseId = operateurInterface.adresseId;
         this.contactId = operateurInterface.contactId;
     }
+    exploitationId: number;
+    centreId: number;
 }

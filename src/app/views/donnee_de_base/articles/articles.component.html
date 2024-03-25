@@ -13,7 +13,7 @@
         *ngIf="!toggle" [disabled]="!modifToggle">
         <i class="fas fa-pencil"></i>
       </button>
-      <button class="btn btn-outline-success btn-sm me-1" title="Ajouter article" (click)="modifToggleModal()"
+      <button class="btn btn-outline-success btn-sm me-1" title="Ajouter article" (click)="addToggleModal();"
         [disabled]="!modifToggle">
         <i class="fas fa-plus"></i>
       </button>
@@ -170,29 +170,6 @@
     </li>
     <li class="list-group-item" style="height: 150px;">
       <ul ngbNav #nav1="ngbNav" [(activeId)]="active_1" class="nav-tabs">
-        <!-- <li [ngbNavItem]="1" *ngIf="modifToggle">
-          <button ngbNavLink>IMPORT - EXPORT</button>
-          <ng-template ngbNavContent></ng-template>
-        </li> -->
-        <!-- <li [ngbNavItem]="2" *ngIf="modifToggle">
-          <button ngbNavLink>STOCK VALORISEE PAR EXPLOITATION</button>
-          <ng-template ngbNavContent>
-            <div ngbDropdown class="d-inline-block">
-              <button type="button" class="btn btn-sm btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>
-                Toggle dropdown
-              </button>
-              <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                <button ngbDropdownItem>Action - 1</button>
-                <button ngbDropdownItem>Another Action</button>
-                <button ngbDropdownItem>Something else is here</button>
-              </div>
-            </div>
-          </ng-template>
-        </li> -->
-        <!-- <li [ngbNavItem]="3">
-          <button ngbNavLink>EXPLOITATION</button>
-          <ng-template ngbNavContent></ng-template>
-        </li> -->
         <li [ngbNavItem]="4">
           <button ngbNavLink>STOCKAGE</button>
           <ng-template ngbNavContent></ng-template>
@@ -206,7 +183,7 @@
     </li>
     <li class="list-group-item" style="height: 250px;">
       <ul ngbNav #nav2="ngbNav" [(activeId)]="active_2" class="nav-tabs">
-        <li [ngbNavItem]="1">
+        <li [ngbNavItem]="1" *ngIf="modifToggle">
           <button ngbNavLink>FOURNISSEUR</button>
           <ng-template ngbNavContent>
             <div class="card-body overflow-y-scroll py-1" style="height: 190px;">
@@ -221,21 +198,21 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let line of article.articlefournisseur">
+                  <tr *ngFor="let line of article.articlefournisseur" >
                     <td class="col-3">{{line.fournisseur.raison_social}}</td>
                     <td class="col-2">
-                  <tr *ngFor="let lines of line.conditionnement">
-                    <td>{{lines.coefficientAchatCommande}} {{lines.uniteCommande.libelle}}</td>
+                  <tr *ngFor="let lines of line.conditionnement" (click)="showFournisseur(lines)">
+                    <td>{{lines.coefficientAchatCommande}}  {{lines.uniteCommande.libelle}}</td>
                   </tr>
                   </td>
-                  <td class="col-3">
+                  <td class="col-3"> 
                     <tr *ngFor="let lines of line.conditionnement">
                       <td>{{line.prixReference / lines.coefficientAchatCommande | number: '1.2-2'}}   €</td>
                     </tr>
                   </td>
                   <td class="col-2">
                     <tr *ngFor="let lines of line.conditionnement">
-                      <td>{{(lines.coefficientAchatCommande * lines.coefficientInventaireAchat * lines.coefficientInventaire)}} {{lines.uniteFt.libelle}}</td>
+                      <td>{{(lines.coefficientAchatCommande * lines.coefficientInventaireAchat * lines.coefficientInventaire)}}  {{lines.uniteFt.libelle}}</td>
                     </tr>
                   </td>
                   <td class="col-2">
@@ -274,7 +251,28 @@
         <li [ngbNavItem]="4">
           <button ngbNavLink>ALLERGENES</button>
           <ng-template ngbNavContent>
-            <div class="card-body overflow-y-scroll py-1" style="height: 190px;">
+          
+            <ng-template #content let-modal>
+              <div class="modal-header">
+                <h6 class="modal-title" id="modal-basic-title">Liste allérgenes</h6>
+                <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+              </div>
+              <div class="modal-body">
+                <form>
+                  <div class="mb-3">
+                    <label for="dateOfBirth">Date of birth</label>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+              </div>
+            </ng-template>
+            <div class="d-grid gap-2" *ngIf="!modifToggle">
+              <button type="button" class="btn btn-primary" id="btn_allergene" (click)="open(content)">Liste des allérgenes</button>
+            </div>
+
+            <div class="card-body overflow-y-scroll py-1" style="height: 190px;" *ngIf="modifToggle">
               <table class="table table-striped">
                 <thead>
                   <tr>

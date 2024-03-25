@@ -9,6 +9,7 @@ export class ArticleService {
 
   private apiGetArticle = environment.APIGETARTICLE
   private apiGetArticleById = environment.APIGETARTICLEBYID
+  private apiGetArticleByExploitation = environment.APIGETARTICLEBYEXPLOITATION
 
   constructor(private https: HttpClient){}
 
@@ -18,5 +19,9 @@ export class ArticleService {
 
   public getArticlesById(id: number){
     return this.https.get<any>(this.apiGetArticleById + id)
+  }
+
+  public getArticlesByExploitation(id: number){
+    return this.https.get<any>(this.apiGetArticleByExploitation + id)
   }
 }

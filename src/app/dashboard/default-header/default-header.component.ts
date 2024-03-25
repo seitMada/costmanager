@@ -2,7 +2,7 @@ import { Component, Input } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
 import { ClassToggleService, HeaderComponent } from '@coreui/angular';
-import { InterfaceOperateur } from 'src/app/shared/model/interfaceOperateur';
+import { InterfaceOperateur } from 'src/app/shared/model/interface-operateur';
 import { LoginService } from 'src/app/shared/service/login.service';
 
 @Component({
@@ -39,9 +39,9 @@ export class DefaultHeaderComponent extends HeaderComponent {
     centreId:           0
   };
 
-
   public onLogout(){
-    this.loginService.logout();
+    const id = sessionStorage.getItem('id') || 0;
+    this.loginService.logout({ id: +id });
   }
 
 }
