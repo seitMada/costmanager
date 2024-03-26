@@ -5,29 +5,15 @@ import { FormsModule } from '@angular/forms';
 import { NgbNavModule, NgbDropdownModule, NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { forkJoin } from 'rxjs';
 
-import { InterfaceArticles, InterfaceArticle } from "../../../shared/model/interface-articles";
+import { InterfaceArticle } from "../../../shared/model/interface-articles";
 import { Article } from "../../../shared/model/articles";
 import { ArticleService } from "../../../shared/service/article.service";
-
-import { InterfaceUnite } from "../../../shared/model/interface-unite";
-import { Unite } from "../../../shared/model/unite";
 import { UnitesService } from "../../../shared/service/unites.service";
-
-import { InterfaceCategories } from "../../../shared/model/interface-categories";
-import { Categorie } from "../../../shared/model/categories";
 import { CategoriesService } from "../../../shared/service/categories.service";
-
-import { InterfaceGroupeanalytiques } from "../../../shared/model/interface-groupeanalytiques";
-import { Groupeanalytique } from "../../../shared/model/groupeanalytiques";
 import { GroupeAnalytiqueService } from "../../../shared/service/groupe-analytique.service";
-
-import { InterfaceFamilles } from "../../../shared/model/interface-familles";
-import { Famille } from "../../../shared/model/familles";
 import { FamillesService } from "../../../shared/service/familles.service";
-
-import { InterfaceSousfamilles } from "../../../shared/model/interface-sousfamilles";
-import { SousFamille } from "../../../shared/model/sousfamilles";
 import { SousfamillesService } from "../../../shared/service/sousfamilles.service";
+import { ExploitationService } from "../../../shared/service/exploitation.service";
 
 @Component({
   selector: 'app-articles',
@@ -45,7 +31,8 @@ export class ArticlesComponent implements OnInit {
     private categoriesService: CategoriesService,
     private groupeService: GroupeAnalytiqueService,
     private familleService: FamillesService,
-    private sousFamilleService: SousfamillesService
+    private sousFamilleService: SousfamillesService,
+    private exploitationService: ExploitationService
   ) { }
 
   private modalService = inject(NgbModal);
@@ -54,9 +41,12 @@ export class ArticlesComponent implements OnInit {
 
   public toggle = true;
   public modifToggle = true;
+  public exploitationToggle = true;
   public active_1 = 4;
   public active_2 = 1;
   public idArticle = 0;
+
+  isError: boolean = false;
 
   toggleModal() {
     this.toggle = !this.toggle;
@@ -75,10 +65,12 @@ export class ArticlesComponent implements OnInit {
   public groupeAnalytique: any;
   public familles: any;
   public sousFamilles: any;
+  public exploitations: any;
 
-  private exploitation = +(sessionStorage.getItem('exploitation') || 3);
+  public exploitation = +(sessionStorage.getItem('exploitation') || 3);
 
   ngOnInit(): void {
+    this.resetArticle();
     this.initArticle();
   }
 
@@ -87,13 +79,19 @@ export class ArticlesComponent implements OnInit {
       articleByExploitation: this.articleService.getArticlesByExploitation(this.exploitation),
       unite: this.uniteService.getUnite(),
       categorie: this.categoriesService.getCategories(),
+      exploitation: this.exploitationService.getExploitation()
     }).subscribe({
       next: (data) => {
-        const { unite, categorie, articleByExploitation } = data;
+        const { unite, categorie, articleByExploitation, exploitation } = data;
         this.articles = new Article(articleByExploitation);
         this.unites = unite;
         this.categories = categorie;
-        this.resetArticle();
+        // if (this.exploitation === 3) {
+        //   this.exploitations = exploitation.filter((item: any) => item.id !== this.exploitation);
+        //   this.exploitations = this.exploitations.filter((item: any) => item.id !== 3);
+        // } else {
+          this.exploitations = exploitation;
+        // }
       }
     })
   }
@@ -115,6 +113,18 @@ export class ArticlesComponent implements OnInit {
             this.sousFamilleService.getSousFamilleByFamille(this.article.famillesId).subscribe({
               next: (sousFamille) => {
                 this.sousFamilles = sousFamille;
+                this.articleService.getArticleExploitationByArticle(this.idArticle).subscribe({
+                  next: (articleExploitation) => {
+                    console.log(articleExploitation)
+                    this.exploitations.forEach((e: any) => {
+                      const comparisonItem = articleExploitation.find((i: any) => i.exploitationsId === e.id);
+                      console.log(comparisonItem)
+                      if (comparisonItem != undefined) {
+                        e.selected = true;
+                      }
+                    });
+                  }
+                })
               },
             })
           },
@@ -124,24 +134,35 @@ export class ArticlesComponent implements OnInit {
   }
 
   cancel() {
-    this.articleService.getArticlesById(this.idArticle).subscribe({
-      next: (article) => {
-        this.article = article;
-        this.modifToggle = !this.modifToggle;
-      },
-    })
+    if (this.idArticle === 0) {
+      this.toggle = true;
+      this.modifToggle = true;
+      this.exploitationToggle = true;
+      this.resetArticle();
+    } else {
+      this.articleService.getArticlesById(this.idArticle).subscribe({
+        next: (article) => {
+          this.article = article;
+          this.modifToggle = !this.modifToggle;
+          
+        },
+      })
+    }
   }
 
   selectUnite(data: any) {
     this.article.unite = data;
+    this.article.uniteId = data.id;
   }
 
   selectCategorie(data: any) {
     this.article.categories = data;
+    this.article.categoriesId = data.id;
   }
 
   selectGroupe(data: any) {
     this.article.groupeanalytique = data;
+    this.article.groupeanalytiqueId = data.id;
     const dat = {
       groupeId: data.id,
       type: data.type
@@ -156,6 +177,7 @@ export class ArticlesComponent implements OnInit {
 
   selectFamille(data: any) {
     this.article.familles = data;
+    this.article.famillesId = data.id;
     this.sousFamilleService.getSousFamilleByFamille(data.id).subscribe({
       next: (sousFamille) => {
         this.sousFamilles = sousFamille;
@@ -166,10 +188,8 @@ export class ArticlesComponent implements OnInit {
 
   selectSousFamille(data: any) {
     this.article.sousfamilles = data;
+    this.article.sousfamillesId = data.id;
   }
-
-
-
 
   open(content: TemplateRef<any>) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
@@ -196,6 +216,7 @@ export class ArticlesComponent implements OnInit {
   addToggleModal() {
     this.modifToggle = !this.modifToggle;
     this.toggle = (this.toggle === false ? true : false);
+    this.idArticle = 0;
     this.resetArticle()
   }
 
@@ -220,7 +241,7 @@ export class ArticlesComponent implements OnInit {
         this.sousFamilles = sousFamille;
         this.article = {
           codeArticle: '',
-          libelle: '',
+          libelle: '...',
           groupeanalytiqueId: 1,
           categoriesId: 1,
           famillesId: 1,
@@ -242,5 +263,71 @@ export class ArticlesComponent implements OnInit {
         console.error('Une erreur est survenue ', error);
       }
     });
+  }
+
+  submit() {
+    if (this.idArticle === 0) {
+      this.articleService.postArticle(this.article).subscribe((response) => {
+        alert('Article enregistrer')
+      })
+    } else {
+      this.articleService.updateArticle(this.article).subscribe((response) => {
+        alert('Article modifier')
+        const exploitationSelected: number[] = [];
+        for (const i of this.exploitations) {
+          if (i.selected === false || i.selected == undefined) {
+            console.log(i.selected + '  ' + i.id)
+            exploitationSelected.push(i.id)
+          }
+        }
+        this.articleService.deleteArticleExploitationByArticle(this.idArticle, exploitationSelected).subscribe(() => {
+          this.articleService.getArticlesById(this.idArticle).subscribe({
+            next: (article) => {
+              this.article = article;
+              this.articleService.getArticleExploitationByArticle(this.idArticle).subscribe({
+                next: (articleExploitation) => {
+                  console.log(articleExploitation)
+                  this.exploitations.forEach((e: any) => {
+                    const comparisonItem = articleExploitation.find((i: any) => i.exploitationsId === e.id);
+                    if (comparisonItem != undefined) {
+                      e.selected = true;
+                    }
+                  });
+                }
+              })
+              this.modifToggle = !this.modifToggle;
+            },
+          })
+        })
+      })
+    }
+  }
+
+  testEmpty() {
+
+  }
+
+  delete() {
+    this.articleService.deleteArticle(this.article).subscribe(() => {
+      alert('Article supprimer');
+      this.resetArticle();
+      this.initArticle();
+      this.toggle = !this.toggle;
+    })
+  }
+
+  deletes() {
+    const selectedIds: number[] = [];
+    for (const article of this.articles) {
+      if (article.selected) {
+        selectedIds.push(article.id !== undefined ? article.id : 0);
+      }
+    }
+    if (selectedIds.length > 0) {
+      this.articleService.deleteArticles(selectedIds).subscribe(() => {
+        alert('Articles supprimer');
+        this.initArticle();
+      })
+    }
   }
 }

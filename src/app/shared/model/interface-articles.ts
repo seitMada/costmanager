@@ -18,6 +18,7 @@ export interface InterfaceArticle {
   uniteId: number;
   coefficientPonderation: number;
   actif: boolean;
+  selected?: boolean;
 
   // Champs supplémentaires provenant des relations
   allergeneArticle: InterfaceAllergeneArticle[];
