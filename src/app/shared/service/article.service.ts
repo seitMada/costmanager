@@ -17,6 +17,9 @@ export class ArticleService {
   private apiDeleteArticles = environment.APIPOSTDELETEARTICLES;
   private apiGetArticleExploitationByArticle = environment.APIGETEXPLOITATIONBYARTICLE;
   private apiPostDeleteArticleExploitationByArticle = environment.APIPOSTDELETEARTICLEEXPLOITATIONBYARTICLE;
+  private apiPostDeleteAllergeneArticle = environment.APIPOSTDELETEALLERGENEARTICLE;
+  private apiPostDesactiveArticle = environment.APIPOSTDESACTIVEARTICLE;
+  private apiPostDesactiveArticles = environment.APIPOSTDESACTIVEARTICLES;
 
   constructor(private https: HttpClient){}
 
@@ -54,5 +57,17 @@ export class ArticleService {
 
   public deleteArticleExploitationByArticle(articleId: number, exploitationid: number[]) {
     return this.https.post(this.apiPostDeleteArticleExploitationByArticle + articleId, exploitationid);
+  }
+
+  public deleteAllergeneArticle(articleId: number, allergeneId: number[]) {
+    return this.https.post(this.apiPostDeleteAllergeneArticle + articleId, allergeneId);
+  }
+
+  public desactiveArticle(articleId: number, exploitationid: number[]) {
+    return this.https.post(this.apiPostDesactiveArticle + articleId, exploitationid);
+  }
+
+  public desactiveArticles(data: any) {
+    return this.https.post(this.apiPostDesactiveArticles, data);
   }
 }

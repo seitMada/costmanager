@@ -20,6 +20,11 @@ export const environment = {
     APIPOSTUPDATEARTICLE: endPoint + 'articles/update_articles/',
     APIPOSTDELETEARTICLE: endPoint + 'articles/delete_articles',
     APIPOSTDELETEARTICLES: endPoint + 'articles/delete_multi_articles',
+    APIPOSTDESACTIVEARTICLE: endPoint + 'articleexploitation/desactive_articleexploitation/',
+    APIPOSTDESACTIVEARTICLES: endPoint + 'articleexploitation/desactive_articleexploitations',
+
+    APIPOSTDELETEALLERGENEARTICLE: endPoint + 'allergenearticle/delete_allergenearticle/',
+    APIGETALLERGENE: endPoint + 'allergene',
 
 
     APIGETUNITE: endPoint + 'unites',

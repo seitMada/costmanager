@@ -6,7 +6,11 @@ import { NgbNavModule, NgbDropdownModule, NgbModal, ModalDismissReasons } from '
 import { forkJoin } from 'rxjs';
 
 import { InterfaceArticle } from "../../../shared/model/interface-articles";
+import { InterfaceAllergenes } from "../../../shared/model/interface-allergenes";
+
 import { Article } from "../../../shared/model/articles";
+import { Allergene } from "../../../shared/model/allergenes";
+
 import { ArticleService } from "../../../shared/service/article.service";
 import { UnitesService } from "../../../shared/service/unites.service";
 import { CategoriesService } from "../../../shared/service/categories.service";
@@ -14,6 +18,7 @@ import { GroupeAnalytiqueService } from "../../../shared/service/groupe-analytiq
 import { FamillesService } from "../../../shared/service/familles.service";
 import { SousfamillesService } from "../../../shared/service/sousfamilles.service";
 import { ExploitationService } from "../../../shared/service/exploitation.service";
+import { AllergenesService } from "../../../shared/service/allergenes.service";
 
 @Component({
   selector: 'app-articles',
@@ -32,7 +37,8 @@ export class ArticlesComponent implements OnInit {
     private groupeService: GroupeAnalytiqueService,
     private familleService: FamillesService,
     private sousFamilleService: SousfamillesService,
-    private exploitationService: ExploitationService
+    private exploitationService: ExploitationService,
+    private allergeneService: AllergenesService
   ) { }
 
   private modalService = inject(NgbModal);
@@ -66,6 +72,8 @@ export class ArticlesComponent implements OnInit {
   public familles: any;
   public sousFamilles: any;
   public exploitations: any;
+  public allergene: InterfaceAllergenes;
+  public allergenes: any;
 
   public exploitation = +(sessionStorage.getItem('exploitation') || 3);
 
@@ -79,19 +87,21 @@ export class ArticlesComponent implements OnInit {
       articleByExploitation: this.articleService.getArticlesByExploitation(this.exploitation),
       unite: this.uniteService.getUnite(),
       categorie: this.categoriesService.getCategories(),
-      exploitation: this.exploitationService.getExploitation()
+      exploitation: this.exploitationService.getExploitation(),
+      allergene: this.allergeneService.getAllAllergene()
     }).subscribe({
       next: (data) => {
-        const { unite, categorie, articleByExploitation, exploitation } = data;
+        const { unite, categorie, articleByExploitation, exploitation, allergene } = data;
         this.articles = new Article(articleByExploitation);
         this.unites = unite;
         this.categories = categorie;
-        // if (this.exploitation === 3) {
-        //   this.exploitations = exploitation.filter((item: any) => item.id !== this.exploitation);
-        //   this.exploitations = this.exploitations.filter((item: any) => item.id !== 3);
-        // } else {
+        this.allergenes = allergene;
+        console.log(allergene)
+        if (this.exploitation === 3) {
           this.exploitations = exploitation;
-        // }
+        } else {
+          this.exploitations = exploitation.filter((item: any) => item.id === this.exploitation);
+        }
       }
     })
   }
@@ -115,12 +125,19 @@ export class ArticlesComponent implements OnInit {
                 this.sousFamilles = sousFamille;
                 this.articleService.getArticleExploitationByArticle(this.idArticle).subscribe({
                   next: (articleExploitation) => {
-                    console.log(articleExploitation)
                     this.exploitations.forEach((e: any) => {
                       const comparisonItem = articleExploitation.find((i: any) => i.exploitationsId === e.id);
-                      console.log(comparisonItem)
                       if (comparisonItem != undefined) {
                         e.selected = true;
+                      }
+                    });
+                    this.allergenes.forEach((a: any) => {
+                      const comparisonItem = this.article.allergeneArticle.find((i: any) => i.allergeneId === a.id);
+                      console.log(comparisonItem)
+                      if (comparisonItem != undefined) {
+                        a.selected = true;
+                      } else {
+                        a.selected = false;
                       }
                     });
                   }
@@ -144,7 +161,6 @@ export class ArticlesComponent implements OnInit {
         next: (article) => {
           this.article = article;
           this.modifToggle = !this.modifToggle;
-          
         },
       })
     }
@@ -195,9 +211,35 @@ export class ArticlesComponent implements OnInit {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
+        console.log(this.closeResult)
+        if (this.closeResult == 'Closed with: Save click') {
+          const allergene: number[] = [];
+          for (const i of this.allergenes) {
+            if (i.selected === true) {
+              allergene.push(i.id)
+            }
+          }
+          this.articleService.deleteAllergeneArticle(this.idArticle, allergene).subscribe(() => { });
+        }
       },
       (reason) => {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        console.log(this.closeResult)
+        this.allergeneService.getAllAllergene().subscribe({
+          next: (allergenes) => {
+            this.allergenes = allergenes;
+            // this.modifToggle = !this.modifToggle;
+            this.allergenes.forEach((a: any) => {
+              const comparisonItem = this.article.allergeneArticle.find((i: any) => i.allergeneId === a.id);
+              console.log(comparisonItem)
+              if (comparisonItem != undefined) {
+                a.selected = true;
+              } else {
+                a.selected = false;
+              }
+            });
+          },
+        })
       },
     );
   }
@@ -273,31 +315,26 @@ export class ArticlesComponent implements OnInit {
     } else {
       this.articleService.updateArticle(this.article).subscribe((response) => {
         alert('Article modifier')
-        const exploitationSelected: number[] = [];
+        const exploitation: number[] = [];
         for (const i of this.exploitations) {
-          if (i.selected === false || i.selected == undefined) {
-            console.log(i.selected + '  ' + i.id)
-            exploitationSelected.push(i.id)
-          }
+          exploitation.push(i.id)
         }
-        this.articleService.deleteArticleExploitationByArticle(this.idArticle, exploitationSelected).subscribe(() => {
-          this.articleService.getArticlesById(this.idArticle).subscribe({
-            next: (article) => {
-              this.article = article;
-              this.articleService.getArticleExploitationByArticle(this.idArticle).subscribe({
-                next: (articleExploitation) => {
-                  console.log(articleExploitation)
-                  this.exploitations.forEach((e: any) => {
-                    const comparisonItem = articleExploitation.find((i: any) => i.exploitationsId === e.id);
-                    if (comparisonItem != undefined) {
-                      e.selected = true;
-                    }
-                  });
-                }
-              })
-              this.modifToggle = !this.modifToggle;
-            },
-          })
+        forkJoin({
+          deleteArticleExploitationByArticle: this.articleService.deleteArticleExploitationByArticle(this.idArticle, exploitation),
+          article: this.articleService.getArticlesById(this.idArticle),
+          articleExploitation: this.articleService.getArticleExploitationByArticle(this.idArticle),
+        }).subscribe({
+          next: (data) => {
+            const { deleteArticleExploitationByArticle, article, articleExploitation } = data;
+            this.article = article;
+            for (const item of this.exploitations) {
+              const comparisonItem = articleExploitation.find((i: any) => i.exploitationsId === item.id);
+              if (comparisonItem != undefined) {
+                item.selected = true;
+              }
+            }
+            this.modifToggle = !this.modifToggle;
+          }
         })
       })
     }
@@ -308,23 +345,45 @@ export class ArticlesComponent implements OnInit {
   }
 
   delete() {
-    this.articleService.deleteArticle(this.article).subscribe(() => {
-      alert('Article supprimer');
-      this.resetArticle();
-      this.initArticle();
-      this.toggle = !this.toggle;
-    })
+    let exploitation: number[] = [];
+    if (this.exploitation === 3) {
+      for (const e of this.exploitations) {
+        exploitation.push(e.id)
+      }
+    } else {
+      exploitation = [this.exploitation]
+    }
+    this.articleService.desactiveArticle(this.idArticle, exploitation).subscribe({
+      next: (data) => {
+        alert('Article supprimer');
+        this.resetArticle();
+        this.initArticle();
+        this.toggle = !this.toggle;
+      }
+    });
   }
 
   deletes() {
     const selectedIds: number[] = [];
+    let exploitation: number[] = [];
     for (const article of this.articles) {
       if (article.selected) {
         selectedIds.push(article.id !== undefined ? article.id : 0);
       }
     }
+    if (this.exploitation === 3) {
+      for (const e of this.exploitations) {
+        exploitation.push(e.id)
+      }
+    } else {
+      exploitation = [this.exploitation]
+    }
     if (selectedIds.length > 0) {
-      this.articleService.deleteArticles(selectedIds).subscribe(() => {
+      const data = {
+        articleId: selectedIds,
+        exploitationsId: exploitation
+      }
+      this.articleService.desactiveArticles(data).subscribe(() => {
         alert('Articles supprimer');
         this.initArticle();
       })
