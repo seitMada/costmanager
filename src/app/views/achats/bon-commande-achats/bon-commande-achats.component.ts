@@ -20,9 +20,20 @@ export class BonCommandeAchatsComponent implements OnInit {
     private commandeService : CommandeService,
   ){}
   public toggle = true;
+  public modifToggle = true;
+  public showlist = true;
 
   toggleModal() {
     this.toggle = !this.toggle;
+  }
+
+  addToggleModal(){
+    this.modifToggle = !this.modifToggle;
+    this.toggle = (this.toggle === false ? true : false);
+  }
+
+  showListToggle(){
+    this.showlist = (this.showlist === false ? true : false);
   }
 
   public fournisseur: any;
@@ -54,6 +65,8 @@ export class BonCommandeAchatsComponent implements OnInit {
     })
   }
 
+  cancel(){}
+
   showFournisseur(fournisseur:any){
     this.fournisseurs = fournisseur;
     console.log(this.fournisseurs);   
@@ -64,5 +77,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     console.log(this.commandes);
     this.toggleModal();
   }
+
+  
  
 }
