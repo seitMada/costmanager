@@ -4,6 +4,7 @@ import { FournisseurService } from "../../../shared/service/fournisseur.service"
 import { CommandeService } from "../../../shared/service/commande.service";
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { InterfaceBonCommande } from '../../../shared/model/bonCommande';
 
 @Component({
   selector: 'app-bon-commande-achats',
@@ -22,6 +23,24 @@ export class BonCommandeAchatsComponent implements OnInit {
   public toggle = true;
   public modifToggle = true;
   public showlist = true;
+
+  public bonCommande: InterfaceBonCommande= {
+    id:0,
+    libelle:'',
+    quantiteCommande:0,
+    prixUnitaire:0,
+    remise:0,
+    montantHT:0,
+    montantTva:0,
+    noPiece:'',
+    validation:false,
+    commentaire:'',
+    dateCommande:"",
+    dateLivraison:"",
+    fournisseurId:0,
+    uniteId:0,
+    centreId:0,
+  };
 
   toggleModal() {
     this.toggle = !this.toggle;
@@ -78,6 +97,9 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.toggleModal();
   }
 
+  addBonCommande(bonCommande:any){
+    this.commandeService.createBonCommande(bonCommande);
+  }
   
  
 }

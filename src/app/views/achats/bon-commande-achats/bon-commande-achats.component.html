@@ -1,4 +1,4 @@
-<div class="card p-1" *ngIf="showlist">
+<div class="card p-1" *ngIf="(showlist || toggle)">
   <div class="row align-items-center justify-content-center p-2">
     <div class="col-auto">
       <button type="button" class="btn btn-info m-1" (click)="addToggleModal()">
@@ -13,14 +13,14 @@
   </div>
 </div>
 
-<div class="card d-flex py-1 my-2 mb-2" *ngIf="!showlist">
+<div class="card d-flex py-1 my-2 mb-2" *ngIf="(!showlist || !toggle)">
   <div class="card-header d-flex bd-highlight">
     <div class="flex-grow-1 bd-highlight">
       <button type="button" class="btn btn-success btn-sm mx-1" *ngIf="!modifToggle">Enregistrer</button>
       <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
     </div>
     <div class="bd-highlight">
-      <button class="btn btn-outline-success btn-sm me-1" title="Ajouter bon de commande" [disabled]="!modifToggle">
+      <button class="btn btn-outline-success btn-sm me-1" (click)="addBonCommande()" title="Ajouter bon de commande" [disabled]="!modifToggle">
         <i class="fas fa-plus"></i>
       </button>
       <button [disabled]="!modifToggle" class="btn btn-outline-danger btn-sm me-1" title="Supprimer bon de commande">

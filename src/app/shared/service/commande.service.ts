@@ -10,8 +10,13 @@ export class CommandeService {
   constructor(private https:HttpClient) { }
 
   private apiGetCommande = environment.APIGETCOMMANDE
+  private apiCreateCommande = environment.APICREATECOMMANDE
 
   public getAllCommande(){
     return this.https.get<any>(this.apiGetCommande);
+  }
+
+  public createBonCommande(commande:any){
+    return this.https.post<any>(this.apiCreateCommande,commande);
   }
 }
