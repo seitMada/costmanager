@@ -45,7 +45,7 @@
         <tbody>
           <tr *ngFor="let line of fichetetchniques">
             <td class="">
-              <input type="checkbox" name="article-{{line.libelle}}" id="article-{{line.id}}" [(ngModel)]="line.selected">
+              <input type="checkbox" name="fichetetchnique-{{line.libelle}}" id="fichetetchnique-{{line.id}}" [(ngModel)]="line.selected">
             </td>
             <td class="col-3 fw-bold" (click)="show(line); toggleModal()">{{line.libelle}}</td>
             <td class="col-2" (click)="show(line); toggleModal()">{{line.famille.libelle}}</td>

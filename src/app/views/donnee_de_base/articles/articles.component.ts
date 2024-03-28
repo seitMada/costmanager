@@ -186,7 +186,7 @@ export class ArticlesComponent implements OnInit {
     this.familleService.getFamilleByGroupe(dat).subscribe({
       next: (famille) => {
         this.familles = famille;
-        // this.article.familles = [];
+        this.sousFamilles = [];
       },
     })
   }
@@ -310,7 +310,8 @@ export class ArticlesComponent implements OnInit {
   submit() {
     if (this.idArticle === 0) {
       this.articleService.postArticle(this.article).subscribe((response) => {
-        alert('Article enregistrer')
+        // alert(response)
+        
       })
     } else {
       this.articleService.updateArticle(this.article).subscribe((response) => {

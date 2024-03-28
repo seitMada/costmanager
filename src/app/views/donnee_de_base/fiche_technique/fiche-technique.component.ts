@@ -7,6 +7,9 @@ import { forkJoin } from 'rxjs';
 import { FichetechniqueService } from "../../../shared/service/fichetechnique.service";
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { InterfaceFichetechnique } from "../../../shared/model/interface-fichetechnique";
+import { Fichetechnique } from "../../../shared/model/fichetechniques";
+
 @Component({
   selector: 'app-fiche-technique',
   standalone: true,
@@ -33,8 +36,8 @@ export class FicheTechniqueComponent implements OnInit {
   public modifToggle = true;
   public exploitationToggle = true;
 
-  public fichetetchniques: any;
-  public fichetetchnique: any;
+  public fichetetchniques: Fichetechnique;
+  public fichetetchnique: InterfaceFichetechnique;
   
   public exploitation = +(sessionStorage.getItem('exploitation') || 3);
 

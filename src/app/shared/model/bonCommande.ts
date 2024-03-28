@@ -1,6 +1,6 @@
-import { InterafaceBonCommande } from "./interface-bonCommande";
+import { InterfaceBonCommande } from "./interface-bonCommande";
 
-export class BonCommande implements InterafaceBonCommande {
+export class BonCommande implements InterfaceBonCommande {
   id?:            number | undefined;
   libelle:string;
   quantiteCommande:number;
@@ -17,7 +17,7 @@ export class BonCommande implements InterafaceBonCommande {
   uniteId:number;
   centreId:number;
 
-  constructor(commandeInterface: InterafaceBonCommande = {
+  constructor(commandeInterface: InterfaceBonCommande = {
     libelle:'',
     quantiteCommande:0,
     prixUnitaire:0,
@@ -27,8 +27,8 @@ export class BonCommande implements InterafaceBonCommande {
     noPiece:'',
     validation:false,
     commentaire:'',
-    dateCommande:"",
-    dateLivraison:"",
+    dateCommande: new Date(),
+    dateLivraison: new Date(),
     fournisseurId:0,
     uniteId:0,
     centreId:0,
@@ -49,3 +49,5 @@ export class BonCommande implements InterafaceBonCommande {
     this.centreId=          commandeInterface.centreId;
   }
 }
+
+// export { InterfaceBonCommande };
