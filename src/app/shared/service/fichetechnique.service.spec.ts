@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { FuchetechniqueService } from './fuchetechnique.service';
+import { FichetechniqueService } from './fichetechnique.service';
 
 describe('FuchetechniqueService', () => {
-  let service: FuchetechniqueService;
+  let service: FichetechniqueService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(FuchetechniqueService);
+    service = TestBed.inject(FichetechniqueService);
   });
 
   it('should be created', () => {

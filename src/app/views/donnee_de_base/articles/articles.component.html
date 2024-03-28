@@ -49,7 +49,7 @@
             <input type="checkbox" name="article-{{line.libelle}}" id="article-{{line.id}}" [(ngModel)]="line.selected">
           </td>
           <td class="col-1" (click)="showArticle(line); toggleModal()">{{line.codeArticle}}</td>
-          <td class="col-3" (click)="showArticle(line); toggleModal()">{{line.libelle}}</td>
+          <td class="col-3 fw-bold" (click)="showArticle(line); toggleModal()">{{line.libelle}}</td>
           <td class="col-1" (click)="showArticle(line); toggleModal()">{{line.unite.abreviation}}</td>
           <td class="col-2" (click)="showArticle(line); toggleModal()">{{line.groupeanalytique.groupe}}</td>
           <td class="col-2 text-overflow" (click)="showArticle(line); toggleModal()">{{line.familles.libelle}}</td>

@@ -37,5 +37,7 @@ export const environment = {
     APIGETFAMILLEBYGROUPE: endPoint + 'familles/groupe/',
 
 
-    APIGETSOUSFAMILLEBYGROUPE: endPoint + 'sousfamilles/famille/'
+    APIGETSOUSFAMILLEBYGROUPE: endPoint + 'sousfamilles/famille/',
+
+    APIGETFICHETECHNIQUEBYEXPLOITATION: endPoint + 'fichetechnique/exploitation/'
 };

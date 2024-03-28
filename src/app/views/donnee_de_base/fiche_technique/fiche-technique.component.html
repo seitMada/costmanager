@@ -1,1 +1,60 @@
-<p>fiche-technique works!</p>
+<div class="card d-flex py-1 mb-2">
+    <div class="d-flex bd-highlight">
+      <div class="flex-grow-1 bd-highlight">
+        <button type="button" class="btn btn-success btn-sm mx-1" *ngIf="!modifToggle"
+          (click)="submit()">Enregistrer</button>
+        <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
+      </div>
+      <div class="bd-highlight">
+        <button class="btn btn-outline-primary btn-sm me-1" title="Liste articles" (click)="toggleModal()" *ngIf="!toggle"
+          [disabled]="!modifToggle">
+          <i class="fas fa-list"></i>
+        </button>
+        <button class="btn btn-outline-info btn-sm me-1" title="Modifier article" (click)="modifToggleModal()"
+          *ngIf="!toggle" [disabled]="!modifToggle">
+          <i class="fas fa-pencil"></i>
+        </button>
+        <button class="btn btn-outline-success btn-sm me-1" title="Ajouter article" (click)="addToggleModal();"
+          [disabled]="!modifToggle">
+          <i class="fas fa-plus"></i>
+        </button>
+        <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer article" (click)="delete()" *ngIf="!toggle">
+          <i class="fas fa-trash"></i>
+        </button>
+        <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer article" (click)="deletes()" *ngIf="toggle">
+          <i class="fas fa-trash"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card d-flex" *ngIf="toggle">
+    <div class="card-body overflow-y-scroll py-1" style="height: 650px;">
+      <table class="table table-striped table-hover">
+        <thead>
+          <tr>
+            <th scope="col" class="">#</th>
+            <th scope="col" class="col-3">Libelle</th>
+            <th scope="col" class="col-2">Famille</th>
+            <th scope="col" class="col-1">Unite</th>
+            <th scope="col" class="col-2">Categorie</th>
+            <th scope="col" class="col-2">Prix</th>
+            <th scope="col" class="col-2">Coût</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let line of fichetetchniques">
+            <td class="">
+              <input type="checkbox" name="article-{{line.libelle}}" id="article-{{line.id}}" [(ngModel)]="line.selected">
+            </td>
+            <td class="col-3 fw-bold" (click)="show(line); toggleModal()">{{line.libelle}}</td>
+            <td class="col-2" (click)="show(line); toggleModal()">{{line.famille.libelle}}</td>
+            <td class="col-1" (click)="show(line); toggleModal()">{{line.unite.abreviation}}</td>
+            <td class="col-2" (click)="show(line); toggleModal()">{{line.categorie.libelle}}</td>
+            <td class="col-2" (click)="show(line); toggleModal()">{{line.prix}}  €</td>
+            <td class="col-2" (click)="show(line); toggleModal()">{{line.cout}}  €</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
