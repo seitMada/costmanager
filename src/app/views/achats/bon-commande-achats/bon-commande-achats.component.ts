@@ -3,8 +3,8 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FournisseurService } from "../../../shared/service/fournisseur.service";
 import { CommandeService } from "../../../shared/service/commande.service";
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { InterfaceBonCommande } from '../../../shared/model/bonCommande';
+import { FormGroup, FormsModule } from '@angular/forms';
+import { InterfaceBonCommande } from '../../../shared/model/interface-bonCommande';
 
 @Component({
   selector: 'app-bon-commande-achats',
@@ -23,43 +23,38 @@ export class BonCommandeAchatsComponent implements OnInit {
   public toggle = true;
   public modifToggle = true;
   public showlist = true;
+  public bonCommandeForm = FormGroup;
+  public modalFournisseur = 'none';
 
-  public bonCommande: InterfaceBonCommande= {
-    id:0,
-    libelle:'',
-    quantiteCommande:0,
-    prixUnitaire:0,
-    remise:0,
-    montantHT:0,
-    montantTva:0,
-    noPiece:'',
-    validation:false,
-    commentaire:'',
-    dateCommande:"",
-    dateLivraison:"",
-    fournisseurId:0,
-    uniteId:0,
-    centreId:0,
-  };
+  public fournisseur: any;
+  public fournisseurs: any;
+
+  public commandes: any;
+
+  public bonCommande: InterfaceBonCommande;
 
   toggleModal() {
     this.toggle = !this.toggle;
   }
 
   addToggleModal(){
-    this.modifToggle = !this.modifToggle;
-    this.toggle = (this.toggle === false ? true : false);
+    
+    if (this.fournisseurs.id>0) {
+      this.selectOnFournisseur();
+      this.modifToggle = !this.modifToggle;
+      this.toggle = (this.toggle === false ? true : false);
+      this.modalFournisseur = 'none';
+    } else {
+      this.modalFournisseur = 'block';
+    }
+  
   }
 
   showListToggle(){
     this.showlist = (this.showlist === false ? true : false);
   }
 
-  public fournisseur: any;
-  public fournisseurs: any;
-
-  public commande: any;
-  public commandes: any;
+  
 
   ngOnInit():void{
     this.fournisseurService.getAllFournisseur().subscribe({
@@ -84,6 +79,10 @@ export class BonCommandeAchatsComponent implements OnInit {
     })
   }
 
+  openModalFournisseur(){
+    this.modalFournisseur = 'block';
+  }
+
   cancel(){}
 
   showFournisseur(fournisseur:any){
@@ -101,5 +100,16 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.commandeService.createBonCommande(bonCommande);
   }
   
- 
+ public selectOnFournisseur(){
+  this.fournisseurService.getOneFournisseur(this.fournisseurs.id).subscribe({
+    next:(fournisseur) =>{
+      this.fournisseur = fournisseur;
+      console.log(this.fournisseur);
+      
+    },
+    error:(error) => {
+      console.log(error);
+    }
+  })
+ }
 }

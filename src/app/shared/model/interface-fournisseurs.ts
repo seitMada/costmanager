@@ -10,6 +10,7 @@ export interface InterfaceFournisseur {
     codeComptable: string;
     modereglementId: number;
     commentaires: string;
+    adresse:string;
 }
 
 // export interface InterfaceFournisseurs {

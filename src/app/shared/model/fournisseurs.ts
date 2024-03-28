@@ -27,6 +27,7 @@ export class Fournisseur implements InterfaceFournisseur {
   codeComptable: string;
   modereglementId: number;
   commentaires: string;
+  adresse:string;
 
 
   constructor(fournisseurInterface: InterfaceFournisseur = {
@@ -40,6 +41,7 @@ export class Fournisseur implements InterfaceFournisseur {
     codeComptable:  '',
     modereglementId: 0,
     commentaires:  '',
+    adresse:""
   }) {
     this.raison_social =fournisseurInterface.raison_social ;
     this.actif =fournisseurInterface.actif;
@@ -51,5 +53,6 @@ export class Fournisseur implements InterfaceFournisseur {
     this.codeComptable =fournisseurInterface.codeComptable ;
     this.modereglementId =fournisseurInterface.modereglementId;
     this.commentaires =fournisseurInterface.commentaires ;
+    this.adresse = fournisseurInterface.adresse;
   }
 }

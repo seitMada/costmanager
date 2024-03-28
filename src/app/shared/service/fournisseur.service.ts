@@ -7,10 +7,15 @@ import { environment } from 'src/environments/environment';
 })
 export class FournisseurService {
   private apiGetFournisseur = environment.APIGETFOURNISSEUR
+  private apiOneFournisseur = environment.APIONEFOURNISSEUR
 
   constructor(private https:HttpClient) { }
 
   public getAllFournisseur(){
     return this.https.get<any>(this.apiGetFournisseur);
+  }
+
+  public getOneFournisseur(fournisseurId:number){
+    return this.https.get<any>(this.apiOneFournisseur+fournisseurId);
   }
 }
