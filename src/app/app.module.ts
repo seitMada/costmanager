@@ -33,6 +33,7 @@ import {
   GridModule,
   HeaderModule,
   ListGroupModule,
+  ModalModule,
   NavModule,
   ProgressModule,
   SharedModule,
@@ -82,6 +83,7 @@ const APP_CONTAINERS = [
     HttpClientModule,
     FormsModule,
     CommonModule,
+    ModalModule
   ],
   providers: [
     {

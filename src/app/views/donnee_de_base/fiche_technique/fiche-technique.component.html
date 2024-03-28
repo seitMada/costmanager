@@ -6,22 +6,22 @@
         <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
       </div>
       <div class="bd-highlight">
-        <button class="btn btn-outline-primary btn-sm me-1" title="Liste articles" (click)="toggleModal()" *ngIf="!toggle"
+        <button class="btn btn-outline-primary btn-sm me-1" title="Liste fichetetchniques" (click)="toggleModal()" *ngIf="!toggle"
           [disabled]="!modifToggle">
           <i class="fas fa-list"></i>
         </button>
-        <button class="btn btn-outline-info btn-sm me-1" title="Modifier article" (click)="modifToggleModal()"
+        <button class="btn btn-outline-info btn-sm me-1" title="Modifier fichetetchnique" (click)="modifToggleModal()"
           *ngIf="!toggle" [disabled]="!modifToggle">
           <i class="fas fa-pencil"></i>
         </button>
-        <button class="btn btn-outline-success btn-sm me-1" title="Ajouter article" (click)="addToggleModal();"
+        <button class="btn btn-outline-success btn-sm me-1" title="Ajouter fichetetchnique" (click)="addToggleModal();"
           [disabled]="!modifToggle">
           <i class="fas fa-plus"></i>
         </button>
-        <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer article" (click)="delete()" *ngIf="!toggle">
+        <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer fichetetchnique" (click)="delete()" *ngIf="!toggle">
           <i class="fas fa-trash"></i>
         </button>
-        <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer article" (click)="deletes()" *ngIf="toggle">
+        <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer fichetetchniques" (click)="deletes()" *ngIf="toggle">
           <i class="fas fa-trash"></i>
         </button>
       </div>

@@ -9,7 +9,7 @@ import { DashboardComponent } from "./dashboard";
 const routes: Routes = [
   {
     path: '',
-    redirectTo: 'login',
+    redirectTo: 'dash',
     pathMatch: 'full'
   },
   {
@@ -18,6 +18,8 @@ const routes: Routes = [
     data: {
       title: 'Costmanager'
     },
+    canActivate:[loginGuard],
+    canActivateChild:[loginGuard],
     children: [
       {
         path: 'donnee_de_base',
@@ -68,7 +70,7 @@ const routes: Routes = [
       title: 'Home'
     }
   },
-  {path: '**', redirectTo: 'login'}
+  {path: '**', redirectTo: 'dash'}
 ];
 
 @NgModule({

@@ -11,6 +11,8 @@ export const environment = {
     APILOGOUT: endPoint + 'api/logout',
     APILOGIN: endPoint + 'api/login',
     APIOPERATEURCONNECTE: endPoint + 'operateur/connecte',
+    APIGETFOURNISSEUR: endPoint + 'fournisseur',
+    APIGETCOMMANDE: endPoint + 'commande',
 
 
     APIGETARTICLE : endPoint + 'articles',
@@ -39,5 +41,8 @@ export const environment = {
 
     APIGETSOUSFAMILLEBYGROUPE: endPoint + 'sousfamilles/famille/',
 
-    APIGETFICHETECHNIQUEBYEXPLOITATION: endPoint + 'fichetechnique/exploitation/'
+    APIGETFICHETECHNIQUEBYEXPLOITATION: endPoint + 'fichetechnique/exploitation/',
+
+
+    APICREATECOMMANDE: endPoint + '/commande'
 };

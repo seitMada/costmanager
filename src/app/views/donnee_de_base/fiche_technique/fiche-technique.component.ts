@@ -55,7 +55,7 @@ export class FicheTechniqueComponent implements OnInit {
   }
 
   show(data: any) {
-    this.toggle = !this.toggle;
+    // this.toggle = !this.toggle;
     console.log(data)
   }
 
@@ -76,7 +76,8 @@ export class FicheTechniqueComponent implements OnInit {
   }
 
   toggleModal() {
-
+    this.toggle = !this.toggle;
+    this.initFichetechnique();
   }
 
   modifToggleModal() {

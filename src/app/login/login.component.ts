@@ -55,9 +55,11 @@ export class LoginComponent implements OnInit {
   
   public exploitations: any;
   public centreRevenus: any;
+  public isLoggedIn:boolean;
 
 
   ngOnInit(): void {
+
     this.exploitationService.getExploitation().subscribe({
       next: (exploitation) => {
         this.exploitations = exploitation;
