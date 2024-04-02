@@ -4,7 +4,12 @@ import { FournisseurService } from "../../../shared/service/fournisseur.service"
 import { CommandeService } from "../../../shared/service/commande.service";
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormsModule } from '@angular/forms';
+
 import { InterfaceBonCommande } from '../../../shared/model/interface-bonCommande';
+import { InterfaceFournisseur } from 'src/app/shared/model/interface-fournisseurs';
+import { Fournisseur } from 'src/app/shared/model/fournisseurs';
+import { ExploitationService } from 'src/app/shared/service/exploitation.service';
+import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
 
 @Component({
   selector: 'app-bon-commande-achats',
@@ -19,6 +24,8 @@ export class BonCommandeAchatsComponent implements OnInit {
     public route: ActivatedRoute,
     private fournisseurService:FournisseurService,
     private commandeService : CommandeService,
+    private exploitationService: ExploitationService,
+    private centreRevenuService: CentreRevenuService,
   ){}
   public toggle = true;
   public modifToggle = true;
@@ -26,8 +33,15 @@ export class BonCommandeAchatsComponent implements OnInit {
   public bonCommandeForm = FormGroup;
   public modalFournisseur = 'none';
 
-  public fournisseur: any;
-  public fournisseurs: any;
+  public fournisseur: InterfaceFournisseur;
+  public fournisseurs: Fournisseur;
+  public idFournisseur =0;
+  public exploitationId = sessionStorage.getItem('exploitation');
+  public centres:any;
+  public centre:any;
+  public exploitation:any;
+
+// public achat = InterfaceA
 
   public commandes: any;
 
@@ -38,16 +52,14 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   addToggleModal(){
-    
-    if (this.fournisseurs.id>0) {
       this.selectOnFournisseur();
       this.modifToggle = !this.modifToggle;
       this.toggle = (this.toggle === false ? true : false);
       this.modalFournisseur = 'none';
-    } else {
-      this.modalFournisseur = 'block';
-    }
-  
+  }
+
+  closeToggleModal(){
+    this.modalFournisseur = 'none';
   }
 
   showListToggle(){
@@ -58,14 +70,31 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   ngOnInit():void{
     this.fournisseurService.getAllFournisseur().subscribe({
-      next:(founisseur) =>{
-        this.fournisseurs = founisseur;
+      next:(fournisseur) =>{
+        this.fournisseurs = fournisseur;
         console.log(this.fournisseurs);
       },
       error:(error) =>{
         alert('Liste fournisseur vide')
       }
     });
+
+    this.exploitationService.getExploitationById(this.exploitationId).subscribe({
+      next:(exploitation)=>{
+        this.exploitation = exploitation;
+        console.log(this.exploitation);
+        this.centres = [];
+        this.centreRevenuService.getCrExploitation(this.exploitation.id).subscribe({
+          next:(centre)=>{
+            this.centres = centre;
+            console.log(this.centres);
+          },
+        });
+      },
+      error:(error) =>{
+        alert('Liste de bon de commande vide');
+      }
+    })
 
     this.commandeService.getAllCommande().subscribe({
       next:(commande)=>{
@@ -101,7 +130,8 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
   
  public selectOnFournisseur(){
-  this.fournisseurService.getOneFournisseur(this.fournisseurs.id).subscribe({
+  
+  this.fournisseurService.getOneFournisseur(this.fournisseur).subscribe({
     next:(fournisseur) =>{
       this.fournisseur = fournisseur;
       console.log(this.fournisseur);

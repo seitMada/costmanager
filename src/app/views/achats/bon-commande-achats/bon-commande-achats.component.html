@@ -23,13 +23,13 @@
           <div class="col-sm-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="basic-addon1">Date de commande</span>
-              <input type="date" class="form-control col-7"[(ngModel)]="bonCommande.dateCommande" aria-label="DateCommande" aria-describedby="basic-addon1">
+              <input type="date" class="form-control col-7" aria-label="DateCommande" aria-describedby="basic-addon1">
             </div>
           </div>
           <div class="col-sm-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="basic-addon1">Fournisseur</span>
-              <input type="text" class="form-control col-6" [(ngModel)]="fournisseur.id" aria-label="fournisseur" [disabled]="true" [value]="fournisseur.raison_social" aria-describedby="basic-addon1">
+              <input type="text" class="form-control col-6" [(ngModel)]="fournisseur" [value]="fournisseur.raison_social" aria-label="fournisseur" [disabled]="true"  aria-describedby="basic-addon1">
               <span class="input-group-text col-1" id="basic-addon1"><i class="fas fa-info"></i></span>
             </div>
           </div>
@@ -37,14 +37,14 @@
         <div class="row m-2">
           <div class="col-sm-6">
             <div class="input-group">
-              <span class="input-group-text col-5" id="basic-addon1">Date de livraison</span>
-              <input type="date" class="form-control col-7" aria-label="dateLivraison" [(ngModel)]="bonCommande.dateLivraison" aria-describedby="basic-addon1" >
+              <span class="input-group-text col-5" id="basic-addon1">Exploitation</span>
+              <input type="text" class="form-control col-7"  [value]="exploitation.libelle" aria-label="exploitation" aria-describedby="basic-addon1" >
             </div>
           </div>
           <div class="col-sm-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="basic-addon1">Adresse Fournisseur</span>
-              <input type="text" class="form-control col-7" [value]="fournisseur.adresse" aria-label="adresse" [disabled]="true" aria-describedby="basic-addon1">
+              <input type="text" class="form-control col-7" [value]="fournisseur.adresse"  aria-label="adresse" [disabled]="true" aria-describedby="basic-addon1">
             </div>
           </div>
           
@@ -52,14 +52,16 @@
         <div class="row m-2">
           <div class="col-sm-6">
             <div class="input-group">
-              <span class="input-group-text col-5" id="basic-addon1">N° bon de commande</span>
-              <input type="text" class="form-control col-7" aria-label="numCommande" [(ngModel)]="bonCommande.noPiece" aria-describedby="basic-addon1" >
+              <span class="input-group-text col-5" id="basic-addon1">Centre de revenu</span>
+              <select class="form-control col-7"  [required]="true" aria-label="fournisseur" aria-describedby="basic-addon1">
+                <option [ngValue]="item.id" *ngFor="let item of centres" >{{item.libelle}}</option>
+              </select>
             </div>
           </div>
           <div class="col-sm-6">
             <div class="input-group">
-              <span class="input-group-text col-5" id="basic-addon1">Centre de revenu</span>
-              <input type="text" class="form-control col-7" aria-label="centreRevenu" [(ngModel)]="bonCommande.centreId" aria-describedby="basic-addon1">
+              <span class="input-group-text col-5" id="basic-addon1">N° bon de commande</span>
+              <input type="text" class="form-control col-7" aria-label="numCommande" aria-describedby="basic-addon1" >
             </div>
           </div>
         </div>
@@ -81,7 +83,7 @@
           <div class="col-sm-12">
             <div class="input-group">
               <span class="input-group-text col-3" id="basic-addon1">Commentaire</span>
-              <textarea rows="2" class="form-control col-9" aria-label="commentaire" [(ngModel)]="bonCommande.commentaire" aria-describedby="basic-addon1"></textarea>
+              <textarea rows="2" class="form-control col-9" aria-label="commentaire" aria-describedby="basic-addon1"></textarea>
             </div>
           </div>
         </div>
@@ -123,24 +125,24 @@
 
   
 <div class="modal" [ngStyle]="{display:modalFournisseur}" data-coreui-backdrop="static" data-coreui-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
-  <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-dialog ">
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="staticBackdropLiveLabel">Fournisseur</h5>
-        <button class="btn-close" type="button" data-coreui-dismiss="modal" aria-label="Close"></button>
+        <button class="btn-close" type="button" (click)="closeToggleModal()" data-coreui-dismiss="modal" aria-label="Close"></button>
       </div>
       <div class="modal-body">
         <form #listFournisseur="">
             <div class="input-group">
               <span class="input-group-text col-5" id="basic-addon1">Liste des fournisseurs</span>
-              <select class="form-control col-7"[(ngModel)]="fournisseurs.id" [ngModelOptions]="{standalone: true}" [required]="true" aria-label="fournisseur" aria-describedby="basic-addon1">
+              <select class="form-control col-7"[(ngModel)]="fournisseur" [ngModelOptions]="{standalone: true}" [required]="true" aria-label="fournisseur" aria-describedby="basic-addon1">
                 <option [ngValue]="line.id" *ngFor="let line of fournisseurs" >{{line.raison_social}}</option>
               </select>
             </div>
         </form>
       </div>
       <div class="text-center">
-        <button class="btn btn-danger m-1" type="button" data-coreui-dismiss="modal">Annuler</button>
+        <button class="btn btn-danger m-1" (click)="closeToggleModal()" type="button" data-coreui-dismiss="modal">Annuler</button>
         <button class="btn btn-success m-1" (click)="addToggleModal()" type="button">Valider</button>
       </div>
     </div>

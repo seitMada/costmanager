@@ -11,8 +11,10 @@ export interface InterfaceFournisseur {
     modereglementId: number;
     commentaires: string;
     adresse:string;
+
+    // modereglement:
 }
 
-// export interface InterfaceFournisseurs {
-//     fournisseurs: InterfaceFournisseur[];
-// }
+export interface InterfaceFournisseurs {
+    fournisseurs: InterfaceFournisseur[];
+}

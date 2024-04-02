@@ -3,6 +3,7 @@ const endPoint = 'http://localhost:3000/';
 export const environment = {
     production: false,
     APIGETEXPLOITATION: endPoint + 'exploitation',
+    APIGETEXPLOITATIONBYID: endPoint+'exploitation/',
     APIGETCREXPLOITATION: endPoint + 'centre-revenu/exploitation/',
     
     APILOGOUT: endPoint + 'api/logout',
@@ -32,5 +33,7 @@ export const environment = {
     APIGETSOUSFAMILLEBYGROUPE: endPoint + 'sousfamilles/famille/',
 
     APICREATECOMMANDE: endPoint + '/commande',
+
+    
 
 };
