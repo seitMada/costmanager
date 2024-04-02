@@ -6,3 +6,7 @@ export interface InterfaceFamilles {
     actif:          boolean;
     type:           string;
 }
+
+export interface InterfaceFamilless {
+    familles: InterfaceFamilles[]
+}

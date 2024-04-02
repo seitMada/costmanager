@@ -133,7 +133,7 @@ export class ArticlesComponent implements OnInit {
                     });
                     this.allergenes.forEach((a: any) => {
                       const comparisonItem = this.article.allergeneArticle.find((i: any) => i.allergeneId === a.id);
-                      console.log(comparisonItem)
+                      // console.log(comparisonItem)
                       if (comparisonItem != undefined) {
                         a.selected = true;
                       } else {
@@ -309,16 +309,32 @@ export class ArticlesComponent implements OnInit {
 
   submit() {
     if (this.idArticle === 0) {
-      this.articleService.postArticle(this.article).subscribe((response) => {
-        // alert(response)
-        
+      this.articleService.postArticle(this.article).subscribe({
+        next: (article: any) => {
+          this.article = article;
+          const exploitation: number[] = [];
+          exploitation.push(3)
+          for (const i of this.exploitations) {
+            if (i.selected === true) {
+              exploitation.push(i.id)
+            }
+          }
+          this.articleService.deleteArticleExploitationByArticle(article.id, exploitation).subscribe({
+            next: () => {
+              this.modifToggle = !this.modifToggle;
+            }
+          })
+        }
       })
+
     } else {
       this.articleService.updateArticle(this.article).subscribe((response) => {
         alert('Article modifier')
         const exploitation: number[] = [];
         for (const i of this.exploitations) {
-          exploitation.push(i.id)
+          if (i.selected === true) {
+            exploitation.push(i.id)
+          }
         }
         forkJoin({
           deleteArticleExploitationByArticle: this.articleService.deleteArticleExploitationByArticle(this.idArticle, exploitation),

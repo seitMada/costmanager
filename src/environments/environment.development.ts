@@ -7,6 +7,7 @@ export const environment = {
 
     APIGETEXPLOITATIONBYARTICLE: endPoint + 'articleexploitation/article_exploitation/',
     APIPOSTDELETEARTICLEEXPLOITATIONBYARTICLE: endPoint + 'articleexploitation/delete_articleexploitation/',
+    APIPOSTCREATEARTICLEEXPLOITATION:  endPoint + 'articleexploitation/add_article_exploitation',
     
     APILOGOUT: endPoint + 'api/logout',
     APILOGIN: endPoint + 'api/login',
