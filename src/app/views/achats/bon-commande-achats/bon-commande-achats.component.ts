@@ -10,7 +10,8 @@ import { InterfaceFournisseur } from 'src/app/shared/model/interface-fournisseur
 import { Fournisseur } from 'src/app/shared/model/fournisseurs';
 import { ExploitationService } from 'src/app/shared/service/exploitation.service';
 import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
-
+import { InterfaceAchat } from "../../../shared/model/interface-achats";
+import { Achat } from "../../../shared/model/achats";
 @Component({
   selector: 'app-bon-commande-achats',
   standalone: true,
@@ -42,6 +43,8 @@ export class BonCommandeAchatsComponent implements OnInit {
   public exploitation:any;
 
 // public achat = InterfaceA
+public achat: InterfaceAchat;
+public achats: Achat;
 
   public commandes: any;
 
