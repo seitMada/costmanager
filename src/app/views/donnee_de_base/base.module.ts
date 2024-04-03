@@ -13,8 +13,12 @@ import { ZoneStockageComponent } from "./gestion_stock/zone-stockage/zone-stocka
 import { MatriceSaisieComponent } from "./matrice-saisie/matrice-saisie.component";
 import { SyntheseFicheTechniqueComponent } from "./synthese-fiche-technique/synthese-fiche-technique.component";
 
+import { defineLocale, frLocale } from 'ngx-bootstrap/chronos';
+
 // Components Routing
 import { BaseRoutingModule } from './base-routing.module';
+
+defineLocale('fr', frLocale);
 
 @NgModule({
   imports: [
@@ -28,7 +32,7 @@ import { BaseRoutingModule } from './base-routing.module';
     StockMinimumComponent,
     ZoneStockageComponent,
     MatriceSaisieComponent,
-    SyntheseFicheTechniqueComponent
+    SyntheseFicheTechniqueComponent,
   ],
   declarations: [
     

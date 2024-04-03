@@ -1,4 +1,4 @@
-import { InterfaceGroupeanalytiques } from "./interface-groupeanalytiques";
+import { InterfaceGroupeanalytiques, InterfaceGroupeanalytiquess } from "./interface-groupeanalytiques";
 
 export class Groupeanalytique implements InterfaceGroupeanalytiques {
     id?: number | undefined;
@@ -17,5 +17,19 @@ export class Groupeanalytique implements InterfaceGroupeanalytiques {
         this.groupe = groupeanalytiqueInterface.groupe;
         this.actif = groupeanalytiqueInterface.actif;
         this.type = groupeanalytiqueInterface.type;
+    }
+}
+
+export class Groupeanalytiques implements InterfaceGroupeanalytiquess {
+    groupeanalytiques: InterfaceGroupeanalytiques[];
+
+    constructor(groupeanalytiques: InterfaceGroupeanalytiques[]){
+        this.groupeanalytiques = groupeanalytiques;
+    }
+  
+    *[Symbol.iterator]() {
+        for (let groupeanalytique of this.groupeanalytiques) {
+            yield groupeanalytique;
+        }
     }
 }

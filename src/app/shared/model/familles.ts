@@ -1,4 +1,4 @@
-import { InterfaceFamilles } from "./interface-familles";
+import { InterfaceFamilles, InterfaceFamilless } from "./interface-familles";
 
 export class Famille implements InterfaceFamilles {
   id?:            number | undefined;
@@ -20,5 +20,19 @@ export class Famille implements InterfaceFamilles {
     this.groupeId=       familleInterface.groupeId;
     this.actif=          familleInterface.actif;
     this.type=           familleInterface.type;
+  }
+}
+
+export class Familles implements InterfaceFamilless {
+  familles: InterfaceFamilles[];
+
+  constructor(familles: InterfaceFamilles[]){
+      this.familles = familles;
+  }
+
+  *[Symbol.iterator]() {
+      for (let famille of this.familles) {
+          yield famille;
+      }
   }
 }

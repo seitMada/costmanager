@@ -1,4 +1,4 @@
-import { InterfaceCategories } from "./interface-categories";
+import { InterfaceCategories, InterfaceCategoriess } from "./interface-categories";
 
 export class Categorie implements InterfaceCategories {
   id?: number | undefined;
@@ -14,5 +14,19 @@ export class Categorie implements InterfaceCategories {
     this.code= categorieInterface.code;
     this.libelle= categorieInterface.libelle;
     this.actif= categorieInterface.actif;
+  }
+}
+
+export class Categories implements InterfaceCategoriess {
+  categories: InterfaceCategories[]
+
+  constructor(categories: InterfaceCategories[]){
+      this.categories = categories;
+  }
+
+  *[Symbol.iterator]() {
+      for (let categorie of this.categories) {
+          yield categorie;
+      }
   }
 }

@@ -27,8 +27,8 @@ export class BonCommande implements InterfaceBonCommande {
     noPiece:'',
     validation:false,
     commentaire:'',
-    dateCommande:new Date,
-    dateLivraison:new Date,
+    dateCommande: new Date(),
+    dateLivraison: new Date(),
     fournisseurId:0,
     uniteId:0,
     centreId:0,
@@ -49,3 +49,5 @@ export class BonCommande implements InterfaceBonCommande {
     this.centreId=          commandeInterface.centreId;
   }
 }
+
+// export { InterfaceBonCommande };

@@ -3,7 +3,12 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { FournisseurService } from "../../../shared/service/fournisseur.service";
 import { CommandeService } from "../../../shared/service/commande.service";
 import { CommonModule } from '@angular/common';
+<<<<<<< HEAD
 import { FormGroup, FormsModule } from '@angular/forms';
+=======
+import { FormsModule } from '@angular/forms';
+import { InterfaceBonCommande } from '../../../shared/model/interface-bonCommande';
+>>>>>>> article_fichetechnique
 
 import { InterfaceBonCommande } from '../../../shared/model/interface-bonCommande';
 import { InterfaceFournisseur } from 'src/app/shared/model/interface-fournisseurs';
@@ -15,7 +20,7 @@ import { Achat } from "../../../shared/model/achats";
 @Component({
   selector: 'app-bon-commande-achats',
   standalone: true,
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './bon-commande-achats.component.html',
   styleUrl: './bon-commande-achats.component.scss'
 })
@@ -23,11 +28,11 @@ export class BonCommandeAchatsComponent implements OnInit {
   constructor(
     public router: Router,
     public route: ActivatedRoute,
-    private fournisseurService:FournisseurService,
-    private commandeService : CommandeService,
+    private fournisseurService: FournisseurService,
+    private commandeService: CommandeService,
     private exploitationService: ExploitationService,
     private centreRevenuService: CentreRevenuService,
-  ){}
+  ) { }
   public toggle = true;
   public modifToggle = true;
   public showlist = true;
@@ -36,15 +41,15 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   public fournisseur: InterfaceFournisseur;
   public fournisseurs: Fournisseur;
-  public idFournisseur =0;
+  public idFournisseur = 0;
   public exploitationId = sessionStorage.getItem('exploitation');
-  public centres:any;
-  public centre:any;
-  public exploitation:any;
+  public centres: any;
+  public centre: any;
+  public exploitation: any;
 
-// public achat = InterfaceA
-public achat: InterfaceAchat;
-public achats: Achat;
+  // public achat = InterfaceA
+  public achat: InterfaceAchat;
+  public achats: Achat;
 
   public commandes: any;
 
@@ -54,95 +59,95 @@ public achats: Achat;
     this.toggle = !this.toggle;
   }
 
-  addToggleModal(){
-      this.selectOnFournisseur();
-      this.modifToggle = !this.modifToggle;
-      this.toggle = (this.toggle === false ? true : false);
-      this.modalFournisseur = 'none';
-  }
-
-  closeToggleModal(){
+  addToggleModal() {
+    this.selectOnFournisseur();
+    this.modifToggle = !this.modifToggle;
+    this.toggle = (this.toggle === false ? true : false);
     this.modalFournisseur = 'none';
   }
 
-  showListToggle(){
+  closeToggleModal() {
+    this.modalFournisseur = 'none';
+  }
+
+  showListToggle() {
     this.showlist = (this.showlist === false ? true : false);
   }
 
-  
 
-  ngOnInit():void{
+
+  ngOnInit(): void {
     this.fournisseurService.getAllFournisseur().subscribe({
-      next:(fournisseur) =>{
+      next: (fournisseur) => {
         this.fournisseurs = fournisseur;
         console.log(this.fournisseurs);
       },
-      error:(error) =>{
+      error: (error) => {
         alert('Liste fournisseur vide')
       }
     });
 
     this.exploitationService.getExploitationById(this.exploitationId).subscribe({
-      next:(exploitation)=>{
+      next: (exploitation) => {
         this.exploitation = exploitation;
         console.log(this.exploitation);
         this.centres = [];
         this.centreRevenuService.getCrExploitation(this.exploitation.id).subscribe({
-          next:(centre)=>{
+          next: (centre) => {
             this.centres = centre;
             console.log(this.centres);
           },
         });
       },
-      error:(error) =>{
+      error: (error) => {
         alert('Liste de bon de commande vide');
       }
     })
 
     this.commandeService.getAllCommande().subscribe({
-      next:(commande)=>{
+      next: (commande) => {
         this.commandes = commande;
         console.log(this.commandes);
-        
+
       },
-      error:(error) =>{
+      error: (error) => {
         alert('Liste de bon de commande vide');
       }
     })
   }
 
-  openModalFournisseur(){
+  openModalFournisseur() {
     this.modalFournisseur = 'block';
   }
 
-  cancel(){}
+  cancel() { }
 
-  showFournisseur(fournisseur:any){
+  showFournisseur(fournisseur: any) {
     this.fournisseurs = fournisseur;
-    console.log(this.fournisseurs);   
+    console.log(this.fournisseurs);
   }
 
-  showCommande(comm:any){
+  showCommande(comm: any) {
     this.commandes = comm;
     console.log(this.commandes);
     this.toggleModal();
   }
 
-  addBonCommande(bonCommande:any){
+  addBonCommande(bonCommande?: any) {
     this.commandeService.createBonCommande(bonCommande);
   }
-  
- public selectOnFournisseur(){
-  
-  this.fournisseurService.getOneFournisseur(this.fournisseur).subscribe({
-    next:(fournisseur) =>{
-      this.fournisseur = fournisseur;
-      console.log(this.fournisseur);
-      
-    },
-    error:(error) => {
-      console.log(error);
-    }
-  })
- }
+
+  public selectOnFournisseur() {
+
+    this.fournisseurService.getOneFournisseur(this.fournisseur).subscribe({
+      next: (fournisseur) => {
+        this.fournisseur = fournisseur;
+        console.log(this.fournisseur);
+
+      },
+      error: (error) => {
+        console.log(error);
+      }
+    })
+  }
 }

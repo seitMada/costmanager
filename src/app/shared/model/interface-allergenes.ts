@@ -1,6 +1,7 @@
 export interface InterfaceAllergenes {
     id?:        number;
     libelle:    string;
+    selected?:  boolean;
 }
 
 

@@ -5,3 +5,7 @@ export interface InterfaceUnite {
     abreviation:    string;
     actif:          boolean;
 }
+
+export interface InterfaceUnites {
+    unites: InterfaceUnite[];
+}

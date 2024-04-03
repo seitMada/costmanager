@@ -3,6 +3,10 @@ table {
     cursor: pointer;
 }
 
+.point {
+    cursor: pointer;
+}
+
 .nav-tabs {
     font-size: smaller;
 }
@@ -14,4 +18,8 @@ table {
 
 .dropdown-menu li:hover {
     font-weight: bolder;
+}
+
+.error {
+    border-color: red;
 }

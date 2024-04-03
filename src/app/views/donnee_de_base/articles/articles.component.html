@@ -1,7 +1,8 @@
 <div class="card d-flex py-1 mb-2">
   <div class="d-flex bd-highlight">
     <div class="flex-grow-1 bd-highlight">
-      <button type="button" class="btn btn-success btn-sm mx-1" *ngIf="!modifToggle">Enregistrer</button>
+      <button type="button" class="btn btn-success btn-sm mx-1" *ngIf="!modifToggle"
+        (click)="submit()">Enregistrer</button>
       <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
     </div>
     <div class="bd-highlight">
@@ -17,7 +18,10 @@
         [disabled]="!modifToggle">
         <i class="fas fa-plus"></i>
       </button>
-      <button [disabled]="true" class="btn btn-outline-danger btn-sm me-1" title="Supprimer article">
+      <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer article" (click)="delete()" *ngIf="!toggle">
+        <i class="fas fa-trash"></i>
+      </button>
+      <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer article" (click)="deletes()" *ngIf="toggle">
         <i class="fas fa-trash"></i>
       </button>
     </div>
@@ -40,15 +44,17 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let line of articles" (click)="showArticle(line); toggleModal()">
-          <td class=""></td>
-          <td class="col-1">{{line.codeArticle}}</td>
-          <td class="col-3">{{line.libelle}}</td>
-          <td class="col-1">{{line.unite.abreviation}}</td>
-          <td class="col-2">{{line.groupeanalytique.groupe}}</td>
-          <td class="col-2 text-overflow">{{line.familles.libelle}}</td>
-          <td class="col-2">{{line.sousfamilles.libelle}}</td>
-          <td class="col-1">{{line.coefficientPonderation * 100}} %</td>
+        <tr *ngFor="let line of articles">
+          <td class="">
+            <input type="checkbox" name="article-{{line.libelle}}" id="article-{{line.id}}" [(ngModel)]="line.selected">
+          </td>
+          <td class="col-1" (click)="showArticle(line); toggleModal()">{{line.codeArticle}}</td>
+          <td class="col-3 fw-bold" (click)="showArticle(line); toggleModal()">{{line.libelle}}</td>
+          <td class="col-1" (click)="showArticle(line); toggleModal()">{{line.unite.abreviation}}</td>
+          <td class="col-2" (click)="showArticle(line); toggleModal()">{{line.groupeanalytique.groupe}}</td>
+          <td class="col-2 text-overflow" (click)="showArticle(line); toggleModal()">{{line.familles.libelle}}</td>
+          <td class="col-2" (click)="showArticle(line); toggleModal()">{{line.sousfamilles.libelle}}</td>
+          <td class="col-1" (click)="showArticle(line); toggleModal()">{{line.coefficientPonderation * 100}} %</td>
         </tr>
       </tbody>
     </table>
@@ -63,14 +69,14 @@
         <div class="row m-2">
           <div class="col-sm-6">
             <div class="input-group">
-              <span class="input-group-text col-5" id="basic-addon1">Code article</span>
-              <input type="text" class="form-control col-7 bg-white" aria-label="Code" aria-describedby="basic-addon1"
+              <span class="input-group-text col-5" id="codearticle">Code article</span>
+              <input type="text" class="form-control col-7 bg-white" aria-label="Code" aria-describedby="codearticle"
                 [(ngModel)]="article.codeArticle" [disabled]="modifToggle">
             </div>
           </div>
           <div class="col-sm-6">
             <div class="input-group">
-              <span class="input-group-text col-5" id="basic-addon1">Désignation</span>
+              <span class="input-group-text col-5" id="libelle">Désignation</span>
               <input type="text" class="form-control col-7 bg-white" aria-label="Designation"
                 aria-describedby="basic-addon1" [(ngModel)]="article.libelle" [disabled]="modifToggle">
             </div>
@@ -79,10 +85,9 @@
         <div class="row m-2">
           <div class="col-sm-6">
             <div class="input-group">
-              <span class="input-group-text col-5" id="basic-addon1">Unite</span>
-              <input type="text" class="form-control bg-white" aria-label="unite" aria-describedby="basic-addon1"
-                [(ngModel)]="article.unite.libelle" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
-                [disabled]="modifToggle">
+              <span class="input-group-text col-5" id="unite">Unite</span>
+              <input type="text" class="form-control bg-white" aria-label="unite" aria-describedby="unite"
+                [(ngModel)]="article.unite.libelle" [ngClass]="modifToggle ? 'col-6' : 'col-7'" disabled="true">
               <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                 data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
                 <span class="visually-hidden">Toggle Dropdown</span>
@@ -94,20 +99,19 @@
           </div>
           <div class="col-sm-6">
             <div class="input-group">
-              <span class="input-group-text col-5" id="basic-addon1">Coéfficient de pondération</span>
-              <input type="text" class="form-control col-6 bg-white" aria-label="coefficientPonderation"
-                aria-describedby="basic-addon1" [(ngModel)]="article.coefficientPonderation" [disabled]="modifToggle">
-              <span class="input-group-text col-1" id="basic-addon1">%</span>
+              <span class="input-group-text col-5" id="coefficient">Coéfficient de pondération</span>
+              <input type="text" class="form-control col-6 bg-white" aria-label="coefficient"
+                aria-describedby="coefficient" [(ngModel)]="article.coefficientPonderation" [disabled]="modifToggle">
+              <span class="input-group-text col-1" id="coefficient">%</span>
             </div>
           </div>
         </div>
         <div class="row m-2">
           <div class="col-sm-6">
             <div class="input-group">
-              <span class="input-group-text col-5" id="basic-addon1">Catégorie</span>
-              <input type="text" class="form-control bg-white" aria-label="categorie" aria-describedby="basic-addon1"
-                [(ngModel)]="article.categories.libelle" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
-                [disabled]="modifToggle">
+              <span class="input-group-text col-5" id="categorie">Catégorie</span>
+              <input type="text" class="form-control bg-white" aria-label="categorie" aria-describedby="categorie"
+                [(ngModel)]="article.categories.libelle" [ngClass]="modifToggle ? 'col-6' : 'col-7'" disabled="true">
               <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                 data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
                 <span class="visually-hidden">Toggle Dropdown</span>
@@ -119,10 +123,10 @@
           </div>
           <div class="col-sm-6">
             <div class="input-group">
-              <span class="input-group-text col-5" id="basic-addon1">Groupe analytique</span>
+              <span class="input-group-text col-5" id="groupeanalytique">Groupe analytique</span>
               <input type="text" class="form-control bg-white" aria-label="groupeanalytique"
-                aria-describedby="basic-addon1" [(ngModel)]="article.groupeanalytique.groupe"
-                [ngClass]="modifToggle ? 'col-6' : 'col-7'" [disabled]="modifToggle">
+                aria-describedby="groupeanalytique" [(ngModel)]="article.groupeanalytique.groupe"
+                [ngClass]="modifToggle ? 'col-6' : 'col-7'" disabled="true">
               <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                 data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
                 <span class="visually-hidden">Toggle Dropdown</span>
@@ -136,10 +140,9 @@
         <div class="row m-2">
           <div class="col-sm-6">
             <div class="input-group">
-              <span class="input-group-text col-5" id="basic-addon1">Famille</span>
-              <input type="text" class="form-control bg-white" aria-label="famille" aria-describedby="basic-addon1"
-                [(ngModel)]="article.familles.libelle" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
-                [disabled]="modifToggle">
+              <span class="input-group-text col-5" id="famille">Famille</span>
+              <input type="text" class="form-control bg-white" aria-label="famille" aria-describedby="famille"
+                [(ngModel)]="article.familles.libelle" [ngClass]="modifToggle ? 'col-6' : 'col-7'" disabled="true">
               <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                 data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
                 <span class="visually-hidden">Toggle Dropdown</span>
@@ -151,10 +154,9 @@
           </div>
           <div class="col-sm-6">
             <div class="input-group">
-              <span class="input-group-text col-5" id="basic-addon1">Sous famille</span>
-              <input type="text" class="form-control bg-white" aria-label="sousfamille" aria-describedby="basic-addon1"
-                [(ngModel)]="article.sousfamilles.libelle" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
-                [disabled]="modifToggle">
+              <span class="input-group-text col-5" id="sousfamille">Sous famille</span>
+              <input type="text" class="form-control bg-white" aria-label="sousfamille" aria-describedby="sousfamille"
+                [(ngModel)]="article.sousfamilles.libelle" [ngClass]="modifToggle ? 'col-6' : 'col-7'" disabled="true">
               <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                 data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
                 <span class="visually-hidden">Toggle Dropdown</span>
@@ -168,18 +170,46 @@
         </div>
       </div>
     </li>
-    <li class="list-group-item" style="height: 150px;">
-      <ul ngbNav #nav1="ngbNav" [(activeId)]="active_1" class="nav-tabs">
-        <li [ngbNavItem]="4">
-          <button ngbNavLink>STOCKAGE</button>
-          <ng-template ngbNavContent></ng-template>
-        </li>
-        <li [ngbNavItem]="5" *ngIf="modifToggle">
-          <button ngbNavLink>GESTION DES UNITES</button>
-          <ng-template ngbNavContent></ng-template>
-        </li>
-      </ul>
-      <div [ngbNavOutlet]="nav1" class="mt-2"></div>
+    <li class="list-group-item" style="height: 170px;">
+      <div class="row">
+        <div class="card col-3">
+          <div class=" text-center fs-7 fw-bold">EXPLOITATIONS</div>
+          <div class="card-body overflow-y-scroll" style="height: 100px;">
+            <table class="table table-striped table-hover">
+              <tbody>
+                <tr *ngFor="let line of exploitations">
+                  <td class="col-9">{{line.libelle}}</td>
+                  <td class="col-3">
+                    <input type="checkbox" name="exploitation-{{line.libelle}}" id="exploitation-{{line.id}}"
+                      [(ngModel)]="line.selected" [disabled]="modifToggle"
+                      *ngIf="line.id !== exploitation ? true : false">
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <!-- <div class="card col-4">
+          <div class=" text-center fs-7 fw-bold">STOCKAGE</div>
+          <div class="card-body overflow-y-scroll" style="height: 100px;">
+
+          </div>
+        </div> 
+        <div class="card col-5">
+          <div class=" text-center fs-7 fw-bold">GESTION DES UNITES</div>
+          <div class="card-body overflow-y-scroll" style="height: 100px;">
+          </div>
+        </div> -->
+        <!-- <div class="card-body py-1 col-6" style="height: 100px;">
+          <ul ngbNav #nav1="ngbNav" [(activeId)]="active_1" class="nav-tabs">
+            <li [ngbNavItem]="4" *ngIf="modifToggle">
+              <button ngbNavLink>GESTION DES UNITES</button>
+              <ng-template ngbNavContent></ng-template>
+            </li>
+          </ul>
+          <div [ngbNavOutlet]="nav1" class="mt-2"></div>
+        </div> -->
+      </div>
     </li>
     <li class="list-group-item" style="height: 250px;">
       <ul ngbNav #nav2="ngbNav" [(activeId)]="active_2" class="nav-tabs">
@@ -198,26 +228,28 @@
                   </tr>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let line of article.articlefournisseur" >
+                  <tr *ngFor="let line of article.articlefournisseur">
                     <td class="col-3">{{line.fournisseur.raison_social}}</td>
                     <td class="col-2">
                   <tr *ngFor="let lines of line.conditionnement" (click)="showFournisseur(lines)">
-                    <td>{{lines.coefficientAchatCommande}}  {{lines.uniteCommande.libelle}}</td>
+                    <td>{{lines.coefficientAchatCommande}} {{lines.uniteCommande.libelle}}</td>
                   </tr>
                   </td>
-                  <td class="col-3"> 
+                  <td class="col-3">
                     <tr *ngFor="let lines of line.conditionnement">
-                      <td>{{line.prixReference / lines.coefficientAchatCommande | number: '1.2-2'}}   €</td>
+                      <td>{{line.prixReference / lines.coefficientAchatCommande | number: '1.2-2'}} €</td>
                     </tr>
                   </td>
                   <td class="col-2">
                     <tr *ngFor="let lines of line.conditionnement">
-                      <td>{{(lines.coefficientAchatCommande * lines.coefficientInventaireAchat * lines.coefficientInventaire)}}  {{lines.uniteFt.libelle}}</td>
+                      <td>{{(lines.coefficientAchatCommande * lines.coefficientInventaireAchat *
+                        lines.coefficientInventaire)}} {{lines.uniteFt.libelle}}</td>
                     </tr>
                   </td>
                   <td class="col-2">
                     <tr *ngFor="let lines of line.conditionnement">
-                      <td>{{line.prixReference / (lines.coefficientAchatCommande * lines.coefficientInventaireAchat * lines.coefficientInventaire) | number: '1.2-2'}}   €</td>
+                      <td>{{line.prixReference / (lines.coefficientAchatCommande * lines.coefficientInventaireAchat *
+                        lines.coefficientInventaire) | number: '1.2-2'}} €</td>
                     </tr>
                   </td>
                   </tr>
@@ -251,25 +283,35 @@
         <li [ngbNavItem]="4">
           <button ngbNavLink>ALLERGENES</button>
           <ng-template ngbNavContent>
-          
+
             <ng-template #content let-modal>
               <div class="modal-header">
                 <h6 class="modal-title" id="modal-basic-title">Liste allérgenes</h6>
-                <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+                <button type="button" class="btn-close" aria-label="Close"
+                  (click)="modal.dismiss('Cross click')"></button>
               </div>
               <div class="modal-body">
-                <form>
-                  <div class="mb-3">
-                    <label for="dateOfBirth">Date of birth</label>
-                  </div>
-                </form>
+                <div class="overflow-y-scroll" style="max-height: 500px;">
+                  <table class="table table-striped table-hover">
+                    <tbody>
+                      <tr *ngFor="let line of allergenes">
+                        <td>{{line.libelle}}</td>
+                        <td><input type="checkbox" name="allergene-{{line.libelle}}" id="allergene-{{line.id}}"
+                            [(ngModel)]="line.selected"></td>
+                      </tr>
+                    </tbody>
+                  </table>
+
+                </div>
               </div>
               <div class="modal-footer">
-                <button type="button" class="btn btn-outline-dark" (click)="modal.close('Save click')">Save</button>
+                <button type="button" class="btn btn-sm btn-outline-success"
+                  (click)="modal.close('Save click')">Enregistrer les allergenes</button>
               </div>
             </ng-template>
             <div class="d-grid gap-2" *ngIf="!modifToggle">
-              <button type="button" class="btn btn-primary" id="btn_allergene" (click)="open(content)">Liste des allérgenes</button>
+              <button type="button" class="btn btn-primary" id="btn_allergene" (click)="open(content)">Liste des
+                allérgenes</button>
             </div>
 
             <div class="card-body overflow-y-scroll py-1" style="height: 190px;" *ngIf="modifToggle">
