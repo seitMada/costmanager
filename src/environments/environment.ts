@@ -42,8 +42,17 @@ export const environment = {
 
     APIGETSOUSFAMILLEBYGROUPE: endPoint + 'sousfamilles/famille/',
 
+    APIGETFICHETECHNIQUEBYID: endPoint + 'fichetechnique/',
     APIGETFICHETECHNIQUEBYEXPLOITATION: endPoint + 'fichetechnique/exploitation/',
+    APIADDFICHETECHNIQUE: endPoint + 'fichetechnique/add_fichetechniques',
+    APIGETEXPLOITATIONBYFICHETECHNIQUE: endPoint + 'fichetechniqueexploitation/',
+    APIUPDATEFICHETECHNIQUE: endPoint + 'fichetechnique/update_fichetechniques/',
+    APIPOSTDELETEFICHETECHNIQUE: endPoint + 'fichetechnique/delete_fichetechnique',
+    APIPOSTDELETEFICHETECHNIQUES: endPoint + 'fichetechnique/delete_multi_fichetechnique',
 
+    APIPOSTDESACTIVEFICHETECHNIQUE: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitation/',
+    APIPOSTDESACTIVEFICHETECHNIQUES: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitations',
+    APIUPDATEFICHETECHNIQUEEXPLOITATION: endPoint + 'fichetechniqueexploitation/delete_fichetechniqueexploitation/',
     
     APICREATECOMMANDE: endPoint + '/commande'
 };

@@ -1,7 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component, OnInit, TemplateRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbModal, NgbNavModule, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
 import { forkJoin } from 'rxjs';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
@@ -9,7 +9,7 @@ import { FichetechniqueService } from "../../../shared/service/fichetechnique.se
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { InterfaceFichetechnique } from "../../../shared/model/interface-fichetechnique";
-import { Fichetechnique } from "../../../shared/model/fichetechniques";
+import { Compositions, Fichetechnique } from "../../../shared/model/fichetechniques";
 import { InterfaceFamilles, InterfaceFamilless } from '../../../shared/model/interface-familles';
 import { Famille, Familles } from "../../../shared/model/familles";
 import { FamillesService } from '../../../shared/service/familles.service';
@@ -22,6 +22,10 @@ import { UnitesService } from "../../../shared/service/unites.service";
 import { InterfaceUnite } from '../../../shared/model/interface-unite';
 import { InterfaceGroupeanalytiques } from '../../../shared/model/interface-groupeanalytiques';
 import { InterfaceCategories } from 'src/app/shared/model/interface-categories';
+import { ExploitationService } from 'src/app/shared/service/exploitation.service';
+import { Exploitations } from "../../../shared/model/exploitations";
+import { Article } from 'src/app/shared/model/articles';
+import { ArticleService } from 'src/app/shared/service/article.service';
 
 @Component({
   selector: 'app-fiche-technique',
@@ -40,8 +44,8 @@ export class FicheTechniqueComponent implements OnInit {
     private categoriesService: CategoriesService,
     private groupeService: GroupeAnalytiqueService,
     private familleService: FamillesService,
-    // private sousFamilleService: SousfamillesService,
-    // private exploitationService: ExploitationService,
+    private articleService: ArticleService,
+    private exploitationService: ExploitationService,
     // private allergeneService: AllergenesService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
@@ -53,12 +57,27 @@ export class FicheTechniqueComponent implements OnInit {
   public modifToggle = true;
   public exploitationToggle = true;
 
-  public fichetetchniques: Fichetechnique;
-  public fichetetchnique: InterfaceFichetechnique;
+  public articles: Article;
+  public fichetechniques: Fichetechnique;
+  public fichetechnique: InterfaceFichetechnique;
   public familles: Familles;
   public categories: Categories;
   public unites: Unites;
   public groupeanalytiques: Groupeanalytiques;
+  public exploitations: Exploitations;
+  public compositions: Compositions;
+  public compositionList: [
+    {
+      libelle: '',
+      quantite: 0,
+      cout: 0,
+      unite: '',
+      type: '',
+      id: 0
+    }
+  ];
+
+  private idFichetechnique: number = 0;
 
   private today = new Date();
   
@@ -67,8 +86,13 @@ export class FicheTechniqueComponent implements OnInit {
     fin: this.today
   }
   public exploitation = +(sessionStorage.getItem('exploitation') || 3);
+  
+  private modalService = inject(NgbModal);
+  closeResult = '';
+  activeComposition = 1;
 
   ngOnInit(): void {
+    this.resetFichetechnique();
     this.initFichetechnique();
   }
 
@@ -77,37 +101,104 @@ export class FicheTechniqueComponent implements OnInit {
       fichetechniqueByExploitation: this.fichetechniqueService.getFichetechniqueByExploitation(this.exploitation),
       groupeanalytique: this.groupeService.getGroupeAnalytique(),
       categorie: this.categoriesService.getCategories(),
-      unite: this.uniteService.getUnite()
+      unite: this.uniteService.getUnite(),
+      exploitations: this.exploitationService.getExploitation(),
+      articlesByExploitation: this.articleService.getArticlesByExploitation(this.exploitation)
     }).subscribe({
       next: (data) => {
-        const { fichetechniqueByExploitation, groupeanalytique, categorie, unite } = data;
-        this.fichetetchniques = fichetechniqueByExploitation;
+        const { fichetechniqueByExploitation, groupeanalytique, categorie, unite, exploitations, articlesByExploitation } = data;
+        this.fichetechniques = fichetechniqueByExploitation;
         this.categories = categorie;
         this.groupeanalytiques = groupeanalytique;
         this.unites = unite;
+        this.exploitations = exploitations;
+        this.articles = articlesByExploitation;
       }
     })
   }
 
-  show(fichetetchnique: any) {
-    // this.toggle = !this.toggle;
-    this.fichetetchnique = fichetetchnique;
+  show(fichetechnique: InterfaceFichetechnique) {
+    this.idFichetechnique = fichetechnique.id? fichetechnique.id : 0;
+    this.fichetechnique = fichetechnique;
     const dat = {
-      groupeId: this.fichetetchnique.groupeanalytiqueId,
+      groupeId: this.fichetechnique.groupeanalytiqueId,
       type: 'A'
     }
     forkJoin({
-      familles: this.familleService.getFamilleByGroupe(dat)
+      familles: this.familleService.getFamilleByGroupe(dat),
+      exploitations: this.exploitationService.getExploitation()
     }).subscribe({
       next: (data) => {
-        const { familles } = data;
+        const { familles, exploitations } = data;
         this.familles = familles;
+        this.exploitations = exploitations;
+        this.fichetechniqueService.getAllExploitationByFichetechnique(this.idFichetechnique).subscribe({
+          next: (fichetechniqueExploitation: any) => {
+            for (const e of this.exploitations) {
+              const comparisonItem = fichetechniqueExploitation.find((i: any) => i.exploitationsId === e.id);
+              if (comparisonItem != undefined) {
+                e.selected = true;
+              } else {
+                e.selected = false;
+              }
+            }
+          }
+        })
       }
     })
   }
 
   submit() {
-
+    if (this.idFichetechnique === 0) {
+      this.fichetechniqueService.addFichetechnique(this.fichetechnique).subscribe({
+        next: (fichetechnique: any) => {
+          this.fichetechnique = fichetechnique;
+          const exploitation: number[] = [];
+          exploitation.push(3)
+          for (const i of this.exploitations) {
+            if (i.selected === true) {
+              exploitation.push(i.id ? i.id : 0)
+            }
+          }
+          this.fichetechniqueService.updateFichetechniqueExploitation(fichetechnique.id, exploitation).subscribe({
+            next: () => {
+              alert('Fichetechnique ajouter')
+              this.modifToggle = !this.modifToggle;
+            }
+          })
+        }
+      })
+    } else {
+      this.fichetechniqueService.updateFichetechnique(this.idFichetechnique, this.fichetechnique).subscribe(() => {
+        const exploitation: number[] = [];
+        for (const i of this.exploitations) {
+          if (i.selected === true) {
+            exploitation.push(i.id? i.id : 0)
+          }
+        }
+        this.fichetechniqueService.updateFichetechniqueExploitation(this.idFichetechnique, exploitation).subscribe(() => {
+          this.fichetechniqueService.getFichetechniqueById(this.idFichetechnique).subscribe({
+            next: (fichetechnique: InterfaceFichetechnique) => {
+              this.fichetechnique = fichetechnique;
+              this.fichetechniqueService.getAllExploitationByFichetechnique(this.idFichetechnique).subscribe({
+                next: (fichetechniqueExploitation: any) => {
+                  for (const item of this.exploitations) {
+                    const comparisonItem = fichetechniqueExploitation.find((i: any) => i.exploitationsId === item.id);
+                    if (comparisonItem != undefined) {
+                      item.selected = true;
+                    } else {
+                      item.selected = false;
+                    }
+                  }
+                  this.modifToggle = !this.modifToggle;
+                  alert('Fichetechnique modifier')
+                }
+              })
+            }
+          })
+        })
+      })
+    }
   }
 
   cancel() {
@@ -115,11 +206,49 @@ export class FicheTechniqueComponent implements OnInit {
   }
 
   delete() {
-
+    let exploitation: number[] = [];
+    if (this.exploitation === 3) {
+      for (const e of this.exploitations) {
+        exploitation.push(e.id? e.id : 0)
+      }
+    } else {
+      exploitation = [this.exploitation]
+    }
+    this.fichetechniqueService.desactiveFichetechnique(this.idFichetechnique, exploitation).subscribe({
+      next: (data) => {
+        alert('Fichetechnique supprimer');
+        this.resetFichetechnique();
+        this.initFichetechnique();
+        this.toggle = !this.toggle;
+      }
+    });
   }
 
   deletes() {
-
+    const selectedIds: number[] = [];
+    let exploitation: number[] = [];
+    for (const fichetechnique of this.fichetechniques) {
+      if (fichetechnique.selected) {
+        selectedIds.push(fichetechnique.id !== undefined ? fichetechnique.id : 0);
+      }
+    }
+    if (this.exploitation === 3) {
+      for (const e of this.exploitations) {
+        exploitation.push(e.id? e.id : 0)
+      }
+    } else {
+      exploitation = [this.exploitation]
+    }
+    if (selectedIds.length > 0) {
+      const data = {
+        fichetechniqueId: selectedIds,
+        exploitationsId: exploitation
+      }
+      this.fichetechniqueService.desactiveFichetechniques(data).subscribe(() => {
+        alert('Fichetechniques supprimer');
+        this.initFichetechnique();
+      })
+    }
   }
 
   toggleModal() {
@@ -132,19 +261,58 @@ export class FicheTechniqueComponent implements OnInit {
   }
 
   addToggleModal() {
+    this.modifToggle = !this.modifToggle;
+    this.toggle = (this.toggle === false ? true : false);
+    this.idFichetechnique = 0;
+    this.resetFichetechnique()
+  }
 
+  private resetFichetechnique() {
+    forkJoin({
+      unite: this.uniteService.getUnite(),
+      categorie: this.categoriesService.getCategories(),
+      groupeAnalytique: this.groupeService.getGroupeAnalytique(),
+      famille: this.familleService.getFamilleByGroupe({ groupeId: 1, type: 'A' }),
+    }).subscribe({
+      next: (data) => {
+        const { unite, categorie, groupeAnalytique, famille } = data;
+        this.unites = unite;
+        this.categories = categorie;
+        this.groupeanalytiques = groupeAnalytique;
+        this.familles = famille;
+        this.fichetechnique = {
+          libelle: '',
+          categorieId: 0,
+          familleId: 0,
+          uniteId: 0,
+          prix: 0,
+          cout: 0,
+          image: '',
+          groupeanalytiqueId: 0,
+
+          exploitation: [],
+          categorie: categorie,
+          famille: famille,
+          unite: unite,
+          groupeanalytique: groupeAnalytique,
+        };
+      },
+      error: (error) => {
+        console.error('Une erreur est survenue ', error);
+      }
+    });
   }
 
   selectUnite(unite: InterfaceUnite) {
-    this.fichetetchnique.uniteId = (unite.id? unite.id : 0);
-    this.fichetetchnique.unite = unite;
-    console.log(this.fichetetchnique.uniteId)
+    this.fichetechnique.uniteId = (unite.id? unite.id : 0);
+    this.fichetechnique.unite = unite;
+    console.log(this.fichetechnique.uniteId)
   }
 
   selectGroupeanalytique(groupeanalytique: InterfaceGroupeanalytiques) {
-    this.fichetetchnique.groupeanalytiqueId = (groupeanalytique.id? groupeanalytique.id : 0);
-    this.fichetetchnique.groupeanalytique = groupeanalytique;
-    this.fichetetchnique.famille.libelle = '';
+    this.fichetechnique.groupeanalytiqueId = (groupeanalytique.id? groupeanalytique.id : 0);
+    this.fichetechnique.groupeanalytique = groupeanalytique;
+    this.fichetechnique.famille.libelle = '';
     const data = {
       groupeId: groupeanalytique.id,
       type: 'A'
@@ -157,13 +325,40 @@ export class FicheTechniqueComponent implements OnInit {
   }
 
   selectFamille(famille: InterfaceFamilles) {
-    this.fichetetchnique.familleId = (famille.id? famille.id : 0);
-    this.fichetetchnique.famille = famille;
+    this.fichetechnique.familleId = (famille.id? famille.id : 0);
+    this.fichetechnique.famille = famille;
   }
 
   selectCategorie(categorie: InterfaceCategories) {
-    this.fichetetchnique.categorieId = (categorie.id? categorie.id : 0);
-    this.fichetetchnique.categorie = categorie;
+    this.fichetechnique.categorieId = (categorie.id? categorie.id : 0);
+    this.fichetechnique.categorie = categorie;
+  }
+
+  private getDismissReason(reason: any): string {
+    switch (reason) {
+      case ModalDismissReasons.ESC:
+        return 'by pressing ESC';
+      case ModalDismissReasons.BACKDROP_CLICK:
+        return 'by clicking on a backdrop';
+      default:
+        return `with: ${reason}`;
+    }
+  }
+
+  open(content: TemplateRef<any>) {
+    this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title' }).result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${result}`;
+        console.log(this.closeResult)
+        if (this.closeResult == 'Closed with: Save click') {
+          
+        }
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        console.log(this.closeResult)
+      },
+    );
   }
 
 }
