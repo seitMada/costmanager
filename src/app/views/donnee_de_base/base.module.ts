@@ -24,6 +24,7 @@ defineLocale('fr', frLocale);
   imports: [
     CommonModule,
     BaseRoutingModule,
+    ReactiveFormsModule,
     ArticlesComponent,
     FicheTechniqueComponent,
     FournisseursComponent,
