@@ -1,8 +1,11 @@
 import { InterfaceBonCommande } from "./interface-bonCommande";
+<<<<<<< HEAD
 import { InterfaceAchat } from "./interface-achats";
 import { InterfaceCentreRevenu } from "./interface-centrerevenu";
 import { InterfaceFournisseur } from "./interface-fournisseurs";
 import { InterfaceUnite } from "./interface-unite";
+=======
+>>>>>>> origin/article_fichetechnique
 
 export class BonCommande implements InterfaceBonCommande {
   id?:            number | undefined;
@@ -24,34 +27,5 @@ export class BonCommande implements InterfaceBonCommande {
   unite:InterfaceUnite;
   achat:InterfaceAchat[]
 
-  // constructor(commandeInterface: InterfaceBonCommande = {
-  //   libelle:'',
-  //   quantiteCommande:0,
-  //   prixUnitaire:0,
-  //   remise:0,
-  //   montantHT:0,
-  //   montantTva:0,
-  //   noPiece:'COM'+new Date(),
-  //   validation:false,
-  //   commentaire:'',
-  //   dateCommande:new Date(),
-  //   fournisseurId:0,
-  //   uniteId:0,
-  //   centreId:0,
     
-  // }) {
-  //   this.libelle=        commandeInterface.libelle;
-  //   this.quantiteCommande=   commandeInterface.quantiteCommande;
-  //   this.prixUnitaire=       commandeInterface.prixUnitaire;
-  //   this.remise=          commandeInterface.remise;
-  //   this.montantHT=           commandeInterface.montantHT;
-  //   this.montantTva=        commandeInterface.montantTva;
-  //   this.noPiece=   commandeInterface.noPiece;
-  //   this.validation=       commandeInterface.validation;
-  //   this.commentaire=          commandeInterface.commentaire;
-  //   this.dateCommande=           commandeInterface.dateCommande;
-  //   this.fournisseurId=   commandeInterface.fournisseurId;
-  //   this.uniteId=       commandeInterface.uniteId;
-  //   this.centreId=          commandeInterface.centreId;
-  // }
 }

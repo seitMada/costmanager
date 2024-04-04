@@ -5,6 +5,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule,ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 // import { FontAwesomeModule } from '@fortawesome/fontawesome-free';
 
@@ -83,7 +84,8 @@ const APP_CONTAINERS = [
     HttpClientModule,
     FormsModule,
     CommonModule,
-    ModalModule
+    ModalModule,
+    BsDatepickerModule.forRoot(),
   ],
   providers: [
     {

@@ -1,4 +1,4 @@
-import { InterfaceUnite } from "./interface-unite";
+import { InterfaceUnite, InterfaceUnites } from "./interface-unite";
 
 export class Unite implements InterfaceUnite{
     id?:            number | undefined;
@@ -12,5 +12,19 @@ export class Unite implements InterfaceUnite{
         this.code = uniteInterface.code;
         this.abreviation = uniteInterface.abreviation;
         this.actif = uniteInterface.actif;
+    }
+}
+
+export class Unites implements InterfaceUnites{
+    unites: InterfaceUnite[];
+
+    constructor(unites: InterfaceUnite[]){
+        this.unites = unites;
+    }
+  
+    *[Symbol.iterator]() {
+        for (let unite of this.unites) {
+            yield unite;
+        }
     }
 }

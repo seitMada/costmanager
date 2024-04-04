@@ -5,3 +5,8 @@ export interface InterfaceGroupeanalytiques {
     actif:          boolean;
     type:           string;
 }
+
+
+export interface InterfaceGroupeanalytiquess {
+    groupeanalytiques: InterfaceGroupeanalytiques[];
+}

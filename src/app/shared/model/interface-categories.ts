@@ -4,3 +4,7 @@ export interface InterfaceCategories {
     libelle:    string;
     actif:      boolean;
 }
+
+export interface InterfaceCategoriess {
+    categories: InterfaceCategories[]
+}

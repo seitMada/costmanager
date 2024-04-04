@@ -16,6 +16,8 @@ export class DefaultHeaderComponent extends HeaderComponent {
   public newMessages = new Array(4)
   public newTasks = new Array(5)
   public newNotifications = new Array(5)
+  
+  public exploitation = +(sessionStorage.getItem('exploitation') || 3);
 
   constructor(
     private classToggler: ClassToggleService,

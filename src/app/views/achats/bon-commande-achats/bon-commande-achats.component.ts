@@ -131,7 +131,7 @@ public achats: Achat;
     this.toggleModal();
   }
 
-  addBonCommande(bonCommande:any){
+  addBonCommande(bonCommande?:any){
     this.commandeService.createBonCommande(bonCommande);
   }
   
