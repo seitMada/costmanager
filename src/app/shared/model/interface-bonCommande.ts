@@ -1,3 +1,8 @@
+import { InterfaceAchat } from "./interface-achats";
+import { InterfaceCentreRevenu } from "./interface-centrerevenu";
+import { InterfaceFournisseur } from "./interface-fournisseurs";
+import { InterfaceUnite } from "./interface-unite";
+
 export interface InterfaceBonCommande {
     id?:            number | undefined;
     libelle:string;
@@ -10,8 +15,18 @@ export interface InterfaceBonCommande {
     validation:boolean;
     commentaire:string;
     dateCommande:Date;
-    dateLivraison:Date;
     fournisseurId:number;
     uniteId:number;
     centreId:number;
+
+    fournisseur:InterfaceFournisseur;
+    centre:InterfaceCentreRevenu;
+    unite:InterfaceUnite;
+    achat:InterfaceAchat[]
+
+   
+}
+
+export interface InterfaceBonCommandes{
+    boncommandes: InterfaceBonCommande[];
 }

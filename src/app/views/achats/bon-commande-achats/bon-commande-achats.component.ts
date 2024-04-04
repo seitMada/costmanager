@@ -32,17 +32,16 @@ export class BonCommandeAchatsComponent implements OnInit {
   public modifToggle = true;
   public showlist = true;
   public bonCommandeForm = FormGroup;
-  public modalFournisseur = 'none';
+  public modalFournisseur = 'block';
+  public modalDetailFournisseur = 'none';
 
-  public fournisseur: InterfaceFournisseur;
-  public fournisseurs: Fournisseur;
+  public fournisseur: any;
+  public fournisseurs: any;
   public idFournisseur =0;
   public exploitationId = sessionStorage.getItem('exploitation');
   public centres:any;
   public centre:any;
   public exploitation:any;
-
-// public achat = InterfaceA
 public achat: InterfaceAchat;
 public achats: Achat;
 
@@ -52,6 +51,10 @@ public achats: Achat;
 
   toggleModal() {
     this.toggle = !this.toggle;
+  }
+
+  showDetailFournisseur(fournisseurId:number){
+    this.modalDetailFournisseur ="block";
   }
 
   addToggleModal(){
@@ -111,9 +114,9 @@ public achats: Achat;
     })
   }
 
-  openModalFournisseur(){
-    this.modalFournisseur = 'block';
-  }
+  // openModalFournisseur(){
+  //   this.modalFournisseur = 'block';
+  // }
 
   cancel(){}
 
