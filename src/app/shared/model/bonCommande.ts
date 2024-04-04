@@ -1,11 +1,8 @@
 import { InterfaceBonCommande } from "./interface-bonCommande";
-<<<<<<< HEAD
 import { InterfaceAchat } from "./interface-achats";
 import { InterfaceCentreRevenu } from "./interface-centrerevenu";
 import { InterfaceFournisseur } from "./interface-fournisseurs";
 import { InterfaceUnite } from "./interface-unite";
-=======
->>>>>>> origin/article_fichetechnique
 
 export class BonCommande implements InterfaceBonCommande {
   id?:            number | undefined;
