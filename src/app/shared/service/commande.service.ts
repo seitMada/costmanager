@@ -9,8 +9,9 @@ export class CommandeService {
 
   constructor(private https:HttpClient) { }
 
-  private apiGetCommande = environment.APIGETCOMMANDE
-  private apiCreateCommande = environment.APICREATECOMMANDE
+  private apiGetCommande = environment.APIGETCOMMANDE;
+  private apiCreateCommande = environment.APICREATECOMMANDE;
+  private apiGetArticleByFournisseurIdAndExploitationId = environment.APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID;
 
   public getAllCommande(){
     return this.https.get<any>(this.apiGetCommande);
@@ -19,4 +20,13 @@ export class CommandeService {
   public createBonCommande(commande:any){
     return this.https.post<any>(this.apiCreateCommande,commande);
   }
+
+  public getArticleFournisseurByFournisseurId(fournisseurId:number,exploitationId:any){
+    return this.https.get<any>(this.apiGetArticleByFournisseurIdAndExploitationId + fournisseurId+'/'+exploitationId);
+  }
+
+  // public getArticleExploitationByExploitationId(exploitationId:any){
+  //   return this.https.get<any>(this.apiGetArticleExploitationByExploitationId + exploitationId);
+  // }
+
 }

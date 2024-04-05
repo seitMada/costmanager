@@ -53,10 +53,15 @@ export class BonCommandeAchatsComponent implements OnInit {
   public exploitationId = sessionStorage.getItem('exploitation');
   public centres:any;
   public centre:any;
+  public artFournis:any;
   public exploitation:any;
   public achat: InterfaceAchat;
   public article: Article;
   public articles:InterfaceArticle[];
+  public articleFournisseur:any;
+  public articleFournisseurs:any;
+  public articleExploitation:any;
+  public articleExploitations:any;
   public achats: Achat;
   public num_commande:string = "COM-"+this.today.toLocaleDateString().replaceAll('/','')+this.today.toLocaleTimeString().replaceAll(':','')+this.today.getMilliseconds();
 
@@ -131,12 +136,17 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   showFournisseur(fournisseur: any) {
     this.fournisseurs = fournisseur;
-    console.log(this.fournisseurs);
   }
 
   ShowArticleFournisseurByExploitation(){
     const fournisseur =this.fournisseur;
-    console.log(this.fournisseur);
+    const exploitationId = Number(this.exploitationId)
+    this.commandeService.getArticleFournisseurByFournisseurId(this.fournisseur.id,this.exploitationId).subscribe({
+      next:(artFournisseur) =>{
+        this.articleFournisseurs = artFournisseur;
+        console.log(this.articleFournisseurs);
+      }
+    });
   }
   showCommande(comm: any) {
     this.commandes = comm;

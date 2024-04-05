@@ -183,27 +183,23 @@
               <th>Code</th>
               <th>Famille</th>
               <th>Prix unitaire</th>
-              <th>Unité commande</th>
-              <th>Quantité FT</th>
-              <th>Unité FT</th>
+              <th>Unité</th>
               <th>Type</th>
             </tr>
           </thead>
           <tbody>
-            <tr>
+            <tr *ngFor="let item of articleFournisseurs">
               <td> 
                 <div class="form-check form-example-indeterminate">
                   <input class="form-check-input" id="flexCheckIndeterminate" type="checkbox">
                 </div>
               </td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
-              <td></td>
+              <td>{{ item.articles_libelle}}</td>
+              <td>{{ item.articles_codeArticle}}</td>
+              <td>{{ item.famille_libelle}}</td>
+              <td>{{ item.articlefournisseur_prixReference}}</td>
+              <td>{{ item.unites_abreviation}}</td>
+              <td>{{ item.groupeanalytiques_type}}</td>
             </tr>
           </tbody>
         </table>
