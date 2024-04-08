@@ -1,27 +1,34 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FournisseurService } from "../../../shared/service/fournisseur.service";
 import { CommandeService } from "../../../shared/service/commande.service";
+
+import { FournisseurModalComponent } from '../../../modal/fournisseur-modal/fournisseur-modal.component';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormsModule } from '@angular/forms';
 
 import { InterfaceBonCommande } from '../../../shared/model/interface-bonCommande';
-import { InterfaceFournisseur } from 'src/app/shared/model/interface-fournisseurs';
-import { Fournisseur } from 'src/app/shared/model/fournisseurs';
 import { ExploitationService } from 'src/app/shared/service/exploitation.service';
 import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
 import { InterfaceAchat } from "../../../shared/model/interface-achats";
 import { Achat } from "../../../shared/model/achats";
 import { Article } from 'src/app/shared/model/articles';
 import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
+import { ModalDismissReasons, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 @Component({
   selector: 'app-bon-commande-achats',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule,BsDatepickerModule],
   templateUrl: './bon-commande-achats.component.html',
-  styleUrl: './bon-commande-achats.component.scss'
+  styleUrl: './bon-commande-achats.component.scss',
+  providers:[NgbModalConfig,NgbModal]
 })
 export class BonCommandeAchatsComponent implements OnInit {
+
+  @ViewChild('contentFournisseur') contentFournisseur: ElementRef;
+  
+
   constructor(
     public router: Router,
     public route: ActivatedRoute,
@@ -29,11 +36,17 @@ export class BonCommandeAchatsComponent implements OnInit {
     private commandeService: CommandeService,
     private exploitationService: ExploitationService,
     private centreRevenuService: CentreRevenuService,
+    private modalService: NgbModal,
+    config:NgbModalConfig,
   ) { 
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
+    config.backdrop = 'static';
+    config.keyboard = false;
   }
   public toggle = true;
   public modifToggle = true;
+  // private modalService = inject(NgbModal);
+  closeResult = '';
   public showlist = true;
   public bonCommandeForm = FormGroup;
   public modalFournisseur = 'block';
@@ -66,6 +79,9 @@ export class BonCommandeAchatsComponent implements OnInit {
   public num_commande:string = "COM-"+this.today.toLocaleDateString().replaceAll('/','')+this.today.toLocaleTimeString().replaceAll(':','')+this.today.getMilliseconds();
 
   public commandes: any;
+  public reason:any
+  public isChecked:boolean = false;
+  public validateArticles:any[];
 
   public bonCommande: InterfaceBonCommande;
 
@@ -77,7 +93,7 @@ export class BonCommandeAchatsComponent implements OnInit {
       this.selectOnFournisseur();
       this.modifToggle = !this.modifToggle;
       this.toggle = (this.toggle === false ? true : false);
-      this.modalFournisseur = 'none';
+      this.modalService.dismissAll();
       this.showBtnAddArticle = 'inline-block'
       this.showBtnAddBC = 'none';
       this.showSupprBc = 'inline-block';
@@ -94,9 +110,11 @@ export class BonCommandeAchatsComponent implements OnInit {
 
 
   ngOnInit(): void {
+    
     this.fournisseurService.getAllFournisseur().subscribe({
       next: (fournisseur) => {
-        this.fournisseurs = fournisseur;        
+        this.fournisseurs = fournisseur;
+        this.openModalFournisseur();        
       },
       error: (error) => {
         alert('Liste fournisseur vide')
@@ -172,12 +190,41 @@ export class BonCommandeAchatsComponent implements OnInit {
     })
   }
 
-  public openModalArticle(){
-    this.modalArticle ='block';
-    this.ShowArticleFournisseurByExploitation();
+  private getDismissReason(reason:any):string{
+    switch(reason){
+      case ModalDismissReasons.ESC:
+        return 'by pressing ESC';
+      case ModalDismissReasons.BACKDROP_CLICK:
+        return 'by clicking on a backdrop';
+      default:
+        return `with: ${reason}`;
+    }
   }
 
-  public closeToggleModalArticle(){
-    this.modalArticle ='none';
+  public openModalArticle(content:TemplateRef<any>){
+    this.modalService.open(content,{ size: 'xl',ariaDescribedBy:'modal-basic-title'});
+    this.ShowArticleFournisseurByExploitation();
+    
   }
+
+  public openModalFournisseur(){
+    const modalRef= this.modalService.open(this.contentFournisseur).result.then(
+      (result) =>{
+        this.closeResult = 'Closed with: ${result}';
+        if (this.closeResult == 'Closed with: Save click') {
+          this.showFournisseur(this.fournisseur);
+        }
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+      }
+    );
+    
+  }
+
+  public onCheckboxChange(event: any){
+      // this.validateArticles.push(this.articleFournisseur);
+      console.log(this.articleFournisseur.id);
+  }
+
 }

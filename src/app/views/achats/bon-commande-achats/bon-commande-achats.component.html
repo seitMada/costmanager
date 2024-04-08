@@ -6,10 +6,10 @@
       <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
     </div>
     <div class="bd-highlight">
-      <button class="btn btn-outline-success btn-sm me-1"  title="Ajouter bon de commande" [ngStyle]="{display:showBtnAddBC}">
+      <button class="btn btn-outline-success btn-sm me-1" (click)="openModalFournisseur()"  title="Ajouter bon de commande" [ngStyle]="{display:showBtnAddBC}">
         <i class="fas fa-plus"></i>
       </button>
-      <button class="btn btn-outline-success btn-sm me-1" (click)="openModalArticle()"  title="Ajouter article"[ngStyle]="{display:showBtnAddArticle}">
+      <button class="btn btn-outline-success btn-sm me-1" (click)="openModalArticle(content)"  title="Ajouter article"[ngStyle]="{display:showBtnAddArticle}">
         <i class="fas fa-plus"></i>
       </button>
       <button [disabled]="!modifToggle" class="btn btn-outline-danger btn-sm me-1" [ngStyle]="{display:showSupprBc}" title="Supprimer bon de commande">
@@ -28,7 +28,7 @@
           <div class="col-sm-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="basic-addon1">Date de commande</span>
-              <input type="text" class="form-control col-7" name="datecommande" [(ngModel)]="dates.today" autocomplete="off" bsDatepicker >
+              <input type="text" class="form-control col-7"  bsDatepicker [bsConfig]="bsConfig" name="datecommande" [(ngModel)]="dates.today" autocomplete="off" >
             </div>
           </div>
           <div class="col-sm-6">
@@ -73,11 +73,12 @@
     </div>
   </div>
 
-  <div class="card d-flex my-3" *ngIf="!toggle">
-    <div class="card-body overflow-scroll py-1" style="height: 450px;">
+  <div class="card d-flex my-2" *ngIf="!toggle">
+    <div class="card-body overflow-scroll py-1" style="height: 350px;">
       <table class="table table-striped my-3">
         <thead>
           <tr>
+            <th></th>
             <th>Famille</th>
             <th>Designation</th>
             <th>Qt commandé</th>
@@ -91,6 +92,11 @@
         </thead>
         <tbody>
           <tr>
+            <td>
+              <div class="form-check form-example-indeterminate">
+                <input class="form-check-input"  id="flexCheckIndeterminate" type="checkbox">
+              </div>
+            </td>
             <td></td>
             <td></td>
             <td></td>
@@ -103,6 +109,13 @@
           </tr>
         </tbody>
       </table>
+    </div>
+  </div>
+
+  <div class="card d-flex my-2" *ngIf="!toggle">
+    <div class="card-body">
+      <div class="col-7">Montant</div>
+      <div class="col-5">€</div>
     </div>
   </div>
 
@@ -119,7 +132,6 @@
           <th scope="col" class="col-2">Prix Unitaire</th>
           <th scope="col" class="col-2">Montant HT</th>
           <th scope="col" class="col-2">Rémise</th>
-          
         </tr>
         </thead>
         <tbody>
@@ -139,76 +151,66 @@
   </div>
   
 
-  
-<div class="modal" [ngStyle]="{display:modalFournisseur}" id="staticBackdropLive" data-coreui-backdrop="static" data-coreui-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLiveLabel" aria-hidden="true">
-  <div class="modal-dialog ">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLiveLabel">Fournisseur</h5>
-        <button class="btn-close" type="button" (click)="closeToggleModal()" data-coreui-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <form #listFournisseur="">
-            <div class="input-group">
-              <span class="input-group-text col-5" id="basic-addon1">Liste des fournisseurs</span>
-              <select class="form-control col-7"[(ngModel)]="fournisseur" [ngModelOptions]="{standalone: true}" [required]="true" aria-label="fournisseur" aria-describedby="basic-addon1">
-                <option [ngValue]="line.id" *ngFor="let line of fournisseurs" >{{line.raison_social}}</option>
-              </select>
+
+ <ng-template #content let-modal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h5 class="modal-title">Ajout Article</h5>
+    <button class="btn-close" type="button" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Séléction</th>
+          <th>Désignation</th>
+          <th>Code</th>
+          <th>Famille</th>
+          <th>Prix unitaire</th>
+          <th>Unité</th>
+          <th>Type</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of articleFournisseurs">
+          <td> 
+            <div class="form-check form-example-indeterminate">
+              <input class="form-check-input" [(ngModel)]="articleFournisseur"  id="flexCheckIndeterminate" (change)="onCheckboxChange($event)" type="checkbox">
             </div>
-        </form>
-      </div>
-      <div class="text-center">
-        <button class="btn btn-success m-1" (click)="addToggleModal()" type="button">Valider</button>
-        <button class="btn btn-danger m-1" (click)="closeToggleModal()" type="button" data-coreui-dismiss="modal">Annuler</button>
-        
-      </div>
-    </div>
+          </td>
+          <td>{{ item.articles_libelle}}</td>
+          <td>{{ item.articles_codeArticle}}</td>
+          <td>{{ item.famille_libelle}}</td>
+          <td>{{ item.articlefournisseur_prixReference | number:'1.2-2'}}</td>
+          <td>{{ item.unites_abreviation}}</td>
+          <td>{{ item.groupeanalytiques_type}}</td>
+        </tr>
+      </tbody>
+    </table>
   </div>
-</div>
-
-
-<div class="modal" [ngStyle]="{display:modalArticle}" id="staticBackdropLive" data-coreui-backdrop="static" data-coreui-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLiveLabel" aria-hidden="true">
-  <div class="modal-dialog modal-xl">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="staticBackdropLiveLabel">Ajout Article</h5>
-        <button class="btn-close" type="button" (click)="closeToggleModalArticle()" data-coreui-dismiss="modal" aria-label="Close"></button>
-      </div>
-      <div class="modal-body">
-        <table class="table table-striped">
-          <thead>
-            <tr>
-              <th>Séléction</th>
-              <th>Désignation</th>
-              <th>Code</th>
-              <th>Famille</th>
-              <th>Prix unitaire</th>
-              <th>Unité</th>
-              <th>Type</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let item of articleFournisseurs">
-              <td> 
-                <div class="form-check form-example-indeterminate">
-                  <input class="form-check-input" id="flexCheckIndeterminate" type="checkbox">
-                </div>
-              </td>
-              <td>{{ item.articles_libelle}}</td>
-              <td>{{ item.articles_codeArticle}}</td>
-              <td>{{ item.famille_libelle}}</td>
-              <td>{{ item.articlefournisseur_prixReference}}</td>
-              <td>{{ item.unites_abreviation}}</td>
-              <td>{{ item.groupeanalytiques_type}}</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-      <div class="text-center">
-        <button class="btn btn-success m-1"  type="button">Valider</button>
-        <button class="btn btn-danger m-1" (click)="closeToggleModalArticle()" type="button" data-coreui-dismiss="modal">Annuler</button>
-        
-      </div>
-    </div>
+  <div class="text-center">
+    <button class="btn btn-success m-1" type="button">Valider</button>
+    <button class="btn btn-danger m-1" (click)="modal.dismiss('Cross click')" type="button" data-coreui-dismiss="modal">Annuler</button>
   </div>
-</div>
+</ng-template>
+
+<ng-template #contentFournisseur let-modal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h5 class="modal-title">Liste Fournisseur</h5>
+    <button class="btn-close" type="button"(click)="modal.dismiss('Close click')" data-coreui-dismiss="modal" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <form>
+        <div class="input-group">
+          <span class="input-group-text col-5" id="basic-addon1">Liste des fournisseurs</span>
+          <select class="form-control col-7"[(ngModel)]="fournisseur" [ngModelOptions]="{standalone: true}" [required]="true" aria-label="fournisseur" aria-describedby="basic-addon1">
+            <option [ngValue]="line.id" *ngFor="let line of fournisseurs" >{{line.raison_social}}</option>
+          </select>
+        </div>
+    </form>
+  </div>
+  <div class="text-center">
+    <button class="btn btn-success m-1" (click)="addToggleModal()"  type="button">Valider</button>
+    <button class="btn btn-danger m-1"(click)="modal.dismiss('Cross click')" type="button" data-coreui-dismiss="modal">Annuler</button>
+    
+  </div>
+</ng-template>

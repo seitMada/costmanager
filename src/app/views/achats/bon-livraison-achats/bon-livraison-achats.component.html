@@ -38,4 +38,24 @@
     </div>
   
 </div>
-  
+<ng-template #contentFournisseur let-modal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h5 class="modal-title">Liste Fournisseur</h5>
+    <button class="btn-close" type="button"(click)="modal.dismiss('Close click')" data-coreui-dismiss="modal" aria-label="Close"></button>
+  </div>
+  <div class="modal-body">
+    <form>
+        <div class="input-group">
+          <span class="input-group-text col-5" id="basic-addon1">Liste des fournisseurs</span>
+          <select class="form-control col-7"[(ngModel)]="fournisseur" [ngModelOptions]="{standalone: true}" [required]="true" aria-label="fournisseur" aria-describedby="basic-addon1">
+            <option [ngValue]="line.id" *ngFor="let line of fournisseurs" >{{line.raison_social}}</option>
+          </select>
+        </div>
+    </form>
+  </div>
+  <div class="text-center">
+    <button class="btn btn-success m-1" (click)="addToggleModal()"  type="button">Valider</button>
+    <button class="btn btn-danger m-1"(click)="modal.dismiss('Cross click')" type="button" data-coreui-dismiss="modal">Annuler</button>
+    
+  </div>
+</ng-template>
