@@ -7,16 +7,53 @@ import { InterfaceFournisseur } from '../model/interface-fournisseurs';
   providedIn: 'root'
 })
 export class FournisseurService {
-  private apiGetFournisseur = environment.APIGETFOURNISSEUR
-  private apiOneFournisseur = environment.APIONEFOURNISSEUR
+  private apiGetFournisseur = environment.APIGETFOURNISSEUR;
+  private apiGetFournisseurByExploitation = environment.APIGETFOURNISSEURBYEXPLOITATION;
+  private apiOneFournisseur = environment.APIONEFOURNISSEUR;
+  private apiFournisseurById = environment.APIFOURNISSEURBYID;
+  private apiUpdateFournisseur = environment.APIUPDATEFOURNISSEUR;
+  private apiAddFournisseur = environment.APIADDFOURNISSEUR;
 
-  constructor(private https:HttpClient) { }
+  private apiUpdateFournisseurExploitation = environment.APIUPDATEFOURNISSEUREXPLOITATION;
+  private apiGetExploitationByFournisseur = environment.APIGETEXPLOITATIONBYFOURNISSEUR;
 
-  public getAllFournisseur(){
+  private apiGetAdresse = environment.APIGETADRESS;
+
+  constructor(private https: HttpClient) { }
+
+  public getAllFournisseur() {
     return this.https.get<any>(this.apiGetFournisseur);
   }
+  
+  public getAllFournisseurByExploitation(id: number) {
+    return this.https.get<any>(this.apiGetFournisseurByExploitation + id);
+  }
 
-  public getOneFournisseur(fournisseur:InterfaceFournisseur){
-    return this.https.get<any>(this.apiOneFournisseur+fournisseur);
+  public getOneFournisseur(fournisseur: InterfaceFournisseur) {
+    return this.https.get<any>(this.apiOneFournisseur + fournisseur);
+  }
+
+  public getFournisseurById(id: number) {
+    return this.https.get<any>(this.apiFournisseurById + id);
+  }
+
+  public updateFournisseur(id: number, fournisseur: InterfaceFournisseur) {
+    return this.https.patch(this.apiUpdateFournisseur + id, fournisseur);
+  }
+
+  public addFournisseur(fournisseur: InterfaceFournisseur) {
+    return this.https.post(this.apiAddFournisseur, fournisseur);
+  }
+
+  public getAllAdresse() {
+    return this.https.get<any>(this.apiGetAdresse);
+  }
+
+  public updateFournisseurExploitation(id: number, exploitationid: number[]) {
+    return this.https.post(this.apiUpdateFournisseurExploitation + id, exploitationid);
+  }
+
+  public getAllExploitationByFournisseur(id: number) {
+    return this.https.get<any>(this.apiGetExploitationByFournisseur + id);
   }
 }

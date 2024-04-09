@@ -16,7 +16,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
   public newMessages = new Array(4)
   public newTasks = new Array(5)
   public newNotifications = new Array(5)
-  
+
   public exploitation = +(sessionStorage.getItem('exploitation') || 3);
 
   constructor(
@@ -25,23 +25,22 @@ export class DefaultHeaderComponent extends HeaderComponent {
     super();
   }
 
-  public operateurData: InterfaceOperateur= {
-    id:0,
+  public operateurData: InterfaceOperateur = {
+    id: 0,
     nom: '',
     prenom: '',
     email: '',
-    mdp:  '',
+    mdp: '',
     compteConnecte: false,
     actif: true,
     login_count: 0,
     code: '',
-    adresseId: 0,
-    contactId: 0,
-    exploitationId:     0,
-    centreId:           0
+    fournisseurId: null,
+    telephone: '',
+    civilite: ''
   };
 
-  public onLogout(){
+  public onLogout() {
     const id = sessionStorage.getItem('id') || 0;
     this.loginService.logout({ id: +id });
   }

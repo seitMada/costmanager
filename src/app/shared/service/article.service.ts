@@ -20,6 +20,9 @@ export class ArticleService {
   private apiPostDeleteAllergeneArticle = environment.APIPOSTDELETEALLERGENEARTICLE;
   private apiPostDesactiveArticle = environment.APIPOSTDESACTIVEARTICLE;
   private apiPostDesactiveArticles = environment.APIPOSTDESACTIVEARTICLES;
+  private apiGetArticleExclude = environment.APIGETARTICLEEXCLUDE;
+
+  private apiGetArticleByFournisseur = environment.APIGETARTICLEBYFOURNISSEUR;
 
   constructor(private https: HttpClient){}
 
@@ -69,5 +72,13 @@ export class ArticleService {
 
   public desactiveArticles(data: any) {
     return this.https.post(this.apiPostDesactiveArticles, data);
+  }
+
+  public getArticlesByFournisseur(id: number){
+    return this.https.get<any>(this.apiGetArticleByFournisseur + id);
+  }
+
+  public getArticlesExclude(id: number, articleId: number[]){
+    return this.https.post(this.apiGetArticleExclude, { id: id, article: articleId });
   }
 }

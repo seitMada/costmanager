@@ -1,3 +1,7 @@
+import { Adress } from "./adresse";
+import { InterfaceAdresse, InterfaceAdresses } from "./interface-adresse";
+import { InterfaceContact, InterfaceContacts, InterfaceOperateur, InterfaceOperateurs } from "./interface-operateur";
+
 export interface InterfaceFournisseur {
     id?: number | undefined;
     raison_social: string;
@@ -10,8 +14,12 @@ export interface InterfaceFournisseur {
     codeComptable: string;
     modereglementId: number;
     commentaires: string;
-    adresse:string;
+    adresseId: number | null;
+    // adresse:string;
+    selected?: boolean;
 
+    adresse: Adress;
+    operateur: InterfaceOperateur[];
     // modereglement:
 }
 

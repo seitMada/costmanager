@@ -46,6 +46,7 @@ export class ArticlesComponent implements OnInit {
 
 
   public toggle = true;
+  public addToggle = true;
   public modifToggle = true;
   public exploitationToggle = true;
   public active_1 = 4;
@@ -56,6 +57,7 @@ export class ArticlesComponent implements OnInit {
 
   toggleModal() {
     this.toggle = !this.toggle;
+    this.addToggle = !this.addToggle;
     this.initArticle();
   }
 
@@ -208,7 +210,7 @@ export class ArticlesComponent implements OnInit {
   }
 
   open(content: TemplateRef<any>) {
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title' }).result.then(
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
         console.log(this.closeResult)
@@ -284,6 +286,7 @@ export class ArticlesComponent implements OnInit {
         this.article = {
           codeArticle: '',
           libelle: '...',
+          cout: 0,
           groupeanalytiqueId: 1,
           categoriesId: 1,
           famillesId: 1,

@@ -8,8 +8,26 @@ export interface InterfaceOperateur {
     actif: boolean;
     login_count: number;
     code: string;
-    adresseId: number;
-    contactId: number;
-    exploitationId: number;
-    centreId: number;
+    fournisseurId: number | null;
+    exploitationId?: number;
+    centreId?: number;
+    telephone: string;
+    civilite: string;
+    selected?:boolean;
+}
+
+export interface InterfaceOperateurs {
+    operateurs: InterfaceOperateur[];
+}
+
+export interface InterfaceContact {
+    id?: number;
+    telephone: string;
+    fournisseurId: number;
+
+    operateurs: InterfaceOperateurs;
+}
+
+export interface InterfaceContacts {
+    contacts: InterfaceContact[];
 }

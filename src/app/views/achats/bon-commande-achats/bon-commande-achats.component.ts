@@ -6,7 +6,6 @@ import { CommandeService } from "../../../shared/service/commande.service";
 import { FournisseurModalComponent } from '../../../modal/fournisseur-modal/fournisseur-modal.component';
 import { CommonModule } from '@angular/common';
 import { FormGroup, FormsModule } from '@angular/forms';
-
 import { InterfaceBonCommande } from '../../../shared/model/interface-bonCommande';
 import { ExploitationService } from 'src/app/shared/service/exploitation.service';
 import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
@@ -16,6 +15,7 @@ import { Article } from 'src/app/shared/model/articles';
 import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { ModalDismissReasons, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+
 @Component({
   selector: 'app-bon-commande-achats',
   standalone: true,

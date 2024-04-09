@@ -15,7 +15,7 @@
         <i class="fas fa-pencil"></i>
       </button>
       <button class="btn btn-outline-success btn-sm me-1" title="Ajouter fichetechnique" (click)="addToggleModal();"
-        [disabled]="!modifToggle">
+        [disabled]="!addToggle">
         <i class="fas fa-plus"></i>
       </button>
       <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer fichetechnique" (click)="delete()"
@@ -82,7 +82,7 @@
               <div class="input-group col">
                 <span class="input-group-text col-6" id="cout">Côut</span>
                 <input type="text" class="form-control col-3 bg-white" aria-label="cout" aria-describedby="basic-addon1"
-                  [(ngModel)]="fichetechnique.cout" [disabled]="modifToggle">
+                  [(ngModel)]="fichetechnique.cout" disabled="true">
                 <span class="input-group-text col-2">€</span>
               </div>
               <div class="input-group col">
@@ -220,7 +220,7 @@
         <div class="card col-5">
           <div class=" text-center fs-7 fw-bold">
             <button type="button" class="btn btn-sm btn-light position-absolute top-0 start-0 m-1"
-              (click)="open(content)">
+              (click)="open(content)" *ngIf="!addToggle">
               <i class="fas fa-pencil"></i>
             </button>
             COMPOSITIONS
@@ -231,21 +231,19 @@
                 <thead>
                   <tr>
                     <th scope="col" class="col-4">Désignation</th>
-                    <th scope="col" class="col-3">Code</th>
-                    <th scope="col" class="col-2">Quantité</th>
+                    <th scope="col" class="col-3">Quantité</th>
+                    <th scope="col" class="col-2">Unité</th>
                     <th scope="col" class="col-1">Type</th>
-                    <th scope="col" class="col-1">Unité</th>
                     <th scope="col" class="col-2">Coût</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr>
-                    <td scope="col" class="col-4">Pomme</td>
-                    <td scope="col" class="col-3">1000</td>
-                    <td scope="col" class="col-2">1</td>
-                    <td scope="col" class="col-1">A</td>
-                    <td scope="col" class="col-1">KG</td>
-                    <td scope="col" class="col-2">1</td>
+                  <tr *ngFor="let line of compositions">
+                    <td class="col-4">{{ (line.article == null)? line.fichetechniqueCompositon?.libelle : line.article.libelle }}</td>
+                    <td class="col-3">{{line.quantite}}</td>
+                    <td class="col-2">{{line.unite.libelle}}</td>
+                    <td class="col-1">{{ (line.articleId == null)? 'FT' : 'A' }}</td>
+                    <td class="col-2">{{ line.cout }} €</td>
                   </tr>
                 </tbody>
               </table>
@@ -253,19 +251,19 @@
             <div class="col-12 mb-1">
               <div class="input-group input-group-sm">
                 <span class="input-group-text col-6 fw-bold">Coût FT</span>
-                <span class="input-group-text bg-white col-6 fw-bold">0.00 €</span>
+                <span class="input-group-text bg-white col-6 fw-bold">{{cout.fichetechnique}} €</span>
               </div>
             </div>
             <div class="col-6">
               <div class="input-group input-group-sm">
                 <span class="input-group-text col-8 fw-bold">Coût alimentaire</span>
-                <span class="input-group-text bg-white col-4 fw-bold">0.00 €</span>
+                <span class="input-group-text bg-white col-4 fw-bold">{{cout.alimentaire}} €</span>
               </div>
             </div>
             <div class="col-6">
               <div class="input-group input-group-sm">
                 <span class="input-group-text col-8 fw-bold">Coût emballage</span>
-                <span class="input-group-text bg-white col-4 fw-bold">0.00 €</span>
+                <span class="input-group-text bg-white col-4 fw-bold">{{cout.emballage}} €</span>
               </div>
             </div>
           </div>
@@ -314,7 +312,7 @@
                     <tr *ngFor="let line of articles">
                       <td class="col-10">{{line.libelle}}</td>
                       <td class="col-2">
-                        <button type="button" class="btn btn-sm btn-info">
+                        <button type="button" class="btn btn-sm btn-outline-info" (click)="changeCompositionArticle(line)">
                           <i class="fas fa-share"></i>
                         </button>
                       </td>
@@ -333,7 +331,7 @@
                     <tr *ngFor="let line of fichetechniques">
                       <td class="col-10">{{line.libelle}}</td>
                       <td class="col-2">
-                        <button type="button" class="btn btn-sm btn-info">
+                        <button type="button" class="btn btn-sm btn-outline-info" (click)="changeCompositionFichetechnique(line)">
                           <i class="fas fa-share"></i>
                         </button>
                       </td>
@@ -357,16 +355,20 @@
               <th class="col-2" scope="col">Coût</th>
             </thead>
             <tbody>
-              <tr *ngFor="let line of compositionList">
-                <td>
-                  <button type="button" class="btn btn-sm btn-primary">
+              <tr *ngFor="let line of compositions">
+                <td class="col-1">
+                  <button type="button" class="btn btn-sm btn-outline-warning" (click)="deleteComposition(line)">
                     <i class="fas fa-reply"></i>
                   </button>
                 </td>
-                <td>{{line.libelle}}</td>
-                <td>{{line.libelle}}</td>
-                <td>{{line.libelle}}</td>
-                <td>{{line.libelle}}</td>
+                <td class="col-4">{{ (line.article == null)? line.fichetechniqueCompositon?.libelle :
+                  line.article.libelle }}</td>
+                <td class="col-3">
+                  <input type="number" name="{{line.id}}" id="{{line.id}}" class="form-control" [(ngModel)]="line.quantite" 
+                    min="0" step="0.05">
+                </td>
+                <td class="col-2">{{line.unite.libelle}}</td>
+                <td class="col-2">{{ line.cout }} €</td>
               </tr>
             </tbody>
           </table>

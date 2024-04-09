@@ -4,6 +4,7 @@ import { InterfaceCategories } from "./interface-categories";
 import { InterfaceFamilles } from "./interface-familles";
 import { InterfaceUnite } from "./interface-unite";
 import { InterfaceGroupeanalytiques } from "./interface-groupeanalytiques";
+import { InterfaceComposition, InterfaceCompositions } from "./interface-compositions";
 
 export interface InterfaceFichetechnique {
     id?: number;
@@ -18,6 +19,7 @@ export interface InterfaceFichetechnique {
     selected?: boolean;
 
     exploitation: InterfaceExploitations[];
+    composition: InterfaceComposition[];
     categorie: InterfaceCategories;
     famille: InterfaceFamilles;
     unite: InterfaceUnite;

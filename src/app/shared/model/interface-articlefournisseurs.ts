@@ -1,5 +1,6 @@
 import { InterfaceFournisseur } from "./interface-fournisseurs";
 import { IntefaceConditionnement } from "./inteface-conditionnements";
+import { InterfaceArticle } from "./interface-articles";
 
 export interface InterfaceArticlefournisseurs {
     id?: number,
@@ -10,6 +11,7 @@ export interface InterfaceArticlefournisseurs {
     prixReferencePrecedent: number,
     commentaire: string,
 
+    article: InterfaceArticle,
     fournisseur: InterfaceFournisseur,
     conditionnement: IntefaceConditionnement[]
 }

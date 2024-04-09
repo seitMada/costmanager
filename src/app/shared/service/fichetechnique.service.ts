@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { Fichetechnique } from '../model/fichetechniques';
 import { InterfaceFichetechnique } from '../model/interface-fichetechnique';
+import { InterfaceComposition } from '../model/interface-compositions';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,9 @@ export class FichetechniqueService {
   private apiPostDesactiveFichetechniques = environment.APIPOSTDESACTIVEFICHETECHNIQUES;
   private apiDeleteFichetechnique = environment.APIPOSTDELETEFICHETECHNIQUE;
   private apiDeleteFichetechniques = environment.APIPOSTDELETEFICHETECHNIQUES;
+
+  private apiUpdateComposition = environment.APIUPDATECOMPOSITION;
+  private apiGetCompositionByFichetechnique = environment.APIGETCOMPOSITIONBYFICHETECHNIQUE;
 
   constructor(private https: HttpClient) { }
 
@@ -61,5 +65,13 @@ export class FichetechniqueService {
 
   public desactiveFichetechniques(data: any) {
     return this.https.post(this.apiPostDesactiveFichetechniques, data);
+  }
+
+  public updateComposition(id: number, composition: InterfaceComposition[]) {
+    return this.https.post(this.apiUpdateComposition + id, composition);
+  }
+
+  public getCompositionByFichetechnique(id: number) {
+    return this.https.get<any>(this.apiGetCompositionByFichetechnique + id);
   }
 }

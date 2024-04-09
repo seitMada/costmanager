@@ -9,7 +9,7 @@ import { FichetechniqueService } from "../../../shared/service/fichetechnique.se
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { InterfaceFichetechnique } from "../../../shared/model/interface-fichetechnique";
-import { Compositions, Fichetechnique } from "../../../shared/model/fichetechniques";
+import { Composition, Compositions, Fichetechnique } from "../../../shared/model/fichetechniques";
 import { InterfaceFamilles, InterfaceFamilless } from '../../../shared/model/interface-familles';
 import { Famille, Familles } from "../../../shared/model/familles";
 import { FamillesService } from '../../../shared/service/familles.service';
@@ -26,6 +26,8 @@ import { ExploitationService } from 'src/app/shared/service/exploitation.service
 import { Exploitations } from "../../../shared/model/exploitations";
 import { Article } from 'src/app/shared/model/articles';
 import { ArticleService } from 'src/app/shared/service/article.service';
+import { InterfaceComposition } from 'src/app/shared/model/interface-compositions';
+import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 
 @Component({
   selector: 'app-fiche-technique',
@@ -54,18 +56,24 @@ export class FicheTechniqueComponent implements OnInit {
   public bsConfig: { containerClass: string; locale: string; dateInputFormat: string; };
 
   public toggle = true;
+  public addToggle = true;
   public modifToggle = true;
   public exploitationToggle = true;
 
-  public articles: Article;
-  public fichetechniques: Fichetechnique;
+  public articles: InterfaceArticle[];
+  public fichetechniques: InterfaceFichetechnique[];
   public fichetechnique: InterfaceFichetechnique;
   public familles: Familles;
   public categories: Categories;
   public unites: Unites;
   public groupeanalytiques: Groupeanalytiques;
   public exploitations: Exploitations;
-  public compositions: Compositions;
+  public cout = {
+    fichetechnique: 0,
+    emballage: 0,
+    alimentaire: 0
+  }
+  public compositions: InterfaceComposition[];
   public compositionList: [
     {
       libelle: '',
@@ -80,13 +88,13 @@ export class FicheTechniqueComponent implements OnInit {
   private idFichetechnique: number = 0;
 
   private today = new Date();
-  
+
   public dates = {
     debut: new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate()),
     fin: this.today
   }
   public exploitation = +(sessionStorage.getItem('exploitation') || 3);
-  
+
   private modalService = inject(NgbModal);
   closeResult = '';
   activeComposition = 1;
@@ -118,8 +126,10 @@ export class FicheTechniqueComponent implements OnInit {
   }
 
   show(fichetechnique: InterfaceFichetechnique) {
-    this.idFichetechnique = fichetechnique.id? fichetechnique.id : 0;
+    this.idFichetechnique = fichetechnique.id ? fichetechnique.id : 0;
     this.fichetechnique = fichetechnique;
+    this.compositions = fichetechnique.composition;
+    // console.log(this.compositions)
     const dat = {
       groupeId: this.fichetechnique.groupeanalytiqueId,
       type: 'A'
@@ -132,6 +142,11 @@ export class FicheTechniqueComponent implements OnInit {
         const { familles, exploitations } = data;
         this.familles = familles;
         this.exploitations = exploitations;
+        for (const composition of this.compositions) {
+          this.articles = this.articles.filter(row => row.id !== composition.articleId);
+          this.fichetechniques = this.fichetechniques.filter(row => row.id !== composition.ftId);
+        }
+        this.calculCout(this.compositions);
         this.fichetechniqueService.getAllExploitationByFichetechnique(this.idFichetechnique).subscribe({
           next: (fichetechniqueExploitation: any) => {
             for (const e of this.exploitations) {
@@ -173,7 +188,7 @@ export class FicheTechniqueComponent implements OnInit {
         const exploitation: number[] = [];
         for (const i of this.exploitations) {
           if (i.selected === true) {
-            exploitation.push(i.id? i.id : 0)
+            exploitation.push(i.id ? i.id : 0)
           }
         }
         this.fichetechniqueService.updateFichetechniqueExploitation(this.idFichetechnique, exploitation).subscribe(() => {
@@ -202,14 +217,26 @@ export class FicheTechniqueComponent implements OnInit {
   }
 
   cancel() {
-
+    if (this.idFichetechnique === 0) {
+      this.toggle = true;
+      this.modifToggle = true;
+      this.exploitationToggle = true;
+      this.resetFichetechnique();
+    } else {
+      this.fichetechniqueService.getFichetechniqueById(this.idFichetechnique).subscribe({
+        next: (fiches) => {
+          this.fichetechnique = fiches;
+          this.modifToggle = !this.modifToggle;
+        },
+      })
+    }
   }
 
   delete() {
     let exploitation: number[] = [];
     if (this.exploitation === 3) {
       for (const e of this.exploitations) {
-        exploitation.push(e.id? e.id : 0)
+        exploitation.push(e.id ? e.id : 0)
       }
     } else {
       exploitation = [this.exploitation]
@@ -234,7 +261,7 @@ export class FicheTechniqueComponent implements OnInit {
     }
     if (this.exploitation === 3) {
       for (const e of this.exploitations) {
-        exploitation.push(e.id? e.id : 0)
+        exploitation.push(e.id ? e.id : 0)
       }
     } else {
       exploitation = [this.exploitation]
@@ -253,6 +280,7 @@ export class FicheTechniqueComponent implements OnInit {
 
   toggleModal() {
     this.toggle = !this.toggle;
+    this.addToggle = !this.addToggle;
     this.initFichetechnique();
   }
 
@@ -291,6 +319,7 @@ export class FicheTechniqueComponent implements OnInit {
           groupeanalytiqueId: 0,
 
           exploitation: [],
+          composition: [],
           categorie: categorie,
           famille: famille,
           unite: unite,
@@ -304,18 +333,18 @@ export class FicheTechniqueComponent implements OnInit {
   }
 
   selectUnite(unite: InterfaceUnite) {
-    this.fichetechnique.uniteId = (unite.id? unite.id : 0);
+    this.fichetechnique.uniteId = (unite.id ? unite.id : 0);
     this.fichetechnique.unite = unite;
     console.log(this.fichetechnique.uniteId)
   }
 
   selectGroupeanalytique(groupeanalytique: InterfaceGroupeanalytiques) {
-    this.fichetechnique.groupeanalytiqueId = (groupeanalytique.id? groupeanalytique.id : 0);
+    this.fichetechnique.groupeanalytiqueId = (groupeanalytique.id ? groupeanalytique.id : 0);
     this.fichetechnique.groupeanalytique = groupeanalytique;
     this.fichetechnique.famille.libelle = '';
     const data = {
       groupeId: groupeanalytique.id,
-      type: 'A'
+      type: 'FT'
     }
     this.familleService.getFamilleByGroupe(data).subscribe({
       next: (famille) => {
@@ -325,12 +354,12 @@ export class FicheTechniqueComponent implements OnInit {
   }
 
   selectFamille(famille: InterfaceFamilles) {
-    this.fichetechnique.familleId = (famille.id? famille.id : 0);
+    this.fichetechnique.familleId = (famille.id ? famille.id : 0);
     this.fichetechnique.famille = famille;
   }
 
   selectCategorie(categorie: InterfaceCategories) {
-    this.fichetechnique.categorieId = (categorie.id? categorie.id : 0);
+    this.fichetechnique.categorieId = (categorie.id ? categorie.id : 0);
     this.fichetechnique.categorie = categorie;
   }
 
@@ -346,19 +375,112 @@ export class FicheTechniqueComponent implements OnInit {
   }
 
   open(content: TemplateRef<any>) {
-    this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title' }).result.then(
+    this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
-        console.log(this.closeResult)
+        // console.log(this.closeResult)
         if (this.closeResult == 'Closed with: Save click') {
-          
+          this.fichetechniqueService.updateComposition(this.idFichetechnique, this.compositions).subscribe(() => {
+            alert('Composition du fichetechnique mis à jour');
+          });
         }
       },
       (reason) => {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
         console.log(this.closeResult)
+        this.fichetechniqueService.getFichetechniqueById(this.idFichetechnique).subscribe({
+          next: (fichetechnique) => {
+            this.compositions = [];
+            this.compositions = fichetechnique.composition;
+          }
+        });
       },
     );
   }
 
+  changeCompositionArticle(article: InterfaceArticle) {
+    const composition: InterfaceComposition = {
+      fichetechniqueId: this.idFichetechnique,
+      articleId: article.id ? article.id : 0,
+      ftId: null,
+      quantite: 0,
+      uniteId: article.uniteId,
+      cout: article.cout,
+
+      article: article,
+      fichetechniqueCompositon: null,
+      unite: article.unite,
+    };
+    this.compositions.push(composition);
+    for (const composition of this.compositions) {
+      this.articles = this.articles.filter(row => row.id !== composition.articleId);
+    }
+  }
+
+  changeCompositionFichetechnique(fichetechnique: InterfaceFichetechnique) {
+    const composition: InterfaceComposition = {
+      fichetechniqueId: this.idFichetechnique,
+      articleId: null,
+      ftId: fichetechnique.id ? fichetechnique.id : 0,
+      quantite: 0,
+      uniteId: fichetechnique.uniteId,
+      cout: fichetechnique.cout,
+
+      article: null,
+      fichetechniqueCompositon: fichetechnique,
+      unite: fichetechnique.unite,
+    };
+    this.compositions.push(composition);
+    for (const composition of this.compositions) {
+      this.fichetechniques = this.fichetechniques.filter(row => row.id !== composition.ftId);
+    }
+  }
+
+  deleteComposition(line: any) {
+    if (line.article !== null) {
+      this.compositions = this.compositions.filter(row => row.articleId !== line.articleId);
+      this.articleService.getArticlesByExploitation(this.exploitation).subscribe({
+        next: (article) => {
+          this.articles = article;
+          for (const composition of this.compositions) {
+            this.articles = this.articles.filter(row => row.id !== composition.articleId);
+          }
+        }
+      })
+    } else {
+      this.compositions = this.compositions.filter(row => row.ftId !== line.ftId);
+      this.fichetechniqueService.getFichetechniqueByExploitation(this.exploitation).subscribe({
+        next: (fichetechnique) => {
+          this.fichetechniques = fichetechnique;
+          for (const composition of this.compositions) {
+            this.fichetechniques = this.fichetechniques.filter(row => row.id !== composition.ftId);
+          }
+        }
+      })
+    }
+  }
+
+  calculCout(composition: InterfaceComposition[]) {
+    console.log(composition)
+    let coutAlimentaire = 0;
+    let coutEmballage = 0;
+    for (const item of composition) {
+      if (item.articleId != null) {
+        if (item.article?.groupeanalytiqueId === 1 || item.article?.groupeanalytiqueId === 4) {
+          coutAlimentaire += item.cout;
+        } else {
+          coutEmballage += item.cout;
+        }
+      } else {
+        if (item.fichetechniqueCompositon?.groupeanalytiqueId === 1 || item.fichetechniqueCompositon?.groupeanalytiqueId === 4) {
+          coutAlimentaire += item.cout;
+        } else {
+          coutEmballage += item.cout;
+        }
+      }
+    }
+    this.cout.alimentaire = coutAlimentaire;
+    this.cout.emballage = coutEmballage;
+    this.cout.fichetechnique = coutAlimentaire + coutEmballage;
+  }
 }

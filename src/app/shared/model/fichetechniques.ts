@@ -5,6 +5,7 @@ import { InterfaceFichetechnique } from "./interface-fichetechnique";
 import { InterfaceGroupeanalytiques } from "./interface-groupeanalytiques";
 import { InterfaceUnite } from "./interface-unite";
 import { InterfaceComposition, InterfaceCompositions } from "./interface-compositions";
+import { InterfaceArticle } from "./interface-articles";
 
 export class Fichetechnique implements InterfaceFichetechnique {
     fichetechniques: InterfaceFichetechnique[];
@@ -20,6 +21,7 @@ export class Fichetechnique implements InterfaceFichetechnique {
     groupeanalytiqueId: number;
 
     exploitation: InterfaceExploitations[];
+    composition: InterfaceComposition[];
     categorie: InterfaceCategories;
     famille: InterfaceFamilles;
     unite: InterfaceUnite;
@@ -39,20 +41,28 @@ export class Fichetechnique implements InterfaceFichetechnique {
 export class Composition implements InterfaceComposition {
     id?: number | undefined;
     fichetechniqueId: number;
-    articleId: number;
+    articleId: number | null;
+    ftId: number | null;
     quantite: number;
     uniteId: number;
+    cout: number;
+    
+    article: InterfaceArticle | null;
+    // fichetechnique: InterfaceFichetechnique;
+    fichetechniqueCompositon: InterfaceFichetechnique | null;
+    unite: InterfaceUnite;
 
-    constructor(compositionInterface: InterfaceComposition = {
-        fichetechniqueId: 0,
-        articleId: 0,
-        quantite: 0,
-        uniteId: 0,
-    }) {
+    constructor(compositionInterface: InterfaceComposition) {
         this.fichetechniqueId = compositionInterface.fichetechniqueId;
         this.articleId = compositionInterface.articleId;
+        this.ftId = compositionInterface.ftId;
         this.quantite = compositionInterface.quantite;
+        this.cout = compositionInterface.cout;
         this.uniteId = compositionInterface.uniteId;
+        this.article = compositionInterface.article;
+        // this.fichetechnique = compositionInterface.fichetechnique;
+        this.fichetechniqueCompositon = compositionInterface.fichetechniqueCompositon;
+        this.unite = compositionInterface.unite;
     }
 }
 

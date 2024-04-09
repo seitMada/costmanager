@@ -12,8 +12,13 @@ export class Operateur implements InterfaceOperateur {
     actif: boolean;
     login_count: number;
     code: string;
-    adresseId: number;
-    contactId: number;
+    fournisseurId: number | null;
+    telephone: string;
+    civilite: string;
+    selected?: boolean | undefined;
+    
+    exploitationId?: number;
+    centreId?: number;
 
     constructor (operateurInterface: InterfaceOperateur = {
         nom: '',
@@ -24,10 +29,12 @@ export class Operateur implements InterfaceOperateur {
         actif: true,
         login_count: 0,
         code: '',
-        adresseId: 1,
-        contactId: 1,
+        fournisseurId: null,
         exploitationId: 0,
-        centreId: 0
+        centreId: 0,
+        telephone: '',
+        civilite: '',
+        selected: false
     }) {
         this.nom = operateurInterface.nom.toUpperCase();
         this.prenom = operateurInterface.prenom.charAt(0).toUpperCase + operateurInterface.prenom.slice(1);
@@ -37,9 +44,9 @@ export class Operateur implements InterfaceOperateur {
         this.actif = operateurInterface.actif;
         this.login_count = operateurInterface.login_count;
         this.code = operateurInterface.code;
-        this.adresseId = operateurInterface.adresseId;
-        this.contactId = operateurInterface.contactId;
+        this.fournisseurId = operateurInterface.fournisseurId;
+        this.telephone = operateurInterface.telephone;
+        this.civilite = operateurInterface.civilite;
+        this.selected = operateurInterface.selected;
     }
-    exploitationId: number;
-    centreId: number;
 }

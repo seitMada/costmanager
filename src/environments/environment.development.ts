@@ -13,8 +13,25 @@ export const environment = {
     APILOGOUT: endPoint + 'api/logout',
     APILOGIN: endPoint + 'api/login',
     APIOPERATEURCONNECTE: endPoint + 'operateur/connecte',
+    APIADDOPERATEUR: endPoint + 'operateur',
+    APIGETOPERATEUR: endPoint + 'operateur/',
+    APIDELETEOPERATEUR: endPoint + 'operateur/delete_operateur',
+    APIDELETEOPERATEURS: endPoint + 'operateur/delete_operateurs/',
+    APIUPDATEOPERATEURS: endPoint + 'operateur/update_operateur/',
+    
     APIGETFOURNISSEUR: endPoint + 'fournisseur',
+    APIGETFOURNISSEURBYEXPLOITATION: endPoint + 'fournisseur/exploitation/',
     APIONEFOURNISSEUR: endPoint + 'fournisseur/',
+    APIFOURNISSEURBYID: endPoint + 'fournisseur/',
+    APIADDFOURNISSEUR: endPoint + 'fournisseur',
+    APIUPDATEFOURNISSEUR: endPoint + 'fournisseur/update_fournisseur/',
+
+    APIGETARTICLEBYFOURNISSEUR: endPoint + 'articlefournisseur/',
+
+    APIPOSTDESACTIVEFOURNISSEUR: endPoint + 'fournisseurexploitation/desactive_fournisseurexploitation/',
+    APIPOSTDESACTIVEFOURNISSEURS: endPoint + 'fournisseurexploitation/desactive_fournisseurexploitations',
+    APIUPDATEFOURNISSEUREXPLOITATION: endPoint + 'fournisseurexploitation/delete_fournisseurexploitation/',
+    APIGETEXPLOITATIONBYFOURNISSEUR: endPoint + 'fournisseurexploitation/',
 
     APIGETCOMMANDE: endPoint + 'commande',
 
@@ -28,6 +45,10 @@ export const environment = {
     APIPOSTDELETEARTICLES: endPoint + 'articles/delete_multi_articles',
     APIPOSTDESACTIVEARTICLE: endPoint + 'articleexploitation/desactive_articleexploitation/',
     APIPOSTDESACTIVEARTICLES: endPoint + 'articleexploitation/desactive_articleexploitations',
+    APIGETARTICLEEXCLUDE : endPoint + 'articles/articleexclude',
+
+    APIUPDATECOMPOSITION: endPoint + 'composition/update_composition/',
+    APIGETCOMPOSITIONBYFICHETECHNIQUE: endPoint + 'composition/',
     
     APIPOSTDELETEALLERGENEARTICLE: endPoint + 'allergenearticle/delete_allergenearticle/',
     APIGETALLERGENE: endPoint + 'allergene',
@@ -60,4 +81,6 @@ export const environment = {
     APICREATECOMMANDE: endPoint + '/commande',
     APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID: endPoint + 'articlefournisseur/',
     // APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID: endPoint + 'articleexploitation/',
+
+    APIGETADRESS: endPoint + 'adresse'
 };

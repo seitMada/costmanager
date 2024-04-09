@@ -2,6 +2,8 @@ import { Fournisseur } from "./fournisseurs";
 import { Conditionnement } from "./conditionnements";
 import { IntefaceConditionnements, IntefaceConditionnement } from "./inteface-conditionnements";
 import { InterfaceArticlefournisseurs } from "./interface-articlefournisseurs";
+import { InterfaceArticle } from "./interface-articles";
+import { InterfaceFournisseur } from "./interface-fournisseurs";
 
 export class Articlefournisseur implements InterfaceArticlefournisseurs {
     id?: number | undefined;
@@ -12,7 +14,8 @@ export class Articlefournisseur implements InterfaceArticlefournisseurs {
     prixReferencePrecedent: number;
     commentaire: string;
 
-    fournisseur: Fournisseur;
+    article: InterfaceArticle;
+    fournisseur: InterfaceFournisseur;
     conditionnement: IntefaceConditionnement[];
 
     constructor(articlefournisseurInterface: InterfaceArticlefournisseurs) {
@@ -22,6 +25,7 @@ export class Articlefournisseur implements InterfaceArticlefournisseurs {
         this.prixReference = articlefournisseurInterface.prixReference;
         this.prixReferencePrecedent = articlefournisseurInterface.prixReferencePrecedent;
         this.commentaire = articlefournisseurInterface.commentaire;
+        this.article = articlefournisseurInterface.article;
         this.fournisseur = articlefournisseurInterface.fournisseur;
         this.conditionnement = articlefournisseurInterface.conditionnement;
     }
