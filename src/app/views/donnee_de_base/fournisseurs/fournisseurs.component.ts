@@ -18,6 +18,10 @@ import { Fournisseur, Fournisseurs } from 'src/app/shared/model/fournisseurs';
 import { Adress, Adresse } from "../../../shared/model/adresse";
 import { Article } from 'src/app/shared/model/articles';
 import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-articlefournisseurs';
+import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
+import { Unite, Unites } from 'src/app/shared/model/unite';
+import { InterfaceUnite } from 'src/app/shared/model/interface-unite';
+import { UnitesService } from 'src/app/shared/service/unites.service';
 
 @Component({
   selector: 'app-fournisseurs',
@@ -34,7 +38,8 @@ export class FournisseursComponent {
     public fournisseurService: FournisseurService,
     public exploitationService: ExploitationService,
     public operateurService: OperateursService,
-    public articleService: ArticleService
+    public articleService: ArticleService,
+    public uniteService: UnitesService
   ) { }
 
   public toggle = true;
@@ -55,6 +60,9 @@ export class FournisseursComponent {
   public operateurs: InterfaceOperateur[];
   public articleFournisseurs: InterfaceArticlefournisseurs[];
   public articles: Article;
+  public article: InterfaceArticle;
+  public unites: Unites;
+  public unite: InterfaceUnite;
 
   public articleExclude: number[] = [];
   public checkContact: number[] = [];
@@ -76,10 +84,11 @@ export class FournisseursComponent {
   public initFournisseur() {
     forkJoin({
       fournisseurs: this.fournisseurService.getAllFournisseurByExploitation(this.exploitation),
-      exploitations: this.exploitationService.getExploitation()
+      exploitations: this.exploitationService.getExploitation(),
+      unites: this.uniteService.getUnite()
     }).subscribe({
       next: (data) => {
-        const { fournisseurs, exploitations } = data;
+        const { fournisseurs, exploitations, unites } = data;
         // console.log(fournisseurs)
         for (const fournisseur of fournisseurs) {
           if (fournisseur.adresseId == null) {
@@ -97,8 +106,15 @@ export class FournisseursComponent {
         }
         this.fournisseurs = fournisseurs;
         this.exploitations = exploitations;
+        this.unites = unites;
       }
     })
+  }
+
+  
+  selectUnite(data: any) {
+    this.article.unite = data;
+    this.article.uniteId = data.id;
   }
 
   show(fournisseur: InterfaceFournisseur) {
@@ -338,7 +354,7 @@ export class FournisseursComponent {
   open(content: TemplateRef<any>) {
     this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
       next: (article) => {
-        this.articleExclude = [];
+        this.articleExclude = [0];
         for (const _article of article) {
           this.articleExclude.push(_article.id)
         }
@@ -450,14 +466,13 @@ export class FournisseursComponent {
   addArticle(content: TemplateRef<any>) {
     this.articleService.getArticlesExclude(this.exploitation, this.articleExclude).subscribe({
       next: (article: any) => {
-        console.log(article)
         this.articles = article;
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
           (result) => {
             this.closeResult = `Closed with: ${result}`;
             console.log(this.closeResult)
             if (this.closeResult == 'Closed with: Save click') {
-
+              
             }
           },
           (reason) => {
@@ -471,6 +486,25 @@ export class FournisseursComponent {
   }
 
   addUniteConditionnement(content: TemplateRef<any>) {
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${result}`;
+        console.log(this.closeResult)
+        if (this.closeResult == 'Closed with: Save click') {
+          alert('ajouter')
+        } else {
+          alert('annuler')
+        }
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        console.log(this.closeResult)
 
+      },
+    );
+  }
+
+  updateSelectArticle(line: InterfaceArticle) {
+    this.article = line;
   }
 }

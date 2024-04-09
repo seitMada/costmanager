@@ -258,7 +258,7 @@
 
 <ng-template #content let-modal>
   <div class="modal-header">
-    <h6 class="modal-title" id="modal-basic-title">Adresses</h6>
+    <h6 class="modal-title text-center" id="modal-basic-title">Adresses</h6>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
@@ -333,7 +333,7 @@
 
 <ng-template #contentArticle let-modal>
   <div class="modal-header">
-    <h6 class="modal-title" id="modal-basic-title-article">Articles</h6>
+    <h6 class="modal-title text-center" id="modal-basic-title-article">Articles</h6>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
@@ -342,7 +342,8 @@
         <thead>
           <tr>
             <th scope="col" class="col-1" rowspan="2">
-              <button type="button" class="btn btn-sm btn-primary" (click)="addArticle(contentListeArticle)"><i class="fas fa-plus"></i></button>
+              <button type="button" class="btn btn-sm btn-primary" (click)="addArticle(contentListeArticle)"><i
+                  class="fas fa-plus"></i></button>
             </th>
             <th scope="col" class="col-3" rowspan="2">Désignation</th>
             <th scope="col" class="col-2" colspan="2">Commande</th>
@@ -410,10 +411,12 @@
             <tr *ngFor="let lines of line.conditionnement">
               <td class="p-0">
                 <div class="btn-group btn-group-sm">
-                  <button type="button" class="btn btn-outline-info px-2 py-0" title="Modifier cette article"><i class="fas fa-pencil" style="font-size: xx-small;"></i></button>
+                  <button type="button" class="btn btn-outline-info px-2 py-0" title="Modifier cette article"><i
+                      class="fas fa-pencil" style="font-size: xx-small;"></i></button>
                   <button type="button" class="btn btn-outline-warning px-2 py-0" title="Supprimer cette article">
                     <i class="fas fa-trash" style="font-size: xx-small;"></i></button>
-                  <button type="button" class="btn btn-outline-secondary px-2 py-0" title="Historique d'achat de cette article">
+                  <button type="button" class="btn btn-outline-secondary px-2 py-0"
+                    title="Historique d'achat de cette article">
                     <i class="fas fa-shopping-cart" style="font-size: xx-small;"></i></button>
                 </div>
               </td>
@@ -431,7 +434,7 @@
 
 <ng-template #contentListeArticle let-modal>
   <div class="modal-header">
-    <h6 class="modal-title" id="modal-basic-title-article">Liste articles</h6>
+    <h6 class="modal-title text-center" id="modal-basic-title-article">Liste articles</h6>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
@@ -452,15 +455,16 @@
         <tbody>
           <tr *ngFor="let line of articles">
             <td class="">
-              <input type="radio" name="article" id="article-{{line.id}}" [value]="line.selected">
+              <input type="radio" name="article" id="article-{{line.id}}" [value]="line.selected"
+                (change)="updateSelectArticle(line)">
             </td>
-            <td class="col-1" >{{line.codeArticle}}</td>
-            <td class="col-3 fw-bold" >{{line.libelle}}</td>
-            <td class="col-1" >{{line.unite.abreviation}}</td>
-            <td class="col-2" >{{line.groupeanalytique.groupe}}</td>
-            <td class="col-2 text-overflow" >{{line.familles.libelle}}</td>
-            <td class="col-2" >{{line.sousfamilles.libelle}}</td>
-            <td class="col-1" >{{line.coefficientPonderation * 100}} %</td>
+            <td class="col-1">{{line.codeArticle}}</td>
+            <td class="col-3 fw-bold">{{line.libelle}}</td>
+            <td class="col-1">{{line.unite.abreviation}}</td>
+            <td class="col-2">{{line.groupeanalytique.groupe}}</td>
+            <td class="col-2 text-overflow">{{line.familles.libelle}}</td>
+            <td class="col-2">{{line.sousfamilles.libelle}}</td>
+            <td class="col-1">{{line.coefficientPonderation * 100}} %</td>
           </tr>
         </tbody>
       </table>
@@ -468,20 +472,84 @@
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-sm btn-outline-success"
-      (click)="modal.close('Save click')">Séléctionner</button>
+      (click)="modal.close('Save click'); addUniteConditionnement(contentUnite)">Séléctionner</button>
   </div>
 </ng-template>
 
 <ng-template #contentUnite let-modal>
   <div class="modal-header">
-    <h6 class="modal-title" id="modal-basic-title-article">Unite conditionnement</h6>
+    <h6 class="modal-title text-center" id="modal-basic-title-article">Unite conditionnement</h6>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
-    
+    <div class="card col-12">
+      <div class="card-header text-center fs-5 fw-bold">{{article.libelle}}</div>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item">
+            <div class="row m-2">
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="codearticle">Code article</span>
+                  <input type="text" class="form-control col-7 bg-white" aria-label="Code"
+                    aria-describedby="codearticle" [(ngModel)]="article.codeArticle" disabled="true">
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-8" id="Prix">Prix par unité de commande</span>
+                  <input type="text" class="form-control col-3 bg-white" aria-label="Prix"
+                    aria-describedby="basic-addon2" [(ngModel)]="article.cout">
+                  <span class="input-group-text col-1" id="Prix">€</span>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li class="list-group-item">
+            <div class="col-12 my-1">
+              <div class="input-group">
+                <span class="input-group-text col-2" id="Commande">Unité Commande</span>
+                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+                  <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li *ngFor="let line of unites"><span (click)="selectUnite(line)">{{line.libelle}}</span></li>
+                </ul>
+                <span class="input-group-text text-center col-1" id="c">=></span>
+                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
+                <span class="input-group-text col-2" id="c">Unité Achat</span>
+                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
+              </div>
+            </div>
+            <div class="col-12 my-1">
+              <div class="input-group">
+                <span class="input-group-text col-2" id="Commande">Unité Achat</span>
+                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
+                <span class="input-group-text text-center col-1" id="c">=></span>
+                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
+                <span class="input-group-text col-2" id="c">Unité Inventaire</span>
+                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
+              </div>
+            </div>
+            <div class="col-12 my-1">
+              <div class="input-group">
+                <span class="input-group-text col-2" id="Commande">Unité Inventaire</span>
+                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
+                <span class="input-group-text text-center col-1" id="c">=></span>
+                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
+                <span class="input-group-text col-2" id="c">Unité Ft</span>
+                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </div>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-sm btn-outline-success"
-      (click)="modal.close('Save click')">Séléctionner</button>
+    <button type="button" class="btn btn-sm btn-outline-success" (click)="modal.close('Save click')">Valider</button>
+    <button type="button" class="btn btn-sm btn-outline-danger" (click)="modal.close('Cancel click')">Annuler</button>
   </div>
 </ng-template>

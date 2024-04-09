@@ -15,34 +15,49 @@ import { Article } from 'src/app/shared/model/articles';
 import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { ModalDismissReasons, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+import { InterfaceFournisseur } from 'src/app/shared/model/interface-fournisseurs';
+import { Fournisseur, Fournisseurs } from 'src/app/shared/model/fournisseurs';
+import { forkJoin } from 'rxjs';
+import { Adress } from 'src/app/shared/model/adresse';
 
 @Component({
   selector: 'app-bon-commande-achats',
   standalone: true,
-  imports: [CommonModule, FormsModule,BsDatepickerModule],
+  imports: [CommonModule, FormsModule, BsDatepickerModule],
   templateUrl: './bon-commande-achats.component.html',
   styleUrl: './bon-commande-achats.component.scss',
-  providers:[NgbModalConfig,NgbModal]
+  providers: [NgbModalConfig, NgbModal]
 })
 export class BonCommandeAchatsComponent implements OnInit {
 
-  @ViewChild('contentFournisseur') contentFournisseur: ElementRef;
-  
+  // @ViewChild('contentFournisseur') contentFournisseur: ElementRef;
 
-  constructor(
-    public router: Router,
-    public route: ActivatedRoute,
-    private fournisseurService: FournisseurService,
-    private commandeService: CommandeService,
-    private exploitationService: ExploitationService,
-    private centreRevenuService: CentreRevenuService,
-    private modalService: NgbModal,
-    config:NgbModalConfig,
-  ) { 
-    this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
-    config.backdrop = 'static';
-    config.keyboard = false;
-  }
+  public fournisseur: Fournisseurs;
+  public fournisseurs: Fournisseur;
+  public idFournisseur = 0;
+  public idBonCommande = 0;
+  // public exploitationId = sessionStorage.getItem('exploitation');
+  public centres: any;
+  public centre: any;
+  public artFournis: any;
+  public exploitation: any;
+  public achat: InterfaceAchat;
+  public article: Article;
+  public articles: InterfaceArticle[];
+  public articleFournisseur: any;
+  public articleFournisseurs: any;
+  public articleExploitation: any;
+  public articleExploitations: any;
+  public achats: Achat;
+  public adresse: Adress;
+  public bonCommande: InterfaceBonCommande;
+  
+  public commandes: InterfaceBonCommande[];
+  public commande: InterfaceBonCommande;
+  public reason: any
+  public isChecked: boolean = false;
+  public validateArticles: any[];
+  
   public toggle = true;
   public modifToggle = true;
   // private modalService = inject(NgbModal);
@@ -52,51 +67,47 @@ export class BonCommandeAchatsComponent implements OnInit {
   public modalFournisseur = 'block';
   public showBtnAddArticle = 'none';
   public showBtnAddBC = 'inline-block';
-  public showSupprBc ='none';
+  public showSupprBc = 'none';
   public modalArticle = 'none';
   public bsConfig: { containerClass: string; locale: string; dateInputFormat: string; };
 
+  constructor(
+    public router: Router,
+    public route: ActivatedRoute,
+    private fournisseurService: FournisseurService,
+    private commandeService: CommandeService,
+    private exploitationService: ExploitationService,
+    private centreRevenuService: CentreRevenuService,
+    private modalService: NgbModal,
+    config: NgbModalConfig,
+  ) {
+    this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
+    config.backdrop = 'static';
+    config.keyboard = false;
+
+    this.resetFournisseur();
+  }
+
   private today = new Date();
   public dates = {
-    today:new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate())
+    today: new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate())
   }
-  public fournisseur: any;
-  public fournisseurs: any;
-  public idFournisseur =0;
-  public exploitationId = sessionStorage.getItem('exploitation');
-  public centres:any;
-  public centre:any;
-  public artFournis:any;
-  public exploitation:any;
-  public achat: InterfaceAchat;
-  public article: Article;
-  public articles:InterfaceArticle[];
-  public articleFournisseur:any;
-  public articleFournisseurs:any;
-  public articleExploitation:any;
-  public articleExploitations:any;
-  public achats: Achat;
-  public num_commande:string = "COM-"+this.today.toLocaleDateString().replaceAll('/','')+this.today.toLocaleTimeString().replaceAll(':','')+this.today.getMilliseconds();
 
-  public commandes: any;
-  public reason:any
-  public isChecked:boolean = false;
-  public validateArticles:any[];
-
-  public bonCommande: InterfaceBonCommande;
+  public num_commande: string = "COM-" + this.today.toLocaleDateString().replaceAll('/', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
+  public exploitationId = +(sessionStorage.getItem('exploitation') || 3);
 
   toggleModal() {
     this.toggle = !this.toggle;
   }
 
-  addToggleModal(){
-      this.selectOnFournisseur();
-      this.modifToggle = !this.modifToggle;
-      this.toggle = (this.toggle === false ? true : false);
-      this.modalService.dismissAll();
-      this.showBtnAddArticle = 'inline-block'
-      this.showBtnAddBC = 'none';
-      this.showSupprBc = 'inline-block';
+  addToggleModal() {
+    this.selectOnFournisseur();
+    this.modifToggle = !this.modifToggle;
+    this.toggle = (this.toggle === false ? true : false);
+    this.modalService.dismissAll();
+    this.showBtnAddArticle = 'inline-block'
+    this.showBtnAddBC = 'none';
+    this.showSupprBc = 'inline-block';
   }
 
   closeToggleModal() {
@@ -107,14 +118,41 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.showlist = (this.showlist === false ? true : false);
   }
 
-
+  public resetFournisseur() {
+    this.adresse = {
+      rue: '...',
+      ville: '...',
+      code_postal: '...',
+      pays: '...',
+      selected: false,
+      centreRevenu: [],
+      exploitation: [],
+      operateur: []
+    }
+    this.fournisseur = {
+      raison_social: '',
+      actif: true,
+      codeFournisseur: '',
+      siret: '',
+      codeNaf: '',
+      tvaIntracom: '',
+      web: '',
+      codeComptable: '',
+      modereglementId: 0,
+      commentaires: '',
+      selected: false,
+      adresseId: null,
+      adresse: this.adresse,
+      operateur: []
+    };
+  }
 
   ngOnInit(): void {
-    
-    this.fournisseurService.getAllFournisseur().subscribe({
-      next: (fournisseur) => {
-        this.fournisseurs = fournisseur;
-        this.openModalFournisseur();        
+    this.fournisseurService.getAllFournisseurByExploitation(this.exploitationId).subscribe({
+      next: (_fournisseur) => {
+        this.fournisseurs = _fournisseur;
+        this.fournisseur = _fournisseur[0];
+        this.idFournisseur = this.fournisseur.id? this.fournisseur.id : 0;
       },
       error: (error) => {
         alert('Liste fournisseur vide')
@@ -156,11 +194,11 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.fournisseurs = fournisseur;
   }
 
-  ShowArticleFournisseurByExploitation(){
-    const fournisseur =this.fournisseur;
+  ShowArticleFournisseurByExploitation() {
+    const fournisseur = this.fournisseur;
     const exploitationId = Number(this.exploitationId)
-    this.commandeService.getArticleFournisseurByFournisseurId(this.fournisseur.id,this.exploitationId).subscribe({
-      next:(artFournisseur) =>{
+    this.commandeService.getArticleFournisseurByFournisseurId(this.fournisseur.id ? this.fournisseur.id : 0 , this.exploitationId).subscribe({
+      next: (artFournisseur) => {
         this.articleFournisseurs = artFournisseur;
         console.log(this.articleFournisseurs);
       }
@@ -190,8 +228,8 @@ export class BonCommandeAchatsComponent implements OnInit {
     })
   }
 
-  private getDismissReason(reason:any):string{
-    switch(reason){
+  private getDismissReason(reason: any): string {
+    switch (reason) {
       case ModalDismissReasons.ESC:
         return 'by pressing ESC';
       case ModalDismissReasons.BACKDROP_CLICK:
@@ -201,30 +239,35 @@ export class BonCommandeAchatsComponent implements OnInit {
     }
   }
 
-  public openModalArticle(content:TemplateRef<any>){
-    this.modalService.open(content,{ size: 'xl',ariaDescribedBy:'modal-basic-title'});
+  public openModalArticle(content: TemplateRef<any>) {
+    this.modalService.open(content, { size: 'xl', ariaDescribedBy: 'modal-basic-title' });
     this.ShowArticleFournisseurByExploitation();
-    
+
   }
 
-  public openModalFournisseur(){
-    const modalRef= this.modalService.open(this.contentFournisseur).result.then(
-      (result) =>{
-        this.closeResult = 'Closed with: ${result}';
-        if (this.closeResult == 'Closed with: Save click') {
-          this.showFournisseur(this.fournisseur);
-        }
-      },
-      (reason) => {
-        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-      }
-    );
-    
+  public openModalFournisseur() {
+    // const modalRef = this.modalService.open(this.contentFournisseur).result.then(
+    //   (result) => {
+    //     this.closeResult = 'Closed with: ${result}';
+    //     if (this.closeResult == 'Closed with: Save click') {
+    //       this.showFournisseur(this.fournisseur);
+    //     }
+    //   },
+    //   (reason) => {
+    //     this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    //   }
+    // );
+
   }
 
-  public onCheckboxChange(event: any){
-      // this.validateArticles.push(this.articleFournisseur);
-      console.log(this.articleFournisseur.id);
+  public onCheckboxChange(event: any) {
+    // this.validateArticles.push(this.articleFournisseur);
+    console.log(this.articleFournisseur.id);
+  }
+
+  selectFounisseur(data: InterfaceFournisseur) {
+    this.fournisseur = data;
+    this.fournisseur.id = data.id;
   }
 
 }
