@@ -48,7 +48,7 @@
           <div class="col-sm-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="basic-addon1">Adresse Fournisseur</span>
-              <input type="text" class="form-control col-7" [value]="fournisseur.adresse"  aria-label="adresse" [disabled]="true" aria-describedby="basic-addon1">
+              <input type="text" class="form-control col-7" [value]="fournisseur.adresse.rue"  aria-label="adresse" [disabled]="true" aria-describedby="basic-addon1">
             </div>
           </div>
           
@@ -86,12 +86,10 @@
             <th>Unité de commande</th>
             <th>Montant HT</th>
             <th>Remise en €</th>
-            <th>Qté commandé FT</th>
-            <th>Unité FT</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
+          <!-- <tr>
             <td>
               <div class="form-check form-example-indeterminate">
                 <input class="form-check-input"  id="flexCheckIndeterminate" type="checkbox">
@@ -99,14 +97,14 @@
             </td>
             <td></td>
             <td></td>
+            <td>
+              
+            </td>
             <td></td>
             <td></td>
             <td></td>
             <td></td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
+          </tr> -->
         </tbody>
       </table>
     </div>
@@ -114,8 +112,14 @@
 
   <div class="card d-flex my-2" *ngIf="!toggle">
     <div class="card-body">
-      <div class="col-7">Montant</div>
-      <div class="col-5">€</div>
+        <div class="input-group ">
+          <!-- <span class="input-group-text"></span> -->
+          <input type="number" class="form-control" name="montantTotal">
+          <!-- <span class="input-group-text"></span> -->
+          <span class="input-group-text">Montant</span>
+          <input type="text" class="form-control text-end" name="montantTotal" [disabled]="true" value="0.00">
+          <span class="input-group-text">€</span>
+        </div>
     </div>
   </div>
 
@@ -174,7 +178,7 @@
         <tr *ngFor="let item of articleFournisseurs">
           <td> 
             <div class="form-check form-example-indeterminate">
-              <input class="form-check-input" [(ngModel)]="articleFournisseur"  id="flexCheckIndeterminate" (change)="onCheckboxChange($event)" type="checkbox">
+              <input class="form-check-input" [value]="item.articlefournisseur_id" type="checkbox" (change)="onCheckboxChange(item.articlefournisseur_id,$event)">
             </div>
           </td>
           <td>{{ item.articles_libelle}}</td>
@@ -188,7 +192,7 @@
     </table>
   </div>
   <div class="text-center">
-    <button class="btn btn-success m-1" type="button">Valider</button>
+    <button class="btn btn-success m-1" (click)="validatearticle()"  type="button">Valider</button>
     <button class="btn btn-danger m-1" (click)="modal.dismiss('Cross click')" type="button" data-coreui-dismiss="modal">Annuler</button>
   </div>
 </ng-template>

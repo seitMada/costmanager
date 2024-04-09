@@ -59,5 +59,6 @@ export const environment = {
     
     APICREATECOMMANDE: endPoint + '/commande',
     APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID: endPoint + 'articlefournisseur/',
-    // APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID: endPoint + 'articleexploitation/',
+    APIGETARTICLEFOURNISSEURBYID: endPoint + 'articlefournisseur/byId',
+    APIGETARTICLEEXPLOITATIONBYID: endPoint + 'articleexploitation/',
 };

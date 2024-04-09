@@ -80,9 +80,8 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   public commandes: any;
   public reason:any
-  public isChecked:boolean = false;
-  public validateArticles:any[];
-
+  public validateArticleId:any[]=[];
+  public artExploitationArticleId:any[]=[];
   public bonCommande: InterfaceBonCommande;
 
   toggleModal() {
@@ -159,12 +158,25 @@ export class BonCommandeAchatsComponent implements OnInit {
   ShowArticleFournisseurByExploitation(){
     const fournisseur =this.fournisseur;
     const exploitationId = Number(this.exploitationId)
-    this.commandeService.getArticleFournisseurByFournisseurId(this.fournisseur.id,this.exploitationId).subscribe({
-      next:(artFournisseur) =>{
-        this.articleFournisseurs = artFournisseur;
-        console.log(this.articleFournisseurs);
+    this.commandeService.getArticleExploitation(exploitationId).subscribe({
+      next:(artExploitation) =>{
+        this.articleExploitations = artExploitation;
+        console.log(this.articleExploitations);
+        
+        for (const i of this.articleExploitations) {
+         this.artExploitationArticleId.push(i.articleId);          
+        }
+        console.log(this.artExploitationArticleId);
+        
+        this.commandeService.getArticleFournisseurByFournisseurId(this.fournisseur.id,this.artExploitationArticleId).subscribe({
+          next:(artFournisseur) =>{
+            this.articleFournisseurs = artFournisseur;
+            console.log(this.articleFournisseurs);
+          }
+        });
       }
     });
+    
   }
   showCommande(comm: any) {
     this.commandes = comm;
@@ -222,9 +234,26 @@ export class BonCommandeAchatsComponent implements OnInit {
     
   }
 
-  public onCheckboxChange(event: any){
-      // this.validateArticles.push(this.articleFournisseur);
-      console.log(this.articleFournisseur.id);
+  public onCheckboxChange(articleFournisseurId:number,event:any){
+    const isChecked = event.target.checked;
+    if (isChecked) {
+      this.validateArticleId.push(articleFournisseurId);
+    }else{
+      const index = this.validateArticleId.indexOf(articleFournisseurId);
+      if (index !== -1) {
+        this.validateArticleId.splice(index,1);
+      }
+    }
+    
+    
+  }
+
+  public validatearticle(){
+    const articleFournisseurId = this.validateArticleId;
+    this.commandeService.getArticleFournisseurById(articleFournisseurId).subscribe(response => {
+        console.log(response);
+        
+    });
   }
 
 }

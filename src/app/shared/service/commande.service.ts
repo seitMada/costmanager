@@ -12,6 +12,8 @@ export class CommandeService {
   private apiGetCommande = environment.APIGETCOMMANDE;
   private apiCreateCommande = environment.APICREATECOMMANDE;
   private apiGetArticleByFournisseurIdAndExploitationId = environment.APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID;
+  private apiGetArticleFournisseurById = environment.APIGETARTICLEFOURNISSEURBYID;
+  private apiGetArticleExploitationById = environment.APIGETARTICLEEXPLOITATIONBYID;
 
   public getAllCommande(){
     return this.https.get<any>(this.apiGetCommande);
@@ -21,12 +23,16 @@ export class CommandeService {
     return this.https.post<any>(this.apiCreateCommande,commande);
   }
 
-  public getArticleFournisseurByFournisseurId(fournisseurId:number,exploitationId:any){
-    return this.https.get<any>(this.apiGetArticleByFournisseurIdAndExploitationId + fournisseurId+'/'+exploitationId);
+  public getArticleFournisseurByFournisseurId(fournisseurId:number,articleId:any[]){
+    return this.https.post<any>(this.apiGetArticleByFournisseurIdAndExploitationId + fournisseurId,articleId);
   }
 
-  // public getArticleExploitationByExploitationId(exploitationId:any){
-  //   return this.https.get<any>(this.apiGetArticleExploitationByExploitationId + exploitationId);
-  // }
+  public getArticleFournisseurById(validateArticleId:any[]){
+    return this.https.post<any>(this.apiGetArticleFournisseurById,validateArticleId);
+  }
+
+ public getArticleExploitation(exploitationId:number){
+  return this.https.get<any>(this.apiGetArticleExploitationById+exploitationId);
+ }
 
 }
