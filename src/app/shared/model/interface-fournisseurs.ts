@@ -15,7 +15,6 @@ export interface InterfaceFournisseur {
     modereglementId: number;
     commentaires: string;
     adresseId: number | null;
-    // adresse:string;
     selected?: boolean;
 
     adresse: Adress;

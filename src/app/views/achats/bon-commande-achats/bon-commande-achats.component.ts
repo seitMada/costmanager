@@ -19,6 +19,8 @@ import { InterfaceFournisseur } from 'src/app/shared/model/interface-fournisseur
 import { Fournisseur, Fournisseurs } from 'src/app/shared/model/fournisseurs';
 import { forkJoin } from 'rxjs';
 import { Adress } from 'src/app/shared/model/adresse';
+import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
+import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
 
 @Component({
   selector: 'app-bon-commande-achats',
@@ -37,10 +39,10 @@ export class BonCommandeAchatsComponent implements OnInit {
   public idFournisseur = 0;
   public idBonCommande = 0;
   // public exploitationId = sessionStorage.getItem('exploitation');
-  public centres: any;
-  public centre: any;
+  public centres: InterfaceCentreRevenu[];
+  public centre: InterfaceCentreRevenu;
   public artFournis: any;
-  public exploitation: any;
+  public exploitation: InterfaceExploitations;
   public achat: InterfaceAchat;
   public article: Article;
   public articles: InterfaceArticle[];
@@ -64,12 +66,15 @@ export class BonCommandeAchatsComponent implements OnInit {
   closeResult = '';
   public showlist = true;
   public bonCommandeForm = FormGroup;
-  public modalFournisseur = 'block';
-  public showBtnAddArticle = 'none';
-  public showBtnAddBC = 'inline-block';
-  public showSupprBc = 'none';
-  public modalArticle = 'none';
   public bsConfig: { containerClass: string; locale: string; dateInputFormat: string; };
+
+  private today = new Date();
+  public dates = {
+    today: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate())
+  }
+
+  public num_commande: string = "COM-" + this.today.toLocaleDateString().replaceAll('/', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
+  public exploitationId = +(sessionStorage.getItem('exploitation') || 3);
 
   constructor(
     public router: Router,
@@ -88,35 +93,65 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.resetFournisseur();
   }
 
-  private today = new Date();
-  public dates = {
-    today: new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate())
+  
+
+  ngOnInit(): void {
+    this.showAllFournisseur();    
+   
+    this.commandeService.getAllCommande().subscribe({
+      next: (commande) => {
+        this.commandes = commande;
+
+      },
+      error: (error) => {
+        alert('Liste de bon de commande vide');
+      }
+    })
+    
   }
 
-  public num_commande: string = "COM-" + this.today.toLocaleDateString().replaceAll('/', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
-  public exploitationId = +(sessionStorage.getItem('exploitation') || 3);
-
+  showAllFournisseur(){
+    this.fournisseurService.getAllFournisseurByExploitation(this.exploitationId).subscribe({
+      next: (_fournisseur) => {
+        this.fournisseurs = _fournisseur;
+        this.fournisseur = _fournisseur[0];
+        this.idFournisseur = this.fournisseur.id? this.fournisseur.id : 0;
+      },
+      error: (error) => {
+        alert('Liste fournisseur vide')
+      }
+    });
+  }
   toggleModal() {
     this.toggle = !this.toggle;
   }
 
   addToggleModal() {
-    this.selectOnFournisseur();
+    
+    this.exploitationService.getExploitationById(this.exploitationId).subscribe({
+      next: (exploitation) => {
+        this.exploitation = exploitation;
+               console.log(this.exploitation);
+               
+        this.centreRevenuService.getCrExploitation(this.exploitation.id ? this.exploitation.id: 0).subscribe({
+          next: (_centre) => {
+            this.centres = _centre;
+            this.centre = _centre[0];
+          },
+        });
+      },
+      error: (error) => {
+        alert('Liste de bon de commande vide');
+      }
+    });
+
+    
     this.modifToggle = !this.modifToggle;
     this.toggle = (this.toggle === false ? true : false);
+    
     this.modalService.dismissAll();
-    this.showBtnAddArticle = 'inline-block'
-    this.showBtnAddBC = 'none';
-    this.showSupprBc = 'inline-block';
   }
 
-  closeToggleModal() {
-    this.modalFournisseur = 'none';
-  }
-
-  showListToggle() {
-    this.showlist = (this.showlist === false ? true : false);
-  }
 
   public resetFournisseur() {
     this.adresse = {
@@ -147,52 +182,9 @@ export class BonCommandeAchatsComponent implements OnInit {
     };
   }
 
-  ngOnInit(): void {
-    this.fournisseurService.getAllFournisseurByExploitation(this.exploitationId).subscribe({
-      next: (_fournisseur) => {
-        this.fournisseurs = _fournisseur;
-        this.fournisseur = _fournisseur[0];
-        this.idFournisseur = this.fournisseur.id? this.fournisseur.id : 0;
-      },
-      error: (error) => {
-        alert('Liste fournisseur vide')
-      }
-    });
-
-    this.exploitationService.getExploitationById(this.exploitationId).subscribe({
-      next: (exploitation) => {
-        this.exploitation = exploitation;
-        console.log(this.exploitation);
-        this.centres = [];
-        this.centreRevenuService.getCrExploitation(this.exploitation.id).subscribe({
-          next: (centre) => {
-            this.centres = centre;
-            console.log(this.centres);
-          },
-        });
-      },
-      error: (error) => {
-        alert('Liste de bon de commande vide');
-      }
-    })
-
-    this.commandeService.getAllCommande().subscribe({
-      next: (commande) => {
-        this.commandes = commande;
-        console.log(this.commandes);
-
-      },
-      error: (error) => {
-        alert('Liste de bon de commande vide');
-      }
-    })
-  }
-
+ 
   cancel() { }
 
-  showFournisseur(fournisseur: any) {
-    this.fournisseurs = fournisseur;
-  }
 
   ShowArticleFournisseurByExploitation() {
     const fournisseur = this.fournisseur;
@@ -200,7 +192,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.commandeService.getArticleFournisseurByFournisseurId(this.fournisseur.id ? this.fournisseur.id : 0 , this.exploitationId).subscribe({
       next: (artFournisseur) => {
         this.articleFournisseurs = artFournisseur;
-        console.log(this.articleFournisseurs);
+        // console.log(this.articleFournisseurs);
       }
     });
   }
@@ -215,17 +207,8 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   public selectOnFournisseur() {
-
-    this.fournisseurService.getOneFournisseur(this.fournisseur).subscribe({
-      next: (fournisseur) => {
-        this.fournisseur = fournisseur;
-        console.log(this.fournisseur);
-
-      },
-      error: (error) => {
-        console.log(error);
-      }
-    })
+    this.fournisseur = this.fournisseur;
+    
   }
 
   private getDismissReason(reason: any): string {
@@ -262,7 +245,7 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   public onCheckboxChange(event: any) {
     // this.validateArticles.push(this.articleFournisseur);
-    console.log(this.articleFournisseur.id);
+    // console.log(this.articleFournisseur.id);
   }
 
   selectFounisseur(data: InterfaceFournisseur) {

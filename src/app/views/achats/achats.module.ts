@@ -9,6 +9,9 @@ import { BonCommandeAchatsComponent } from "./bon-commande-achats/bon-commande-a
 import { BonLivraisonAchatsComponent } from "./bon-livraison-achats/bon-livraison-achats.component";
 import { FacturesComponent } from "./factures/factures.component";
 
+import { defineLocale, frLocale } from 'ngx-bootstrap/chronos';
+
+defineLocale('fr', frLocale);
 
 @NgModule({
   declarations: [],
@@ -19,7 +22,7 @@ import { FacturesComponent } from "./factures/factures.component";
     MercurialesComponent,
     BonCommandeAchatsComponent,
     BonLivraisonAchatsComponent,
-    FacturesComponent
+    FacturesComponent,
   ]
 })
 export class AchatsModule { }

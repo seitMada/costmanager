@@ -7,31 +7,27 @@
     <div class="bd-highlight mx-2 my-0">
       <div class="input-group input-group-sm">
         <span class="input-group-text col-5" id="basic-addon1">Fournisseurs</span>
-        <input type="text" class="form-control bg-white col-6" aria-label="unite" aria-describedby="fournisseur" [(ngModel)]="fournisseur.raison_social" disabled="true">
+        <input type="text" class="form-control bg-white col-6" aria-label="unite" aria-describedby="fournisseur"
+          [(ngModel)]="fournisseur.raison_social" disabled="true">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
           data-bs-toggle="dropdown" aria-expanded="false">
           <span class="visually-hidden">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end">
-          <li *ngFor="let line of fournisseurs"><span (click)="selectFounisseur(line)">{{line.raison_social}}</span></li>
+          <li *ngFor="let line of fournisseurs"><span (click)="selectFounisseur(line)">{{line.raison_social}}</span>
+          </li>
         </ul>
       </div>
     </div>
     <div class="bd-highlight">
-      <button class="btn btn-outline-success btn-sm me-1" (click)="openModalFournisseur()"
-        title="Ajouter bon de commande" [ngStyle]="{display:showBtnAddBC}">
+      <button class="btn btn-outline-success btn-sm me-1" (click)="toggleModal()" title="Ajouter bon de commande">
         <i class="fas fa-plus"></i>
       </button>
-      <button class="btn btn-outline-success btn-sm me-1" (click)="openModalArticle(content)" title="Ajouter article"
-        [ngStyle]="{display:showBtnAddArticle}">
-        <i class="fas fa-plus"></i>
-      </button>
-      <button [disabled]="!modifToggle" class="btn btn-outline-danger btn-sm me-1" [ngStyle]="{display:showSupprBc}"
-        title="Supprimer bon de commande">
+
+      <button [disabled]="!modifToggle" class="btn btn-outline-danger btn-sm me-1" title="Supprimer bon de commande">
         <i class="fas fa-trash"></i>
       </button>
-      <button class="btn btn-outline-primary btn-sm me-1" title="Liste bon de commande" (click)="toggleModal()"
-        *ngIf="toggle">
+      <button class="btn btn-outline-primary btn-sm me-1" *ngIf="!toggle" title="Liste bon de commande">
         <i class="fas fa-list"></i>
       </button>
     </div>
@@ -53,8 +49,8 @@
         <div class="col-sm-6">
           <div class="input-group">
             <span class="input-group-text col-5" id="basic-addon1">Fournisseur</span>
-            <input type="text" class="form-control col-6" [value]="fournisseur.raison_social" aria-label="fournisseur"
-              [disabled]="true" aria-describedby="basic-addon1">
+            <input type="text" class="form-control col-6" [value]="fournisseur.raison_social" 
+              aria-label="fournisseur" [disabled]="true" aria-describedby="basic-addon1">
           </div>
         </div>
       </div>
@@ -62,14 +58,14 @@
         <div class="col-sm-6">
           <div class="input-group">
             <span class="input-group-text col-5" id="basic-addon1">Exploitation</span>
-            <input type="text" class="form-control col-7" [value]="exploitation.libelle" [disabled]="true"
+            <input type="text" class="form-control col-7" [disabled]="true"
               aria-label="exploitation" aria-describedby="basic-addon1">
           </div>
         </div>
         <div class="col-sm-6">
           <div class="input-group">
             <span class="input-group-text col-5" id="basic-addon1">Adresse Fournisseur</span>
-            <input type="text" class="form-control col-7" [value]="fournisseur.adresse" aria-label="adresse"
+            <input type="text" class="form-control col-7" [value]="fournisseur.adresse.rue+fournisseur.adresse.code_postal" aria-label="adresse"
               [disabled]="true" aria-describedby="basic-addon1">
           </div>
         </div>
@@ -79,10 +75,16 @@
         <div class="col-sm-6">
           <div class="input-group">
             <span class="input-group-text col-5" id="basic-addon1">Centre de revenu</span>
-            <select class="form-control col-7" [required]="true" aria-label="centrerevenu"
-              aria-describedby="basic-addon1">
-              <option [ngValue]="item.id" *ngFor="let item of centres">{{item.libelle}}</option>
-            </select>
+            <input type="text" class="form-control bg-white col-6" aria-label="centre" aria-describedby="centre"
+              disabled="true">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+              data-bs-toggle="dropdown" aria-expanded="false">
+              <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+              <li *ngFor="let item of centres"><span>{{item.libelle}}</span>
+              </li>
+            </ul>
           </div>
         </div>
         <div class="col-sm-6">
@@ -98,6 +100,11 @@
 </div>
 
 <div class="card d-flex my-2" *ngIf="!toggle">
+  <div class="card-header text-end">
+    <button class="btn btn-outline-success btn-sm me-1" (click)="openModalArticle(content)" title="Ajouter article">
+      <i class="fas fa-plus"></i>
+    </button>
+  </div>
   <div class="card-body overflow-scroll py-1" style="height: 350px;">
     <table class="table table-striped my-3">
       <thead>
@@ -212,33 +219,3 @@
       data-coreui-dismiss="modal">Annuler</button>
   </div>
 </ng-template>
-
-<!-- <ng-template #contentFournisseur let-modal let-c="close" let-d="dismiss">
-  <div class="modal-header">
-    <h5 class="modal-title text-center">Liste Fournisseur</h5>
-    <button class="btn-close" type="button" (click)="modal.dismiss('Close click')" data-coreui-dismiss="modal"
-      aria-label="Close"></button>
-  </div>
-  <div class="modal-body">
-    <form>
-      <div class="input-group">
-        <span class="input-group-text col-5" id="basic-addon1">Liste des fournisseurs</span>
-        <input type="text" class="form-control bg-white col-6" aria-label="unite" aria-describedby="fournisseur" [(ngModel)]="fournisseur.raison_social" disabled="true">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-          data-bs-toggle="dropdown" aria-expanded="false">
-          <span class="visually-hidden">Toggle Dropdown</span>
-        </button>
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li *ngFor="let line of fournisseurs"><span (click)="selectFounisseur(line)">{{line.raison_social}}</span></li>
-        </ul>
-      </div>
-    </form>
-  </div>
-  <div class="modal-footer">
-    <div class="text-center">
-      <button class="btn btn-success me-1" (click)="addToggleModal()" type="button">Valider</button>
-      <button class="btn btn-danger" (click)="modal.dismiss('Cross click')" type="button"
-        data-coreui-dismiss="modal">Annuler</button>
-    </div>
-  </div>
-</ng-template> -->
