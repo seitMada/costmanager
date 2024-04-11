@@ -243,7 +243,7 @@
                     <td class="col-3">{{line.quantite}}</td>
                     <td class="col-2">{{line.unite.libelle}}</td>
                     <td class="col-1">{{ (line.articleId == null)? 'FT' : 'A' }}</td>
-                    <td class="col-2">{{ line.cout }} €</td>
+                    <td class="col-2">{{ line.cout * line.quantite | number: '1.2-2'}} €</td>
                   </tr>
                 </tbody>
               </table>

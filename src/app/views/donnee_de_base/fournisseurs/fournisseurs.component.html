@@ -374,7 +374,7 @@
           </td>
           <td scope="col" class="col-1">
             <tr *ngFor="let lines of line.conditionnement">
-              <td>{{line.prixReference}}</td>
+              <td>{{line.prixReference | number: '1.2-2'}} €</td>
             </tr>
           </td>
           <td scope="col" class="col-1">
@@ -384,7 +384,7 @@
           </td>
           <td scope="col" class="col-1">
             <tr *ngFor="let lines of line.conditionnement">
-              <td>{{line.prixReference}}</td>
+              <td>{{line.prixReference / lines.coefficientAchatCommande | number: '1.2-2'}} €</td>
             </tr>
           </td>
           <td scope="col" class="col-1">
@@ -394,7 +394,7 @@
           </td>
           <td scope="col" class="col-1">
             <tr *ngFor="let lines of line.conditionnement">
-              <td>{{line.prixReference}}</td>
+              <td>{{line.prixReference / lines.coefficientAchatCommande / lines.coefficientInventaireAchat | number: '1.2-2'}} €</td>
             </tr>
           </td>
           <td scope="col" class="col-1">
@@ -404,16 +404,16 @@
           </td>
           <td scope="col" class="col-1">
             <tr *ngFor="let lines of line.conditionnement">
-              <td>{{line.prixReference}}</td>
+              <td>{{line.prixReference / lines.coefficientAchatCommande / lines.coefficientInventaireAchat / lines.coefficientInventaire | number: '1.2-2'}} €</td>
             </tr>
           </td>
           <td scope="col" class="col-1">
             <tr *ngFor="let lines of line.conditionnement">
               <td class="p-0">
                 <div class="btn-group btn-group-sm">
-                  <button type="button" class="btn btn-outline-info px-2 py-0" title="Modifier cette article"><i
+                  <button type="button" class="btn btn-outline-info px-2 py-0" title="Modifier cette article" (click)="updateArticleFournisseur(line, lines, contentUnite)"><i
                       class="fas fa-pencil" style="font-size: xx-small;"></i></button>
-                  <button type="button" class="btn btn-outline-warning px-2 py-0" title="Supprimer cette article">
+                  <button type="button" class="btn btn-outline-warning px-2 py-0" title="Supprimer cette article" (click)="deleteArticleFournisseur(line, lines)">
                     <i class="fas fa-trash" style="font-size: xx-small;"></i></button>
                   <button type="button" class="btn btn-outline-secondary px-2 py-0"
                     title="Historique d'achat de cette article">
@@ -464,13 +464,13 @@
             <td class="col-2">{{line.groupeanalytique.groupe}}</td>
             <td class="col-2 text-overflow">{{line.familles.libelle}}</td>
             <td class="col-2">{{line.sousfamilles.libelle}}</td>
-            <td class="col-1">{{line.coefficientPonderation * 100}} %</td>
+            <td class="col-1">{{line.coefficientPonderation}}</td>
           </tr>
         </tbody>
       </table>
     </div>
   </div>
-  <div class="modal-footer">
+  <div class="modal-footer" *ngIf="toggleArticle">
     <button type="button" class="btn btn-sm btn-outline-success"
       (click)="modal.close('Save click'); addUniteConditionnement(contentUnite)">Séléctionner</button>
   </div>
@@ -499,48 +499,95 @@
                 <div class="input-group">
                   <span class="input-group-text col-8" id="Prix">Prix par unité de commande</span>
                   <input type="text" class="form-control col-3 bg-white" aria-label="Prix"
-                    aria-describedby="basic-addon2" [(ngModel)]="article.cout">
+                    aria-describedby="basic-addon2" [(ngModel)]="articleFournisseur.prixReference">
                   <span class="input-group-text col-1" id="Prix">€</span>
                 </div>
               </div>
             </div>
+          </li>          
+          <li class="list-group-item" *ngIf="conditionnement.id != 0">
+            <button class="btn btn-outline-secondary" (click)="addNouveauConditionnement(articleFournisseur)"> Ajouter nouveau conditionnement </button>
           </li>
           <li class="list-group-item">
-            <div class="col-12 my-1">
-              <div class="input-group">
-                <span class="input-group-text col-2" id="Commande">Unité Commande</span>
-                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                  data-bs-toggle="dropdown" aria-expanded="false">
-                  <span class="visually-hidden">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                  <li *ngFor="let line of unites"><span (click)="selectUnite(line)">{{line.libelle}}</span></li>
-                </ul>
-                <span class="input-group-text text-center col-1" id="c">=></span>
-                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
-                <span class="input-group-text col-2" id="c">Unité Achat</span>
-                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
+            <div class="row my-1">
+              <div class="col-5">
+                <div class="input-group">
+                  <span class="input-group-text col-6" id="Commande">Unité Commande</span>
+                  <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon" [(ngModel)]="conditionnement.uniteCommande.libelle">
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li *ngFor="let line of unites"><span (click)="selectUniteCommande(line)">{{line.libelle}}</span></li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="input-group">
+                  <span class="input-group-text text-center" id="c">=></span>
+                  <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon" [(ngModel)]="conditionnement.coefficientAchatCommande">
+                </div>
+              </div>
+              <div class="col-5">
+                <div class="input-group">
+                  <span class="input-group-text col-6" id="c">Unité Achat</span>
+                  <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon" [(ngModel)]="conditionnement.uniteAchat.libelle">
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li *ngFor="let line of unites"><span (click)="selectUniteAchat(line)">{{line.libelle}}</span></li>
+                  </ul>
+                </div>
               </div>
             </div>
-            <div class="col-12 my-1">
-              <div class="input-group">
-                <span class="input-group-text col-2" id="Commande">Unité Achat</span>
-                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
-                <span class="input-group-text text-center col-1" id="c">=></span>
-                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
-                <span class="input-group-text col-2" id="c">Unité Inventaire</span>
-                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
+            <div class="row my-1">
+              <div class="col-5">
+                <div class="input-group">
+                  <span class="input-group-text col-6" id="Commande">Unité Achat</span>
+                  <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon" [(ngModel)]="conditionnement.uniteAchat.libelle">
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="input-group">
+                  <span class="input-group-text text-center" id="c">=></span>
+                  <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon" [(ngModel)]="conditionnement.coefficientInventaireAchat">
+                </div>
+              </div>
+              <div class="col-5">
+                <div class="input-group">
+                  <span class="input-group-text col-6" id="c">Unité Inventaire</span>
+                  <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon" [(ngModel)]="conditionnement.uniteInventaire.libelle">
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li *ngFor="let line of unites"><span (click)="selectUniteInventaire(line)">{{line.libelle}}</span></li>
+                  </ul>
+                </div>
               </div>
             </div>
-            <div class="col-12 my-1">
-              <div class="input-group">
-                <span class="input-group-text col-2" id="Commande">Unité Inventaire</span>
-                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
-                <span class="input-group-text text-center col-1" id="c">=></span>
-                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
-                <span class="input-group-text col-2" id="c">Unité Ft</span>
-                <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon">
+            <div class="row my-1">
+              <div class="col-5">
+                <div class="input-group">
+                  <span class="input-group-text col-6" id="Commande">Unité Inventaire</span>
+                  <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon" [(ngModel)]="conditionnement.uniteInventaire.libelle">
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="input-group">
+                  <span class="input-group-text text-center" id="c">=></span>
+                  <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon" [(ngModel)]="conditionnement.coefficientInventaire">
+                </div>
+              </div>
+              <div class="col-5">
+                <div class="input-group">
+                  <span class="input-group-text col-6" id="c">Unité Ft</span>
+                  <input type="text" class="form-control bg-white" aria-label="Commande" aria-describedby="basic-addon" [(ngModel)]="conditionnement.uniteFt.libelle">
+                </div>
               </div>
             </div>
           </li>

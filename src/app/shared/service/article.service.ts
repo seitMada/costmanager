@@ -23,6 +23,7 @@ export class ArticleService {
   private apiGetArticleExclude = environment.APIGETARTICLEEXCLUDE;
 
   private apiGetArticleByFournisseur = environment.APIGETARTICLEBYFOURNISSEUR;
+  private apiGetArticleByIdFournisseur = environment.APIGETARTICLEBYIDFOURNISSEUR;
 
   constructor(private https: HttpClient){}
 

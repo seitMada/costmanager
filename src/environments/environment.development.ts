@@ -45,8 +45,8 @@ export const environment = {
     APIPOSTDESACTIVEARTICLE: endPoint + 'articleexploitation/desactive_articleexploitation/',
     APIPOSTDESACTIVEARTICLES: endPoint + 'articleexploitation/desactive_articleexploitations',
     APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID: endPoint + 'articleexploitation/',
-
     APIGETARTICLEEXCLUDE : endPoint + 'articles/articleexclude',
+    APIGETARTICLEBYIDFOURNISSEUR: endPoint + 'articles/fournisseur/',
     
     APIGETARTICLEBYFOURNISSEUR: endPoint + 'articlefournisseur/',
 

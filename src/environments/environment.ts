@@ -47,8 +47,16 @@ export const environment = {
     APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID: endPoint + 'articleexploitation/',
 
     APIGETARTICLEEXCLUDE : endPoint + 'articles/articleexclude',
+    APIGETARTICLEBYIDFOURNISSEUR: endPoint + 'articles/fournisseur/',
     
     APIGETARTICLEBYFOURNISSEUR: endPoint + 'articlefournisseur/',
+    APIADDARTICLEFOURNISSEUR: endPoint + 'articlefournisseur',
+    APIDELETEARTICLEFOURNISSEUR: endPoint + 'articlefournisseur/delete',
+    APIUPDATEARTICLEFOURNISSEUR: endPoint + 'articlefournisseur/update',
+
+    APIADDCONDITIONNEMENT: endPoint + 'conditionement',
+    APIUPDATECONDITIONNEMENT: endPoint + 'conditionement/update_conditionnement/',
+    APIDELETECONDITIONNEMENT: endPoint + 'conditionement/delete',
 
     APIPOSTDELETEALLERGENEARTICLE: endPoint + 'allergenearticle/delete_allergenearticle/',
     APIGETALLERGENE: endPoint + 'allergene',

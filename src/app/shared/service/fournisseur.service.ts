@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { InterfaceFournisseur } from '../model/interface-fournisseurs';
+import { InterfaceArticlefournisseurs } from '../model/interface-articlefournisseurs';
+import { IntefaceConditionnement } from '../model/inteface-conditionnements';
 
 @Injectable({
   providedIn: 'root'
@@ -18,6 +20,13 @@ export class FournisseurService {
   private apiGetExploitationByFournisseur = environment.APIGETEXPLOITATIONBYFOURNISSEUR;
 
   private apiGetAdresse = environment.APIGETADRESS;
+
+  private apiAddArticleFournisseur = environment.APIADDARTICLEFOURNISSEUR;
+  private apiDeleteArticleFournisseur = environment.APIDELETEARTICLEFOURNISSEUR;
+
+  private apiAddConditionnement = environment.APIADDCONDITIONNEMENT;
+  private apiUpdateConditionnement = environment.APIUPDATECONDITIONNEMENT;
+  private apiDeleteConditionnement = environment.APIDELETECONDITIONNEMENT;
 
   constructor(private https: HttpClient) { }
 
@@ -55,5 +64,25 @@ export class FournisseurService {
 
   public getAllExploitationByFournisseur(id: number) {
     return this.https.get<any>(this.apiGetExploitationByFournisseur + id);
+  }
+
+  public addArticleFournisseur(articleFournisseur: InterfaceArticlefournisseurs) {
+    return this.https.post(this.apiAddArticleFournisseur, articleFournisseur);
+  }
+
+  public addConditionnement(conditionement: IntefaceConditionnement) {
+    return this.https.post(this.apiAddConditionnement, conditionement);
+  }
+
+  public updateConditionnement(id: number, conditionement: IntefaceConditionnement) {
+    return this.https.patch(this.apiUpdateConditionnement + id, conditionement);
+  }
+
+  public deleteConditionnement(conditionement: IntefaceConditionnement) {
+    return this.https.post(this.apiDeleteConditionnement, conditionement);
+  }
+
+  public deleteArticleFournisseur(id: number) {
+    return this.https.post(this.apiDeleteArticleFournisseur, { id: id });
   }
 }

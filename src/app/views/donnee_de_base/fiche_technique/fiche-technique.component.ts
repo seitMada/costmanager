@@ -467,15 +467,15 @@ export class FicheTechniqueComponent implements OnInit {
     for (const item of composition) {
       if (item.articleId != null) {
         if (item.article?.groupeanalytiqueId === 1 || item.article?.groupeanalytiqueId === 4) {
-          coutAlimentaire += item.cout;
+          coutAlimentaire += item.cout * item.quantite;
         } else {
-          coutEmballage += item.cout;
+          coutEmballage += item.cout * item.quantite;
         }
       } else {
         if (item.fichetechniqueCompositon?.groupeanalytiqueId === 1 || item.fichetechniqueCompositon?.groupeanalytiqueId === 4) {
-          coutAlimentaire += item.cout;
+          coutAlimentaire += item.cout * item.quantite;
         } else {
-          coutEmballage += item.cout;
+          coutEmballage += item.cout * item.quantite;
         }
       }
     }

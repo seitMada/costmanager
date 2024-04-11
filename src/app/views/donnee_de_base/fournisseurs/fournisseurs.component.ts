@@ -22,6 +22,7 @@ import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { Unite, Unites } from 'src/app/shared/model/unite';
 import { InterfaceUnite } from 'src/app/shared/model/interface-unite';
 import { UnitesService } from 'src/app/shared/service/unites.service';
+import { IntefaceConditionnement } from 'src/app/shared/model/inteface-conditionnements';
 
 @Component({
   selector: 'app-fournisseurs',
@@ -47,6 +48,8 @@ export class FournisseursComponent {
   public modifToggle = true;
   public modifContactToggle = false;
   public addToggleOperateur = false;
+  public toggleArticle = false;
+  public toggleAddConditionnement = false;
 
   public country = PAYS;
   public flags: string = '';
@@ -59,10 +62,12 @@ export class FournisseursComponent {
   public operateur: InterfaceOperateur;
   public operateurs: InterfaceOperateur[];
   public articleFournisseurs: InterfaceArticlefournisseurs[];
+  public articleFournisseur: InterfaceArticlefournisseurs;
   public articles: Article;
   public article: InterfaceArticle;
   public unites: Unites;
   public unite: InterfaceUnite;
+  public conditionnement: IntefaceConditionnement;
 
   public articleExclude: number[] = [];
   public checkContact: number[] = [];
@@ -79,6 +84,41 @@ export class FournisseursComponent {
     this.resetFournisseur();
     this.initFournisseur();
     this.initOperateur();
+  }
+
+  public initConditionnement(_article: InterfaceArticle) {
+    this.conditionnement = {
+      id: 0,
+      articleId: _article.id ? _article.id : 0,
+      idUniteCommande: 0,
+      coefficientAchatCommande: 1,
+      idUniteAchat: 0,
+      coefficientInventaireAchat: 1,
+      iduniteInventaire: 0,
+      coefficientInventaire: 1,
+      idUniteFt: _article.uniteId,
+      articlefournisseurId: 0,
+
+      uniteAchat: {
+        libelle: '',
+        code: '',
+        abreviation: '',
+        actif: true,
+      },
+      uniteCommande: {
+        libelle: '',
+        code: '',
+        abreviation: '',
+        actif: true,
+      },
+      uniteInventaire: {
+        libelle: '',
+        code: '',
+        abreviation: '',
+        actif: true,
+      },
+      uniteFt: _article.unite
+    }
   }
 
   public initFournisseur() {
@@ -111,7 +151,7 @@ export class FournisseursComponent {
     })
   }
 
-  
+
   selectUnite(data: any) {
     this.article.unite = data;
     this.article.uniteId = data.id;
@@ -354,9 +394,10 @@ export class FournisseursComponent {
   open(content: TemplateRef<any>) {
     this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
       next: (article) => {
+        console.log(article)
         this.articleExclude = [0];
         for (const _article of article) {
-          this.articleExclude.push(_article.id)
+          this.articleExclude.push(_article.articleId)
         }
         console.log(this.articleExclude);
         this.articleFournisseurs = article;
@@ -472,13 +513,14 @@ export class FournisseursComponent {
             this.closeResult = `Closed with: ${result}`;
             console.log(this.closeResult)
             if (this.closeResult == 'Closed with: Save click') {
-              
+              // this.addUniteConditionnement();
+              this.toggleArticle = false;
             }
           },
           (reason) => {
             this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
             console.log(this.closeResult)
-
+            this.toggleArticle = false;
           },
         );
       }
@@ -486,14 +528,42 @@ export class FournisseursComponent {
   }
 
   addUniteConditionnement(content: TemplateRef<any>) {
+    console.log(this.conditionnement)
+    this.articleFournisseur = {
+      articleId: this.article.id ? this.article.id : 0,
+      fournisseurId: this.fournisseur.id ? this.fournisseur.id : 0,
+      marque: '',
+      prixReference: this.article.cout,
+      prixReferencePrecedent: 0,
+      commentaire: '',
+
+      article: this.article,
+      fournisseur: this.fournisseur,
+      conditionnement: []
+    }
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
         console.log(this.closeResult)
         if (this.closeResult == 'Closed with: Save click') {
-          alert('ajouter')
+          console.log(this.articleFournisseur, this.conditionnement)
+          this.fournisseurService.addArticleFournisseur(this.articleFournisseur).subscribe({
+            next: (_articleFournisseur: any) => {
+              this.conditionnement.articlefournisseurId = _articleFournisseur.id;
+              this.fournisseurService.addConditionnement(this.conditionnement).subscribe({
+                next: () => {
+                  this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
+                    next: (_article) => {
+                      this.articleFournisseurs = _article;
+                    }
+                  })
+                  alert('Article fournisseur ajouter')
+                }
+              })
+            }
+          });
         } else {
-          alert('annuler')
+          // alert('annuler')
         }
       },
       (reason) => {
@@ -505,6 +575,149 @@ export class FournisseursComponent {
   }
 
   updateSelectArticle(line: InterfaceArticle) {
+    this.toggleArticle = true;
     this.article = line;
+    this.initConditionnement(this.article);
+  }
+
+  selectUniteCommande(unite: InterfaceUnite) {
+    this.conditionnement.idUniteCommande = unite.id ? unite.id : 0;
+    this.conditionnement.uniteCommande = unite;
+  }
+
+  selectUniteAchat(unite: InterfaceUnite) {
+    this.conditionnement.idUniteAchat = unite.id ? unite.id : 0;
+    this.conditionnement.uniteAchat = unite;
+  }
+
+  selectUniteInventaire(unite: InterfaceUnite) {
+    this.conditionnement.iduniteInventaire = unite.id ? unite.id : 0;
+    this.conditionnement.uniteInventaire = unite;
+  }
+
+  updateArticleFournisseur(_articleFournisseur: InterfaceArticlefournisseurs, _conditionnement: IntefaceConditionnement, content: TemplateRef<any>) {
+    console.log(_articleFournisseur, _conditionnement)
+    this.article = _articleFournisseur.article;
+    this.articleFournisseur = _articleFournisseur;
+    this.conditionnement = _conditionnement;
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${result}`;
+        console.log(this.closeResult)
+        if (this.closeResult == 'Closed with: Save click') {
+          this.articleFournisseur = {
+            articleId: _articleFournisseur.id ? _articleFournisseur.id : 0,
+            fournisseurId: this.fournisseur.id ? this.fournisseur.id : 0,
+            marque: '',
+            prixReference: _articleFournisseur.prixReference,
+            prixReferencePrecedent: 0,
+            commentaire: '',
+
+            article: _articleFournisseur.article,
+            fournisseur: this.fournisseur,
+            conditionnement: []
+          }
+          console.log(this.articleFournisseur, this.conditionnement)
+          if (this.conditionnement.articlefournisseurId == 0) {
+            this.fournisseurService.addArticleFournisseur(this.articleFournisseur).subscribe({
+              next: (_articleFournisseur: any) => {
+                this.conditionnement.articlefournisseurId = _articleFournisseur.id;
+                this.fournisseurService.addConditionnement(this.conditionnement).subscribe({
+                  next: () => {
+                    this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
+                      next: (_article) => {
+                        this.articleFournisseurs = _article;
+                      }
+                    })
+                    alert('Article fournisseur ajouter')
+                  }
+                })
+              }
+            });
+          } else {
+            if (this.conditionnement.id == 0) {
+              // this.fournisseurService.addConditionnement(this.conditionnement).subscribe({
+              //   next: () => {
+              //     this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
+              //       next: (_article) => {
+              //         this.articleFournisseurs = _article;
+              //       }
+              //     })
+              //     alert('Conditionnement ajouter')
+              //   }
+              // })
+              this.fournisseurService.addArticleFournisseur(this.articleFournisseur).subscribe({
+                next: (_articleFournisseur: any) => {
+                  this.conditionnement.articlefournisseurId = _articleFournisseur.id;
+                  this.fournisseurService.addConditionnement(this.conditionnement).subscribe({
+                    next: () => {
+                      this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
+                        next: (_article) => {
+                          this.articleFournisseurs = _article;
+                        }
+                      })
+                      alert('Conditionnement ajouter')
+                    }
+                  })
+                }
+              });
+            } else {
+              this.fournisseurService.updateConditionnement(this.conditionnement.id ? this.conditionnement.id : 0, this.conditionnement).subscribe({
+                next: () => {
+                  this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
+                    next: (_article) => {
+                      this.articleFournisseurs = _article;
+                    }
+                  })
+                  alert('Conditionnement Modifier')
+                }
+              })
+            }
+          }
+        } else {
+          // alert('annuler')
+        }
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        console.log(this.closeResult)
+
+      },
+    );
+  }
+
+  addNouveauConditionnement(_articlefournisseur: InterfaceArticlefournisseurs) {
+    this.articleFournisseur = _articlefournisseur;
+    this.initConditionnement(this.articleFournisseur.article);
+    this.articleFournisseur.id = _articlefournisseur.id;
+    this.conditionnement.articlefournisseurId = _articlefournisseur.id ? _articlefournisseur.id : 0;
+    console.log(this.articleFournisseur, this.conditionnement)
+  }
+
+  deleteArticleFournisseur(_articleFournisseur: InterfaceArticlefournisseurs, _conditionnement: IntefaceConditionnement) {
+    this.fournisseurService.deleteConditionnement(_conditionnement).subscribe({
+      next: () => {
+        this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
+          next: (_article) => {
+            this.articleFournisseurs = _article;
+            for (const _af of this.articleFournisseurs) {
+              if (_articleFournisseur.id == _af.id && _af.conditionnement.length == 0) {
+                this.fournisseurService.deleteArticleFournisseur(_af.id ? _af.id : 0).subscribe({
+                  next: () => {
+                    this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
+                      next: (_article) => {
+                        this.articleFournisseurs = _article;
+                        alert('Article fournisseur supprimer');
+                      }
+                    })
+                  }
+                })
+              }
+            }
+          }
+        })
+        alert('Conditionnement supprimer');
+      },
+    })
   }
 }
