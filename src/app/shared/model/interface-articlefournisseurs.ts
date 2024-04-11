@@ -10,6 +10,7 @@ export interface InterfaceArticlefournisseurs {
     prixReference: number,
     prixReferencePrecedent: number,
     commentaire: string,
+    selected?: boolean,
 
     article: InterfaceArticle,
     fournisseur: InterfaceFournisseur,

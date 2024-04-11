@@ -1,10 +1,11 @@
 import { Articlefournisseur } from "./articlefournisseurs";
 import { BonCommande } from "./bonCommande";
+import { InterfaceArticlefournisseurs } from "./interface-articlefournisseurs";
 
 export interface InterfaceCommandeDetails{
     id?:number | undefined;
     commandeId:number;
-    composantId:number;
+    // composantId:number;
     articlefournisseurId:number;
     QteCommande: number;
     QteLivre:number;
@@ -12,6 +13,6 @@ export interface InterfaceCommandeDetails{
     remise:number;
     validationdetailbc:boolean;
 
-    commande:BonCommande;
-    articlefournisseur:Articlefournisseur
+    commande?:BonCommande;
+    articlefournisseur : InterfaceArticlefournisseurs
 }

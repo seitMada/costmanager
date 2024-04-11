@@ -109,62 +109,30 @@
     <table class="table table-striped my-3">
       <thead>
         <tr>
-          <th></th>
-          <th>Famille</th>
-          <th>Designation</th>
-          <th>Qt commandé</th>
-          <th>Unité de commande</th>
-          <th>Prix unitaire HT </th>
-          <th>Montant HT</th>
-          <th>Remise en €</th>
+          <th class="col-1"></th>
+          <th class="col-3">Famille</th>
+          <th class="col-3">Designation</th>
+          <th class="col-1">Qt commandé</th>
+          <th class="col-1">Unité de commande</th>
+          <th class="col-1">Prix unitaire HT </th>
+          <th class="col-1">Montant HT</th>
+          <th class="col-1">Remise en €</th>
           <!-- <th>Qté commandé FT</th>
           <th>Unité FT</th> -->
         </tr>
       </thead>
       <tbody>
-        <tr  *ngFor="let line of commandes">
-          <td>
-            <div class="form-check form-example-indeterminate">
+        <tr *ngFor="let line of commandes">
+          <td  class="col-1">
               <input class="form-check-input"[value]="line.id" id="flexCheckIndeterminate" type="checkbox">
-            </div>
           </td>
-          <td>
-            <span *ngFor="let item of line.commandeDetail">
-              {{item.articlefournisseur.article.familles.libelle}}
-            </span>
-          </td>
-          <td>
-            <span *ngFor="let item of line.commandeDetail">
-              {{item.articlefournisseur.article.libelle}}
-            </span>
-          </td>
-          <td>
-            <span *ngFor="let item of line.commandeDetail">
-              <input type="text" class="form-control" name="qte_commande">
-            </span>
-          </td>
-          <td>
-            <span *ngFor="let item of line.commandeDetail">
-              {{item.articlefournisseur.article.unite.abreviation}}
-            </span>
-          </td>
-          <td>
-            <span *ngFor="let item of line.commandeDetail">
-              <input type="text" class="form-control" name="prix_unitaire" >
-            </span>
-            
-          </td>
-          <td>
-            <span *ngFor="let item of line.commandeDetail">
-              <input type="text" class="form-control" name="montant" [disabled]="true">
-            </span>
-          </td>
-          <td>
-            <span *ngFor="let item of line.commandeDetail">
-              <input type="text" class="form-control" name="remise">
-            </span>
-          </td>
-          
+          <td class="col-3">{{line.articlefournisseur.article.familles.libelle}}</td>
+          <td class="col-3">{{line.articlefournisseur.article.libelle}}</td>
+          <td class="col-1"><input type="text" class="form-control" name="qte_commande" [(ngModel)]="line.QteCommande"></td>
+          <td class="col-1">{{line.articlefournisseur.article.unite.abreviation}}</td>
+          <td class="col-1"><input type="text" class="form-control" name="prix_unitaire" [(ngModel)]="line.prixarticle"></td>
+          <td class="col-1">{{line.QteCommande * line.prixarticle}} €</td>
+          <td class="col-1"><input type="text" class="form-control" name="remise" [(ngModel)]="line.remise"></td>
           <!-- <td>{{ line. }}</td>
           <td>{{ line. }}</td> -->
         </tr>
@@ -195,12 +163,12 @@
       </thead>
       <tbody>
         <tr *ngFor="let line of commandes" (click)="showCommande(line)">
-          <td class="col-1"></td>
+          <!-- <td class="col-1"></td>
           <td class="col-3">{{line.noPiece}}</td>
           <td class="col-2">{{line.dateCommande}}</td>
           <td class="col-2">{{line.quantiteCommande | number:'1.2-2'}}</td>
           <td class="col-2">{{line.montantHT | number:'1.2-2'}}</td>
-          <td class="col-2">{{line.remise | number:'1.2-2'}} </td>
+          <td class="col-2">{{line.remise | number:'1.2-2'}} </td> -->
         </tr>
       </tbody>
     </table>
@@ -229,7 +197,9 @@
         <tr *ngFor="let item of articleFournisseurs">
           <td>
             <div class="form-check form-example-indeterminate">
-              <input class="form-check-input" [value]="item.id" (change)="onCheckboxChange(item,$event)" type="checkbox">
+              <!-- <input class="form-check-input" [value]="item.id" type="checkbox"> -->
+              <input type="checkbox" name="af-{{item.id}}" id="af-{{item.id}}"
+              [(ngModel)]="item.selected">
             </div>
           </td>
           <td>{{ item.article.libelle}}</td>
@@ -242,9 +212,8 @@
       </tbody>
     </table>
   </div>
-  <div class="text-center">
-    <button class="btn btn-success m-1" (click)="validatearticle()" type="button">Valider</button>
-    <button class="btn btn-danger m-1" (click)="modal.dismiss('Cross click')" type="button"
-      data-coreui-dismiss="modal">Annuler</button>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-success" (click)="modal.close('Save click')">Valider</button>
+    <button class="btn btn-danger m-1" (click)="modal.dismiss('Cross click')" type="button" data-coreui-dismiss="modal">Annuler</button>
   </div>
 </ng-template>

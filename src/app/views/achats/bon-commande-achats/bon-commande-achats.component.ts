@@ -19,11 +19,12 @@ import { Fournisseur, Fournisseurs } from 'src/app/shared/model/fournisseurs';
 import { Adress } from 'src/app/shared/model/adresse';
 import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
 import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
-import { Centrerevenu,Centrerevenus } from "src/app/shared/model/centrerevenu";
+import { Centrerevenu, Centrerevenus } from "src/app/shared/model/centrerevenu";
 import { InterfaceArticleExploitation, InterfaceArticleExploitations } from 'src/app/shared/model/interface-articleexploitations';
 import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-articlefournisseurs';
 import { Observable } from 'rxjs';
 import { InterfaceBonCommandes } from 'src/app/shared/model/interface-bonCommande';
+import { InterfaceCommandeDetails } from 'src/app/shared/model/interface-commandedetail';
 
 @Component({
   selector: 'app-bon-commande-achats',
@@ -56,13 +57,14 @@ export class BonCommandeAchatsComponent implements OnInit {
   public articleExploitations: InterfaceArticleExploitations;
   public achats: Achat;
   public adresse: Adress;
-  
-  public commandes: InterfaceBonCommandes[];
+
+  public commandes: InterfaceCommandeDetails[];
   public commande: InterfaceBonCommandes;
+  public commandeDetails: InterfaceCommandeDetails;
   public reason: any;
-  public validateArticles: any[]=[];
-  public artExploitationArticleId:any[]=[];
-  
+  public validateArticles: any[] = [];
+  public artExploitationArticleId: any[] = [];
+
   public toggle = true;
   public modifToggle = true;
   // private modalService = inject(NgbModal);
@@ -98,15 +100,15 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.resetCentre();
   }
 
-  formatDate(date:Date | string, format:string = 'yyyy-MM-dd'){
-    return this.datePipe.transform(date,format);
+  formatDate(date: Date | string, format: string = 'yyyy-MM-dd') {
+    return this.datePipe.transform(date, format);
   }
 
   ngOnInit(): void {
-    this.num_commande = "COM-" + (this.formatDate(this.today))?.replaceAll('-','')+ this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
-    this.showAllFournisseur(); 
-    this.showExploitationFournisseur();   
-   
+    this.num_commande = "COM-" + (this.formatDate(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
+    this.showAllFournisseur();
+    this.showExploitationFournisseur();
+
     this.commandeService.getAllCommande().subscribe({
       next: (commande) => {
         this.commandes = commande;
@@ -115,15 +117,15 @@ export class BonCommandeAchatsComponent implements OnInit {
         alert('Liste de bon de commande vide');
       }
     })
-    
+
   }
 
-  showAllFournisseur(){
+  showAllFournisseur() {
     this.fournisseurService.getAllFournisseurByExploitation(this.exploitationId).subscribe({
       next: (_fournisseur) => {
         this.fournisseurs = _fournisseur;
         this.fournisseur = _fournisseur[0];
-        this.idFournisseur = this.fournisseur.id? this.fournisseur.id : 0;        
+        this.idFournisseur = this.fournisseur.id ? this.fournisseur.id : 0;
       },
       error: (error) => {
         alert('Liste fournisseur vide')
@@ -134,11 +136,11 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.toggle = !this.toggle;
     this.selectDixDernierCommandeByFournisseurId();
   }
-  showExploitationFournisseur(){
+  showExploitationFournisseur() {
     this.exploitationService.getExploitationById(this.exploitationId).subscribe({
       next: (exploitation) => {
         this.exploitation = exploitation;
-        this.centreRevenuService.getCrExploitation(this.exploitation.id ? this.exploitation.id: 0).subscribe({
+        this.centreRevenuService.getCrExploitation(this.exploitation.id ? this.exploitation.id : 0).subscribe({
           next: (_centre) => {
             this.centres = _centre;
             this.centre = _centre[0];
@@ -150,14 +152,14 @@ export class BonCommandeAchatsComponent implements OnInit {
       }
     });
   }
-  addToggleModal() {       
+  addToggleModal() {
     this.modifToggle = !this.modifToggle;
     this.toggle = (this.toggle === false ? true : false);
     this.articleFournisseurs = [];
     this.modalService.dismissAll();
   }
 
-  public resetCentre(){
+  public resetCentre() {
     this.adresse = {
       rue: '...',
       ville: '...',
@@ -181,14 +183,14 @@ export class BonCommandeAchatsComponent implements OnInit {
       adressesId: 0,
     }
     this.centre = {
-      code:'',
+      code: '',
       libelle: '',
-      exploitationsId:0,
+      exploitationsId: 0,
       adressesId: 0,
       email: '',
-      telephone:'',
-      exploitations:this.exploitation,
-      adresses:this.adresse
+      telephone: '',
+      exploitations: this.exploitation,
+      adresses: this.adresse
     }
   }
 
@@ -221,14 +223,14 @@ export class BonCommandeAchatsComponent implements OnInit {
     };
   }
 
- 
+
   cancel() { }
 
   selectDixDernierCommandeByFournisseurId() {
     const fournisseur = this.fournisseur;
     this.commandes = [];
-    this.commandeService.getDixDernierCommandes(fournisseur.id? fournisseur.id:0).subscribe({
-      next:(commande) =>{
+    this.commandeService.getDixDernierCommandes(fournisseur.id ? fournisseur.id : 0).subscribe({
+      next: (commande) => {
         this.commandes = commande;
         console.log(this.commandes);
       }
@@ -246,7 +248,7 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   public selectOnFournisseur() {
     this.fournisseur = this.fournisseur;
-    
+
   }
 
   private getDismissReason(reason: any): string {
@@ -261,41 +263,86 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   public openModalArticle(content: TemplateRef<any>) {
-    this.modalService.open(content, { size: 'xl', ariaDescribedBy: 'modal-basic-title' });
+    // this.modalService.open(content, { size: 'xl', ariaDescribedBy: 'modal-basic-title' });
+    // const exploitationId = Number(this.exploitationId);
+    // this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
+    //   next:(artExploitation) =>{
+    //     const fournisseur = this.fournisseur;
+    //     if (artExploitation) {
+    //       this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
+    //       this.commandeService.getArticleFournisseurByArticleId(fournisseur.id? fournisseur.id: 0,this.artExploitationArticleId).subscribe({
+    //         next:(artFournisseur:any) => {
+    //           this.articleFournisseurs = artFournisseur;
+    //           console.log(this.articleFournisseurs);
+    //         }
+    //       })
+    //     }     
+    //   }
+    // 
     const exploitationId = Number(this.exploitationId);
     this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
-      next:(artExploitation) =>{
+      next: (artExploitation) => {
         const fournisseur = this.fournisseur;
         if (artExploitation) {
           this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
-          this.commandeService.getArticleFournisseurByArticleId(fournisseur.id? fournisseur.id: 0,this.artExploitationArticleId).subscribe({
-            next:(artFournisseur:any) => {
+          this.commandeService.getArticleFournisseurByArticleId(fournisseur.id ? fournisseur.id : 0, this.artExploitationArticleId).subscribe({
+            next: (artFournisseur: any) => {
               this.articleFournisseurs = artFournisseur;
               console.log(this.articleFournisseurs);
+
+              this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+                (result) => {
+                  this.closeResult = `Closed with: ${result}`;
+                  console.log(this.closeResult)
+                  if (this.closeResult == 'Closed with: Save click') {
+                    for (const _articlefournisseur of this.articleFournisseurs) {
+                      if (_articlefournisseur.selected == true) {
+                        this.commandeDetails = {
+                          commandeId: 0,
+                          articlefournisseurId: _articlefournisseur.articleId,
+                          QteCommande: 0,
+                          QteLivre: 0,
+                          prixarticle: _articlefournisseur.prixReference,
+                          remise: 0,
+                          validationdetailbc: false,
+                          articlefournisseur: _articlefournisseur
+                        }
+                        this.commandes.push(this.commandeDetails)
+                      }
+                    }
+                    console.log(this.commandes)
+                  }
+                },
+                (reason) => {
+                  this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+                  console.log(this.closeResult)
+
+                },
+              );
             }
           })
-        }     
+        }
       }
     });
   }
 
-  
 
-  public onCheckboxChange(articleFournisseur:InterfaceArticlefournisseurs,event:any) {
+
+  public onCheckboxChange(articleFournisseur: InterfaceArticlefournisseurs, event: any) {
     const isChecked = event.target.checked;
     if (isChecked) {
       this.validateArticles.push(articleFournisseur.id);
-    }else{
+    } else {
       const index = this.validateArticles.indexOf(articleFournisseur.id);
       if (index !== -1) {
-        this.validateArticles.splice(index,1);
+        this.validateArticles.splice(index, 1);
       }
-    }    
+    }
   }
 
-  public validatearticle(){
+  public validatearticle() {
     this.commandeService.getArticleFournisseurByArticle(this.validateArticles).subscribe({
-      next:(artFournis) =>{
+      next: (artFournis) => {
         this.commandes = artFournis;
       }
     });
@@ -306,7 +353,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.fournisseur.id = data.id;
   }
 
-  selectCentreRevenu(data:InterfaceCentreRevenu){
+  selectCentreRevenu(data: InterfaceCentreRevenu) {
     this.centre = data;
     this.centre.id = data.id;
   }
