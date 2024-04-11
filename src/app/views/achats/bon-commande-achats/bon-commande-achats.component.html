@@ -1,15 +1,15 @@
 <div class="card d-flex py-1 my-2 mb-2">
   <div class="d-flex bd-highlight">
     <div class="flex-grow-1 bd-highlight">
-      <button type="button" class="btn btn-success btn-sm mx-1" *ngIf="!modifToggle">Enregistrer</button>
-      <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
+      <button type="button" class="btn btn-success btn-sm mx-1" *ngIf="!toggle">Enregistrer</button>
+      <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!toggle" (click)="cancel()">Annuler</button>
     </div>
     <div class="bd-highlight mx-2 my-0">
       <div class="input-group input-group-sm">
         <span class="input-group-text col-5" id="basic-addon1">Fournisseurs</span>
         <input type="text" class="form-control bg-white col-6" aria-label="unite" aria-describedby="fournisseur"
           [(ngModel)]="fournisseur.raison_social" disabled="true">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="toggle"
           data-bs-toggle="dropdown" aria-expanded="false">
           <span class="visually-hidden">Toggle Dropdown</span>
         </button>
@@ -20,7 +20,7 @@
       </div>
     </div>
     <div class="bd-highlight">
-      <button class="btn btn-outline-success btn-sm me-1" (click)="toggleModal()" title="Ajouter bon de commande">
+      <button class="btn btn-outline-success btn-sm me-1" (click)="toggleModal()" *ngIf="toggle" title="Ajouter bon de commande">
         <i class="fas fa-plus"></i>
       </button>
 
@@ -58,14 +58,14 @@
         <div class="col-sm-6">
           <div class="input-group">
             <span class="input-group-text col-5" id="basic-addon1">Exploitation</span>
-            <input type="text" class="form-control col-7" [disabled]="true"
+            <input type="text" class="form-control col-7" [value]="exploitation.libelle" [disabled]="true"
               aria-label="exploitation" aria-describedby="basic-addon1">
           </div>
         </div>
         <div class="col-sm-6">
           <div class="input-group">
             <span class="input-group-text col-5" id="basic-addon1">Adresse Fournisseur</span>
-            <input type="text" class="form-control col-7" [value]="fournisseur.adresse.rue+fournisseur.adresse.code_postal" aria-label="adresse"
+            <input type="text" class="form-control col-7" [value]="fournisseur.adresse.rue +  fournisseur.adresse.code_postal" aria-label="adresse"
               [disabled]="true" aria-describedby="basic-addon1">
           </div>
         </div>
@@ -75,14 +75,14 @@
         <div class="col-sm-6">
           <div class="input-group">
             <span class="input-group-text col-5" id="basic-addon1">Centre de revenu</span>
-            <input type="text" class="form-control bg-white col-6" aria-label="centre" aria-describedby="centre"
+            <input type="text" class="form-control bg-white col-6" [value]="centre.libelle" aria-label="centre" aria-describedby="centre"
               disabled="true">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
               data-bs-toggle="dropdown" aria-expanded="false">
               <span class="visually-hidden">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
-              <li *ngFor="let item of centres"><span>{{item.libelle}}</span>
+              <li *ngFor="let item of centres"><span (click)="selectCentreRevenu(item)">{{item.libelle}}</span>
               </li>
             </ul>
           </div>
@@ -113,30 +113,60 @@
           <th>Famille</th>
           <th>Designation</th>
           <th>Qt commandé</th>
-          <th>Prix unitaire HT </th>
           <th>Unité de commande</th>
+          <th>Prix unitaire HT </th>
           <th>Montant HT</th>
           <th>Remise en €</th>
-          <th>Qté commandé FT</th>
-          <th>Unité FT</th>
+          <!-- <th>Qté commandé FT</th>
+          <th>Unité FT</th> -->
         </tr>
       </thead>
       <tbody>
-        <tr>
+        <tr  *ngFor="let line of commandes">
           <td>
             <div class="form-check form-example-indeterminate">
-              <input class="form-check-input" id="flexCheckIndeterminate" type="checkbox">
+              <input class="form-check-input"[value]="line.id" id="flexCheckIndeterminate" type="checkbox">
             </div>
           </td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
-          <td></td>
+          <td>
+            <span *ngFor="let item of line.commandeDetail">
+              {{item.articlefournisseur.article.familles.libelle}}
+            </span>
+          </td>
+          <td>
+            <span *ngFor="let item of line.commandeDetail">
+              {{item.articlefournisseur.article.libelle}}
+            </span>
+          </td>
+          <td>
+            <span *ngFor="let item of line.commandeDetail">
+              <input type="text" class="form-control" name="qte_commande">
+            </span>
+          </td>
+          <td>
+            <span *ngFor="let item of line.commandeDetail">
+              {{item.articlefournisseur.article.unite.abreviation}}
+            </span>
+          </td>
+          <td>
+            <span *ngFor="let item of line.commandeDetail">
+              <input type="text" class="form-control" name="prix_unitaire" >
+            </span>
+            
+          </td>
+          <td>
+            <span *ngFor="let item of line.commandeDetail">
+              <input type="text" class="form-control" name="montant" [disabled]="true">
+            </span>
+          </td>
+          <td>
+            <span *ngFor="let item of line.commandeDetail">
+              <input type="text" class="form-control" name="remise">
+            </span>
+          </td>
+          
+          <!-- <td>{{ line. }}</td>
+          <td>{{ line. }}</td> -->
         </tr>
       </tbody>
     </table>
@@ -168,9 +198,9 @@
           <td class="col-1"></td>
           <td class="col-3">{{line.noPiece}}</td>
           <td class="col-2">{{line.dateCommande}}</td>
-          <td class="col-2">{{line.quantiteCommande}}</td>
-          <td class="col-2">{{line.montantHT}}</td>
-          <td class="col-2">{{line.remise}} </td>
+          <td class="col-2">{{line.quantiteCommande | number:'1.2-2'}}</td>
+          <td class="col-2">{{line.montantHT | number:'1.2-2'}}</td>
+          <td class="col-2">{{line.remise | number:'1.2-2'}} </td>
         </tr>
       </tbody>
     </table>
@@ -199,22 +229,21 @@
         <tr *ngFor="let item of articleFournisseurs">
           <td>
             <div class="form-check form-example-indeterminate">
-              <input class="form-check-input" [(ngModel)]="articleFournisseur" id="flexCheckIndeterminate"
-                (change)="onCheckboxChange($event)" type="checkbox">
+              <input class="form-check-input" [value]="item.id" (change)="onCheckboxChange(item,$event)" type="checkbox">
             </div>
           </td>
-          <td>{{ item.articles_libelle}}</td>
-          <td>{{ item.articles_codeArticle}}</td>
-          <td>{{ item.famille_libelle}}</td>
-          <td>{{ item.articlefournisseur_prixReference | number:'1.2-2'}}</td>
-          <td>{{ item.unites_abreviation}}</td>
-          <td>{{ item.groupeanalytiques_type}}</td>
+          <td>{{ item.article.libelle}}</td>
+          <td>{{ item.article.codeArticle}}</td>
+          <td>{{ item.article.familles.libelle}}</td>
+          <td>{{ item.prixReference | number:'1.2-2'}}</td>
+          <td>{{ item.article.unite.abreviation}}</td>
+          <td>{{ item.article.groupeanalytique.type}}</td>
         </tr>
       </tbody>
     </table>
   </div>
   <div class="text-center">
-    <button class="btn btn-success m-1" type="button">Valider</button>
+    <button class="btn btn-success m-1" (click)="validatearticle()" type="button">Valider</button>
     <button class="btn btn-danger m-1" (click)="modal.dismiss('Cross click')" type="button"
       data-coreui-dismiss="modal">Annuler</button>
   </div>

@@ -26,14 +26,13 @@ export const environment = {
     APIADDFOURNISSEUR: endPoint + 'fournisseur',
     APIUPDATEFOURNISSEUR: endPoint + 'fournisseur/update_fournisseur/',
 
-    APIGETARTICLEBYFOURNISSEUR: endPoint + 'articlefournisseur/',
-
     APIPOSTDESACTIVEFOURNISSEUR: endPoint + 'fournisseurexploitation/desactive_fournisseurexploitation/',
     APIPOSTDESACTIVEFOURNISSEURS: endPoint + 'fournisseurexploitation/desactive_fournisseurexploitations',
     APIUPDATEFOURNISSEUREXPLOITATION: endPoint + 'fournisseurexploitation/delete_fournisseurexploitation/',
     APIGETEXPLOITATIONBYFOURNISSEUR: endPoint + 'fournisseurexploitation/',
 
     APIGETCOMMANDE: endPoint + 'commande',
+    APIGETDIXDERNIERCOMMANDE: endPoint + 'commande/derniersCommandes/',
 
 
     APIGETARTICLE : endPoint + 'articles',
@@ -45,11 +44,12 @@ export const environment = {
     APIPOSTDELETEARTICLES: endPoint + 'articles/delete_multi_articles',
     APIPOSTDESACTIVEARTICLE: endPoint + 'articleexploitation/desactive_articleexploitation/',
     APIPOSTDESACTIVEARTICLES: endPoint + 'articleexploitation/desactive_articleexploitations',
-    APIGETARTICLEEXCLUDE : endPoint + 'articles/articleexclude',
+    APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID: endPoint + 'articleexploitation/',
 
-    APIUPDATECOMPOSITION: endPoint + 'composition/update_composition/',
-    APIGETCOMPOSITIONBYFICHETECHNIQUE: endPoint + 'composition/',
+    APIGETARTICLEEXCLUDE : endPoint + 'articles/articleexclude',
     
+    APIGETARTICLEBYFOURNISSEUR: endPoint + 'articlefournisseur/',
+
     APIPOSTDELETEALLERGENEARTICLE: endPoint + 'allergenearticle/delete_allergenearticle/',
     APIGETALLERGENE: endPoint + 'allergene',
 
@@ -63,7 +63,6 @@ export const environment = {
     APIGETGROUPE: endPoint + 'groupe_analytique',
     APIGETFAMILLEBYGROUPE: endPoint + 'familles/groupe/',
 
-
     APIGETSOUSFAMILLEBYGROUPE: endPoint + 'sousfamilles/famille/',
 
     APIGETFICHETECHNIQUEBYID: endPoint + 'fichetechnique/',
@@ -74,13 +73,19 @@ export const environment = {
     APIPOSTDELETEFICHETECHNIQUE: endPoint + 'fichetechnique/delete_fichetechnique',
     APIPOSTDELETEFICHETECHNIQUES: endPoint + 'fichetechnique/delete_multi_fichetechnique',
 
+    APIUPDATECOMPOSITION: endPoint + 'composition/update_composition/',
+    APIGETCOMPOSITIONBYFICHETECHNIQUE: endPoint + 'composition/',
+
     APIPOSTDESACTIVEFICHETECHNIQUE: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitation/',
     APIPOSTDESACTIVEFICHETECHNIQUES: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitations',
     APIUPDATEFICHETECHNIQUEEXPLOITATION: endPoint + 'fichetechniqueexploitation/delete_fichetechniqueexploitation/',
-
+    
     APICREATECOMMANDE: endPoint + '/commande',
     APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID: endPoint + 'articlefournisseur/',
-    // APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID: endPoint + 'articleexploitation/',
+    APIGETARTICLEFOURNISSEURBYARTICLEID: endPoint + 'articlefournisseur/byarticleId/',
+    ARTICLEFOURNISSEURCHECKED: endPoint+ 'articlefournisseur/byarticleId',
+    
 
-    APIGETADRESS: endPoint + 'adresse'
+    APIGETADRESS: endPoint + 'adresse',
+
 };

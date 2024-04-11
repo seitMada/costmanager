@@ -1,5 +1,5 @@
 import { NgModule } from '@angular/core';
-import { HashLocationStrategy, LocationStrategy, PathLocationStrategy } from '@angular/common';
+import { DatePipe, HashLocationStrategy, LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
@@ -94,7 +94,8 @@ const APP_CONTAINERS = [
     },
     IconSetService,
     Title,
-    ExploitationService
+    ExploitationService,
+    DatePipe
   ],
   bootstrap: [AppComponent]
 })

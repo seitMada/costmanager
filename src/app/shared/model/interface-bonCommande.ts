@@ -3,9 +3,9 @@ import { InterfaceAchat } from "./interface-achats";
 import { InterfaceCentreRevenu } from "./interface-centrerevenu";
 import { InterfaceExploitations } from "./interface-exploitations";
 import { InterfaceFournisseur } from "./interface-fournisseurs";
-import { InterfaceUnite } from "./interface-unite";
+import { InterfaceCommandeDetails } from "./interface-commandedetail";
 
-export interface InterfaceBonCommande {
+export interface InterfaceBonCommandes {
     id?: number | undefined;
     libelle: string;
     quantiteCommande: number;
@@ -23,12 +23,10 @@ export interface InterfaceBonCommande {
     fournisseur: InterfaceFournisseur;
     centre: InterfaceCentreRevenu[];
     exploitation: InterfaceExploitations[];
+    commandeDetail:InterfaceCommandeDetails[];
+
     // unite: InterfaceUnite;
     achat: InterfaceAchat[];
 
 
-}
-
-export interface InterfaceBonCommandes {
-    boncommandes: InterfaceBonCommande[];
 }

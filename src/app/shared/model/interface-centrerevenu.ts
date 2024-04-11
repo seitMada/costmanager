@@ -1,5 +1,6 @@
+import { Adress } from "./adresse";
 import { InterfaceAdresse } from "./interface-adresse";
-import { InterfaceExploitations } from "./interface-exploitations";
+import { Exploitation } from './exploitations';
 
 export interface InterfaceCentreRevenu {
     id?:number;
@@ -10,8 +11,8 @@ export interface InterfaceCentreRevenu {
     email: string;
     telephone:string;
 
-    exploitations:InterfaceExploitations;
-    adresses:InterfaceAdresse
+    exploitations:Exploitation;
+    adresses:Adress
 
 }
 

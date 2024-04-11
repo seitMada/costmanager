@@ -32,6 +32,7 @@ export const environment = {
     APIGETEXPLOITATIONBYFOURNISSEUR: endPoint + 'fournisseurexploitation/',
 
     APIGETCOMMANDE: endPoint + 'commande',
+    APIGETDIXDERNIERCOMMANDE: endPoint + 'commande/derniersCommandes/',
 
 
     APIGETARTICLE : endPoint + 'articles',
@@ -43,6 +44,8 @@ export const environment = {
     APIPOSTDELETEARTICLES: endPoint + 'articles/delete_multi_articles',
     APIPOSTDESACTIVEARTICLE: endPoint + 'articleexploitation/desactive_articleexploitation/',
     APIPOSTDESACTIVEARTICLES: endPoint + 'articleexploitation/desactive_articleexploitations',
+    APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID: endPoint + 'articleexploitation/',
+
     APIGETARTICLEEXCLUDE : endPoint + 'articles/articleexclude',
     
     APIGETARTICLEBYFOURNISSEUR: endPoint + 'articlefournisseur/',
@@ -79,7 +82,10 @@ export const environment = {
     
     APICREATECOMMANDE: endPoint + '/commande',
     APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID: endPoint + 'articlefournisseur/',
-    // APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID: endPoint + 'articleexploitation/',
+    APIGETARTICLEFOURNISSEURBYARTICLEID: endPoint + 'articlefournisseur/byarticleId/',
+    ARTICLEFOURNISSEURCHECKED: endPoint+ 'articlefournisseur/byarticleId',
+    
 
-    APIGETADRESS: endPoint + 'adresse'
+    APIGETADRESS: endPoint + 'adresse',
+
 };
