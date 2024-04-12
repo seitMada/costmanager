@@ -7,7 +7,6 @@ import { InterfaceCommandeDetails } from "./interface-commandedetail";
 
 export interface InterfaceBonCommandes {
     id?: number | undefined;
-    libelle: string;
     quantiteCommande: number;
     remise: number;
     montantHT: number;
@@ -19,13 +18,12 @@ export interface InterfaceBonCommandes {
     fournisseurId: number;
     exploitationId: number;
     centreId: number;
+    selected:false,
 
     fournisseur: InterfaceFournisseur;
     centre: InterfaceCentreRevenu[];
     exploitation: InterfaceExploitations[];
     commandeDetail:InterfaceCommandeDetails[];
-
-    // unite: InterfaceUnite;
     achat: InterfaceAchat[];
 
 

@@ -32,7 +32,9 @@ export const environment = {
     APIGETEXPLOITATIONBYFOURNISSEUR: endPoint + 'fournisseurexploitation/',
 
     APIGETCOMMANDE: endPoint + 'commande',
-    APIGETDIXDERNIERCOMMANDE: endPoint + 'commande/derniersCommandes/',
+    APICREATECOMMANDEDETAIL :endPoint + 'commande/commandeDetail',
+    APIGETDIXDERNIERCOMMANDE: endPoint + 'commande_detail/derniersCommandes/',
+    
 
 
     APIGETARTICLE : endPoint + 'articles',
@@ -88,7 +90,7 @@ export const environment = {
     APIPOSTDESACTIVEFICHETECHNIQUES: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitations',
     APIUPDATEFICHETECHNIQUEEXPLOITATION: endPoint + 'fichetechniqueexploitation/delete_fichetechniqueexploitation/',
     
-    APICREATECOMMANDE: endPoint + '/commande',
+    APICREATECOMMANDE: endPoint + 'commande',
     APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID: endPoint + 'articlefournisseur/',
     APIGETARTICLEFOURNISSEURBYARTICLEID: endPoint + 'articlefournisseur/byarticleId/',
     ARTICLEFOURNISSEURCHECKED: endPoint+ 'articlefournisseur/byarticleId',

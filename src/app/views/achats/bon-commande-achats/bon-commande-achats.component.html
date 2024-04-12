@@ -1,7 +1,7 @@
 <div class="card d-flex py-1 my-2 mb-2">
   <div class="d-flex bd-highlight">
     <div class="flex-grow-1 bd-highlight">
-      <button type="button" class="btn btn-success btn-sm mx-1" *ngIf="!toggle">Enregistrer</button>
+      <button type="button" (click)="addBonCommande()" class="btn btn-success btn-sm mx-1" *ngIf="!toggle">Enregistrer</button>
       <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!toggle" (click)="cancel()">Annuler</button>
     </div>
     <div class="bd-highlight mx-2 my-0">
@@ -27,7 +27,7 @@
       <button [disabled]="!modifToggle" class="btn btn-outline-danger btn-sm me-1" title="Supprimer bon de commande">
         <i class="fas fa-trash"></i>
       </button>
-      <button class="btn btn-outline-primary btn-sm me-1" *ngIf="!toggle" title="Liste bon de commande">
+      <button class="btn btn-outline-primary btn-sm me-1" *ngIf="!toggle" title="Liste bon de commande" (click)="showListCommande()">
         <i class="fas fa-list"></i>
       </button>
     </div>
@@ -43,13 +43,13 @@
           <div class="input-group">
             <span class="input-group-text col-5" id="basic-addon1">Date de commande</span>
             <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datecommande"
-              [(ngModel)]="dates.today" autocomplete="off">
+              [(ngModel)]="boncommande.dateCommande" autocomplete="off">
           </div>
         </div>
         <div class="col-sm-6">
           <div class="input-group">
             <span class="input-group-text col-5" id="basic-addon1">Fournisseur</span>
-            <input type="text" class="form-control col-6" [value]="fournisseur.raison_social" 
+            <input type="text" class="form-control col-6" [(ngModel)]="boncommande.fournisseur.raison_social" name="fournisseurId" 
               aria-label="fournisseur" [disabled]="true" aria-describedby="basic-addon1">
           </div>
         </div>
@@ -58,14 +58,14 @@
         <div class="col-sm-6">
           <div class="input-group">
             <span class="input-group-text col-5" id="basic-addon1">Exploitation</span>
-            <input type="text" class="form-control col-7" [value]="exploitation.libelle" [disabled]="true"
+            <input type="text" class="form-control col-7" [(ngModel)]="exploitation.libelle" name="exploitationId" [disabled]="true"
               aria-label="exploitation" aria-describedby="basic-addon1">
           </div>
         </div>
         <div class="col-sm-6">
           <div class="input-group">
             <span class="input-group-text col-5" id="basic-addon1">Adresse Fournisseur</span>
-            <input type="text" class="form-control col-7" [value]="fournisseur.adresse.rue +  fournisseur.adresse.code_postal" aria-label="adresse"
+            <input type="text" [value]="fournisseur.adresse.rue +' '+fournisseur.adresse.code_postal+' '+fournisseur.adresse.ville+' '+fournisseur.adresse.pays" class="form-control col-7" name="adresse" aria-label="adresse"
               [disabled]="true" aria-describedby="basic-addon1">
           </div>
         </div>
@@ -75,7 +75,7 @@
         <div class="col-sm-6">
           <div class="input-group">
             <span class="input-group-text col-5" id="basic-addon1">Centre de revenu</span>
-            <input type="text" class="form-control bg-white col-6" [value]="centre.libelle" aria-label="centre" aria-describedby="centre"
+            <input type="text" class="form-control bg-white col-6" name="centreId" [(ngModel)]="centre.libelle" aria-label="centre" aria-describedby="centre"
               disabled="true">
             <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
               data-bs-toggle="dropdown" aria-expanded="false">
@@ -90,7 +90,7 @@
         <div class="col-sm-6">
           <div class="input-group">
             <span class="input-group-text col-5" id="basic-addon1">N° bon de commande</span>
-            <input type="text" class="form-control col-7" [(ngModel)]="num_commande" name="numCommande"
+            <input type="text" class="form-control col-7" [(ngModel)]="boncommande.noPiece"  name="noPiece"
               aria-describedby="basic-addon1">
           </div>
         </div>
@@ -104,6 +104,9 @@
     <button class="btn btn-outline-success btn-sm me-1" (click)="openModalArticle(content)" title="Ajouter article">
       <i class="fas fa-plus"></i>
     </button>
+    <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer bon de commande">
+      <i class="fas fa-trash"></i>
+    </button>
   </div>
   <div class="card-body overflow-scroll py-1" style="height: 350px;">
     <table class="table table-striped my-3">
@@ -112,10 +115,10 @@
           <th class="col-1"></th>
           <th class="col-3">Famille</th>
           <th class="col-3">Designation</th>
-          <th class="col-1">Qt commandé</th>
-          <th class="col-1">Unité de commande</th>
-          <th class="col-1">Prix unitaire HT </th>
-          <th class="col-1">Montant HT</th>
+          <th class="col-1">Quantité</th>
+          <th class="col-1">Unité</th>
+          <th class="col-1">Prix unitaire</th>
+          <th class="col-1">Montant</th>
           <th class="col-1">Remise en €</th>
           <!-- <th>Qté commandé FT</th>
           <th>Unité FT</th> -->
@@ -124,27 +127,29 @@
       <tbody>
         <tr *ngFor="let line of commandes">
           <td  class="col-1">
-              <input class="form-check-input"[value]="line.id" id="flexCheckIndeterminate" type="checkbox">
+              <input class="form-check-input" type="checkbox" name="dc-{{line.id}}" id="dc-{{line.id}}" [(ngModel)]="line.selected" >
           </td>
           <td class="col-3">{{line.articlefournisseur.article.familles.libelle}}</td>
           <td class="col-3">{{line.articlefournisseur.article.libelle}}</td>
-          <td class="col-1"><input type="text" class="form-control" name="qte_commande" [(ngModel)]="line.QteCommande"></td>
+          <td class="col-1 text-end"><input type="text" class="form-control" name="qte_commande[]" [(ngModel)]="line.QteCommande"></td>
           <td class="col-1">{{line.articlefournisseur.article.unite.abreviation}}</td>
-          <td class="col-1"><input type="text" class="form-control" name="prix_unitaire" [(ngModel)]="line.prixarticle"></td>
-          <td class="col-1">{{line.QteCommande * line.prixarticle}} €</td>
-          <td class="col-1"><input type="text" class="form-control" name="remise" [(ngModel)]="line.remise"></td>
+          <td class="col-1 text-end"><input type="text" class="form-control" name="prix_unitaire[]" [(ngModel)]="line.prixarticle"></td>
+          <td class="col-1 text-end">{{line.QteCommande * line.prixarticle}} €</td>
+          <td class="col-1">
+            <div class="input-group">
+              <input type="text" class="form-control" name="remise[]" [(ngModel)]="line.remise">
+              <span class="input-group-text">€</span>
+            </div>
+          </td>
           <!-- <td>{{ line. }}</td>
           <td>{{ line. }}</td> -->
         </tr>
       </tbody>
     </table>
   </div>
-</div>
-
-<div class="card d-flex my-2" *ngIf="!toggle">
-  <div class="card-body">
-    <div class="col-7">Montant</div>
-    <div class="col-5">€</div>
+  <div class="card-footer d-flex">
+    <div class="col-10 text-end fw-bold">Montant Total</div>
+    <div class="col-1 text-end fw-bold">{{getTotalMontant() - getTotalRemise() | number:'1.2-2'}} €</div>
   </div>
 </div>
 
@@ -162,13 +167,13 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let line of commandes" (click)="showCommande(line)">
-          <!-- <td class="col-1"></td>
+        <tr *ngFor="let line of boncommandes" (click)="showCommande(line)">
+          <td class="col-1"><input type="checkbox" name="af-{{line.id}}" id="af-{{line.id}}" [(ngModel)]="line.selected"></td>
           <td class="col-3">{{line.noPiece}}</td>
-          <td class="col-2">{{line.dateCommande}}</td>
+          <td class="col-2">{{line.dateCommande | date :'dd-MM-yyyy'}}</td>
           <td class="col-2">{{line.quantiteCommande | number:'1.2-2'}}</td>
-          <td class="col-2">{{line.montantHT | number:'1.2-2'}}</td>
-          <td class="col-2">{{line.remise | number:'1.2-2'}} </td> -->
+          <td class="col-2">{{line.montantHT | number:'1.2-2'}} €</td>
+          <td class="col-2">{{line.remise | number:'1.2-2'}} €</td>
         </tr>
       </tbody>
     </table>
@@ -180,40 +185,38 @@
     <h5 class="modal-title text-center">Ajout Article</h5>
     <button class="btn-close" type="button" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
   </div>
-  <div class="modal-body">
+  <div class="modal-body overflow-scroll-y" style="height: 400px;">
     <table class="table table-striped">
       <thead>
         <tr>
-          <th>Séléction</th>
-          <th>Désignation</th>
-          <th>Code</th>
-          <th>Famille</th>
-          <th>Prix unitaire</th>
-          <th>Unité</th>
-          <th>Type</th>
+          <th class="col-1"></th>
+          <th class="col-3">Désignation</th>
+          <th class="col-2">Code</th>
+          <th class="col-2">Famille</th>
+          <th class="col-1">Prix</th>
+          <th class="col-1">Unite</th>
+          <!-- <th class="col-1">Prix FT</th>
+          <th class="col-1">Unite FT</th> -->
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let item of articleFournisseurs">
-          <td>
-            <div class="form-check form-example-indeterminate">
-              <!-- <input class="form-check-input" [value]="item.id" type="checkbox"> -->
-              <input type="checkbox" name="af-{{item.id}}" id="af-{{item.id}}"
-              [(ngModel)]="item.selected">
-            </div>
+          <td class="col-1">
+            <input type="checkbox" name="af-{{item.id}}" id="af-{{item.id}}" [(ngModel)]="item.selected">
           </td>
-          <td>{{ item.article.libelle}}</td>
-          <td>{{ item.article.codeArticle}}</td>
-          <td>{{ item.article.familles.libelle}}</td>
-          <td>{{ item.prixReference | number:'1.2-2'}}</td>
-          <td>{{ item.article.unite.abreviation}}</td>
-          <td>{{ item.article.groupeanalytique.type}}</td>
+          <td class="col-3">{{ item.article.libelle}}</td>
+          <td class="col-2">{{ item.article.codeArticle}}</td>
+          <td class="col-2">{{ item.article.familles.libelle}}</td>
+          <td class="col-1">{{ item.prixReference | number:'1.2-2'}}</td>
+          <td class="col-1">{{ item.article.unite.abreviation}}</td>
+          <!-- <td class="col-1"></td>
+          <td class="col-1"></td> -->
         </tr>
       </tbody>
     </table>
   </div>
   <div class="modal-footer">
     <button type="button" class="btn btn-sm btn-success" (click)="modal.close('Save click')">Valider</button>
-    <button class="btn btn-danger m-1" (click)="modal.dismiss('Cross click')" type="button" data-coreui-dismiss="modal">Annuler</button>
+    <button class="btn btn-sm btn-danger m-1" (click)="modal.dismiss('Cross click')" type="button" data-coreui-dismiss="modal">Annuler</button>
   </div>
 </ng-template>

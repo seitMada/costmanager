@@ -12,6 +12,7 @@ export interface InterfaceCommandeDetails{
     prixarticle:number;
     remise:number;
     validationdetailbc:boolean;
+    selected:false;
 
     commande?:BonCommande;
     articlefournisseur : InterfaceArticlefournisseurs

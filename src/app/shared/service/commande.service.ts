@@ -2,6 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { InterfaceBonCommandes } from '../model/interface-bonCommande';
+import { InterfaceCommandeDetails } from '../model/interface-commandedetail';
 
 @Injectable({
   providedIn: 'root'
@@ -16,13 +18,14 @@ export class CommandeService {
   private apiArticleFournisseurByArticleId = environment.APIGETARTICLEFOURNISSEURBYARTICLEID;
   private apiDixDernierCommande = environment.APIGETDIXDERNIERCOMMANDE;
   private apiGetArticleFournisseurByArticle = environment.ARTICLEFOURNISSEURCHECKED;
+  private apiCreateCommandeDetail = environment.APICREATECOMMANDEDETAIL;
 
   public getAllCommande(){
     return this.https.get<any>(this.apiGetCommande);
   }
 
-  public createBonCommande(commande:any){
-    return this.https.post<any>(this.apiCreateCommande,commande);
+  public createBonCommande(commande:InterfaceBonCommandes){
+    return this.https.post<any>(this.apiCreateCommande,{commande});
   }
 
   public getArticleExploitaionByExploitationId(exploitationId:number){
@@ -39,6 +42,10 @@ export class CommandeService {
 
   public getArticleFournisseurByArticle(articleId:any[]){
     return this.https.get<any>(this.apiGetArticleFournisseurByArticle,{ params: { articleId: articleId.join(',')} });
+  }
+
+  public createCommandeDetail(commandeId:number,commandeDetails:InterfaceCommandeDetails[]){
+    return this.https.post<any>(this.apiCreateCommandeDetail,{commandeId,commandeDetails});
   }
 
 }

@@ -8,7 +8,6 @@ import { InterfaceCommandeDetails } from "./interface-commandedetail";
 
 export class BonCommande implements InterfaceBonCommandes {
   id?:            number | undefined;
-  libelle: string;
   quantiteCommande: number;
   remise: number;
   montantHT: number;
@@ -19,6 +18,7 @@ export class BonCommande implements InterfaceBonCommandes {
   dateCommande: Date;
   fournisseurId: number;
   exploitationId: number;
+  selected: false;
   centreId: number;
   fournisseur: InterfaceFournisseur;
   centre: InterfaceCentreRevenu[];
@@ -28,7 +28,6 @@ export class BonCommande implements InterfaceBonCommandes {
   achat: InterfaceAchat[];
 
     constructor(bonCommandeInterface:InterfaceBonCommandes){
-      this.libelle=bonCommandeInterface.libelle;
       this.quantiteCommande=bonCommandeInterface.quantiteCommande;
       this.remise=bonCommandeInterface.remise;
       this.montantHT=bonCommandeInterface.montantHT;
