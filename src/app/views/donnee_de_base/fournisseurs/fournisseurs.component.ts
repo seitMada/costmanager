@@ -98,6 +98,7 @@ export class FournisseursComponent {
       coefficientInventaire: 1,
       idUniteFt: _article.uniteId,
       articlefournisseurId: 0,
+      prixAchat: 0,
 
       uniteAchat: {
         libelle: '',
@@ -636,31 +637,31 @@ export class FournisseursComponent {
             });
           } else {
             if (this.conditionnement.id == 0) {
-              // this.fournisseurService.addConditionnement(this.conditionnement).subscribe({
-              //   next: () => {
-              //     this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
-              //       next: (_article) => {
-              //         this.articleFournisseurs = _article;
-              //       }
-              //     })
-              //     alert('Conditionnement ajouter')
-              //   }
-              // })
-              this.fournisseurService.addArticleFournisseur(this.articleFournisseur).subscribe({
-                next: (_articleFournisseur: any) => {
-                  this.conditionnement.articlefournisseurId = _articleFournisseur.id;
-                  this.fournisseurService.addConditionnement(this.conditionnement).subscribe({
-                    next: () => {
-                      this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
-                        next: (_article) => {
-                          this.articleFournisseurs = _article;
-                        }
-                      })
-                      alert('Conditionnement ajouter')
+              this.fournisseurService.addConditionnement(this.conditionnement).subscribe({
+                next: () => {
+                  this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
+                    next: (_article) => {
+                      this.articleFournisseurs = _article;
                     }
                   })
+                  alert('Conditionnement ajouter')
                 }
-              });
+              })
+              // this.fournisseurService.addArticleFournisseur(this.articleFournisseur).subscribe({
+              //   next: (_articleFournisseur: any) => {
+              //     this.conditionnement.articlefournisseurId = _articleFournisseur.id;
+              //     this.fournisseurService.addConditionnement(this.conditionnement).subscribe({
+              //       next: () => {
+              //         this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
+              //           next: (_article) => {
+              //             this.articleFournisseurs = _article;
+              //           }
+              //         })
+              //         alert('Conditionnement ajouter')
+              //       }
+              //     })
+              //   }
+              // });
             } else {
               this.fournisseurService.updateConditionnement(this.conditionnement.id ? this.conditionnement.id : 0, this.conditionnement).subscribe({
                 next: () => {

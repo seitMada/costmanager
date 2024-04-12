@@ -11,6 +11,7 @@ export interface IntefaceConditionnement {
     coefficientInventaire: number,
     idUniteFt: number,
     articlefournisseurId: number,
+    prixAchat: number;
 
     uniteAchat: InterfaceUnite,
     uniteCommande: InterfaceUnite,

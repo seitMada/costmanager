@@ -232,24 +232,23 @@
                     <td class="col-3">{{line.fournisseur.raison_social}}</td>
                     <td class="col-2">
                   <tr *ngFor="let lines of line.conditionnement" (click)="showFournisseur(lines)">
-                    <td>{{lines.coefficientAchatCommande}} {{lines.uniteCommande.libelle}}</td>
+                    <td>{{lines.uniteCommande.libelle}}</td>
                   </tr>
                   </td>
                   <td class="col-3">
                     <tr *ngFor="let lines of line.conditionnement">
-                      <td>{{line.prixReference / lines.coefficientAchatCommande | number: '1.2-2'}} €</td>
+                      <td>{{lines.prixAchat / lines.coefficientAchatCommande | number: '1.2-2'}} €</td>
                     </tr>
                   </td>
                   <td class="col-2">
                     <tr *ngFor="let lines of line.conditionnement">
-                      <td>{{(lines.coefficientAchatCommande * lines.coefficientInventaireAchat *
-                        lines.coefficientInventaire)}} {{lines.uniteFt.libelle}}</td>
+                      <td>{{lines.uniteFt.libelle}}</td>
                     </tr>
                   </td>
                   <td class="col-2">
                     <tr *ngFor="let lines of line.conditionnement">
-                      <td>{{line.prixReference / (lines.coefficientAchatCommande * lines.coefficientInventaireAchat *
-                        lines.coefficientInventaire) | number: '1.2-2'}} €</td>
+                      <td>{{lines.prixAchat / lines.coefficientAchatCommande / lines.coefficientInventaireAchat /
+                        lines.coefficientInventaire | number: '1.2-2'}} €</td>
                     </tr>
                   </td>
                   </tr>

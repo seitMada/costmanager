@@ -1,5 +1,4 @@
 import { Adress } from "./adresse";
-import { InterfaceAdresse } from "./interface-adresse";
 import { Exploitation } from './exploitations';
 
 export interface InterfaceCentreRevenu {
