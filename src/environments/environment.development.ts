@@ -31,7 +31,7 @@ export const environment = {
     APIUPDATEFOURNISSEUREXPLOITATION: endPoint + 'fournisseurexploitation/delete_fournisseurexploitation/',
     APIGETEXPLOITATIONBYFOURNISSEUR: endPoint + 'fournisseurexploitation/',
 
-    APIGETCOMMANDE: endPoint + 'commande',
+    APIGETTENCOMMANDE: endPoint + 'commande/fournisseur/',
     APICREATECOMMANDEDETAIL :endPoint + 'commande/commandeDetail',
     APIGETDIXDERNIERCOMMANDE: endPoint + 'commande_detail/derniersCommandes/',
     

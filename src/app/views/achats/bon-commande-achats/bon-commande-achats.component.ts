@@ -68,8 +68,10 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   public toggle = true;
   public modifToggle = true;
+  public btnT = false;
+  public btnC = false;
   closeResult = '';
-  public showlist = true;
+  public showDeleteBtn = false;
   public bonCommandeForm = FormGroup;
   public bsConfig: { containerClass: string; locale: string; dateInputFormat: string; };
 
@@ -107,24 +109,16 @@ export class BonCommandeAchatsComponent implements OnInit {
   ngOnInit(): void {
    
     this.num_commande = "COM-" + (this.formatDate(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
-    this.showAllFournisseur();
+    
     this.showExploitationFournisseur();
+    this.showAllFournisseur();
     this.selectDixDernierCommandeByFournisseurId();
-
-    this.commandeService.getAllCommande().subscribe({
-      next: (boncommande) => {
-        this.boncommandes = boncommande;
-      },
-      error: (error) => {
-        alert('Liste de bon de commande vide');
-      }
-    })
-
   }
 
   showListCommande(){
     this.toggle =true;
   }
+
 
   showAllFournisseur() {
     this.fournisseurService.getAllFournisseurByExploitation(this.exploitationId).subscribe({
@@ -132,6 +126,14 @@ export class BonCommandeAchatsComponent implements OnInit {
         this.fournisseurs = _fournisseur;
         this.fournisseur = _fournisseur[0];
         this.idFournisseur = this.fournisseur.id ? this.fournisseur.id : 0;
+        this.commandeService.getTenRecordsCommande(this.idFournisseur,this.exploitation.id? this.exploitation.id:0).subscribe({
+          next: (boncommande) => {
+            this.boncommandes = boncommande;
+          },
+          error: (error) => {
+            alert('Liste de bon de commande vide');
+          }
+        })
       },
       error: (error) => {
         alert('Liste fournisseur vide')
@@ -139,7 +141,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     });
   }
   toggleModal() {
-    this.toggle = !this.toggle;
+    this.btnT = !this.btnT;
     this.selectDixDernierCommandeByFournisseurId(); 
     this.idBonCommande =0;
   }
@@ -159,7 +161,7 @@ export class BonCommandeAchatsComponent implements OnInit {
               noPiece: this.num_commande,
               validation: false,
               commentaire: '',
-              dateCommande: (this.dates.today),
+              dateCommande: this.dates.today,
               fournisseurId: this.fournisseur.id ? this.fournisseur.id: 0,
               exploitationId: this.exploitationId,
               centreId: this.centre.id ? this.centre.id: 0,
@@ -258,7 +260,6 @@ export class BonCommandeAchatsComponent implements OnInit {
     }
     return montantRemise;
   }
-  cancel() { }
 
   selectDixDernierCommandeByFournisseurId() {
     const fournisseur = this.fournisseur;
@@ -271,7 +272,6 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   showCommande(comm: any) {
     this.boncommandes = comm;
-    console.log(this.boncommandes);
   }
 
   addBonCommande() {
@@ -316,7 +316,6 @@ export class BonCommandeAchatsComponent implements OnInit {
             next: (artFournisseur: any) => {
               this.articleFournisseurs = artFournisseur;
               console.log(this.articleFournisseurs);
-
               this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
                 (result) => {
                   this.closeResult = `Closed with: ${result}`;
@@ -346,11 +345,13 @@ export class BonCommandeAchatsComponent implements OnInit {
 
                 },
               );
+
             }
           })
         }
       }
     });
+           
   }
 
 
@@ -365,4 +366,11 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.centre.id = data.id;
   }
 
+  checkSelectedRows(){
+    this.showDeleteBtn = this.commandes.some(line => line.selected);
+  }
+  deleteSelectedRows() {
+    this.commandes = this.commandes.filter(line => !line.selected);
+    this.showDeleteBtn = false;
+  }
 }
