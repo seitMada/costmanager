@@ -96,5 +96,10 @@ export const environment = {
 
     APIGETADRESS: endPoint + 'adresse',
 
-    APIGETINVENTAIREBYCRANDDATE: endPoint + 'inventaire'
+    APIGETINVENTAIREBYCRANDDATE: endPoint + 'inventaire',
+    APICREATEINVENTAIRE: endPoint + 'inventaire/add',
+    
+    APIGETLIEUSTOCKAGEBYCENTREID: endPoint + 'lieustockage',
+    
+    APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage'
 };

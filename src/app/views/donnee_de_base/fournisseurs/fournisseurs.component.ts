@@ -104,18 +104,21 @@ export class FournisseursComponent {
         libelle: '',
         code: '',
         abreviation: '',
+        step: 1,
         actif: true,
       },
       uniteCommande: {
         libelle: '',
         code: '',
         abreviation: '',
+        step: 1,
         actif: true,
       },
       uniteInventaire: {
         libelle: '',
         code: '',
         abreviation: '',
+        step: 1,
         actif: true,
       },
       uniteFt: _article.unite

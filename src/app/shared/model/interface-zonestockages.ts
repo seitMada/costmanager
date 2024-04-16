@@ -1,9 +1,9 @@
 import { InterfaceLieustockages } from "./interface-lieustockages";
 
 export interface InterfaceZonestockages {
-    id?:number;
-    zone:string;
-    lieuId:number;
+    id?: number;
+    zone: string;
+    lieuId: number;
 
-    lieustockage: InterfaceLieustockages;
+    lieu: InterfaceLieustockages;
 }

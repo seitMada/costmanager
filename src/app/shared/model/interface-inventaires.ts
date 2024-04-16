@@ -1,3 +1,4 @@
+import { InterfaceArticle } from "./interface-articles";
 import { InterfaceCentreRevenu } from "./interface-centrerevenu";
 import { InterfaceOperateur } from "./interface-operateur";
 import { InterfaceZonestockages } from "./interface-zonestockages";
@@ -10,8 +11,21 @@ export interface InterfaceInventaires {
     zonestockageId: number;
     operateurId: number;
     centreRevenuId: number;
+    selected?: boolean;
 
-    centreRevenu: InterfaceCentreRevenu;
+    centre: InterfaceCentreRevenu;
     operateur: InterfaceOperateur;
     zonestockage: InterfaceZonestockages;
+    inventairedetail: InterfaceInventairesDetails[]
+}
+
+export interface InterfaceInventairesDetails {
+    id?:number;
+    articleId:number;
+    quantite:number;
+    uniteId:number;
+    inventaireId:number;
+    selected?: boolean;
+
+    article: InterfaceArticle;
 }
