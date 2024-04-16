@@ -1,15 +1,15 @@
 <div class="card d-flex py-1 my-2 mb-2">
   <div class="d-flex bd-highlight">
     <div class="flex-grow-1 bd-highlight">
-      <button type="button" (click)="addBonCommande()" class="btn btn-success btn-sm mx-1" *ngIf="!toggle">Enregistrer</button>
-      <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!toggle" (click)="showListCommande()">Annuler</button>
+      <button type="button" (click)="addBonCommande()" class="btn btn-success btn-sm mx-1" *ngIf="(!toggle && !btnC)">Enregistrer</button>
+      <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="(!toggle && !btnC)" (click)="showListCommande()">Annuler</button>
     </div>
     <div class="bd-highlight mx-2 my-0">
       <div class="input-group input-group-sm">
         <span class="input-group-text col-5" id="basic-addon1">Fournisseurs</span>
         <input type="text" class="form-control bg-white col-6" aria-label="unite" aria-describedby="fournisseur"
           [(ngModel)]="fournisseur.raison_social" disabled="true">
-        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="toggle"
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="(toggle || btnC)"
           data-bs-toggle="dropdown" aria-expanded="false">
           <span class="visually-hidden">Toggle Dropdown</span>
         </button>
@@ -21,7 +21,7 @@
     </div>
     <div class="bd-highlight">
       <button class="btn btn-outline-success btn-sm me-1" (click)="toggleModal()" title="Ajouter bon de commande">T</button>
-      <button [disabled]="!modifToggle" class="btn btn-outline-info btn-sm me-1" title="Ajout commande">
+      <button class="btn btn-outline-info btn-sm me-1" (click)="addCommandeModal()" title="Ajout commande">
         C
       </button>
       <button class="btn btn-outline-primary btn-sm me-1" title="Liste de 10 dernières commandes" (click)="showListCommande()">
@@ -31,8 +31,7 @@
   </div>
 </div>
 
-<div class="row"  *ngIf="!toggle">
-  <div class="card d-flex">
+  <div class="card d-flex" *ngIf="(!toggle && !btnC)">
     <div class="card-body py-1">
       <form #bonCommandeForm="ngForm">
         <div class="row m-2">
@@ -96,9 +95,9 @@
     </div>
   </div>
 
-  <div class="card d-flex my-2">
+  <div class="card d-flex my-2" *ngIf="(!toggle && !btnC)">
     <div class="card-header text-end">
-      <button class="btn btn-outline-success btn-sm me-1" *ngIf="!btnC" (click)="openModalArticle(content)" title="Ajouter article">
+      <button class="btn btn-outline-success btn-sm me-1" [disabled]="!modifToggle" *ngIf="(!toggle && !btnC)" (click)="openModalArticle(content)" title="Ajouter article">
         <i class="fas fa-plus"></i>
       </button>
       <button class="btn btn-outline-danger btn-sm me-1" *ngIf="showDeleteBtn" (click)="deleteSelectedRows()" title="Supprimer bon de commande">
@@ -122,7 +121,7 @@
             
           </tr>
         </thead>
-        <tbody *ngIf="!toggle">
+        <tbody >
           <tr *ngFor="let line of commandes">
             <td  class="col-1">
                 <input class="form-check-input" type="checkbox" name="dc-{{line.id}}" id="dc-{{line.id}}" [(ngModel)]="line.selected" (change)="checkSelectedRows()">
@@ -144,29 +143,6 @@
           
           </tr>
         </tbody>
-
-        <!-- <tbody *ngIf="!btnT">
-          <tr *ngFor="let line of articleFournisseurs">
-            <td  class="col-1">
-                <input class="form-check-input" type="checkbox" name="dc-{{line.id}}" id="dc-{{line.id}}" [(ngModel)]="line.selected" (change)="checkSelectedRows()">
-            </td>
-            <td class="col-3">{{line.article.familles.libelle}}</td>
-            <td class="col-3">{{line.article.libelle}}</td>
-            <td class="col-1 text-end"><input type="text" class="form-control" name="qte_commande[]" [(ngModel)]="line.QteCommande"></td>
-            <td class="col-1">{{line.articlefournisseur.article.unite.abreviation}}</td>
-            <td class="col-1 text-end"><input type="text" class="form-control" name="prix_unitaire[]" [(ngModel)]="line.prixarticle"></td>
-            <td class="col-1 text-end">{{line.QteCommande * line.prixarticle}} €</td>
-            <td class="col-1">
-              <div class="input-group">
-                <input type="text" class="form-control" name="remise[]" [(ngModel)]="line.remise">
-                <span class="input-group-text">€</span>
-              </div>
-            </td>
-            <td>{{ line. }}</td>
-            <td>{{ line. }}</td> 
-          
-          </tr>
-        </tbody> -->
       </table>
     </div>
     <div class="card-footer d-flex">
@@ -174,8 +150,7 @@
       <div class="col-1 text-end fw-bold">{{getTotalMontant() - getTotalRemise() | number:'1.2-2'}} €</div>
     </div>
   </div>
-</div>
-<div class="card d-flex" *ngIf="toggle">
+<div class="card d-flex" *ngIf="(toggle || btnC)">
   <div class="card-body overflow-scroll-y py-1" style="height: 600px;">
     <table class="table table-striped table-hover">
       <thead>
