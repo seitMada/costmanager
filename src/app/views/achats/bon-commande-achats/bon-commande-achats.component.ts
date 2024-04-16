@@ -25,6 +25,7 @@ import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-art
 import { Observable } from 'rxjs';
 import { InterfaceBonCommandes } from 'src/app/shared/model/interface-bonCommande';
 import { InterfaceCommandeDetails } from 'src/app/shared/model/interface-commandedetail';
+import { BonCommande } from 'src/app/shared/model/bonCommande';
 
 @Component({
   selector: 'app-bon-commande-achats',
@@ -69,8 +70,10 @@ export class BonCommandeAchatsComponent implements OnInit {
   public toggle = true;
   public modifToggle = true;
   public btnC = false;
+  public addBtn = false;
   closeResult = '';
   public showDeleteBtn = false;
+  public showDeleteBtnCom = false;
   public bonCommandeForm = FormGroup;
   public bsConfig: { containerClass: string; locale: string; dateInputFormat: string; };
 
@@ -143,6 +146,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   toggleModal() {
     this.toggle = false;
     this.btnC = false;
+    this.addBtn = true;
     this.selectDixDernierCommandeByFournisseurId(); 
     this.idBonCommande =0;
   }
@@ -150,6 +154,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   addCommandeModal(){
     this.toggle = false;
     this.btnC = false;
+    this.addBtn = false;
     this.commandes = [];
     this.idBonCommande =0;
   }
@@ -313,8 +318,15 @@ export class BonCommandeAchatsComponent implements OnInit {
     // })
   }
 
-  showCommande(comm: any) {
-    this.boncommandes = comm;
+  showCommande(bonCommande: BonCommande) {
+    this.boncommande = bonCommande;
+    this.toggle = false;
+    this.btnC = false;
+    this.addBtn = true;
+    this.selectDixDernierCommandeByFournisseurId(); 
+    this.idBonCommande =bonCommande.id ? bonCommande.id :0;
+    console.log(this.boncommande);
+    
   }
 
   addBonCommande() {
@@ -417,5 +429,14 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.commandes = this.commandes.filter(line => !line.selected);
     this.showDeleteBtn = false;
     this.modifToggle = true;
+  }
+
+  selectBoncomm(){
+    this.showDeleteBtnCom = this.boncommandes.some(line => line.selected);
+  }
+
+  deleteSelectedRowsComm() {
+    this.boncommandes = this.boncommandes.filter(line => !line.selected);
+    this.showDeleteBtnCom = false;
   }
 }
