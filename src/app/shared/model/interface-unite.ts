@@ -3,6 +3,7 @@ export interface InterfaceUnite {
     libelle:        string;
     code:           string;
     abreviation:    string;
+    step:           number;
     actif:          boolean;
 }
 

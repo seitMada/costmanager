@@ -5,12 +5,14 @@ export class Unite implements InterfaceUnite{
     libelle:        string;
     code:           string;
     abreviation:    string;
+    step: number;
     actif:          boolean;
 
     constructor(uniteInterface: InterfaceUnite) {
         this.libelle = uniteInterface.libelle;
         this.code = uniteInterface.code;
         this.abreviation = uniteInterface.abreviation;
+        this.step = uniteInterface.step;
         this.actif = uniteInterface.actif;
     }
 }

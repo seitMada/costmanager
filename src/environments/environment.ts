@@ -63,12 +63,9 @@ export const environment = {
     APIPOSTDELETEALLERGENEARTICLE: endPoint + 'allergenearticle/delete_allergenearticle/',
     APIGETALLERGENE: endPoint + 'allergene',
 
-
     APIGETUNITE: endPoint + 'unites',
 
-
     APIGETCATEGORIES: endPoint + 'categories',
-
 
     APIGETGROUPE: endPoint + 'groupe_analytique',
     APIGETFAMILLEBYGROUPE: endPoint + 'familles/groupe/',
@@ -95,7 +92,12 @@ export const environment = {
     APIGETARTICLEFOURNISSEURBYARTICLEID: endPoint + 'articlefournisseur/byarticleId/',
     ARTICLEFOURNISSEURCHECKED: endPoint+ 'articlefournisseur/byarticleId',
     
-
     APIGETADRESS: endPoint + 'adresse',
 
+    APIGETINVENTAIREBYCRANDDATE: endPoint + 'inventaire',
+    APICREATEINVENTAIRE: endPoint + 'inventaire/add',
+    
+    APIGETLIEUSTOCKAGEBYCENTREID: endPoint + 'lieustockage',
+    
+    APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage'
 };

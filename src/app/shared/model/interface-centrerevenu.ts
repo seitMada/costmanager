@@ -1,21 +1,21 @@
 import { Adress } from "./adresse";
-import { InterfaceAdresse } from "./interface-adresse";
 import { Exploitation } from './exploitations';
+import { InterfaceExploitations } from "./interface-exploitations";
 
 export interface InterfaceCentreRevenu {
-    id?:number;
-    code:string;
+    id?: number;
+    code: string;
     libelle: string;
-    exploitationsId:number;
+    exploitationsId: number;
     adressesId: number;
     email: string;
-    telephone:string;
+    telephone: string;
 
-    exploitations:Exploitation;
-    adresses:Adress
+    exploitations: InterfaceExploitations;
+    adresses: Adress
 
 }
 
-export interface InterfaceCentreRevenus{
+export interface InterfaceCentreRevenus {
     centrerevenus: InterfaceCentreRevenu[];
 }
