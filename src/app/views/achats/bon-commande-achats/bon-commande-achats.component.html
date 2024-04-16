@@ -31,7 +31,7 @@
   </div>
 </div>
 
-<div class="row"  *ngIf="!btnT">
+<div class="row"  *ngIf="!toggle">
   <div class="card d-flex">
     <div class="card-body py-1">
       <form #bonCommandeForm="ngForm">
@@ -122,7 +122,7 @@
             
           </tr>
         </thead>
-        <tbody *ngIf="!btnC">
+        <tbody *ngIf="!toggle">
           <tr *ngFor="let line of commandes">
             <td  class="col-1">
                 <input class="form-check-input" type="checkbox" name="dc-{{line.id}}" id="dc-{{line.id}}" [(ngModel)]="line.selected" (change)="checkSelectedRows()">

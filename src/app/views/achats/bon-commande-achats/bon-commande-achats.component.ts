@@ -116,7 +116,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   showListCommande(){
-    this.toggle =true;
+    this.toggle =!this.toggle;
   }
 
 
@@ -141,7 +141,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     });
   }
   toggleModal() {
-    this.btnT = !this.btnT;
+    this.toggle = !this.toggle;
     this.selectDixDernierCommandeByFournisseurId(); 
     this.idBonCommande =0;
   }
