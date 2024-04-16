@@ -68,7 +68,6 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   public toggle = true;
   public modifToggle = true;
-  public btnT = false;
   public btnC = false;
   closeResult = '';
   public showDeleteBtn = false;
@@ -116,7 +115,8 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   showListCommande(){
-    this.toggle =!this.toggle;
+    this.toggle =true;
+    this.btnC =true;
   }
 
 
@@ -141,8 +141,16 @@ export class BonCommandeAchatsComponent implements OnInit {
     });
   }
   toggleModal() {
-    this.toggle = !this.toggle;
+    this.toggle = false;
+    this.btnC = false;
     this.selectDixDernierCommandeByFournisseurId(); 
+    this.idBonCommande =0;
+  }
+
+  addCommandeModal(){
+    this.toggle = false;
+    this.btnC = false;
+    this.commandes = [];
     this.idBonCommande =0;
   }
   showExploitationFournisseur() {
@@ -261,13 +269,48 @@ export class BonCommandeAchatsComponent implements OnInit {
     return montantRemise;
   }
 
+  listArticleFournisseurs(){
+    const exploitationId = Number(this.exploitationId);
+    this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
+      next: (artExploitation) => {
+        const fournisseur = this.fournisseur;
+        if (artExploitation) {
+          this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
+          this.commandeService.getArticleFournisseurByArticleId(fournisseur.id ? fournisseur.id : 0, this.artExploitationArticleId).subscribe({
+            next: (artFournisseur: any) => {
+              this.articleFournisseurs = artFournisseur;
+              console.log(this.articleFournisseurs);
+            }
+          })
+        }
+      }
+    });
+  }
+
   selectDixDernierCommandeByFournisseurId() {
     const fournisseur = this.fournisseur;
-    this.commandeService.getDixDernierCommandes(fournisseur.id ? fournisseur.id : 0).subscribe({
-      next: (commandeDetails) => {
-        this.commandes = commandeDetails;
-      }
-    })
+    const articleFournisseurs = this.articleFournisseurs;
+    this.commandes = [];
+    this.listArticleFournisseurs();
+    for (const articlefournisseur of articleFournisseurs) {
+        this.commandeDetails = {
+          commandeId: 0,
+          articlefournisseurId: articlefournisseur.articleId,
+          QteCommande: 0,
+          QteLivre: 0,
+          prixarticle: articlefournisseur.prixReference,
+          remise: 0,
+          validationdetailbc: false,
+          articlefournisseur: articlefournisseur,
+          selected:false
+        }
+        this.commandes.push(this.commandeDetails)
+    }
+    // this.commandeService.getDixDernierCommandes(fournisseur.id ? fournisseur.id : 0).subscribe({
+    //   next: (commandeDetails) => {
+    //     this.commandes = commandeDetails;
+    //   }
+    // })
   }
 
   showCommande(comm: any) {
@@ -306,16 +349,17 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   public openModalArticle(content: TemplateRef<any>) { 
-    const exploitationId = Number(this.exploitationId);
-    this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
-      next: (artExploitation) => {
-        const fournisseur = this.fournisseur;
-        if (artExploitation) {
-          this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
-          this.commandeService.getArticleFournisseurByArticleId(fournisseur.id ? fournisseur.id : 0, this.artExploitationArticleId).subscribe({
-            next: (artFournisseur: any) => {
-              this.articleFournisseurs = artFournisseur;
-              console.log(this.articleFournisseurs);
+    // const exploitationId = Number(this.exploitationId);
+    // this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
+    //   next: (artExploitation) => {
+    //     const fournisseur = this.fournisseur;
+    //     if (artExploitation) {
+    //       this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
+    //       this.commandeService.getArticleFournisseurByArticleId(fournisseur.id ? fournisseur.id : 0, this.artExploitationArticleId).subscribe({
+    //         next: (artFournisseur: any) => {
+    //           this.articleFournisseurs = artFournisseur;
+    //           console.log(this.articleFournisseurs);
+              this.listArticleFournisseurs();
               this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
                 (result) => {
                   this.closeResult = `Closed with: ${result}`;
@@ -342,15 +386,14 @@ export class BonCommandeAchatsComponent implements OnInit {
                 (reason) => {
                   this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
                   console.log(this.closeResult)
-
                 },
               );
 
-            }
-          })
-        }
-      }
-    });
+    //         }
+    //       })
+    //     }
+    //   }
+    // });
            
   }
 
@@ -368,9 +411,11 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   checkSelectedRows(){
     this.showDeleteBtn = this.commandes.some(line => line.selected);
+    this.modifToggle = false;
   }
   deleteSelectedRows() {
     this.commandes = this.commandes.filter(line => !line.selected);
     this.showDeleteBtn = false;
+    this.modifToggle = true;
   }
 }
