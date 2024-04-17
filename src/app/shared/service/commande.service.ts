@@ -19,6 +19,7 @@ export class CommandeService {
   private apiDixDernierCommande = environment.APIGETDIXDERNIERCOMMANDE;
   private apiGetArticleFournisseurByArticle = environment.ARTICLEFOURNISSEURCHECKED;
   private apiCreateCommandeDetail = environment.APICREATECOMMANDEDETAIL;
+  private apiDeleteCommande = environment.APIDELETECOMMANDE;
 
   public getTenRecordsCommande(fournisseurId:number,exploitationId:number){
     return this.https.get<any>(this.apiGetTenCommande+fournisseurId,{params : {exploitationId:exploitationId} });
@@ -46,6 +47,10 @@ export class CommandeService {
 
   public createCommandeDetail(commandeId:number,commandeDetails:InterfaceCommandeDetails[]){
     return this.https.post<any>(this.apiCreateCommandeDetail,{commandeId,commandeDetails});
+  }
+
+  public deleteOneCommande(commande:InterfaceBonCommandes){
+    return this.https.post<any>(this.apiDeleteCommande,commande);
   }
 
 }

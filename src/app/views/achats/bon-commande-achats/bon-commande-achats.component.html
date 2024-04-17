@@ -42,7 +42,7 @@
             <div class="input-group">
               <span class="input-group-text col-5" id="basic-addon1">Date de commande</span>
               <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datecommande"
-                [(ngModel)]="boncommande.dateCommande" autocomplete="off">
+                [(ngModel)]="dates.today" autocomplete="off">
             </div>
           </div>
           <div class="col-sm-6">
@@ -166,12 +166,12 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let line of boncommandes" (click)="showCommande(line)">
+        <tr *ngFor="let line of boncommandes">
           <td class="col-1"><input type="checkbox" name="af-{{line.id}}" id="af-{{line.id}}" [(ngModel)]="line.selected" (change)="selectBoncomm()"></td>
-          <td class="col-3">{{line.noPiece}}</td>
+          <td class="col-3" (click)="showCommande(line)">{{line.noPiece}}</td>
           <td class="col-2">{{line.dateCommande | date :'dd-MM-yyyy'}}</td>
           <td class="col-3">{{line.montantHT | number:'1.2-2'}} €</td>
-          <td class="col-2"><a title="Télécharger PDF" class="text-info"><i class="fas fa-print"></i></a></td>
+          <td class="col-2 text-info"><i (click)="generatePDF(line)" class="fas fa-print" title="Télécharger PDF"></i></td>
         </tr>
       </tbody>
     </table>

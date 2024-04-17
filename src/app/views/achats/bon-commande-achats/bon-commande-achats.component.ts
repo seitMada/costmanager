@@ -27,6 +27,11 @@ import { InterfaceBonCommandes } from 'src/app/shared/model/interface-bonCommand
 import { InterfaceCommandeDetails } from 'src/app/shared/model/interface-commandedetail';
 import { BonCommande } from 'src/app/shared/model/bonCommande';
 
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+// pdfMake.vfs = pdfFonts.pdfMake.vfs;
+
+
 @Component({
   selector: 'app-bon-commande-achats',
   standalone: true,
@@ -114,12 +119,13 @@ export class BonCommandeAchatsComponent implements OnInit {
     
     this.showExploitationFournisseur();
     this.showAllFournisseur();
-    this.selectDixDernierCommandeByFournisseurId();
+    this.listArticleFournisseurs();
   }
 
   showListCommande(){
     this.toggle =true;
     this.btnC =true;
+    this.selectBoncomm();
   }
 
 
@@ -147,11 +153,13 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.toggle = false;
     this.btnC = false;
     this.addBtn = true;
+    this.showDeleteBtnCom = false;
     this.selectDixDernierCommandeByFournisseurId(); 
     this.idBonCommande =0;
   }
 
   addCommandeModal(){
+    this.showDeleteBtnCom = false;
     this.toggle = false;
     this.btnC = false;
     this.addBtn = false;
@@ -293,10 +301,11 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   selectDixDernierCommandeByFournisseurId() {
+    this.listArticleFournisseurs();
     const fournisseur = this.fournisseur;
     const articleFournisseurs = this.articleFournisseurs;
     this.commandes = [];
-    this.listArticleFournisseurs();
+    
     for (const articlefournisseur of articleFournisseurs) {
         this.commandeDetails = {
           commandeId: 0,
@@ -311,11 +320,6 @@ export class BonCommandeAchatsComponent implements OnInit {
         }
         this.commandes.push(this.commandeDetails)
     }
-    // this.commandeService.getDixDernierCommandes(fournisseur.id ? fournisseur.id : 0).subscribe({
-    //   next: (commandeDetails) => {
-    //     this.commandes = commandeDetails;
-    //   }
-    // })
   }
 
   showCommande(bonCommande: BonCommande) {
@@ -336,7 +340,7 @@ export class BonCommandeAchatsComponent implements OnInit {
         next:(bonCommande) => {
           this.commandeService.createCommandeDetail(bonCommande.id,this.commandes).subscribe({
             next:(value) =>{
-              
+              this.boncommandes.push(bonCommande);
             },
           });
         }
@@ -361,54 +365,48 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   public openModalArticle(content: TemplateRef<any>) { 
-    // const exploitationId = Number(this.exploitationId);
-    // this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
-    //   next: (artExploitation) => {
-    //     const fournisseur = this.fournisseur;
-    //     if (artExploitation) {
-    //       this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
-    //       this.commandeService.getArticleFournisseurByArticleId(fournisseur.id ? fournisseur.id : 0, this.artExploitationArticleId).subscribe({
-    //         next: (artFournisseur: any) => {
-    //           this.articleFournisseurs = artFournisseur;
-    //           console.log(this.articleFournisseurs);
-              this.listArticleFournisseurs();
-              this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
-                (result) => {
-                  this.closeResult = `Closed with: ${result}`;
-                  console.log(this.closeResult)
-                  if (this.closeResult == 'Closed with: Save click') {
-                    for (const _articlefournisseur of this.articleFournisseurs) {
-                      if (_articlefournisseur.selected == true) {
-                        this.commandeDetails = {
-                          commandeId: 0,
-                          articlefournisseurId: _articlefournisseur.articleId,
-                          QteCommande: 0,
-                          QteLivre: 0,
-                          prixarticle: _articlefournisseur.prixReference,
-                          remise: 0,
-                          validationdetailbc: false,
-                          articlefournisseur: _articlefournisseur,
-                          selected:false
-                        }
-                        this.commandes.push(this.commandeDetails)
-                      }
-                    }
-                  }
-                },
-                (reason) => {
-                  this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-                  console.log(this.closeResult)
-                },
-              );
-
-    //         }
-    //       })
-    //     }
-    //   }
-    // });
-           
+    this.listArticleFournisseurs();
+    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${result}`;
+        console.log(this.closeResult)
+        if (this.closeResult == 'Closed with: Save click') {
+          for (const _articlefournisseur of this.articleFournisseurs) {
+            if (_articlefournisseur.selected == true) {
+              this.commandeDetails = {
+                commandeId: 0,
+                articlefournisseurId: _articlefournisseur.articleId,
+                QteCommande: 0,
+                QteLivre: 0,
+                prixarticle: _articlefournisseur.prixReference,
+                remise: 0,
+                validationdetailbc: false,
+                articlefournisseur: _articlefournisseur,
+                selected:false
+              }
+              this.commandes.push(this.commandeDetails)
+            }
+          }
+        }
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        console.log(this.closeResult)
+      },
+    );           
   }
 
+  generatePDF(commande:InterfaceBonCommandes) {
+    console.log(commande);
+    
+    // const docDefinition = {
+    //   content: [
+    //     'Hello, this is a PDF generated by Angular!'
+    //   ]
+    // };
+
+    // pdfMake.createPdf(docDefinition).download('example.pdf');
+  }
 
 
   selectFounisseur(data: InterfaceFournisseur) {
@@ -436,7 +434,16 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   deleteSelectedRowsComm() {
-    this.boncommandes = this.boncommandes.filter(line => !line.selected);
-    this.showDeleteBtnCom = false;
+    this.boncommandes = this.boncommandes.filter(line => line.selected);
+    for (const bonCommande of this.boncommandes) {
+     if (bonCommande.validation == false) {
+      this.commandeService.deleteOneCommande(bonCommande).subscribe({
+        next:(value) =>{
+          this.boncommandes = this.boncommandes.filter(line => !line.selected);
+          this.showDeleteBtnCom = false;
+        },
+      });
+     }      
+    }
   }
 }
