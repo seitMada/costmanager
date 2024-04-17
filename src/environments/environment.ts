@@ -88,6 +88,9 @@ export const environment = {
     APIUPDATEFICHETECHNIQUEEXPLOITATION: endPoint + 'fichetechniqueexploitation/delete_fichetechniqueexploitation/',
     
     APICREATECOMMANDE: endPoint + 'commande',
+    APIDELETECOMMANDE: endPoint +'commande/delete_commande',
+
+
     APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID: endPoint + 'articlefournisseur/',
     APIGETARTICLEFOURNISSEURBYARTICLEID: endPoint + 'articlefournisseur/byarticleId/',
     ARTICLEFOURNISSEURCHECKED: endPoint+ 'articlefournisseur/byarticleId',

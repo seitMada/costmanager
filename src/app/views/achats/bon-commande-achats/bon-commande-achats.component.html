@@ -27,6 +27,9 @@
       <button class="btn btn-outline-primary btn-sm me-1" title="Liste de 10 dernières commandes" (click)="showListCommande()">
         10
       </button>
+      <button class="btn btn-outline-danger btn-sm me-1" *ngIf="showDeleteBtnCom" (click)="deleteSelectedRowsComm()" title="Supprimer bon de commande">
+        <i class="fas fa-trash"></i>
+      </button>
     </div>
   </div>
 </div>
@@ -39,7 +42,7 @@
             <div class="input-group">
               <span class="input-group-text col-5" id="basic-addon1">Date de commande</span>
               <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datecommande"
-                [(ngModel)]="boncommande.dateCommande" autocomplete="off">
+                [(ngModel)]="dates.today" autocomplete="off">
             </div>
           </div>
           <div class="col-sm-6">
@@ -97,7 +100,7 @@
 
   <div class="card d-flex my-2" *ngIf="(!toggle && !btnC)">
     <div class="card-header text-end">
-      <button class="btn btn-outline-success btn-sm me-1" [disabled]="!modifToggle" *ngIf="(!toggle && !btnC)" (click)="openModalArticle(content)" title="Ajouter article">
+      <button class="btn btn-outline-success btn-sm me-1" [disabled]="!modifToggle" *ngIf="(!toggle && !btnC && !addBtn)" (click)="openModalArticle(content)" title="Ajouter article">
         <i class="fas fa-plus"></i>
       </button>
       <button class="btn btn-outline-danger btn-sm me-1" *ngIf="showDeleteBtn" (click)="deleteSelectedRows()" title="Supprimer bon de commande">
@@ -158,21 +161,17 @@
           <th scope="col" class="col-1">#</th>
           <th scope="col" class="col-3">N° Commande</th>
           <th scope="col" class="col-2">Date Commande</th>
-          <th scope="col" class="col-1">Qté Commandée</th>
-          <th scope="col" class="col-2">Montant HT</th>
-          <th scope="col" class="col-2">Rémise</th>
-          <th scope="col" class="col-1"></th>
+          <th scope="col" class="col-3">Montant HT</th>
+          <th scope="col" class="col-2"></th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let line of boncommandes" (click)="showCommande(line)">
-          <td class="col-1"><input type="checkbox" name="af-{{line.id}}" id="af-{{line.id}}" [(ngModel)]="line.selected"></td>
-          <td class="col-3">{{line.noPiece}}</td>
+        <tr *ngFor="let line of boncommandes">
+          <td class="col-1"><input type="checkbox" name="af-{{line.id}}" id="af-{{line.id}}" [(ngModel)]="line.selected" (change)="selectBoncomm()"></td>
+          <td class="col-3" (click)="showCommande(line)">{{line.noPiece}}</td>
           <td class="col-2">{{line.dateCommande | date :'dd-MM-yyyy'}}</td>
-          <td class="col-2">{{line.quantiteCommande | number:'1.2-2'}}</td>
-          <td class="col-2">{{line.montantHT | number:'1.2-2'}} €</td>
-          <td class="col-2">{{line.remise | number:'1.2-2'}} €</td>
-          <td><a title="Télécharger PDF" class="text-info"><i class="fas fa-print"></i></a></td>
+          <td class="col-3">{{line.montantHT | number:'1.2-2'}} €</td>
+          <td class="col-2 text-info"><i (click)="generatePDF(line)" class="fas fa-print" title="Télécharger PDF"></i></td>
         </tr>
       </tbody>
     </table>
