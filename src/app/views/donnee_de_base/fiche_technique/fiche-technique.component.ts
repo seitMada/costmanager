@@ -405,7 +405,7 @@ export class FicheTechniqueComponent implements OnInit {
       ftId: null,
       quantite: 0,
       uniteId: article.uniteId,
-      cout: article.cout,
+      cout: article.cout + (article.cout * ( article.coefficientPonderation / 100 )),
 
       article: article,
       fichetechniqueCompositon: null,

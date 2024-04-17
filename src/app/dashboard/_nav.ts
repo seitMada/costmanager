@@ -123,16 +123,16 @@ export const navItems: INavData[] = [
     name: 'Inventaires',
     url: '/inventaires',
     iconComponent: { name: 'cil-folder' },
-    children: [
-      {
-        name: 'Listes inventaires',
-        url: 'inventaires/inventaires'
-      },
-      {
-        name: 'Creations inventaires',
-        url: 'inventaires/creations_inventaires'
-      }
-    ]
+    // children: [
+    //   {
+    //     name: 'Listes inventaires',
+    //     url: 'inventaires/inventaires'
+    //   },
+    //   {
+    //     name: 'Creations inventaires',
+    //     url: 'inventaires/creations_inventaires'
+    //   }
+    // ]
   },
   {
     name: 'Pertes',

@@ -220,7 +220,7 @@
         <div class="card col-5">
           <div class=" text-center fs-7 fw-bold">
             <button type="button" class="btn btn-sm btn-light position-absolute top-0 start-0 m-1"
-              (click)="open(content)" *ngIf="!addToggle">
+              (click)="open(content)">
               <i class="fas fa-pencil"></i>
             </button>
             COMPOSITIONS
@@ -239,7 +239,8 @@
                 </thead>
                 <tbody>
                   <tr *ngFor="let line of compositions">
-                    <td class="col-4">{{ (line.article == null)? line.fichetechniqueCompositon?.libelle : line.article.libelle }}</td>
+                    <td class="col-4">{{ (line.article == null)? line.fichetechniqueCompositon?.libelle :
+                      line.article.libelle }}</td>
                     <td class="col-3">{{line.quantite}}</td>
                     <td class="col-2">{{line.unite.libelle}}</td>
                     <td class="col-1">{{ (line.articleId == null)? 'FT' : 'A' }}</td>
@@ -312,7 +313,8 @@
                     <tr *ngFor="let line of articles">
                       <td class="col-10">{{line.libelle}}</td>
                       <td class="col-2">
-                        <button type="button" class="btn btn-sm btn-outline-info" (click)="changeCompositionArticle(line)">
+                        <button type="button" class="btn btn-sm btn-outline-info"
+                          (click)="changeCompositionArticle(line)">
                           <i class="fas fa-share"></i>
                         </button>
                       </td>
@@ -331,7 +333,8 @@
                     <tr *ngFor="let line of fichetechniques">
                       <td class="col-10">{{line.libelle}}</td>
                       <td class="col-2">
-                        <button type="button" class="btn btn-sm btn-outline-info" (click)="changeCompositionFichetechnique(line)">
+                        <button type="button" class="btn btn-sm btn-outline-info"
+                          (click)="changeCompositionFichetechnique(line)">
                           <i class="fas fa-share"></i>
                         </button>
                       </td>
@@ -364,8 +367,8 @@
                 <td class="col-4">{{ (line.article == null)? line.fichetechniqueCompositon?.libelle :
                   line.article.libelle }}</td>
                 <td class="col-3">
-                  <input type="number" name="{{line.id}}" id="{{line.id}}" class="form-control" [(ngModel)]="line.quantite" 
-                    min="0" step="0.05">
+                  <input type="number" name="{{line.id}}" id="{{line.id}}" class="form-control"
+                    [(ngModel)]="line.quantite" min="0" step="0.05">
                 </td>
                 <td class="col-2">{{line.unite.libelle}}</td>
                 <td class="col-2">{{ line.cout }} €</td>

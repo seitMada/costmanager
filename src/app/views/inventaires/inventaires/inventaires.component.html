@@ -6,18 +6,18 @@
       <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
     </div>
     <div class="flex-grow-1 bd-highlight mx-1 col-4">
-      <div class="input-group input-group-sm">
+      <div class="input-group input-group-sm" *ngIf="addToggle">
         <span for="dateDebut" class="input-group-text col-4">
           Inventaire :
         </span>
         <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.debut" name="dateDebut"
-          bsDatepicker [bsConfig]="bsConfig" [maxDate]="dates.fin">
+          bsDatepicker [bsConfig]="bsConfig" [maxDate]="dates.fin" (ngModelChange)="selectCentreRevenus(centrerevenu)">
         <span for="dateFin" class="input-group-text col-1">
           au :
         </span>
         <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.fin" [minDate]="dates.debut"
-          name="dateFin" bsDatepicker [bsConfig]="bsConfig">
-        <button type="button" class="btn btn-outline-secondary col-1"><i class="fas fa-check"></i></button>
+          name="dateFin" bsDatepicker [bsConfig]="bsConfig" (ngModelChange)="selectCentreRevenus(centrerevenu)">
+        <!-- <button type="button" class="btn btn-outline-secondary col-1"><i class="fas fa-check"></i></button> -->
       </div>
     </div>
     <div class="flex-grow-1 bd-highlight mx-1 col-3">
@@ -45,16 +45,20 @@
         <i class="fas fa-trash"></i>
       </button>
       <button class="btn btn-outline-success btn-sm me-1" title="Ajouter inventaire" (click)="addToggleModal();"
-        [disabled]="!addToggle">
+        [disabled]="!addToggle" *ngIf="!inventaire.etat">
         <i class="fas fa-plus"></i>
       </button>
       <button class="btn btn-outline-info btn-sm me-1" title="Modifier inventaire" (click)="modifToggleModal()"
-        *ngIf="toggleEtat">
+        *ngIf="!toggle" [disabled]="!modifToggle || inventaire.etat">
         <i class="fas fa-pencil"></i>
       </button>
       <button class="btn btn-outline-primary btn-sm me-1" title="Liste inventaires" (click)="toggleModal()"
-        *ngIf="!toggle">
+        *ngIf="!toggle" [disabled]="!modifToggle">
         <i class="fas fa-list"></i>
+      </button>
+      <button class="btn btn-outline-warning btn-sm me-1" title="Valider inventaire" (click)="validInventaire()"
+        *ngIf="!inventaire.etat && !toggle">
+        <i class="fas fa-check"></i>
       </button>
     </div>
   </div>
@@ -79,11 +83,11 @@
             <input type="checkbox" name="inventaire-{{line.date_inventaire}}" id="inventaire-{{line.id}}"
               [(ngModel)]="line.selected">
           </td>
-          <td class="col-3" (click)="show(line); toggleModal(line.etat)">{{screenDate(line.date_inventaire)}}</td>
-          <td class="col-2" (click)="show(line); toggleModal(line.etat)">{{line.centre.libelle}}</td>
-          <td class="col-2" (click)="show(line); toggleModal(line.etat)">{{line.zonestockage.lieu.lieu}}</td>
-          <td class="col-2" (click)="show(line); toggleModal(line.etat)">{{line.zonestockage.zone}}</td>
-          <td class="col-2" (click)="show(line); toggleModal(line.etat)">{{line.operateur.nom}}
+          <td class="col-3" (click)="toggleModal(line.etat); show(line)">{{screenDate(line.date_inventaire)}}</td>
+          <td class="col-2" (click)="toggleModal(line.etat); show(line)">{{line.centre.libelle}}</td>
+          <td class="col-2" (click)="toggleModal(line.etat); show(line)">{{line.zonestockage.lieu.lieu}}</td>
+          <td class="col-2" (click)="toggleModal(line.etat); show(line)">{{line.zonestockage.zone}}</td>
+          <td class="col-2" (click)="toggleModal(line.etat); show(line)">{{line.operateur.nom}}
             {{line.operateur.prenom}}</td>
         </tr>
       </tbody>
@@ -114,7 +118,7 @@
                 <span class="input-group-text col-5" id="exploitation">Exploitation</span>
                 <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
                   aria-label="Code" aria-describedby="exploitation"
-                  [(ngModel)]="inventaire.centre.exploitations.libelle" [disabled]="modifToggle">
+                  [(ngModel)]="inventaire.centre.exploitations.libelle" disabled="true">
                 <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                   data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
                   <span class="visually-hidden">Toggle Dropdown</span>
@@ -130,7 +134,7 @@
               <div class="input-group"><span class="input-group-text col-5" id="centrerevenu">Centre Revenu</span>
                 <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
                   aria-label="Code" aria-describedby="centrerevenu" [(ngModel)]="inventaire.centre.libelle"
-                  [disabled]="modifToggle">
+                  disabled="true">
                 <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                   data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
                   <span class="visually-hidden">Toggle Dropdown</span>
@@ -149,7 +153,7 @@
                 <span class="input-group-text col-5" id="lieu">Lieu de stockage</span>
                 <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
                   aria-label="Code" aria-describedby="lieu" [(ngModel)]="inventaire.zonestockage.lieu.lieu"
-                  [disabled]="modifToggle">
+                  disabled="true">
                 <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                   data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
                   <span class="visually-hidden">Toggle Dropdown</span>
@@ -163,8 +167,7 @@
             <div class="col-sm-6">
               <div class="input-group"><span class="input-group-text col-5" id="zone">Zone de stockage</span>
                 <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
-                  aria-label="Code" aria-describedby="zone" [(ngModel)]="inventaire.zonestockage.zone"
-                  [disabled]="modifToggle">
+                  aria-label="Code" aria-describedby="zone" [(ngModel)]="inventaire.zonestockage.zone" disabled="true">
                 <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                   data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
                   <span class="visually-hidden">Toggle Dropdown</span>
@@ -183,10 +186,11 @@
     <li class="list-group-item">
       <div class="card d-flex py-1 mb-2">
         <div class="d-flex flex-row-reverse bd-highlight">
-          <button type="button" class="btn btn-sm btn-outline-danger mx-1" (click)="deselectArticles(inventaire.inventairedetail)"><i
+          <button type="button" class="btn btn-sm btn-outline-danger mx-1"
+            (click)="deselectArticles(inventaire.inventairedetail)" [disabled]="modifToggle"><i
               class="fas fa-trash"></i></button>
-          <button type="button" class="btn btn-sm btn-outline-info ms-1" (click)="openArticle(content)"><i
-              class="fas fa-plus"></i></button>
+          <button type="button" class="btn btn-sm btn-outline-info ms-1" (click)="openArticle(content)"
+            [disabled]="modifToggle"><i class="fas fa-plus"></i></button>
         </div>
       </div>
       <div class="card-body overflow-y-scroll py-1" style="height: 360px;">
@@ -205,12 +209,12 @@
             <tr *ngFor="let line of inventaire.inventairedetail">
               <td class="col-1">
                 <input type="checkbox" name="inventaire-{{line.articleId}}" id="inventaire-{{line.id}}"
-                  [(ngModel)]="line.selected">
+                  [(ngModel)]="line.selected" *ngIf="!modifToggle">
               </td>
               <td class="col-3">{{line.article.libelle}}</td>
               <td class="col-2">
                 <input type="number" class="form-control form-control-sm bg-transparent" [(ngModel)]="line.quantite"
-                  [step]="line.article.unite.step" placeholder="0.00">
+                  [step]="line.article.unite.step" placeholder="0.00" [disabled]="modifToggle">
               </td>
               <td class="col-2">{{line.article.unite.libelle}}</td>
               <td class="col-2">{{line.article.familles.libelle}}</td>

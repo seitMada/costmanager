@@ -324,6 +324,7 @@ export class ArticlesComponent implements OnInit {
           }
           this.articleService.deleteArticleExploitationByArticle(article.id, exploitation).subscribe({
             next: () => {
+              alert('Article ajouter')
               this.modifToggle = !this.modifToggle;
             }
           })

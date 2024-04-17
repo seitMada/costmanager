@@ -243,11 +243,49 @@ export class FournisseursComponent {
   }
 
   deletes() {
-
+    const selectedIds: number[] = [];
+    let exploitation: number[] = [];
+    for (const fournisseur of this.fournisseurs) {
+      if (fournisseur.selected) {
+        selectedIds.push(fournisseur.id !== undefined ? fournisseur.id : 0);
+      }
+    }
+    if (this.exploitation === 3) {
+      for (const e of this.exploitations) {
+        exploitation.push(e.id || 0)
+      }
+    } else {
+      exploitation = [this.exploitation]
+    }
+    if (selectedIds.length > 0) {
+      const data = {
+        fournisseurId: selectedIds,
+        exploitationsId: exploitation
+      }
+      this.fournisseurService.desactiveFournisseursExploitation(data).subscribe(() => {
+        alert('Fournisseurs supprimer');
+        this.initFournisseur();
+      })
+    }
   }
 
   delete() {
-
+    let exploitation: number[] = [];
+    if (this.exploitation === 3) {
+      for (const e of this.exploitations) {
+        exploitation.push(e.id || 0)
+      }
+    } else {
+      exploitation = [this.exploitation]
+    }
+    this.fournisseurService.desactiveFournisseurExploitation(this.idFournisseur, exploitation).subscribe({
+      next: (data) => {
+        alert('Fournisseur supprimer');
+        this.resetFournisseur();
+        this.initFournisseur();
+        this.toggle = !this.toggle;
+      }
+    });
   }
 
   addToggleModal() {
@@ -268,7 +306,19 @@ export class FournisseursComponent {
   }
 
   cancel() {
-
+    if (this.idFournisseur === 0) {
+      this.toggle = true;
+      this.modifToggle = true;
+      // this.exploitationToggle = true;
+      this.resetFournisseur();
+    } else {
+      this.fournisseurService.getFournisseurById(this.idFournisseur || 0).subscribe({
+        next: (_fournisseur) => {
+          this.fournisseur = _fournisseur;
+          this.modifToggle = !this.modifToggle;
+        },
+      })
+    }
   }
 
   submit() {
@@ -650,21 +700,6 @@ export class FournisseursComponent {
                   alert('Conditionnement ajouter')
                 }
               })
-              // this.fournisseurService.addArticleFournisseur(this.articleFournisseur).subscribe({
-              //   next: (_articleFournisseur: any) => {
-              //     this.conditionnement.articlefournisseurId = _articleFournisseur.id;
-              //     this.fournisseurService.addConditionnement(this.conditionnement).subscribe({
-              //       next: () => {
-              //         this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
-              //           next: (_article) => {
-              //             this.articleFournisseurs = _article;
-              //           }
-              //         })
-              //         alert('Conditionnement ajouter')
-              //       }
-              //     })
-              //   }
-              // });
             } else {
               this.fournisseurService.updateConditionnement(this.conditionnement.id ? this.conditionnement.id : 0, this.conditionnement).subscribe({
                 next: () => {
