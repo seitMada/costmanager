@@ -21,8 +21,8 @@ export interface InterfaceBonCommandes {
     selected:false,
 
     fournisseur: InterfaceFournisseur;
-    centre: InterfaceCentreRevenu[];
-    exploitation: InterfaceExploitations[];
+    centre: InterfaceCentreRevenu;
+    exploitation: InterfaceExploitations;
     commandeDetail:InterfaceCommandeDetails[];
     achat: InterfaceAchat[];
 

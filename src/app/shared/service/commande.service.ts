@@ -12,21 +12,22 @@ export class CommandeService {
 
   constructor(private https:HttpClient) { }
 
-  private apiGetTenCommande = environment.APIGETTENCOMMANDE;
+  private apiGetCommandeByFournisseurExploitation = environment.APIGETCOMMANDEBYFOURNISSEUREXPLOITATION;
   private apiCreateCommande = environment.APICREATECOMMANDE;
   private apiArticleExploitationByExploitationId = environment.APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID;
+  private apiGetCommandeDetailByCommandeId = environment.APIGETCOMMANDEDETAILBYCOMMANDEID;
   private apiArticleFournisseurByArticleId = environment.APIGETARTICLEFOURNISSEURBYARTICLEID;
   private apiDixDernierCommande = environment.APIGETDIXDERNIERCOMMANDE;
   private apiGetArticleFournisseurByArticle = environment.ARTICLEFOURNISSEURCHECKED;
   private apiCreateCommandeDetail = environment.APICREATECOMMANDEDETAIL;
   private apiDeleteCommande = environment.APIDELETECOMMANDE;
 
-  public getTenRecordsCommande(fournisseurId:number,exploitationId:number){
-    return this.https.get<any>(this.apiGetTenCommande+fournisseurId,{params : {exploitationId:exploitationId} });
+  public getCommandeByFournisseurExploitation(fournisseurId:number,exploitationId:number){
+    return this.https.get<any>(this.apiGetCommandeByFournisseurExploitation+fournisseurId,{params : {exploitationId:exploitationId} });
   }
 
-  public createBonCommande(commande:InterfaceBonCommandes){
-    return this.https.post<any>(this.apiCreateCommande,commande);
+  public createBonCommande(commande:InterfaceBonCommandes,commandeDetails:InterfaceCommandeDetails[]){
+    return this.https.post<any>(this.apiCreateCommande,{commande,commandeDetails});
   }
 
   public getArticleExploitaionByExploitationId(exploitationId:number){
@@ -37,20 +38,24 @@ export class CommandeService {
     return this.https.get<any>(this.apiArticleFournisseurByArticleId+fournisseurId,{ params: { articleId: articleId.join(',') } })
   }
 
-  public getDixDernierCommandes(fournisseurId:number){
-    return this.https.get<any>(this.apiDixDernierCommande+fournisseurId);
+  public getDixDernierCommandes(fournisseurId:number,exploitationId:number){
+    return this.https.get<any>(this.apiDixDernierCommande+fournisseurId,{params: {exploitationId:exploitationId}});
   }
 
   public getArticleFournisseurByArticle(articleId:any[]){
     return this.https.get<any>(this.apiGetArticleFournisseurByArticle,{ params: { articleId: articleId.join(',')} });
   }
 
-  public createCommandeDetail(commandeId:number,commandeDetails:InterfaceCommandeDetails[]){
-    return this.https.post<any>(this.apiCreateCommandeDetail,{commandeId,commandeDetails});
-  }
+  // public createCommandeDetail(commandeId:number,commandeDetails:InterfaceCommandeDetails[]){
+  //   return this.https.post<any>(this.apiCreateCommandeDetail,{commandeId,commandeDetails});
+  // }
 
   public deleteOneCommande(commande:InterfaceBonCommandes){
     return this.https.post<any>(this.apiDeleteCommande,commande);
+  }
+
+  public getCommandeDetailByCommandeId(commandeId:number){
+    return this.https.get<any>(this.apiGetCommandeDetailByCommandeId+commandeId);
   }
 
 }

@@ -21,8 +21,8 @@ export class BonCommande implements InterfaceBonCommandes {
   selected: false;
   centreId: number;
   fournisseur: InterfaceFournisseur;
-  centre: InterfaceCentreRevenu[];
-  exploitation: InterfaceExploitations[];
+  centre: InterfaceCentreRevenu;
+  exploitation: InterfaceExploitations;
   commandeDetail:InterfaceCommandeDetails[];
 
   achat: InterfaceAchat[];
