@@ -34,7 +34,7 @@ export const environment = {
     APIGETCOMMANDEBYFOURNISSEUREXPLOITATION: endPoint + 'commande/fournisseur/',
     APICREATECOMMANDEDETAIL :endPoint + 'commande/commandeDetail',
     APIGETDIXDERNIERCOMMANDE: endPoint + 'commande_detail/derniersCommandes/',
-    APIGETCOMMANDEDETAILBYCOMMANDEID: endPoint + 'commande/',
+    APIGETCOMMANDEDETAILBYCOMMANDEID: endPoint + 'commande_detail/',
 
 
     APIGETARTICLE : endPoint + 'articles',

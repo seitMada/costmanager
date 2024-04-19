@@ -1,8 +1,8 @@
 <div class="card d-flex py-1 my-2 mb-2">
   <div class="d-flex bd-highlight">
     <div class="flex-grow-1 bd-highlight">
-      <button type="button" (click)="addBonCommande()" class="btn btn-success btn-sm mx-1" *ngIf="(!toggle && !btnTenRecord)">Enregistrer</button>
-      <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="(!toggle && !btnTenRecord) " (click)="annuler()">Annuler</button>
+      <button type="button" (click)="addBonCommande()" [disabled]="inputModif" class="btn btn-success btn-sm mx-1" *ngIf="(!toggle && !btnTenRecord)">Enregistrer</button>
+      <button type="button" class="btn btn-danger btn-sm mx-1"  *ngIf="(!toggle && !btnTenRecord) " (click)="annuler()">Annuler</button>
     </div>
     <div class="bd-highlight mx-2 my-0">
       <div class="input-group input-group-sm">
@@ -40,7 +40,7 @@
               <div class="col-sm-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Date de commande</span>
-                  <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datecommande"
+                  <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datecommande" [disabled]="inputModif"
                     [(ngModel)]="dates.today" autocomplete="off">
                 </div>
               </div>
@@ -75,7 +75,7 @@
                   <span class="input-group-text col-5" id="basic-addon1">Centre de revenu</span>
                   <input type="text" class="form-control bg-white col-6" name="centreId" [(ngModel)]="centre.libelle" aria-label="centre" aria-describedby="centre"
                     disabled="true">
-                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="!inputModif"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="visually-hidden">Toggle Dropdown</span>
                   </button>
@@ -88,7 +88,7 @@
               <div class="col-sm-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">N° bon de commande</span>
-                  <input type="text" class="form-control col-7" [(ngModel)]="boncommande.noPiece"  name="noPiece"
+                  <input type="text" class="form-control col-7" [(ngModel)]="boncommande.noPiece"  name="noPiece" [disabled]="inputModif"
                     aria-describedby="basic-addon1">
                 </div>
               </div>
@@ -131,18 +131,18 @@
                 </td>
                 <td class="col-3">{{line.articlefournisseur.article.familles.libelle}}</td>
                 <td class="col-3">{{line.articlefournisseur.article.libelle}}</td>
-                <td class="col-1 text-end"><input type="text" class="form-control form-control-sm" name="qte_commande[]" [(ngModel)]="line.QteCommande"></td>
+                <td class="col-1 text-end"><input type="text" class="form-control form-control-sm" [disabled]="inputModif" name="qte_commande[]" [(ngModel)]="line.QteCommande"></td>
                 <td class="col-1">{{line.articlefournisseur.article.unite.abreviation}}</td>
                 <td class="col-1 text-end">
                   <div class="input-group input-group-sm">
-                    <input type="text" class="form-control form-control-sm" name="prix_unitaire[]" [(ngModel)]="line.prixarticle">
+                    <input type="text" class="form-control form-control-sm" [disabled]="inputModif"  name="prix_unitaire[]" [(ngModel)]="line.prixarticle">
                     <span class="input-group-text">€</span>
                   </div>
                 </td>
                 <td class="col-1 text-end">{{line.QteCommande * line.prixarticle}} €</td>
                 <td class="col-1">
                   <div class="input-group input-group-sm">
-                    <input type="text" class="form-control " name="remise[]" [(ngModel)]="line.remise">
+                    <input type="text" class="form-control" [disabled]="inputModif" name="remise[]" [(ngModel)]="line.remise">
                     <span class="input-group-text">€</span>
                   </div>
                 </td>
@@ -166,6 +166,7 @@
 
   
 <div class="card d-flex" *ngIf="(toggle && !btnTenRecord)">
+  <div class="card-header text-center fs-5 fw-bold">Tous les bons de commandes du fournisseur {{ fournisseur.raison_social }}</div>
   <div class="card-body overflow-scroll-y py-1" style="height: 600px;" >
     <table class="table table-hover">
       <thead>
@@ -191,6 +192,7 @@
 </div>
 
 <div class="card d-flex" *ngIf="(!toggle && btnTenRecord)">
+  <div class="card-header text-center fs-5 fw-bold">Les dix dernières commandes du fournisseur {{ fournisseur.raison_social }}</div>
   <div class="card-body overflow-scroll-y py-1" style="height: 600px;">
     <table class="table table-striped table-hover">
       <thead>
