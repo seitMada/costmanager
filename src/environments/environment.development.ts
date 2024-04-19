@@ -93,7 +93,7 @@ export const environment = {
 
     APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID: endPoint + 'articlefournisseur/',
     APIGETARTICLEFOURNISSEURBYARTICLEID: endPoint + 'articlefournisseur/byarticleId/',
-    ARTICLEFOURNISSEURCHECKED: endPoint+ 'articlefournisseur/byarticleId',
+    ARTICLEFOURNISSEURBYARTICLE: endPoint+ 'articlefournisseur/byarticleId',
     
     APIGETADRESS: endPoint + 'adresse',
 

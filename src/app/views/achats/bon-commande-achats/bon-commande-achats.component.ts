@@ -27,7 +27,8 @@ import { InterfaceBonCommandes } from 'src/app/shared/model/interface-bonCommand
 import { InterfaceCommandeDetails } from 'src/app/shared/model/interface-commandedetail';
 import { BonCommande } from 'src/app/shared/model/bonCommande';
 
-import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
+import jsPDF from 'jspdf';
 
 
 @Component({
@@ -203,7 +204,7 @@ export class BonCommandeAchatsComponent implements OnInit {
               for (const articlefournisseur of artFournisseur) {
                   this.commandeDetail = {
                     commandeId: 0,
-                    articlefournisseurId: articlefournisseur.articleId,
+                    articlefournisseurId: articlefournisseur.id ? articlefournisseur.id :0,
                     QteCommande: 0,
                     QteLivre: 0,
                     prixarticle: articlefournisseur.prixReference,
@@ -411,41 +412,128 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   public openModalArticle(content: TemplateRef<any>) { 
-    this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
-      (result) => {
-        this.closeResult = `Closed with: ${result}`;
-        console.log(this.closeResult)
-        if (this.closeResult == 'Closed with: Save click') {
-          for (const _articlefournisseur of this.articleFournisseurs) {
-            if (_articlefournisseur.selected == true) {
-              this.commandeDetail = {
-                commandeId: 0,
-                articlefournisseurId: _articlefournisseur.articleId,
-                QteCommande: 0,
-                QteLivre: 0,
-                prixarticle: _articlefournisseur.prixReference,
-                remise: 0,
-                validationdetailbc: false,
-                articlefournisseur: _articlefournisseur,
-                selected:false
+    
+    if(this.commandes.length >0){
+      const articlesId = this.commandes.map((i: any) => i.articlefournisseurId);
+      this.commandeService.getArticleFournisseurByArticle(articlesId,this.fournisseur.id ? this.fournisseur.id :0).subscribe({
+        next:(_articlefournisseurs)=> {
+          this.articleFournisseurs = _articlefournisseurs;
+          this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+            (result) => {
+              
+              this.closeResult = `Closed with: ${result}`;
+              console.log(this.closeResult)
+              if (this.closeResult == 'Closed with: Save click') {
+                for (const articlefournisseur of this.articleFournisseurs) {
+                  if (articlefournisseur.selected == true) {
+                    this.commandeDetail = {
+                      commandeId: 0,
+                      articlefournisseurId: articlefournisseur.id ? articlefournisseur.id:0,
+                      QteCommande: 0,
+                      QteLivre: 0,
+                      prixarticle: articlefournisseur.prixReference,
+                      remise: 0,
+                      validationdetailbc: false,
+                      articlefournisseur: articlefournisseur,
+                      selected:false
+                    }
+                    this.commandes.push(this.commandeDetail)
+                  }
+                }
               }
-              this.commandes.push(this.commandeDetail)
+            },
+            (reason) => {
+              this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+              console.log(this.closeResult)
+            },
+          );    
+        },
+      }); 
+    }
+    else{
+      this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+        (result) => {
+          this.closeResult = `Closed with: ${result}`;
+          console.log(this.closeResult)
+          if (this.closeResult == 'Closed with: Save click') {
+            for (const articlefournisseur of this.articleFournisseurs) {
+              if (articlefournisseur.selected == true) {
+                this.commandeDetail = {
+                  commandeId: 0,
+                  articlefournisseurId: articlefournisseur.id ? articlefournisseur.id:0,
+                  QteCommande: 0,
+                  QteLivre: 0,
+                  prixarticle: articlefournisseur.prixReference,
+                  remise: 0,
+                  validationdetailbc: false,
+                  articlefournisseur: articlefournisseur,
+                  selected:false
+                }
+                this.commandes.push(this.commandeDetail)
+              }
             }
           }
-        }
-      },
-      (reason) => {
-        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        console.log(this.closeResult)
-      },
-    );           
+        },
+        (reason) => {
+          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+          console.log(this.closeResult)
+        },
+      );  
+    }
+          
   }
 
   generatePDF(commande:InterfaceBonCommandes) {
-    console.log(commande);
+    const doc = new jsPDF();
+    doc.text(`Bon de commande n°${commande.noPiece}`, 10, 10);
+    doc.text(`Date: ${this.formatDate(commande.dateCommande,'dd/MM/yyyy')}`, 10, 20);
+    doc.text(`Fournisseur: ${commande.fournisseur.raison_social}`, 10, 30);
+
+    const data: any[][] = [];
+    const columns = ['Réf','Désignation','Quantité','Unité','Prix article','Montant'];
+    const rows =  commande.commandeDetail;
+
+    // Ajout des en-têtes au tableau de données
+      data.push(columns);
+
+    // Ajout des lignes de données au tableau de données
+    rows.forEach(row => {
+        data.push(Object.values(row));
+    });
+
+// Utilisation de la méthode table avec le tableau de données
+// doc.autoTable({
+//     head: [columns],
+//     body: data,
+//     startY: 10,
+//     styles: { fontSize: 10 },
+//     theme: 'grid'
+// });
+
+    // const config = {
+    //     autoSize     : false,
+    //     printHeaders : true
+    // }
+
+    // let y = 40;
+    // 
+    // const rows = commande.commandeDetail.map(commandedetail => [
+    //   commandedetail.articlefournisseur.article.codeArticle,
+    //   commandedetail.articlefournisseur.article.libelle,
+    //   commandedetail.QteCommande,
+    //   commandedetail.articlefournisseur.article.unite.abreviation,
+    //   commandedetail.prixarticle,
+    //   commandedetail.prixarticle * commandedetail.QteCommande
+    // ]);
     
-    // const doc = new jsPDF();
-    // doc.text('Bon de commande N° '+ commande.noPiece, 10, 10);
+    // doc.table(10, 40, data, config);
+    // doc.output('dataurlnewwindow');
+    // doc.table();
+    // // commande.commandeDetail.forEach((commandedetail, index) => {
+    // //   const ligne = `${commandedetail.articlefournisseur.article.libelle} - Quantité: ${commandedetail.QteCommande} - Prix unitaire: ${commandedetail.prixarticle}`;
+    // //   doc.text(ligne, 10, y);
+    // //   y += 10;
+    // // });
     // doc.save('commande.pdf');
   }
 
@@ -458,7 +546,6 @@ export class BonCommandeAchatsComponent implements OnInit {
       next:(commandeDetail) =>{
         this.commandes = commandeDetail; 
         console.log(this.commandes);
-               
       },
     })
     
@@ -581,9 +668,11 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   showListCommande(){
     this.toggle = !this.toggle;
+    this.addBtn = !this.addBtn;
     this.addTogle = !this.addTogle;
+    this.listArts = this.listArts;
     this.addCommande = !this.addCommande;
-    this.btnTenRecord = !this.btnTenRecord;
+    this.commandes = [];
     this.inputModif = false;
   }
 
