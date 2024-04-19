@@ -493,48 +493,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     const columns = ['Réf','Désignation','Quantité','Unité','Prix article','Montant'];
     const rows =  commande.commandeDetail;
 
-    // Ajout des en-têtes au tableau de données
-      data.push(columns);
-
-    // Ajout des lignes de données au tableau de données
-    rows.forEach(row => {
-        data.push(Object.values(row));
-    });
-
-// Utilisation de la méthode table avec le tableau de données
-// doc.autoTable({
-//     head: [columns],
-//     body: data,
-//     startY: 10,
-//     styles: { fontSize: 10 },
-//     theme: 'grid'
-// });
-
-    // const config = {
-    //     autoSize     : false,
-    //     printHeaders : true
-    // }
-
-    // let y = 40;
-    // 
-    // const rows = commande.commandeDetail.map(commandedetail => [
-    //   commandedetail.articlefournisseur.article.codeArticle,
-    //   commandedetail.articlefournisseur.article.libelle,
-    //   commandedetail.QteCommande,
-    //   commandedetail.articlefournisseur.article.unite.abreviation,
-    //   commandedetail.prixarticle,
-    //   commandedetail.prixarticle * commandedetail.QteCommande
-    // ]);
     
-    // doc.table(10, 40, data, config);
-    // doc.output('dataurlnewwindow');
-    // doc.table();
-    // // commande.commandeDetail.forEach((commandedetail, index) => {
-    // //   const ligne = `${commandedetail.articlefournisseur.article.libelle} - Quantité: ${commandedetail.QteCommande} - Prix unitaire: ${commandedetail.prixarticle}`;
-    // //   doc.text(ligne, 10, y);
-    // //   y += 10;
-    // // });
-    // doc.save('commande.pdf');
   }
 
   
