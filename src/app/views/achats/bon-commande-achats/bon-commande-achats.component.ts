@@ -29,6 +29,7 @@ import { BonCommande } from 'src/app/shared/model/bonCommande';
 
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { error } from 'console';
 // pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 
@@ -46,10 +47,9 @@ export class BonCommandeAchatsComponent implements OnInit {
   public fournisseurs: Fournisseur;
   public centres: Centrerevenus;
   public centre: Centrerevenu;
-  public artFournis: any;
   public exploitation: InterfaceExploitations;
   public achat: InterfaceAchat;
-  public article: Article;
+  public article: InterfaceArticle;
   public articles: InterfaceArticle[];
   public articleFournisseur: InterfaceArticlefournisseurs;
   public articleFournisseurs: InterfaceArticlefournisseurs[];
@@ -61,34 +61,41 @@ export class BonCommandeAchatsComponent implements OnInit {
   public commandes: InterfaceCommandeDetails[];
   public boncommande: InterfaceBonCommandes;
   public boncommandes: InterfaceBonCommandes[];
-  public commandeDetails: InterfaceCommandeDetails;
+  public commandeDetail: InterfaceCommandeDetails;
   public reason: any;
   public validateArticles: any[] = [];
   public artExploitationArticleId: any[] = [];
 
+  public exploitationId = +(sessionStorage.getItem('exploitation') || 3);
   public idFournisseur = 0;
   public idBonCommande = 0;
   public articleFournisseurId = 0;
   public montantTTc=0;
   public montantRemise =0;
 
+  public num_commande: string;
+
   public toggle = true;
   public modifToggle = true;
+  public addTogle = true;
+  public addCommande = true;
+  public listArts = true;
   public btnC = false;
   public addBtn = false;
-  closeResult = '';
   public showDeleteBtn = false;
   public showDeleteBtnCom = false;
-  public bonCommandeForm = FormGroup;
-  public bsConfig: { containerClass: string; locale: string; dateInputFormat: string; };
+  public btnTenRecord = false;
+  public inputModif = false;
 
+  public bonCommandeForm = FormGroup;
+  closeResult = '';
+
+  public bsConfig: { containerClass: string; locale: string; dateInputFormat: string; };
   private today = new Date();
   public dates = {
     today: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate())
   }
 
-  public num_commande: string;
-  public exploitationId = +(sessionStorage.getItem('exploitation') || 3);
 
   constructor(
     public router: Router,
@@ -107,6 +114,9 @@ export class BonCommandeAchatsComponent implements OnInit {
 
     this.resetFournisseur();
     this.resetCentre();
+    this.resetCommande();
+    this.resetDetailCommande();
+    this.resetArticleFournisseur();
   }
 
   formatDate(date: Date | string, format: string = 'yyyy-MM-dd') {
@@ -122,12 +132,6 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.listArticleFournisseurs();
   }
 
-  showListCommande(){
-    this.toggle =true;
-    this.btnC =true;
-    this.selectBoncomm();
-  }
-
 
   showAllFournisseur() {
     this.fournisseurService.getAllFournisseurByExploitation(this.exploitationId).subscribe({
@@ -135,8 +139,9 @@ export class BonCommandeAchatsComponent implements OnInit {
         this.fournisseurs = _fournisseur;
         this.fournisseur = _fournisseur[0];
         this.idFournisseur = this.fournisseur.id ? this.fournisseur.id : 0;
-        this.commandeService.getTenRecordsCommande(this.idFournisseur,this.exploitation.id? this.exploitation.id:0).subscribe({
+        this.commandeService.getCommandeByFournisseurExploitation(this.idFournisseur,this.exploitation.id? this.exploitation.id:0).subscribe({
           next: (boncommande) => {
+            this.commandes = [];
             this.boncommandes = boncommande;
           },
           error: (error) => {
@@ -149,23 +154,7 @@ export class BonCommandeAchatsComponent implements OnInit {
       }
     });
   }
-  toggleModal() {
-    this.toggle = false;
-    this.btnC = false;
-    this.addBtn = true;
-    this.showDeleteBtnCom = false;
-    this.selectDixDernierCommandeByFournisseurId(); 
-    this.idBonCommande =0;
-  }
-
-  addCommandeModal(){
-    this.showDeleteBtnCom = false;
-    this.toggle = false;
-    this.btnC = false;
-    this.addBtn = false;
-    this.commandes = [];
-    this.idBonCommande =0;
-  }
+  
   showExploitationFournisseur() {
     this.exploitationService.getExploitationById(this.exploitationId).subscribe({
       next: (exploitation) => {
@@ -202,6 +191,41 @@ export class BonCommandeAchatsComponent implements OnInit {
     });
   }
 
+  listArticleFournisseurs(){
+    const exploitationId = Number(this.exploitationId);
+    this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
+      next: (artExploitation) => {
+        const fournisseur = this.fournisseur;
+        if (artExploitation) {
+          this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
+          this.commandeService.getArticleFournisseurByArticleId(fournisseur.id ? fournisseur.id : 0, this.artExploitationArticleId).subscribe({
+            next: (artFournisseur: any) => {
+              this.articleFournisseurs = artFournisseur;
+              this.commandes = [];
+    
+              for (const articlefournisseur of artFournisseur) {
+                  this.commandeDetail = {
+                    commandeId: 0,
+                    articlefournisseurId: articlefournisseur.articleId,
+                    QteCommande: 0,
+                    QteLivre: 0,
+                    prixarticle: articlefournisseur.prixReference,
+                    remise: 0,
+                    validationdetailbc: false,
+                    articlefournisseur: articlefournisseur,
+                    selected:false
+                  }
+                  this.commandes.push(this.commandeDetail)
+              }
+            }
+          })
+        }
+      }
+    });
+  }
+
+  
+
   public resetCentre() {
     this.adresse = {
       rue: '...',
@@ -234,6 +258,97 @@ export class BonCommandeAchatsComponent implements OnInit {
       telephone: '',
       exploitations: this.exploitation,
       adresses: this.adresse
+    }
+  }
+
+  public resetCommande(){
+    this.fournisseur = {
+      raison_social: '',
+      actif: true,
+      codeFournisseur: '',
+      siret: '',
+      codeNaf: '',
+      tvaIntracom: '',
+      web: '',
+      codeComptable: '',
+      modereglementId: 0,
+      commentaires: '',
+      selected: false,
+      adresseId: null,
+      adresse: this.adresse,
+      operateur: []
+    }
+    this.centre = {
+      code: '',
+      libelle: '',
+      exploitationsId: 0,
+      adressesId: 0,
+      email: '',
+      telephone: '',
+      exploitations: this.exploitation,
+      adresses: this.adresse
+    }
+    this.exploitation = {
+      code_couleur: '',
+      libelle: '',
+      nbDecimal: 0,
+      commentaire: '',
+      siteWeb: '',
+      codenaf: '',
+      siret: '',
+      logo: '',
+      actif: true,
+      adressesId: 0,
+    }
+    this.boncommande = {
+      quantiteCommande: 0,
+      remise: 0,
+      montantHT: 0,
+      montantTva: 0,
+      noPiece: '',
+      validation: false,
+      commentaire: '',
+      dateCommande: new Date,
+      fournisseurId: 0,
+      exploitationId: 0,
+      selected: false,
+      centreId: 0,
+      fournisseur: this.fournisseur,
+      centre: this.centre,
+      exploitation: this.exploitation,
+      commandeDetail:[],
+      achat:[]
+    }
+  }
+
+  public resetArticleFournisseur(){
+   
+    this.articleFournisseur = {
+      articleId: 0,
+      fournisseurId: 0,
+      marque: '',
+      prixReference: 0,
+      prixReferencePrecedent: 0,
+      commentaire: '',
+
+      article:this.article,
+      fournisseur:this.fournisseur,
+      conditionnement: [],
+    }
+  }
+
+  public resetDetailCommande(){
+    this.commandeDetail = {
+      commandeId:0,
+      articlefournisseurId:0,
+      QteCommande: 0,
+      QteLivre:0,
+      prixarticle:0,
+      remise:0,
+      validationdetailbc:false,
+      commande:this.boncommande,
+      articlefournisseur:this.articleFournisseur,
+      selected:false,
     }
   }
 
@@ -282,72 +397,6 @@ export class BonCommandeAchatsComponent implements OnInit {
     return montantRemise;
   }
 
-  listArticleFournisseurs(){
-    const exploitationId = Number(this.exploitationId);
-    this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
-      next: (artExploitation) => {
-        const fournisseur = this.fournisseur;
-        if (artExploitation) {
-          this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
-          this.commandeService.getArticleFournisseurByArticleId(fournisseur.id ? fournisseur.id : 0, this.artExploitationArticleId).subscribe({
-            next: (artFournisseur: any) => {
-              this.articleFournisseurs = artFournisseur;
-              console.log(this.articleFournisseurs);
-            }
-          })
-        }
-      }
-    });
-  }
-
-  selectDixDernierCommandeByFournisseurId() {
-    this.listArticleFournisseurs();
-    const fournisseur = this.fournisseur;
-    const articleFournisseurs = this.articleFournisseurs;
-    this.commandes = [];
-    
-    for (const articlefournisseur of articleFournisseurs) {
-        this.commandeDetails = {
-          commandeId: 0,
-          articlefournisseurId: articlefournisseur.articleId,
-          QteCommande: 0,
-          QteLivre: 0,
-          prixarticle: articlefournisseur.prixReference,
-          remise: 0,
-          validationdetailbc: false,
-          articlefournisseur: articlefournisseur,
-          selected:false
-        }
-        this.commandes.push(this.commandeDetails)
-    }
-  }
-
-  showCommande(bonCommande: BonCommande) {
-    this.boncommande = bonCommande;
-    this.toggle = false;
-    this.btnC = false;
-    this.addBtn = true;
-    this.selectDixDernierCommandeByFournisseurId(); 
-    this.idBonCommande =bonCommande.id ? bonCommande.id :0;
-    console.log(this.boncommande);
-    
-  }
-
-  addBonCommande() {
-    this.boncommande = this.boncommande;
-    if (this.idBonCommande ===0 ) {
-      this.commandeService.createBonCommande(this.boncommande).subscribe({
-        next:(bonCommande) => {
-          this.commandeService.createCommandeDetail(bonCommande.id,this.commandes).subscribe({
-            next:(value) =>{
-              this.boncommandes.push(bonCommande);
-            },
-          });
-        }
-      });
-    } 
-  }
-
   public selectOnFournisseur() {
     this.fournisseur = this.fournisseur;
 
@@ -365,7 +414,6 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   public openModalArticle(content: TemplateRef<any>) { 
-    this.listArticleFournisseurs();
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
@@ -373,7 +421,7 @@ export class BonCommandeAchatsComponent implements OnInit {
         if (this.closeResult == 'Closed with: Save click') {
           for (const _articlefournisseur of this.articleFournisseurs) {
             if (_articlefournisseur.selected == true) {
-              this.commandeDetails = {
+              this.commandeDetail = {
                 commandeId: 0,
                 articlefournisseurId: _articlefournisseur.articleId,
                 QteCommande: 0,
@@ -384,7 +432,7 @@ export class BonCommandeAchatsComponent implements OnInit {
                 articlefournisseur: _articlefournisseur,
                 selected:false
               }
-              this.commandes.push(this.commandeDetails)
+              this.commandes.push(this.commandeDetail)
             }
           }
         }
@@ -408,6 +456,76 @@ export class BonCommandeAchatsComponent implements OnInit {
     // pdfMake.createPdf(docDefinition).download('example.pdf');
   }
 
+  
+
+  listArticleDixDernierCommande(){
+    const fournisseurId = this.fournisseur.id ? this.fournisseur.id:0;
+    const exploitationId = this.exploitation.id ? this.exploitation.id: 0;
+    this.commandeService.getDixDernierCommandes(fournisseurId,Number(exploitationId)).subscribe({
+      next:(commandeDetail) =>{
+        this.commandes = commandeDetail; 
+        console.log(this.commandes);
+               
+      },
+    })
+    
+  }
+
+
+  showCommande(bonCommande: BonCommande) {
+    this.boncommande = bonCommande;
+    this.idBonCommande =bonCommande.id ? bonCommande.id :0;
+    this.commandeService.getCommandeDetailByCommandeId(this.idBonCommande).subscribe({
+      next:(commandeDetail) =>{
+        this.commandes =[];        
+        for(const detailComm of commandeDetail){
+          this.commandeDetail = {
+            commandeId: detailComm.commandeId,
+            articlefournisseurId: detailComm.articlefournisseurId,
+            QteCommande: detailComm.QteCommande,
+            QteLivre: detailComm.QteLivre,
+            prixarticle: detailComm.prixarticle,
+            remise: detailComm.remise,
+            validationdetailbc: detailComm.validationdetailbc,
+            articlefournisseur: detailComm.articlefournisseur,
+            selected:false
+          }
+          this.commandes.push(this.commandeDetail)
+        }
+        this.addCommande = !this.addCommande;
+        this.listArts = !this.listArts;
+        this.toggle = !this.toggle;
+        this.btnTenRecord = this.btnTenRecord;
+        this.inputModif = !this.inputModif;
+      },
+    })
+  }
+
+
+  addBonCommande() {
+    this.boncommande = this.boncommande;
+    if (this.idBonCommande ===0 ) {
+      this.commandeService.createBonCommande(this.boncommande,this.commandes).subscribe({
+        next:(bonCommande) => {
+          alert('Bon de commande n° '+ this.boncommande.noPiece+ 'crée avec succès!');
+          this.inputModif = !this.inputModif;
+          this.addCommande = false;
+          this.listArts = false;
+          this.addTogle = false;
+        },
+        error:(error) =>{
+          alert('veuillez réessayer!');
+        }
+      });
+    } 
+  }
+
+  annuler(){
+    this.toggle = !this.toggle;
+    this.addTogle = true;
+    this.addCommande = true;
+    this.listArts = true;
+  }
 
   selectFounisseur(data: InterfaceFournisseur) {
     this.fournisseur = data;
@@ -439,11 +557,38 @@ export class BonCommandeAchatsComponent implements OnInit {
      if (bonCommande.validation == false) {
       this.commandeService.deleteOneCommande(bonCommande).subscribe({
         next:(value) =>{
-          this.boncommandes = this.boncommandes.filter(line => !line.selected);
           this.showDeleteBtnCom = false;
         },
       });
      }      
     }
   }
+
+  toggleModal() {
+    this.addBtn = this.addBtn;
+    this.idBonCommande =0;
+    this.toggle = !this.toggle;
+    this.addCommande = !this.addCommande;
+    this.btnTenRecord = false;
+    this.listArts = !this.listArts;
+    this.inputModif = false;
+  }
+
+  addCommandeModal(){
+    this.toggle = !this.toggle;
+    this.addBtn = !this.addBtn;
+    this.addTogle = !this.addTogle;
+    this.listArts = !this.listArts;
+    this.commandes = [];
+    this.inputModif = false;
+  }
+
+  showListCommande(){
+    this.toggle = !this.toggle;
+    this.addTogle = !this.addTogle;
+    this.addCommande = !this.addCommande;
+    this.btnTenRecord = !this.btnTenRecord;
+    this.inputModif = false;
+  }
+
 }

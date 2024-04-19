@@ -31,10 +31,10 @@ export const environment = {
     APIUPDATEFOURNISSEUREXPLOITATION: endPoint + 'fournisseurexploitation/delete_fournisseurexploitation/',
     APIGETEXPLOITATIONBYFOURNISSEUR: endPoint + 'fournisseurexploitation/',
 
-    APIGETTENCOMMANDE: endPoint + 'commande/fournisseur/',
+    APIGETCOMMANDEBYFOURNISSEUREXPLOITATION: endPoint + 'commande/fournisseur/',
     APICREATECOMMANDEDETAIL :endPoint + 'commande/commandeDetail',
     APIGETDIXDERNIERCOMMANDE: endPoint + 'commande_detail/derniersCommandes/',
-    
+    APIGETCOMMANDEDETAILBYCOMMANDEID: endPoint + 'commande_detail/',
 
 
     APIGETARTICLE : endPoint + 'articles',
