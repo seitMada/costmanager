@@ -507,7 +507,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     if (this.idBonCommande ===0 ) {
       this.commandeService.createBonCommande(this.boncommande,this.commandes).subscribe({
         next:(bonCommande) => {
-          alert('Bon de commande n° '+ this.boncommande.noPiece+ 'crée avec succès!');
+          alert('Bon de commande n° '+ this.boncommande.noPiece+ ' crée avec succès!');
           this.inputModif = !this.inputModif;
           this.addCommande = false;
           this.listArts = false;
@@ -552,12 +552,13 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   deleteSelectedRowsComm() {
-    this.boncommandes = this.boncommandes.filter(line => line.selected);
-    for (const bonCommande of this.boncommandes) {
-     if (bonCommande.validation == false) {
+    const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
+    for (const bonCommande of selectedBonCommandes) {
+     if (!bonCommande.validation) {
       this.commandeService.deleteOneCommande(bonCommande).subscribe({
         next:(value) =>{
-          this.showDeleteBtnCom = false;
+          this.boncommandes = this.boncommandes.filter(line => line !== bonCommande);
+          this.showDeleteBtnCom = this.boncommandes.some(line => line.selected);
         },
       });
      }      
