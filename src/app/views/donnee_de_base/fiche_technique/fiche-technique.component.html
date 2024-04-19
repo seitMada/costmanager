@@ -19,11 +19,11 @@
         <i class="fas fa-plus"></i>
       </button>
       <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer fichetechnique" (click)="delete()"
-        *ngIf="!toggle">
+        *ngIf="!toggle" [disabled]="!deleteToggle">
         <i class="fas fa-trash"></i>
       </button>
       <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer fichetechniques" (click)="deletes()"
-        *ngIf="toggle">
+        *ngIf="toggle" [disabled]="!deleteToggle">
         <i class="fas fa-trash"></i>
       </button>
     </div>
@@ -56,8 +56,8 @@
           <td class="col-1" (click)="show(line); toggleModal()">{{line.unite.abreviation}}</td>
           <td class="col-2" (click)="show(line); toggleModal()">{{line.groupeanalytique.groupe}}</td>
           <td class="col-2" (click)="show(line); toggleModal()">{{line.categorie.libelle}}</td>
-          <td class="col-1" (click)="show(line); toggleModal()">{{line.prix}} €</td>
-          <td class="col-1" (click)="show(line); toggleModal()">{{line.cout}} €</td>
+          <td class="col-1" (click)="show(line); toggleModal()">{{line.prix | number: '1.2-2'}} €</td>
+          <td class="col-1" (click)="show(line); toggleModal()">{{line.cout | number: '1.2-2'}} €</td>
         </tr>
       </tbody>
     </table>
@@ -80,7 +80,7 @@
           <div class="col-sm-6">
             <div class="row g-2">
               <div class="input-group col">
-                <span class="input-group-text col-6" id="cout">Côut</span>
+                <span class="input-group-text col-6" id="cout">Coût</span>
                 <input type="text" class="form-control col-3 bg-white" aria-label="cout" aria-describedby="basic-addon1"
                   [(ngModel)]="fichetechnique.cout" disabled="true">
                 <span class="input-group-text col-2">€</span>
@@ -220,7 +220,7 @@
         <div class="card col-5">
           <div class=" text-center fs-7 fw-bold">
             <button type="button" class="btn btn-sm btn-light position-absolute top-0 start-0 m-1"
-              (click)="open(content)">
+              (click)="open(content)" [disabled]="addToggle">
               <i class="fas fa-pencil"></i>
             </button>
             COMPOSITIONS
@@ -368,7 +368,7 @@
                   line.article.libelle }}</td>
                 <td class="col-3">
                   <input type="number" name="{{line.id}}" id="{{line.id}}" class="form-control"
-                    [(ngModel)]="line.quantite" min="0" step="0.05">
+                    [(ngModel)]="line.quantite" min="0" [step]="line.unite.step">
                 </td>
                 <td class="col-2">{{line.unite.libelle}}</td>
                 <td class="col-2">{{ line.cout }} €</td>

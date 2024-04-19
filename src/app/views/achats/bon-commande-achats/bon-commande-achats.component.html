@@ -20,9 +20,9 @@
       </div>
     </div>
     <div class="bd-highlight">
-      <button class="btn btn-outline-success btn-sm me-1" [disabled]="!addTogle" (click)="toggleModal(); listArticleFournisseurs()" title="Ajouter bon de commande"><i class="fas fa-t"></i></button>
-      <button class="btn btn-outline-info btn-sm me-1" [disabled]="!addCommande" (click)="addCommandeModal()" title="Ajout commande"><i class="fas fa-c"></i></button>
-      <button class="btn btn-outline-primary btn-sm me-1" [disabled]="!listArts" title="Liste de 10 dernières commandes" (click)="showListCommande(); listArticleDixDernierCommande()"><i class="fas fa-1"></i><i class="fas fa-0"></i></button>
+      <button class="btn btn-outline-success btn-sm me-1" (click)="toggleModal(); getAllArticles()" title="Ajouter bon de commande"><i class="fas fa-t"></i></button>
+      <button class="btn btn-outline-info btn-sm me-1" (click)="addCommandeModal()" title="Ajout commande"><i class="fas fa-c"></i></button>
+      <button class="btn btn-outline-primary btn-sm me-1" title="Liste de 10 dernières commandes" (click)="showListCommande()"><i class="fas fa-1"></i><i class="fas fa-0"></i></button>
       <button class="btn btn-outline-danger btn-sm me-1" *ngIf="showDeleteBtnCom" (click)="deleteSelectedRowsComm()" title="Supprimer bon de commande">
         <i class="fas fa-trash"></i>
       </button>

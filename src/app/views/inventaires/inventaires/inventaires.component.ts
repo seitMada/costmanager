@@ -65,6 +65,7 @@ export class InventairesComponent {
   public inventaireDetail: InterfaceInventairesDetails;
   public inventaireDetails: InterfaceInventairesDetails[];
   public lieustockages: InterfaceLieustockages[];
+  public lieustockageszones: InterfaceLieustockages[];
   public lieustockage: InterfaceLieustockages;
   public zonestockages: InterfaceZonestockages[];
   public zonestockage: InterfaceZonestockages;
@@ -118,7 +119,7 @@ export class InventairesComponent {
         lieu: {
           lieu: '',
           centreId: 0,
-          centreRevenu: {
+          centre: {
             code: '',
             libelle: '',
             exploitationsId: 0,
@@ -135,7 +136,8 @@ export class InventairesComponent {
               siret: '',
               logo: '',
               actif: false,
-              adressesId: 0
+              adressesId: 0,
+              // centreRevenu: []
             },
             adresses: {
               rue: '',
@@ -145,9 +147,11 @@ export class InventairesComponent {
               centreRevenu: [],
               exploitation: [],
               operateur: []
-            }
-          }
-        }
+            },
+          },
+          zonestockage: []
+        },
+        centre: []
       },
       inventairedetail: []
     }
@@ -162,7 +166,7 @@ export class InventairesComponent {
       email: '',
       telephone: '',
       exploitations: this.exploitation,
-      adresses: new Adress()
+      adresses: new Adress(),
     }
   }
 
@@ -214,7 +218,21 @@ export class InventairesComponent {
         this.exploitation = _exploitation;
         this.centrerevenus = _centrerevenus;
         this.inventaire.centre.exploitations = _exploitation;
+        this.inventaire.centre.libelle = '';
+        this.inventaire.centreRevenuId = 0;
         // this.inventaire.centreRevenuId = _centrerevenus.id;
+        const exploitationId: number[] = [];
+        exploitationId.push(_exploitation.id || 0);
+        this.zonelieuService.getZoneStockageByExploitationId(exploitationId).subscribe({
+          next: (_data: any) => {
+            this.lieustockageszones = _data;
+            for (const _lieu of this.lieustockageszones) {
+              for (const _zone of _lieu.zonestockage) {
+                _zone.selected = true;
+              }
+            }
+          }
+        })
       }
     })
   }
@@ -222,6 +240,7 @@ export class InventairesComponent {
   selectCentreRevenu(_centrerevenu: InterfaceCentreRevenu) {
     this.zonelieuService.getLieuStockageByCentreId(_centrerevenu.id || 0).subscribe({
       next: (_lieustockage: any) => {
+        console.log(_lieustockage)
         this.centrerevenu = _centrerevenu;
         this.lieustockages = _lieustockage;
         this.inventaire.centre = _centrerevenu;
@@ -233,6 +252,7 @@ export class InventairesComponent {
   selectLieuStockage(_lieustockage: InterfaceLieustockages) {
     this.zonelieuService.getZoneStockageByLieuId(_lieustockage.id || 0).subscribe({
       next: (_zonestockage: any) => {
+        console.log(_zonestockage)
         this.zonestockages = _zonestockage;
         this.lieustockage = _lieustockage;
         this.inventaire.zonestockage.lieu = _lieustockage;
@@ -303,7 +323,7 @@ export class InventairesComponent {
       this.inventaire.operateurId = this.idoperateur;
       this.inventaireService.createInventaire(this.inventaire, this.inventaire.inventairedetail).subscribe({
         next: () => {
-          
+
           this.modifToggle = !this.modifToggle;
           alert('Inventaire créer');
         }
@@ -439,9 +459,54 @@ export class InventairesComponent {
     this.inventaire.etat = true;
     this.inventaireService.updateInventaire(this.inventaire).subscribe({
       next: () => {
-        alert('L\'inventaire du ' + this.screenDate(this.inventaire.date_inventaire) + ' pour le centre de revenu ' + this.centrerevenu.libelle + ' a été valider' )
+        alert('L\'inventaire du ' + this.screenDate(this.inventaire.date_inventaire) + ' pour le centre de revenu ' + this.centrerevenu.libelle + ' a été valider')
       }
     })
+  }
+
+  openInventaire(content: TemplateRef<any>) {
+    this.resetinventaire()
+    this.selectCentreRevenu(this.centrerevenu);
+    const exploitationId: number[] = [];
+    exploitationId.push(this.inventaire.centre.exploitations.id || 0);
+    this.zonelieuService.getZoneStockageByExploitationId(exploitationId).subscribe({
+      next: (_data: any) => {
+        this.lieustockageszones = _data;
+        for (const _lieu of this.lieustockageszones) {
+          for (const _zone of _lieu.zonestockage) {
+            _zone.selected = true;
+          }
+        }
+      }
+    })
+ 
+    this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${result}`;
+        // console.log(this.closeResult)
+        // let _i = '0';
+        const zonestockageId: number[] = [0];
+        if (this.closeResult == 'Closed with: Save click') {
+          for (const _lieu of this.lieustockageszones) {
+            for (const _zone of _lieu.zonestockage) {
+              if (_zone.selected === true) {
+                zonestockageId.push(_zone.id || 0);
+              }
+            }
+          }
+          this.articleService.getArticlesByZone(zonestockageId).subscribe({
+            next: (_article) => {
+              console.log(_article)
+            }
+          })
+        }
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        console.log(this.closeResult)
+
+      },
+    );
   }
 
 }

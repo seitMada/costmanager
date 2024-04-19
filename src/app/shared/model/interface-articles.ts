@@ -6,6 +6,7 @@ import { InterfaceSousfamilles } from "./interface-sousfamilles";
 import { InterfaceUnite } from "./interface-unite";
 import { InterfaceGroupeanalytiques } from "./interface-groupeanalytiques";
 import { InterfaceArticlefournisseurs } from "./interface-articlefournisseurs";
+import { InterfaceArticlezonestockages } from "./interface-articlezonestockages";
 
 export interface InterfaceArticle {
   id?: number;
@@ -30,6 +31,7 @@ export interface InterfaceArticle {
   sousfamilles: InterfaceSousfamilles;
   unite: InterfaceUnite;
   groupeanalytique: InterfaceGroupeanalytiques;
+  articlezonestockages: InterfaceArticlezonestockages[];
 }
 
 export interface InterfaceArticles {

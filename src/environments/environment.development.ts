@@ -106,5 +106,9 @@ export const environment = {
     
     APIGETLIEUSTOCKAGEBYCENTREID: endPoint + 'lieustockage',
     
-    APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage'
+    APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage',
+    APIGETZONESTOCKAGEBYEXPLOITATIONID: endPoint + 'zonestockage/exploitation',
+    APIGETARTICLEBYZONE: endPoint + 'zonestockage/article',
+    
+    APIDELETEARTICLEZONESTOCKAGE: endPoint + 'articlezonestockage/delete/'
 };

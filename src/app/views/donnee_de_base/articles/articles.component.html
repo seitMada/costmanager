@@ -46,7 +46,7 @@
       <tbody>
         <tr *ngFor="let line of articles">
           <td class="">
-            <input type="checkbox" name="article-{{line.libelle}}" id="article-{{line.id}}" [(ngModel)]="line.selected">
+            <input type="checkbox" class="form-check-input" name="article-{{line.libelle}}" id="article-{{line.id}}" [(ngModel)]="line.selected">
           </td>
           <td class="col-1" (click)="showArticle(line); toggleModal()">{{line.codeArticle}}</td>
           <td class="col-3 fw-bold" (click)="showArticle(line); toggleModal()">{{line.libelle}}</td>
@@ -100,8 +100,8 @@
           <div class="col-sm-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="coefficient">Coéfficient de pondération</span>
-              <input type="text" class="form-control col-6 bg-white" aria-label="coefficient"
-                aria-describedby="coefficient" [(ngModel)]="article.coefficientPonderation" [disabled]="modifToggle">
+              <input type="number" class="form-control col-6 bg-white" aria-label="coefficient"
+                aria-describedby="coefficient" step="1" [(ngModel)]="article.coefficientPonderation" [disabled]="modifToggle">
               <span class="input-group-text col-1" id="coefficient">%</span>
             </div>
           </div>
@@ -170,7 +170,7 @@
         </div>
       </div>
     </li>
-    <li class="list-group-item" style="height: 170px;">
+    <li class="list-group-item" style="height: 185px;">
       <div class="row">
         <div class="card col-3">
           <div class=" text-center fs-7 fw-bold">EXPLOITATIONS</div>
@@ -180,13 +180,38 @@
                 <tr *ngFor="let line of exploitations">
                   <td class="col-9">{{line.libelle}}</td>
                   <td class="col-3">
-                    <input type="checkbox" name="exploitation-{{line.libelle}}" id="exploitation-{{line.id}}"
+                    <input type="checkbox" class="form-check-input" name="exploitation-{{line.libelle}}" id="exploitation-{{line.id}}"
                       [(ngModel)]="line.selected" [disabled]="modifToggle"
-                      *ngIf="line.id !== exploitation ? true : false">
+                      *ngIf="line.id !== exploitation ? true : false" (ngModelChange)="changeZonestockage()">
                   </td>
                 </tr>
               </tbody>
             </table>
+          </div>
+        </div>
+        <div class="card col-9">
+          <div class=" text-center fs-7 fw-bold">
+            <!-- <button type="button" class="btn btn-sm btn-light position-absolute top-0 start-0 m-1" id="btn_allergene" (click)="open(content)"><i class="fas fa-suitcase"></i></button>
+              <span>STOCKAGE</span> -->STOCKAGE
+            </div>
+          <div class="card-body overflow-scroll p-0" style="height: 145px;">
+            <div class="row">
+              <div class="col-4 mb-2" *ngFor="let lieu of lieustockages">
+                <div class="card">
+                  <div class="card-header-sm fw-bold text-truncate">{{lieu.lieu}} - {{lieu.centre.libelle}}</div>
+                  <div class="card-body overflow-y-scroll" style="height: 100px; padding-top: 2px;">
+                    <table class="table table-bordered table-sm">
+                      <tr *ngFor="let line of lieu.zonestockage">
+                        <td>{{line.zone}}</td>
+                        <td>
+                          <input type="checkbox" class="form-check-input" name="zone-{{line.zone}}" id="zone-{{line.id}}" [(ngModel)]="line.selected" [disabled]="modifToggle">
+                        </td>
+                      </tr>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
         <!-- <div class="card col-4">
@@ -295,7 +320,7 @@
                     <tbody>
                       <tr *ngFor="let line of allergenes">
                         <td>{{line.libelle}}</td>
-                        <td><input type="checkbox" name="allergene-{{line.libelle}}" id="allergene-{{line.id}}"
+                        <td><input type="checkbox" class="form-check-input" name="allergene-{{line.libelle}}" id="allergene-{{line.id}}"
                             [(ngModel)]="line.selected"></td>
                       </tr>
                     </tbody>
@@ -339,3 +364,19 @@
     </li>
   </ul>
 </div>
+
+<!-- <ng-template #content let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title text-center" id="modal-basic-title">Zone de stockage de l'article {{article.libelle}}</h6>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="row">
+      
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-outline-success"
+      (click)="modal.close('Save click')">Enregistrer</button>
+  </div>
+</ng-template> -->
