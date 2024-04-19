@@ -18,7 +18,7 @@ export class CommandeService {
   private apiGetCommandeDetailByCommandeId = environment.APIGETCOMMANDEDETAILBYCOMMANDEID;
   private apiArticleFournisseurByArticleId = environment.APIGETARTICLEFOURNISSEURBYARTICLEID;
   private apiDixDernierCommande = environment.APIGETDIXDERNIERCOMMANDE;
-  private apiGetArticleFournisseurByArticle = environment.ARTICLEFOURNISSEURCHECKED;
+  private apiGetArticleFournisseurByArticle = environment.ARTICLEFOURNISSEURBYARTICLE;
   private apiCreateCommandeDetail = environment.APICREATECOMMANDEDETAIL;
   private apiDeleteCommande = environment.APIDELETECOMMANDE;
 
@@ -42,13 +42,10 @@ export class CommandeService {
     return this.https.get<any>(this.apiDixDernierCommande+fournisseurId,{params: {exploitationId:exploitationId}});
   }
 
-  public getArticleFournisseurByArticle(articleId:any[]){
-    return this.https.get<any>(this.apiGetArticleFournisseurByArticle,{ params: { articleId: articleId.join(',')} });
+  public getArticleFournisseurByArticle(articleId:any[],fournisseurId:number){
+    return this.https.get<any>(this.apiGetArticleFournisseurByArticle,{ params: { articleId: articleId.join(','),fournisseurId:fournisseurId} });
   }
 
-  // public createCommandeDetail(commandeId:number,commandeDetails:InterfaceCommandeDetails[]){
-  //   return this.https.post<any>(this.apiCreateCommandeDetail,{commandeId,commandeDetails});
-  // }
 
   public deleteOneCommande(commande:InterfaceBonCommandes){
     return this.https.post<any>(this.apiDeleteCommande,commande);

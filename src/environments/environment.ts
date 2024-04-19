@@ -93,22 +93,14 @@ export const environment = {
 
     APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID: endPoint + 'articlefournisseur/',
     APIGETARTICLEFOURNISSEURBYARTICLEID: endPoint + 'articlefournisseur/byarticleId/',
-    ARTICLEFOURNISSEURCHECKED: endPoint+ 'articlefournisseur/byarticleId',
+    ARTICLEFOURNISSEURBYARTICLE: endPoint+ 'articlefournisseur/byarticleId',
     
     APIGETADRESS: endPoint + 'adresse',
 
     APIGETINVENTAIREBYCRANDDATE: endPoint + 'inventaire',
     APICREATEINVENTAIRE: endPoint + 'inventaire/add',
-    APIDELETEINVENTAIRE: endPoint + 'inventaire/delete',
-    APIDELETESINVENTAIRE: endPoint + 'inventaire/deletes',
-    APIUPDATEINVENTAIRE: endPoint + 'inventaire/update',
-    APIGETINVENTAIREBYID: endPoint + 'inventaire/',
     
     APIGETLIEUSTOCKAGEBYCENTREID: endPoint + 'lieustockage',
     
-    APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage',
-    APIGETZONESTOCKAGEBYEXPLOITATIONID: endPoint + 'zonestockage/exploitation',
-    APIGETARTICLEBYZONE: endPoint + 'zonestockage/article',
-
-    APIDELETEARTICLEZONESTOCKAGE: endPoint + 'articlezonestockage/delete/'
+    APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage'
 };
