@@ -6,18 +6,18 @@
       <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
     </div>
     <div class="flex-grow-1 bd-highlight mx-1 col-4">
-      <div class="input-group input-group-sm">
+      <div class="input-group input-group-sm" *ngIf="addToggle">
         <span for="dateDebut" class="input-group-text col-4">
           Inventaire :
         </span>
         <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.debut" name="dateDebut"
-          bsDatepicker [bsConfig]="bsConfig" [maxDate]="dates.fin">
+          bsDatepicker [bsConfig]="bsConfig" [maxDate]="dates.fin" (ngModelChange)="selectCentreRevenus(centrerevenu)">
         <span for="dateFin" class="input-group-text col-1">
           au :
         </span>
         <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.fin" [minDate]="dates.debut"
-          name="dateFin" bsDatepicker [bsConfig]="bsConfig">
-        <button type="button" class="btn btn-outline-secondary col-1"><i class="fas fa-check"></i></button>
+          name="dateFin" bsDatepicker [bsConfig]="bsConfig" (ngModelChange)="selectCentreRevenus(centrerevenu)">
+        <!-- <button type="button" class="btn btn-outline-secondary col-1"><i class="fas fa-check"></i></button> -->
       </div>
     </div>
     <div class="flex-grow-1 bd-highlight mx-1 col-3">
@@ -44,17 +44,21 @@
         *ngIf="toggle">
         <i class="fas fa-trash"></i>
       </button>
-      <button class="btn btn-outline-success btn-sm me-1" title="Ajouter inventaire" (click)="addToggleModal();"
-        [disabled]="!addToggle">
+      <button class="btn btn-outline-success btn-sm me-1" title="Ajouter inventaire" (click)="openInventaire(contentinventaire);"
+        [disabled]="!addToggle" *ngIf="!inventaire.etat">
         <i class="fas fa-plus"></i>
       </button>
       <button class="btn btn-outline-info btn-sm me-1" title="Modifier inventaire" (click)="modifToggleModal()"
-        *ngIf="toggleEtat">
+        *ngIf="!toggle" [disabled]="!modifToggle || inventaire.etat">
         <i class="fas fa-pencil"></i>
       </button>
       <button class="btn btn-outline-primary btn-sm me-1" title="Liste inventaires" (click)="toggleModal()"
-        *ngIf="!toggle">
+        *ngIf="!toggle" [disabled]="!modifToggle">
         <i class="fas fa-list"></i>
+      </button>
+      <button class="btn btn-outline-warning btn-sm me-1" title="Valider inventaire" (click)="validInventaire()"
+        *ngIf="!inventaire.etat && !toggle">
+        <i class="fas fa-check"></i>
       </button>
     </div>
   </div>
@@ -79,11 +83,11 @@
             <input type="checkbox" name="inventaire-{{line.date_inventaire}}" id="inventaire-{{line.id}}"
               [(ngModel)]="line.selected">
           </td>
-          <td class="col-3" (click)="show(line); toggleModal(line.etat)">{{screenDate(line.date_inventaire)}}</td>
-          <td class="col-2" (click)="show(line); toggleModal(line.etat)">{{line.centre.libelle}}</td>
-          <td class="col-2" (click)="show(line); toggleModal(line.etat)">{{line.zonestockage.lieu.lieu}}</td>
-          <td class="col-2" (click)="show(line); toggleModal(line.etat)">{{line.zonestockage.zone}}</td>
-          <td class="col-2" (click)="show(line); toggleModal(line.etat)">{{line.operateur.nom}}
+          <td class="col-3" (click)="toggleModal(line.etat); show(line)">{{screenDate(line.date_inventaire)}}</td>
+          <td class="col-2" (click)="toggleModal(line.etat); show(line)">{{line.centre.libelle}}</td>
+          <td class="col-2" (click)="toggleModal(line.etat); show(line)">{{line.zonestockage.lieu.lieu}}</td>
+          <td class="col-2" (click)="toggleModal(line.etat); show(line)">{{line.zonestockage.zone}}</td>
+          <td class="col-2" (click)="toggleModal(line.etat); show(line)">{{line.operateur.nom}}
             {{line.operateur.prenom}}</td>
         </tr>
       </tbody>
@@ -91,102 +95,19 @@
   </div>
 </div>
 
-<div class="card d-flex" *ngIf="!toggle">
+<div class="card d-flex" *ngIf="false">
   <div class="card-header text-center fs-5 fw-bold">{{centrerevenu.libelle}} - Inventaire du
     {{screenDate(inventaire.date_inventaire)}} -</div>
   <ul class="list-group list-group-flush">
-    <li class="list-group-item">
-      <div class="card-body py-1">
-        <div class="card-body py-1">
-          <div class="row m-2">
-            <div class="col-sm-6">
-              <div class="input-group">
-                <span class="input-group-text col-5" id="libelle">Date inventaire</span>
-                <input type="text" class="form-control col-7 bg-white" aria-label="date" autocomplete="off"
-                  aria-describedby="date" name="date" [(ngModel)]="inventaire.date_inventaire" [disabled]="modifToggle"
-                  bsDatepicker [bsConfig]="bsConfig">
-              </div>
-            </div>
-          </div>
-          <div class="row m-2">
-            <div class="col-sm-6">
-              <div class="input-group">
-                <span class="input-group-text col-5" id="exploitation">Exploitation</span>
-                <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
-                  aria-label="Code" aria-describedby="exploitation"
-                  [(ngModel)]="inventaire.centre.exploitations.libelle" [disabled]="modifToggle">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                  data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
-                  <span class="visually-hidden">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" *ngIf="!modifToggle">
-                  <li *ngFor="let line of exploitations"><span
-                      (click)="selectExploitation(line)">{{line.libelle}}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-sm-6">
-              <div class="input-group"><span class="input-group-text col-5" id="centrerevenu">Centre Revenu</span>
-                <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
-                  aria-label="Code" aria-describedby="centrerevenu" [(ngModel)]="inventaire.centre.libelle"
-                  [disabled]="modifToggle">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                  data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
-                  <span class="visually-hidden">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" *ngIf="!modifToggle">
-                  <li *ngFor="let line of centrerevenus"><span
-                      (click)="selectCentreRevenu(line)">{{line.libelle}}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-          <div class="row m-2">
-            <div class="col-sm-6">
-              <div class="input-group">
-                <span class="input-group-text col-5" id="lieu">Lieu de stockage</span>
-                <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
-                  aria-label="Code" aria-describedby="lieu" [(ngModel)]="inventaire.zonestockage.lieu.lieu"
-                  [disabled]="modifToggle">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                  data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
-                  <span class="visually-hidden">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" *ngIf="!modifToggle">
-                  <li *ngFor="let line of lieustockages"><span (click)="selectLieuStockage(line)">{{line.lieu}}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-            <div class="col-sm-6">
-              <div class="input-group"><span class="input-group-text col-5" id="zone">Zone de stockage</span>
-                <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
-                  aria-label="Code" aria-describedby="zone" [(ngModel)]="inventaire.zonestockage.zone"
-                  [disabled]="modifToggle">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                  data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
-                  <span class="visually-hidden">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end" *ngIf="!modifToggle">
-                  <li *ngFor="let line of zonestockages"><span
-                      (click)="selectZoneStockage(line, inventaire.zonestockage.lieu)">{{line.zone}}</span>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
+    
     <li class="list-group-item">
       <div class="card d-flex py-1 mb-2">
         <div class="d-flex flex-row-reverse bd-highlight">
-          <button type="button" class="btn btn-sm btn-outline-danger mx-1" (click)="deselectArticles(inventaire.inventairedetail)"><i
+          <button type="button" class="btn btn-sm btn-outline-danger mx-1"
+            (click)="deselectArticles(inventaire.inventairedetail)" [disabled]="modifToggle"><i
               class="fas fa-trash"></i></button>
-          <button type="button" class="btn btn-sm btn-outline-info ms-1" (click)="openArticle(content)"><i
-              class="fas fa-plus"></i></button>
+          <button type="button" class="btn btn-sm btn-outline-info ms-1" (click)="openArticle(content)"
+            [disabled]="modifToggle"><i class="fas fa-plus"></i></button>
         </div>
       </div>
       <div class="card-body overflow-y-scroll py-1" style="height: 360px;">
@@ -205,12 +126,12 @@
             <tr *ngFor="let line of inventaire.inventairedetail">
               <td class="col-1">
                 <input type="checkbox" name="inventaire-{{line.articleId}}" id="inventaire-{{line.id}}"
-                  [(ngModel)]="line.selected">
+                  [(ngModel)]="line.selected" *ngIf="!modifToggle">
               </td>
               <td class="col-3">{{line.article.libelle}}</td>
               <td class="col-2">
                 <input type="number" class="form-control form-control-sm bg-transparent" [(ngModel)]="line.quantite"
-                  [step]="line.article.unite.step" placeholder="0.00">
+                  [step]="line.article.unite.step" placeholder="0.00" [disabled]="modifToggle">
               </td>
               <td class="col-2">{{line.article.unite.libelle}}</td>
               <td class="col-2">{{line.article.familles.libelle}}</td>
@@ -258,5 +179,93 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-sm btn-outline-success"
       (click)="modal.close('Save click')">Séléctionner</button>
+  </div>
+</ng-template>
+
+<ng-template #contentinventaire let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title text-center" id="modal-basic-title">{{centrerevenu.libelle}} - Inventaire du
+      {{screenDate(inventaire.date_inventaire)}} -</h6>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <div class="card-body py-1">
+          <div class="card-body py-1">
+            <div class="row m-2">
+              <div class="col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="libelle">Date inventaire</span>
+                  <input type="text" class="form-control col-7 bg-white" aria-label="date" autocomplete="off"
+                    aria-describedby="date" name="date" [(ngModel)]="inventaire.date_inventaire"
+                    bsDatepicker [bsConfig]="bsConfig">
+                </div>
+              </div>
+            </div>
+            <div class="row m-2">
+              <div class="col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="exploitation">Exploitation</span>
+                  <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
+                    aria-label="Code" aria-describedby="exploitation"
+                    [(ngModel)]="inventaire.centre.exploitations.libelle" disabled="true">
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li *ngFor="let line of exploitations"><span
+                        (click)="selectExploitation(line)">{{line.libelle}}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="input-group"><span class="input-group-text col-5" id="centrerevenu">Centre Revenu</span>
+                  <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
+                    aria-label="Code" aria-describedby="centrerevenu" [(ngModel)]="inventaire.centre.libelle"
+                    disabled="true">
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li *ngFor="let line of centrerevenus"><span
+                        (click)="selectCentreRevenu(line)">{{line.libelle}}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="card-body overflow-y-scroll p-0" style="height: 400px;">
+          <div class="row">
+            <div class="col-4 mb-2" *ngFor="let lieu of lieustockageszones">
+              <div class="card">
+                <div class="card-header-sm fw-bold text-truncate">{{lieu.lieu}} - {{lieu.centre.libelle}}</div>
+                <div class="card-body overflow-y-scroll" style="height: 150px; padding-top: 2px;">
+                  <table class="table table-bordered table-sm">
+                    <tr *ngFor="let line of lieu.zonestockage">
+                      <td>{{line.zone}}</td>
+                      <td>
+                        <input type="checkbox" class="form-check-input" name="zone-{{line.zone}}" id="zone-{{line.id}}" [(ngModel)]="line.selected">
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-outline-success"
+      (click)="modal.close('Save click')">Valider</button>
   </div>
 </ng-template>

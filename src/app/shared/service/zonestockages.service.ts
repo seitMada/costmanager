@@ -9,6 +9,9 @@ export class ZonestockagesService {
 
   private apiGetLieuStockageByCentreId = environment.APIGETLIEUSTOCKAGEBYCENTREID;
   private apiGetZoneStockageByLieuId = environment.APIGETZONESTOCKAGEBYLIEUID;
+  private apiGetZoneStockageByExploitationId = environment.APIGETZONESTOCKAGEBYEXPLOITATIONID;
+  
+  private apiDeleteArticleZonestockage = environment.APIDELETEARTICLEZONESTOCKAGE;
 
   constructor(private https: HttpClient) { }
 
@@ -18,5 +21,13 @@ export class ZonestockagesService {
 
   getZoneStockageByLieuId(lieuId: number) {
     return this.https.post(this.apiGetZoneStockageByLieuId, { lieuId: lieuId });
+  }
+
+  getZoneStockageByExploitationId(exploitationId: number[]) {
+    return this.https.post(this.apiGetZoneStockageByExploitationId, { exploitationId: exploitationId });
+  }
+
+  deleteArticleZoneStockage(articleId: number, zonestockageId: number[]) {
+    return this.https.post(this.apiDeleteArticleZonestockage + articleId, zonestockageId);
   }
 }

@@ -19,6 +19,9 @@ import { FamillesService } from "../../../shared/service/familles.service";
 import { SousfamillesService } from "../../../shared/service/sousfamilles.service";
 import { ExploitationService } from "../../../shared/service/exploitation.service";
 import { AllergenesService } from "../../../shared/service/allergenes.service";
+import { ZonestockagesService } from 'src/app/shared/service/zonestockages.service';
+import { InterfaceLieustockages } from 'src/app/shared/model/interface-lieustockages';
+import { InterfaceZonestockages } from 'src/app/shared/model/interface-zonestockages';
 
 @Component({
   selector: 'app-articles',
@@ -38,7 +41,8 @@ export class ArticlesComponent implements OnInit {
     private familleService: FamillesService,
     private sousFamilleService: SousfamillesService,
     private exploitationService: ExploitationService,
-    private allergeneService: AllergenesService
+    private allergeneService: AllergenesService,
+    private zonestockageService: ZonestockagesService
   ) { }
 
   private modalService = inject(NgbModal);
@@ -63,6 +67,7 @@ export class ArticlesComponent implements OnInit {
 
   modifToggleModal() {
     this.modifToggle = !this.modifToggle;
+    this.addToggle = !this.addToggle;
   }
 
   public article: InterfaceArticle;
@@ -76,6 +81,10 @@ export class ArticlesComponent implements OnInit {
   public exploitations: any;
   public allergene: InterfaceAllergenes;
   public allergenes: any;
+  public lieustockages: InterfaceLieustockages[];
+  public lieustockage: InterfaceLieustockages;
+  public zonestockages: InterfaceZonestockages[];
+  public zonestockage: InterfaceZonestockages;
 
   public exploitation = +(sessionStorage.getItem('exploitation') || 3);
 
@@ -98,7 +107,6 @@ export class ArticlesComponent implements OnInit {
         this.unites = unite;
         this.categories = categorie;
         this.allergenes = allergene;
-        console.log(allergene)
         if (this.exploitation === 3) {
           this.exploitations = exploitation;
         } else {
@@ -108,7 +116,7 @@ export class ArticlesComponent implements OnInit {
     })
   }
 
-  showArticle(art: any) {
+  async showArticle(art: any) {
     this.article = art;
     console.log(this.article)
     this.idArticle = art.id;
@@ -127,12 +135,33 @@ export class ArticlesComponent implements OnInit {
                 this.sousFamilles = sousFamille;
                 this.articleService.getArticleExploitationByArticle(this.idArticle).subscribe({
                   next: (articleExploitation) => {
+                    const exploitationId: number[] = [0];
+                    // this.exploitations = articleExploitation;
+                    console.log(articleExploitation)
                     this.exploitations.forEach((e: any) => {
                       const comparisonItem = articleExploitation.find((i: any) => i.exploitationsId === e.id);
                       if (comparisonItem != undefined) {
                         e.selected = true;
+                        exploitationId.push(e.id)
+                      } else {
+                        e.selected = false;
                       }
                     });
+                    this.zonestockageService.getZoneStockageByExploitationId(exploitationId).subscribe({
+                      next: (_data: any) => {
+                        this.lieustockages = _data;
+                        for (const _lieu of this.lieustockages) {
+                          for (const _zone of _lieu.zonestockage) {
+                            const select = this.article.articlezonestockages.filter(i => i.zonestockagesId === _zone.id)
+                            if (select.length > 0) {
+                              _zone.selected = true;
+                            } else {
+                              _zone.selected = false;
+                            }
+                          }
+                        }
+                      }
+                    })
                     this.allergenes.forEach((a: any) => {
                       const comparisonItem = this.article.allergeneArticle.find((i: any) => i.allergeneId === a.id);
                       // console.log(comparisonItem)
@@ -156,13 +185,16 @@ export class ArticlesComponent implements OnInit {
     if (this.idArticle === 0) {
       this.toggle = true;
       this.modifToggle = true;
+      this.addToggle = true;
       this.exploitationToggle = true;
       this.resetArticle();
     } else {
       this.articleService.getArticlesById(this.idArticle).subscribe({
-        next: (article) => {
+        next: async (article) => {
           this.article = article;
+          await this.showArticle(article);
           this.modifToggle = !this.modifToggle;
+          this.addToggle = !this.addToggle;
         },
       })
     }
@@ -183,7 +215,7 @@ export class ArticlesComponent implements OnInit {
     this.article.groupeanalytiqueId = data.id;
     const dat = {
       groupeId: data.id,
-      type: data.type
+      type: 'A'
     }
     this.familleService.getFamilleByGroupe(dat).subscribe({
       next: (famille) => {
@@ -257,18 +289,36 @@ export class ArticlesComponent implements OnInit {
     }
   }
 
-  addToggleModal() {
+  async addToggleModal() {
     this.modifToggle = !this.modifToggle;
+    this.addToggle = !this.addToggle;
     this.toggle = (this.toggle === false ? true : false);
     this.idArticle = 0;
-    this.resetArticle()
+    await this.resetArticle()
+    const exploitationId: number[] = [];
+    exploitationId.push(this.exploitation)
+    this.zonestockageService.getZoneStockageByExploitationId(exploitationId).subscribe({
+      next: (_data: any) => {
+        this.lieustockages = _data;
+        for (const _lieu of this.lieustockages) {
+          for (const _zone of _lieu.zonestockage) {
+            const select = this.article.articlezonestockages.filter(i => i.zonestockagesId === _zone.id);
+            if (select.length > 0) {
+              _zone.selected = true;
+            } else {
+              _zone.selected = false;
+            }
+          }
+        }
+      }
+    })
   }
 
   showFournisseur(data: any) {
     console.log(data)
   }
 
-  private resetArticle() {
+  private async resetArticle() {
     forkJoin({
       unite: this.uniteService.getUnite(),
       categorie: this.categoriesService.getCategories(),
@@ -301,8 +351,10 @@ export class ArticlesComponent implements OnInit {
           familles: famille,
           sousfamilles: sousFamille,
           unite: unite,
-          groupeanalytique: groupeAnalytique
+          groupeanalytique: groupeAnalytique,
+          articlezonestockages: []
         };
+        this.lieustockages = []
       },
       error: (error) => {
         console.error('Une erreur est survenue ', error);
@@ -310,9 +362,36 @@ export class ArticlesComponent implements OnInit {
     });
   }
 
+  changeZonestockage() {
+    // console.log(this.exploitations);
+    const exploitationId: number[] = [];
+    exploitationId.push(this.exploitation)
+    this.exploitations.forEach((e: any) => {
+      if (e.selected === true) {
+        e.selected = true;
+        exploitationId.push(e.id)
+      }
+    });
+    this.zonestockageService.getZoneStockageByExploitationId(exploitationId).subscribe({
+      next: (_data: any) => {
+        this.lieustockages = _data;
+        for (const _lieu of this.lieustockages) {
+          for (const _zone of _lieu.zonestockage) {
+            const select = this.article.articlezonestockages.filter(i => i.zonestockagesId === _zone.id)
+            if (select.length > 0) {
+              _zone.selected = true;
+            } else {
+              _zone.selected = false;
+            }
+          }
+        }
+      }
+    })
+  }
+
   submit() {
     if (this.idArticle === 0) {
-      this.articleService.postArticle(this.article).subscribe({
+      this.articleService.createArticle(this.article).subscribe({
         next: (article: any) => {
           this.article = article;
           const exploitation: number[] = [];
@@ -322,14 +401,35 @@ export class ArticlesComponent implements OnInit {
               exploitation.push(i.id)
             }
           }
+          const zonestockage: number[] = [];
+          // zonestockage.push(3)
+          for (const _lieu of this.lieustockages) {
+            for (const _zone of _lieu.zonestockage) {
+              if (_zone.selected === true) {
+                zonestockage.push(_zone.id || 0)
+              }
+            }
+          }
           this.articleService.deleteArticleExploitationByArticle(article.id, exploitation).subscribe({
             next: () => {
-              this.modifToggle = !this.modifToggle;
+              console.log(zonestockage)
+              this.zonestockageService.deleteArticleZoneStockage(article.id, zonestockage).subscribe({
+                next: async () => {
+                  this.articleService.getArticlesById(article.id).subscribe({
+                    next: async (_article) => {
+                      this.article = _article;
+                      await this.showArticle(_article);
+                      alert('Article ajouter');
+                      this.modifToggle = !this.modifToggle;
+                      this.addToggle = !this.addToggle;
+                    }
+                  })
+                }
+              })
             }
           })
         }
       })
-
     } else {
       this.articleService.updateArticle(this.article).subscribe((response) => {
         alert('Article modifier')
@@ -339,21 +439,39 @@ export class ArticlesComponent implements OnInit {
             exploitation.push(i.id)
           }
         }
-        forkJoin({
-          deleteArticleExploitationByArticle: this.articleService.deleteArticleExploitationByArticle(this.idArticle, exploitation),
-          article: this.articleService.getArticlesById(this.idArticle),
-          articleExploitation: this.articleService.getArticleExploitationByArticle(this.idArticle),
-        }).subscribe({
-          next: (data) => {
-            const { deleteArticleExploitationByArticle, article, articleExploitation } = data;
-            this.article = article;
-            for (const item of this.exploitations) {
-              const comparisonItem = articleExploitation.find((i: any) => i.exploitationsId === item.id);
-              if (comparisonItem != undefined) {
-                item.selected = true;
-              }
+        const zonestockage: number[] = [];
+        // zonestockage.push(3)
+        for (const _lieu of this.lieustockages) {
+          for (const _zone of _lieu.zonestockage) {
+            if (_zone.selected === true) {
+              zonestockage.push(_zone.id || 0)
             }
-            this.modifToggle = !this.modifToggle;
+          }
+        }
+        this.articleService.deleteArticleExploitationByArticle(this.idArticle, exploitation).subscribe({
+          next: () => {
+            this.zonestockageService.deleteArticleZoneStockage(this.idArticle, zonestockage).subscribe({
+              next: () => {
+                this.articleService.getArticleExploitationByArticle(this.idArticle).subscribe({
+                  next: (_articleExploitation) => {
+                    for (const item of this.exploitations) {
+                      const comparisonItem = _articleExploitation.find((i: any) => i.exploitationsId === item.id);
+                      if (comparisonItem != undefined) {
+                        item.selected = true;
+                      }
+                    }
+                    this.articleService.getArticlesById(this.idArticle).subscribe({
+                      next: async (_article) => {
+                        this.article = _article;
+                        await this.showArticle(_article);
+                        this.modifToggle = !this.modifToggle;
+                        this.addToggle = !this.addToggle;
+                      }
+                    })
+                  }
+                })
+              }
+            })
           }
         })
       })

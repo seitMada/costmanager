@@ -1,9 +1,11 @@
 import { InterfaceCentreRevenu } from "./interface-centrerevenu";
+import { InterfaceZonestockages } from "./interface-zonestockages";
 
 export interface InterfaceLieustockages {
     id?: number;
     lieu: string;
     centreId: number;
 
-    centreRevenu: InterfaceCentreRevenu
+    centre: InterfaceCentreRevenu;
+    zonestockage: InterfaceZonestockages[]
 }

@@ -28,6 +28,9 @@ export class FournisseurService {
   private apiUpdateConditionnement = environment.APIUPDATECONDITIONNEMENT;
   private apiDeleteConditionnement = environment.APIDELETECONDITIONNEMENT;
 
+  private apiDesactiveFournisseur = environment.APIPOSTDESACTIVEFOURNISSEUR;
+  private apiDesactiveFournisseurs = environment.APIPOSTDESACTIVEFOURNISSEURS;
+
   constructor(private https: HttpClient) { }
 
   public getAllFournisseur() {
@@ -84,5 +87,13 @@ export class FournisseurService {
 
   public deleteArticleFournisseur(id: number) {
     return this.https.post(this.apiDeleteArticleFournisseur, { id: id });
+  }
+
+  public desactiveFournisseurExploitation(id: number, exploitationid: number[]) {
+    return this.https.post(this.apiDesactiveFournisseur + id, exploitationid);
+  }
+
+  public desactiveFournisseursExploitation(data: any) {
+    return this.https.post(this.apiDesactiveFournisseurs, data);
   }
 }

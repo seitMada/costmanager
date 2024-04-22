@@ -7,30 +7,32 @@ import { CreationInventairesComponent } from "./creation-inventaires/creation-in
 const routes: Routes = [
   {
     path: '',
+    component: InventairesComponent,
     data: {
       title: 'Inventaires',
     },
-    children: [
-      {
-        path: '',
-        pathMatch: 'full',
-        redirectTo: 'inventaires',
-      },
-      {
-        path: 'inventaires',
-        component: InventairesComponent,
-        data: {
-          title: 'Inventaires',
-        },
-      },
-      {
-        path: 'creations_inventaires',
-        component: CreationInventairesComponent,
-        data: {
-          title: 'Creations inventaires',
-        },
-      },
-    ]
+    // redirectTo: 'inventaires',
+    // children: [
+    //   {
+    //     path: '',
+    //     pathMatch: 'full',
+    //     redirectTo: 'inventaires',
+    //   },
+    //   {
+    //     path: 'inventaires',
+    //     component: InventairesComponent,
+    //     data: {
+    //       title: 'Inventaires',
+    //     },
+    //   },
+    //   // {
+    //   //   path: 'creations_inventaires',
+    //   //   component: CreationInventairesComponent,
+    //   //   data: {
+    //   //     title: 'Creations inventaires',
+    //   //   },
+    //   // },
+    // ]
   }
 ];
 

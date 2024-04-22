@@ -34,8 +34,19 @@ export class InventairesComponent {
   public toggle = true;
   public toggleEtat = false;
   public addToggle = true;
+  public listToggle = true;
   public modifToggle = true;
   public exploitationToggle = true;
+  // public checkToggle = true;
+
+  public btnctrl = {
+    btnsave: true,
+    date: true,
+    update: true,
+    add: true,
+    list: true,
+    delete: true
+  }
 
   private modalService = inject(NgbModal);
   closeResult = '';
@@ -54,6 +65,7 @@ export class InventairesComponent {
   public inventaireDetail: InterfaceInventairesDetails;
   public inventaireDetails: InterfaceInventairesDetails[];
   public lieustockages: InterfaceLieustockages[];
+  public lieustockageszones: InterfaceLieustockages[];
   public lieustockage: InterfaceLieustockages;
   public zonestockages: InterfaceZonestockages[];
   public zonestockage: InterfaceZonestockages;
@@ -78,6 +90,7 @@ export class InventairesComponent {
 
   private resetinventaire() {
     this.inventaire = {
+      id: 0,
       date_inventaire: new Date(),
       commentaire: '',
       etat: false,
@@ -106,7 +119,7 @@ export class InventairesComponent {
         lieu: {
           lieu: '',
           centreId: 0,
-          centreRevenu: {
+          centre: {
             code: '',
             libelle: '',
             exploitationsId: 0,
@@ -123,7 +136,8 @@ export class InventairesComponent {
               siret: '',
               logo: '',
               actif: false,
-              adressesId: 0
+              adressesId: 0,
+              // centreRevenu: []
             },
             adresses: {
               rue: '',
@@ -133,9 +147,11 @@ export class InventairesComponent {
               centreRevenu: [],
               exploitation: [],
               operateur: []
-            }
-          }
-        }
+            },
+          },
+          zonestockage: []
+        },
+        centre: []
       },
       inventairedetail: []
     }
@@ -150,7 +166,7 @@ export class InventairesComponent {
       email: '',
       telephone: '',
       exploitations: this.exploitation,
-      adresses: new Adress()
+      adresses: new Adress(),
     }
   }
 
@@ -165,9 +181,10 @@ export class InventairesComponent {
     // console.log(this.dates.debut, this.dates.fin)
     this.exploitations = [];
     this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
-      next: (_centreRevenu) => {
+      next: async (_centreRevenu) => {
         this.centrerevenus = _centreRevenu;
         this.centrerevenu = _centreRevenu[0];
+        await this.selectCentreRevenus(this.centrerevenu);
         if (this.idexploitation === 3) {
           this.exploitationService.getExploitation().subscribe({
             next: (_exploitation) => {
@@ -185,7 +202,7 @@ export class InventairesComponent {
     })
   }
 
-  selectCentreRevenus(_centrerevenu: InterfaceCentreRevenu) {
+  async selectCentreRevenus(_centrerevenu: InterfaceCentreRevenu) {
     this.centrerevenu = _centrerevenu;
     this.idcentrerevenu = _centrerevenu.id ? _centrerevenu.id : 0;
     this.inventaireService.getInventaireByCrAndDate(this.idcentrerevenu, this.formatDate(this.dates.debut), this.formatDate(this.dates.fin, true)).subscribe({
@@ -201,7 +218,21 @@ export class InventairesComponent {
         this.exploitation = _exploitation;
         this.centrerevenus = _centrerevenus;
         this.inventaire.centre.exploitations = _exploitation;
+        this.inventaire.centre.libelle = '';
+        this.inventaire.centreRevenuId = 0;
         // this.inventaire.centreRevenuId = _centrerevenus.id;
+        const exploitationId: number[] = [];
+        exploitationId.push(_exploitation.id || 0);
+        this.zonelieuService.getZoneStockageByExploitationId(exploitationId).subscribe({
+          next: (_data: any) => {
+            this.lieustockageszones = _data;
+            for (const _lieu of this.lieustockageszones) {
+              for (const _zone of _lieu.zonestockage) {
+                _zone.selected = true;
+              }
+            }
+          }
+        })
       }
     })
   }
@@ -209,6 +240,7 @@ export class InventairesComponent {
   selectCentreRevenu(_centrerevenu: InterfaceCentreRevenu) {
     this.zonelieuService.getLieuStockageByCentreId(_centrerevenu.id || 0).subscribe({
       next: (_lieustockage: any) => {
+        console.log(_lieustockage)
         this.centrerevenu = _centrerevenu;
         this.lieustockages = _lieustockage;
         this.inventaire.centre = _centrerevenu;
@@ -220,6 +252,7 @@ export class InventairesComponent {
   selectLieuStockage(_lieustockage: InterfaceLieustockages) {
     this.zonelieuService.getZoneStockageByLieuId(_lieustockage.id || 0).subscribe({
       next: (_zonestockage: any) => {
+        console.log(_zonestockage)
         this.zonestockages = _zonestockage;
         this.lieustockage = _lieustockage;
         this.inventaire.zonestockage.lieu = _lieustockage;
@@ -233,8 +266,9 @@ export class InventairesComponent {
     this.inventaire.zonestockage.lieu = _lieustockage;
   }
 
-  show(_inventaire: InterfaceInventaires) {
+  async show(_inventaire: InterfaceInventaires) {
     this.inventaire = _inventaire;
+    this.inventaire.etat = _inventaire.etat;
     this.idinventaire = _inventaire.id || 0;
     this.inventaire.inventairedetail = _inventaire.inventairedetail;
     this.inventaire.date_inventaire = new Date(this.inventaire.date_inventaire);
@@ -268,47 +302,97 @@ export class InventairesComponent {
   }
 
   cancel() {
-
+    if (this.inventaire.id === 0) {
+      this.toggle = true;
+      this.modifToggle = true;
+      this.addToggle = true;
+      this.resetinventaire();
+    } else {
+      this.inventaireService.getInventaireById(this.inventaire.id || 0).subscribe({
+        next: (_inventaire) => {
+          this.inventaire = _inventaire;
+          this.inventaire.date_inventaire = new Date(_inventaire.date_inventaire);
+          this.modifToggle = !this.modifToggle;
+        },
+      })
+    }
   }
 
   submit() {
-    this.inventaire.operateurId = this.idoperateur;
-    this.inventaireService.createInventaire(this.inventaire, this.inventaire.inventairedetail).subscribe({
-      next: () => {
-        alert('Inventaire créer');
-      }
-    })
+    if (this.inventaire.id == 0) {
+      this.inventaire.operateurId = this.idoperateur;
+      this.inventaireService.createInventaire(this.inventaire, this.inventaire.inventairedetail).subscribe({
+        next: () => {
+
+          this.modifToggle = !this.modifToggle;
+          alert('Inventaire créer');
+        }
+      })
+    } else {
+      this.inventaireService.updateInventaire(this.inventaire).subscribe({
+        next: () => {
+          alert('Inventaire modifier');
+          this.modifToggle = !this.modifToggle;
+        }
+      })
+    }
   }
 
-  toggleModal(_etat: boolean = false) {
+  async toggleModal(_etat: boolean = true) {
+    await this.selectCentreRevenus(this.centrerevenu);
     this.toggle = !this.toggle;
+    // this.inventaire.etat = !this.toggle ? true : false;
     this.addToggle = !this.addToggle;
+    this.listToggle = !this.listToggle;
     if (this.toggleEtat === false) {
       this.toggleEtat = !this.toggleEtat;
     }
-    if (_etat !== true) {
+    if (_etat === true) {
       this.toggleEtat = !this.toggleEtat;
     }
   }
 
   modifToggleModal() {
-
+    this.modifToggle = !this.modifToggle;
+    this.listToggle = (this.listToggle === false ? true : false);
   }
 
   addToggleModal() {
     this.modifToggle = !this.modifToggle;
     this.toggle = (this.toggle === false ? true : false);
+    this.toggleEtat = (this.toggleEtat !== false ? true : false);
+    this.addToggle = (this.addToggle === false ? true : false);
+    this.listToggle = (this.listToggle !== false ? true : false);
     this.idinventaire = 0;
     this.resetinventaire()
     this.selectCentreRevenu(this.centrerevenu);
   }
 
   delete() {
-
+    this.inventaireService.deleteInventaire(this.inventaire).subscribe({
+      next: () => {
+        alert('Inventaire supprimer');
+        this.resetinventaire();
+        this.selectCentreRevenus(this.centrerevenu);
+        this.toggle = !this.toggle;
+      }
+    });
   }
 
   deletes() {
-
+    const selectedIds: number[] = [];
+    for (const _inventaire of this.inventaires) {
+      if (_inventaire.selected) {
+        selectedIds.push(_inventaire.id !== undefined ? _inventaire.id : 0);
+      }
+    }
+    if (selectedIds.length > 0) {
+      this.inventaireService.deleteInventaires(selectedIds).subscribe(() => {
+        alert('Inventaires supprimer');
+        this.resetinventaire();
+        this.selectCentreRevenus(this.centrerevenu);
+      })
+    }
   }
 
   private getDismissReason(reason: any): string {
@@ -368,7 +452,61 @@ export class InventairesComponent {
   }
 
   deselectArticles(_inventairedetais: InterfaceInventairesDetails[]) {
-    this.inventaire.inventairedetail = _inventairedetais.filter(_i => _i.selected === false)
+    this.inventaire.inventairedetail = _inventairedetais.filter(_i => _i.selected === false || _i.selected == undefined)
+  }
+
+  validInventaire() {
+    this.inventaire.etat = true;
+    this.inventaireService.updateInventaire(this.inventaire).subscribe({
+      next: () => {
+        alert('L\'inventaire du ' + this.screenDate(this.inventaire.date_inventaire) + ' pour le centre de revenu ' + this.centrerevenu.libelle + ' a été valider')
+      }
+    })
+  }
+
+  openInventaire(content: TemplateRef<any>) {
+    this.resetinventaire()
+    this.selectCentreRevenu(this.centrerevenu);
+    const exploitationId: number[] = [];
+    exploitationId.push(this.inventaire.centre.exploitations.id || 0);
+    this.zonelieuService.getZoneStockageByExploitationId(exploitationId).subscribe({
+      next: (_data: any) => {
+        this.lieustockageszones = _data;
+        for (const _lieu of this.lieustockageszones) {
+          for (const _zone of _lieu.zonestockage) {
+            _zone.selected = true;
+          }
+        }
+      }
+    })
+ 
+    this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${result}`;
+        // console.log(this.closeResult)
+        // let _i = '0';
+        const zonestockageId: number[] = [0];
+        if (this.closeResult == 'Closed with: Save click') {
+          for (const _lieu of this.lieustockageszones) {
+            for (const _zone of _lieu.zonestockage) {
+              if (_zone.selected === true) {
+                zonestockageId.push(_zone.id || 0);
+              }
+            }
+          }
+          this.articleService.getArticlesByZone(zonestockageId).subscribe({
+            next: (_article) => {
+              console.log(_article)
+            }
+          })
+        }
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        console.log(this.closeResult)
+
+      },
+    );
   }
 
 }

@@ -21,6 +21,7 @@ export class ArticleService {
   private apiPostDesactiveArticle = environment.APIPOSTDESACTIVEARTICLE;
   private apiPostDesactiveArticles = environment.APIPOSTDESACTIVEARTICLES;
   private apiGetArticleExclude = environment.APIGETARTICLEEXCLUDE;
+  private apiGetArticleByZone = environment.APIGETARTICLEBYZONE;
 
   private apiGetArticleByFournisseur = environment.APIGETARTICLEBYFOURNISSEUR;
   private apiGetArticleByIdFournisseur = environment.APIGETARTICLEBYFOURNISSEUR;
@@ -39,7 +40,7 @@ export class ArticleService {
     return this.https.get<any>(this.apiGetArticleByExploitation + id)
   }
 
-  public postArticle(article: InterfaceArticle){
+  public createArticle(article: InterfaceArticle){
     return this.https.post(this.apiCreateArticle, article);
   }
 
@@ -81,5 +82,9 @@ export class ArticleService {
 
   public getArticlesExclude(id: number, articleId: number[]){
     return this.https.post(this.apiGetArticleExclude, { id: id, article: articleId });
+  }
+
+  public getArticlesByZone(zonestockageId: number[]){
+    return this.https.post(this.apiGetArticleByZone, { zonestockageId: zonestockageId });
   }
 }
