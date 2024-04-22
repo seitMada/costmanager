@@ -412,10 +412,10 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   public openModalArticle(content: TemplateRef<any>) { 
-    
     if(this.commandes.length >0){
-      const articlesId = this.commandes.map((i: any) => i.articlefournisseurId);
-      this.commandeService.getArticleFournisseurByArticle(articlesId,this.fournisseur.id ? this.fournisseur.id :0).subscribe({
+      const articlesId = this.commandes.map((i: any) => i.articlefournisseur.articleId);
+      console.log(articlesId);
+      this.commandeService.getArticleFournisseurByArticle(articlesId,this.fournisseur.id ? this.fournisseur.id :0,this.artExploitationArticleId).subscribe({
         next:(_articlefournisseurs)=> {
           this.articleFournisseurs = _articlefournisseurs;
           this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(

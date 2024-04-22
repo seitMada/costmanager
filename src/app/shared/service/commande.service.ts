@@ -42,8 +42,8 @@ export class CommandeService {
     return this.https.get<any>(this.apiDixDernierCommande+fournisseurId,{params: {exploitationId:exploitationId}});
   }
 
-  public getArticleFournisseurByArticle(articleId:any[],fournisseurId:number){
-    return this.https.get<any>(this.apiGetArticleFournisseurByArticle,{ params: { articleId: articleId.join(','),fournisseurId:fournisseurId} });
+  public getArticleFournisseurByArticle(articleId:any[],fournisseurId:number,artExploitation:any[]){
+    return this.https.get<any>(this.apiGetArticleFournisseurByArticle,{ params: { articleId: articleId.join(','),fournisseurId:fournisseurId,artExploitation:artExploitation.join(',') } });
   }
 
 
