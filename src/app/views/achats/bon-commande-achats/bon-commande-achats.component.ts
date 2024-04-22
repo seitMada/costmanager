@@ -209,7 +209,7 @@ export class BonCommandeAchatsComponent implements OnInit {
                     articlefournisseurId: articlefournisseur.id ? articlefournisseur.id :0,
                     QteCommande: 0,
                     QteLivre: 0,
-                    prixarticle: articlefournisseur.conditionnement.prixAchat ? articlefournisseur.conditionnement.prixAchat: 0,
+                    prixarticle: articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat: 0,
                     remise: 0,
                     validationdetailbc: false,
                     articlefournisseur: articlefournisseur,
