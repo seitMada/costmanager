@@ -70,6 +70,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   public articleFournisseurId = 0;
   public montantTTc=0;
   public montantRemise =0;
+  public maxPrixAchat = 0;
 
   public num_commande: string;
 
@@ -199,6 +200,7 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.commandeService.getArticleFournisseurByArticleId(fournisseur.id ? fournisseur.id : 0, this.artExploitationArticleId).subscribe({
             next: (artFournisseur: any) => {
               this.articleFournisseurs = artFournisseur;
+              
               this.commandes = [];
     
               for (const articlefournisseur of artFournisseur) {
@@ -207,7 +209,7 @@ export class BonCommandeAchatsComponent implements OnInit {
                     articlefournisseurId: articlefournisseur.id ? articlefournisseur.id :0,
                     QteCommande: 0,
                     QteLivre: 0,
-                    prixarticle: articlefournisseur.prixReference,
+                    prixarticle: articlefournisseur.conditionnement.prixAchat ? articlefournisseur.conditionnement.prixAchat: 0,
                     remise: 0,
                     validationdetailbc: false,
                     articlefournisseur: articlefournisseur,
@@ -414,7 +416,6 @@ export class BonCommandeAchatsComponent implements OnInit {
   public openModalArticle(content: TemplateRef<any>) { 
     if(this.commandes.length >0){
       const articlesId = this.commandes.map((i: any) => i.articlefournisseur.articleId);
-      console.log(articlesId);
       this.commandeService.getArticleFournisseurByArticle(articlesId,this.fournisseur.id ? this.fournisseur.id :0,this.artExploitationArticleId).subscribe({
         next:(_articlefournisseurs)=> {
           this.articleFournisseurs = _articlefournisseurs;
@@ -514,6 +515,9 @@ export class BonCommandeAchatsComponent implements OnInit {
   showCommande(bonCommande: BonCommande) {
     this.boncommande = bonCommande;
     this.idBonCommande =bonCommande.id ? bonCommande.id :0;
+    this.dates = {
+      today: new Date(this.boncommande.dateCommande)
+    };
     this.commandeService.getCommandeDetailByCommandeId(this.idBonCommande).subscribe({
       next:(commandeDetail) =>{
         this.commandes =[];        
@@ -570,7 +574,16 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   selectFounisseur(data: InterfaceFournisseur) {
     this.fournisseur = data;
-    this.fournisseur.id = data.id;
+    this.fournisseur.id = data.id ? data.id:0 ;
+    this.commandeService.getCommandeByFournisseurExploitation(this.fournisseur.id,this.exploitation.id? this.exploitation.id:0).subscribe({
+      next: (boncommande) => {
+        this.commandes = [];
+        this.boncommandes = boncommande;
+      },
+      error: (error) => {
+        alert('Liste de bon de commande vide');
+      }
+    })
   }
 
   selectCentreRevenu(data: InterfaceCentreRevenu) {

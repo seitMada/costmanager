@@ -182,7 +182,7 @@
         <tr *ngFor="let line of boncommandes" [ngClass]="line.validation ===false ? 'table-light' : 'table-info'">
           <td class="col-1"><input type="checkbox" name="af-{{line.id}}" id="af-{{line.id}}" [(ngModel)]="line.selected" (change)="selectBoncomm()"></td>
           <td class="col-3" (click)="showCommande(line)">{{line.noPiece}}</td>
-          <td class="col-2" (click)="showCommande(line)">{{line.dateCommande | date :'dd-MM-yyyy'}}</td>
+          <td class="col-2" (click)="showCommande(line)">{{line.dateCommande | date :'dd/MM/yyyy'}}</td>
           <td class="col-3" (click)="showCommande(line)">{{line.montantHT | number:'1.2-2'}} €</td>
           <td class="col-2 text-info"><i (click)="generatePDF(line)" class="fas fa-print" title="Télécharger PDF"></i></td>
         </tr>
@@ -250,7 +250,7 @@
           <td class="col-3">{{ item.article.libelle}}</td>
           <td class="col-2">{{ item.article.codeArticle}}</td>
           <td class="col-2">{{ item.article.familles.libelle}}</td>
-          <td class="col-1">{{ item.prixReference | number:'1.2-2'}}</td>
+          <td class="col-1">{{ item.conditionnement[0].prixAchat | number:'1.2-2'}}</td>
           <td class="col-1">{{ item.article.unite.abreviation}}</td>
           <!-- <td class="col-1"></td>
           <td class="col-1"></td> -->
