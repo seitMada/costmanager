@@ -99,8 +99,15 @@ export const environment = {
 
     APIGETINVENTAIREBYCRANDDATE: endPoint + 'inventaire',
     APICREATEINVENTAIRE: endPoint + 'inventaire/add',
+    APIDELETEINVENTAIRE: endPoint + 'inventaire/delete',
+    APIDELETESINVENTAIRE: endPoint+ 'inventaire/deletes',
+    APIUPDATEINVENTAIRE: endPoint+ 'inventaire/update',
+    APIGETINVENTAIREBYID: endPoint+ 'inventaire/',
     
     APIGETLIEUSTOCKAGEBYCENTREID: endPoint + 'lieustockage',
+    APIGETZONESTOCKAGEBYEXPLOITATIONID: endPoint + 'zonestockage/exploitation',
+    APIDELETEARTICLEZONESTOCKAGE:  endPoint + 'articlezonestockage/',
+    APIGETARTICLEBYZONE: endPoint + 'articlezonestockage/',
     
     APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage'
 };

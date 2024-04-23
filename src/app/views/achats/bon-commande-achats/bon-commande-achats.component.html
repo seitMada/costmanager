@@ -7,8 +7,7 @@
     <div class="bd-highlight mx-2 my-0">
       <div class="input-group input-group-sm">
         <span class="input-group-text col-5" id="basic-addon1">Fournisseurs</span>
-        <input type="text" class="form-control bg-white col-6" aria-label="unite" aria-describedby="fournisseur"
-          [(ngModel)]="fournisseur.raison_social" disabled="true">
+        <input type="text" class="form-control bg-white col-6" aria-label="unite" aria-describedby="fournisseur" [(ngModel)]="fournisseur.raison_social" disabled="true">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="toggle"
           data-bs-toggle="dropdown" aria-expanded="false">
           <span class="visually-hidden">Toggle Dropdown</span>
@@ -64,7 +63,7 @@
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Adresse Fournisseur</span>
                   <input type="text" [value]="fournisseur.adresse.rue +' '+fournisseur.adresse.code_postal+' '+fournisseur.adresse.ville+' '+fournisseur.adresse.pays" class="form-control col-7" name="adresse" aria-label="adresse"
-                    [disabled]="true" aria-describedby="basic-addon1">
+                    [disabled]="true" >
                 </div>
               </div>
     
@@ -73,23 +72,19 @@
               <div class="col-sm-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Centre de revenu</span>
-                  <input type="text" class="form-control bg-white col-6" name="centreId" [(ngModel)]="centre.libelle" aria-label="centre" aria-describedby="centre"
-                    disabled="true">
-                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="!inputModif"
-                    data-bs-toggle="dropdown" aria-expanded="false">
+                  <input type="text" class="form-control bg-white col-6" name="centreId" [(ngModel)]="centre.libelle" aria-label="centre" aria-describedby="centre"disabled="true">
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="!inputModif" data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="visually-hidden">Toggle Dropdown</span>
                   </button>
                   <ul class="dropdown-menu dropdown-menu-end">
-                    <li *ngFor="let item of centres"><span (click)="selectCentreRevenu(item)">{{item.libelle}}</span>
-                    </li>
+                    <li *ngFor="let item of centres"><span (click)="selectCentreRevenu(item)">{{item.libelle}}</span></li>
                   </ul>
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">N° bon de commande</span>
-                  <input type="text" class="form-control col-7" [(ngModel)]="boncommande.noPiece"  name="noPiece" [disabled]="inputModif"
-                    aria-describedby="basic-addon1">
+                  <input type="text" class="form-control col-7" [(ngModel)]="boncommande.noPiece"  name="noPiece" [disabled]="inputModif" aria-describedby="basic-addon1">
                 </div>
               </div>
             </div>
@@ -250,7 +245,7 @@
           <td class="col-3">{{ item.article.libelle}}</td>
           <td class="col-2">{{ item.article.codeArticle}}</td>
           <td class="col-2">{{ item.article.familles.libelle}}</td>
-          <td class="col-1">{{ item.conditionnement[0].prixAchat | number:'1.2-2'}}</td>
+          <td class="col-1">{{ item.conditionnement[0].prixAchat | number:'1.2-2'}} €</td>
           <td class="col-1">{{ item.article.unite.abreviation}}</td>
           <!-- <td class="col-1"></td>
           <td class="col-1"></td> -->

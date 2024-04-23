@@ -10,8 +10,6 @@ import { CommandeService } from "../../../shared/service/commande.service";
 import { ExploitationService } from 'src/app/shared/service/exploitation.service';
 import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
 
-import { InterfaceAchat } from "../../../shared/model/interface-achats";
-import { Achat } from "../../../shared/model/achats";
 import { Article } from 'src/app/shared/model/articles';
 import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { InterfaceFournisseur } from 'src/app/shared/model/interface-fournisseurs';
@@ -22,14 +20,14 @@ import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitat
 import { Centrerevenu, Centrerevenus } from "src/app/shared/model/centrerevenu";
 import { InterfaceArticleExploitation, InterfaceArticleExploitations } from 'src/app/shared/model/interface-articleexploitations';
 import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-articlefournisseurs';
-import { Observable } from 'rxjs';
+
 import { InterfaceBonCommandes } from 'src/app/shared/model/interface-bonCommande';
 import { InterfaceCommandeDetails } from 'src/app/shared/model/interface-commandedetail';
 import { BonCommande } from 'src/app/shared/model/bonCommande';
 
-import 'jspdf-autotable';
-import jsPDF from 'jspdf';
 
+import { jsPDF } from 'jspdf';
+import 'jspdf-autotable';
 
 @Component({
   selector: 'app-bon-commande-achats',
@@ -46,14 +44,12 @@ export class BonCommandeAchatsComponent implements OnInit {
   public centres: Centrerevenus;
   public centre: Centrerevenu;
   public exploitation: InterfaceExploitations;
-  public achat: InterfaceAchat;
   public article: InterfaceArticle;
   public articles: InterfaceArticle[];
   public articleFournisseur: InterfaceArticlefournisseurs;
   public articleFournisseurs: InterfaceArticlefournisseurs[];
   public articleExploitation: InterfaceArticleExploitation;
   public articleExploitations: InterfaceArticleExploitations;
-  public achats: Achat;
   public adresse: Adress;
 
   public commandes: InterfaceCommandeDetails[];
@@ -114,7 +110,6 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.resetFournisseur();
     this.resetCentre();
     this.resetCommande();
-    this.resetDetailCommande();
     this.resetArticleFournisseur();
   }
 
@@ -128,7 +123,6 @@ export class BonCommandeAchatsComponent implements OnInit {
     
     this.showExploitationFournisseur();
     this.showAllFournisseur();
-    this.listArticleFournisseurs();
   }
 
 
@@ -192,16 +186,14 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   listArticleFournisseurs(){
     const exploitationId = Number(this.exploitationId);
+    this.selectFounisseur(this.fournisseur);
     this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
-      next: (artExploitation) => {
-        const fournisseur = this.fournisseur;
+      next: (artExploitation) => {         
         if (artExploitation) {
           this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
-          this.commandeService.getArticleFournisseurByArticleId(fournisseur.id ? fournisseur.id : 0, this.artExploitationArticleId).subscribe({
+          this.commandeService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
             next: (artFournisseur: any) => {
               this.articleFournisseurs = artFournisseur;
-              
-              this.commandes = [];
     
               for (const articlefournisseur of artFournisseur) {
                   this.commandeDetail = {
@@ -224,6 +216,21 @@ export class BonCommandeAchatsComponent implements OnInit {
     });
   }
 
+  public resetArticleFournisseur(){
+    this.articleFournisseur = {
+      articleId: 0,
+      fournisseurId: this.fournisseur.id ? this.fournisseur.id:0,
+      marque: '',
+      prixReference: 0,
+      prixReferencePrecedent: 0,
+      commentaire: '',
+      selected: false,
+
+      article: this.article,
+      fournisseur: this.fournisseur,
+      conditionnement: []
+    }
+  }
   
 
   public resetCentre() {
@@ -262,57 +269,19 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   public resetCommande(){
-    this.fournisseur = {
-      raison_social: '',
-      actif: true,
-      codeFournisseur: '',
-      siret: '',
-      codeNaf: '',
-      tvaIntracom: '',
-      web: '',
-      codeComptable: '',
-      modereglementId: 0,
-      commentaires: '',
-      selected: false,
-      adresseId: null,
-      adresse: this.adresse,
-      operateur: []
-    }
-    this.centre = {
-      code: '',
-      libelle: '',
-      exploitationsId: 0,
-      adressesId: 0,
-      email: '',
-      telephone: '',
-      exploitations: this.exploitation,
-      adresses: this.adresse
-    }
-    this.exploitation = {
-      code_couleur: '',
-      libelle: '',
-      nbDecimal: 0,
-      commentaire: '',
-      siteWeb: '',
-      codenaf: '',
-      siret: '',
-      logo: '',
-      actif: true,
-      adressesId: 0,
-    }
     this.boncommande = {
       quantiteCommande: 0,
       remise: 0,
       montantHT: 0,
       montantTva: 0,
-      noPiece: '',
+      noPiece: this.num_commande,
       validation: false,
       commentaire: '',
-      dateCommande: new Date,
-      fournisseurId: 0,
-      exploitationId: 0,
+      dateCommande: new Date(),
+      fournisseurId: this.fournisseur.id ? this.fournisseur.id:0,
+      exploitationId: this.exploitationId ? this.exploitationId:0,
       selected: false,
-      centreId: 0,
+      centreId:  this.centre.id ? this.centre.id:0,
       fournisseur: this.fournisseur,
       centre: this.centre,
       exploitation: this.exploitation,
@@ -321,36 +290,6 @@ export class BonCommandeAchatsComponent implements OnInit {
     }
   }
 
-  public resetArticleFournisseur(){
-   
-    this.articleFournisseur = {
-      articleId: 0,
-      fournisseurId: 0,
-      marque: '',
-      prixReference: 0,
-      prixReferencePrecedent: 0,
-      commentaire: '',
-
-      article:this.article,
-      fournisseur:this.fournisseur,
-      conditionnement: [],
-    }
-  }
-
-  public resetDetailCommande(){
-    this.commandeDetail = {
-      commandeId:0,
-      articlefournisseurId:0,
-      QteCommande: 0,
-      QteLivre:0,
-      prixarticle:0,
-      remise:0,
-      validationdetailbc:false,
-      commande:this.boncommande,
-      articlefournisseur:this.articleFournisseur,
-      selected:false,
-    }
-  }
 
   public resetFournisseur() {
     this.adresse = {
@@ -414,6 +353,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   public openModalArticle(content: TemplateRef<any>) { 
+    this.resetArticleFournisseur();
     if(this.commandes.length >0){
       const articlesId = this.commandes.map((i: any) => i.articlefournisseur.articleId);
       this.commandeService.getArticleFournisseurByArticle(articlesId,this.fournisseur.id ? this.fournisseur.id :0,this.artExploitationArticleId).subscribe({
@@ -484,20 +424,72 @@ export class BonCommandeAchatsComponent implements OnInit {
           
   }
 
-  generatePDF(commande:InterfaceBonCommandes) {
-    const doc = new jsPDF();
-    doc.text(`Bon de commande n°${commande.noPiece}`, 10, 10);
-    doc.text(`Date: ${this.formatDate(commande.dateCommande,'dd/MM/yyyy')}`, 10, 20);
-    doc.text(`Fournisseur: ${commande.fournisseur.raison_social}`, 10, 30);
+    generatePDF(commande: InterfaceBonCommandes) {
+      
+      if (!commande || !commande.noPiece || !commande.dateCommande || !commande.fournisseur || !commande.commandeDetail) {
+          console.error('Commande invalide.');
+          return;
+      }
 
-    const data: any[][] = [];
-    const columns = ['Réf','Désignation','Quantité','Unité','Prix article','Montant'];
-    const rows =  commande.commandeDetail;
+      const doc = new jsPDF() as any;
+      doc.setFont('Helvetica');
+      doc.text('Bon de commande',80,20,{styles: { fontSize: 15 }} );
+      doc.setFontSize(12);
+      doc.text(`N° ${commande.noPiece}`, 10, 30);
+      if (commande.fournisseur && commande.fournisseur.raison_social) {
+        doc.text(`Fournisseur: ${commande.fournisseur.raison_social}`, 90, 30);
+      } else {
+        console.error('Fournisseur invalide.');
+        return;
+      }
+      
+      doc.text(`Exploitation: ${commande.exploitation.libelle}`, 10, 40);
+      doc.text(`Adresse fournisseur: ${commande.fournisseur.adresse.rue}`+' ' +`${commande.fournisseur.adresse.code_postal}`+' ' +`${commande.fournisseur.adresse.ville}`+' ' +`${commande.fournisseur.adresse.pays}`, 90, 40);
+      doc.text(`Date: ${this.formatDate(commande.dateCommande, 'dd/MM/yyyy')}`, 10, 50);
 
-    
+      const columns = ['Réf', 'Désignation', 'Quantité', 'Unité', 'Prix article', 'Montant'];
+      const rows =  commande.commandeDetail;
+      
+      
+      if (!rows || rows.length === 0) {
+          console.error('Détails de commande vides ou non définis.');
+          return;
+      }
+      let datas:any = [];
+      
+      rows.forEach((detail, index) => {
+          const row = [
+              detail.articlefournisseur.article.codeArticle,
+              detail.articlefournisseur.article.libelle,
+              detail.QteCommande,
+              detail.articlefournisseur.article.unite.abreviation,
+              detail.prixarticle +' €',
+              detail.QteCommande * detail.prixarticle+' €'
+          ];
+           
+          datas.push(row);
+      });
+      const options = {
+        startY: 60, 
+        styles: { fontSize: 11 }, 
+      };
+      
+      const sum = rows.slice(1).reduce((acc:any, row:any) => acc + row[5], 0);
+      console.log(sum);
+      
+     const footers = [['', '', '', '', 'Montant total', `${sum}`]];
+      // doc.autoTable({ head: [columns], body: datas,foot:footers });
+
+      doc.autoTable({
+        head: [columns], // En-tête du tableau
+        body: datas, // Corps du tableau
+        foot: footers, // Pied de page du tableau
+        columns: columns, // Colonnes du tableau
+        ...options // Autres options
+    });
+      // doc.save(`BonCommande_${commande.noPiece}.pdf`); 
   }
-
-  
+ 
 
   listArticleDixDernierCommande(){
     const fournisseurId = this.fournisseur.id ? this.fournisseur.id:0;
@@ -547,8 +539,8 @@ export class BonCommandeAchatsComponent implements OnInit {
 
 
   addBonCommande() {
-    this.boncommande = this.boncommande;
-    if (this.idBonCommande ===0 ) {
+    this.boncommande = this.boncommande;    
+    if (this.commandes.length > 0) {
       this.commandeService.createBonCommande(this.boncommande,this.commandes).subscribe({
         next:(commande:any) => {
           alert('Bon de commande n° '+ this.boncommande.noPiece+ ' crée avec succès!');
@@ -570,21 +562,10 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.addCommande = true;
     this.listArts = true;
     this.showAllFournisseur();
+    this.resetCommande();
   }
 
-  selectFounisseur(data: InterfaceFournisseur) {
-    this.fournisseur = data;
-    this.fournisseur.id = data.id ? data.id:0 ;
-    this.commandeService.getCommandeByFournisseurExploitation(this.fournisseur.id,this.exploitation.id? this.exploitation.id:0).subscribe({
-      next: (boncommande) => {
-        this.commandes = [];
-        this.boncommandes = boncommande;
-      },
-      error: (error) => {
-        alert('Liste de bon de commande vide');
-      }
-    })
-  }
+  
 
   selectCentreRevenu(data: InterfaceCentreRevenu) {
     this.centre = data;
@@ -627,6 +608,22 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.btnTenRecord = false;
     this.listArts = !this.listArts;
     this.inputModif = false;
+    this.resetCommande();
+  }
+
+  async selectFounisseur(data: InterfaceFournisseur) {
+    this.fournisseur =data; 
+    this.fournisseur.id = data.id ? data.id:0 ;
+    this.commandeService.getCommandeByFournisseurExploitation(this.fournisseur.id,this.exploitation.id? this.exploitation.id:0).subscribe({
+      next: (boncommande) => {
+        this.commandes = [];
+        this.boncommandes = boncommande;    
+      },
+      error: (error) => {
+        alert('Liste de bon de commande vide');
+      }
+    });
+    
   }
 
   addCommandeModal(){
@@ -639,12 +636,13 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   showListCommande(){
-    this.toggle = !this.toggle;
-    this.addBtn = !this.addBtn;
+    this.toggle = (this.toggle === false ? true : false);
+    this.addBtn = (this.addBtn !== false ? true : false);
     this.addTogle = !this.addTogle;
     this.listArts = this.listArts;
     this.addCommande = !this.addCommande;
     this.commandes = [];
+    this.resetCommande();
     this.inputModif = false;
   }
 
