@@ -7,7 +7,6 @@ export class CommandeDetail{
     commandeId:number;
     articlefournisseurId:number;
     QteCommande: number;
-    QteLivre:number;
     prixarticle:number;
     remise:number;
     validationdetailbc:boolean;
@@ -20,7 +19,6 @@ export class CommandeDetail{
         this.commandeId= commandeDetailInterface.commandeId;
         this.articlefournisseurId= commandeDetailInterface.articlefournisseurId;
         this.QteCommande=  commandeDetailInterface.QteCommande;
-        this.QteLivre= commandeDetailInterface.QteLivre;
         this.prixarticle= commandeDetailInterface.prixarticle;
         this.remise= commandeDetailInterface.remise;
         this.validationdetailbc= commandeDetailInterface.validationdetailbc;

@@ -157,7 +157,6 @@ export class BonCommandeAchatsComponent implements OnInit {
             this.centres = _centre;
             this.centre = _centre[0];
             this.boncommande = {
-              quantiteCommande: 0,
               remise: 0,
               montantHT:0,
               montantTva: 0,
@@ -200,7 +199,6 @@ export class BonCommandeAchatsComponent implements OnInit {
                     commandeId: 0,
                     articlefournisseurId: articlefournisseur.id ? articlefournisseur.id :0,
                     QteCommande: 0,
-                    QteLivre: 0,
                     prixarticle: articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat: 0,
                     remise: 0,
                     validationdetailbc: false,
@@ -270,7 +268,6 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   public resetCommande(){
     this.boncommande = {
-      quantiteCommande: 0,
       remise: 0,
       montantHT: 0,
       montantTva: 0,
@@ -371,7 +368,6 @@ export class BonCommandeAchatsComponent implements OnInit {
                       commandeId: 0,
                       articlefournisseurId: articlefournisseur.id ? articlefournisseur.id:0,
                       QteCommande: 0,
-                      QteLivre: 0,
                       prixarticle: articlefournisseur.prixReference,
                       remise: 0,
                       validationdetailbc: false,
@@ -403,7 +399,6 @@ export class BonCommandeAchatsComponent implements OnInit {
                   commandeId: 0,
                   articlefournisseurId: articlefournisseur.id ? articlefournisseur.id:0,
                   QteCommande: 0,
-                  QteLivre: 0,
                   prixarticle: articlefournisseur.prixReference,
                   remise: 0,
                   validationdetailbc: false,
@@ -517,7 +512,6 @@ export class BonCommandeAchatsComponent implements OnInit {
             commandeId: detailComm.commandeId,
             articlefournisseurId: detailComm.articlefournisseurId,
             QteCommande: detailComm.QteCommande,
-            QteLivre: detailComm.QteLivre,
             prixarticle: detailComm.prixarticle,
             remise: detailComm.remise,
             validationdetailbc: detailComm.validationdetailbc,

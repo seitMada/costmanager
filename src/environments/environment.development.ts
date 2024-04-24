@@ -35,7 +35,8 @@ export const environment = {
     APICREATECOMMANDEDETAIL :endPoint + 'commande/commandeDetail',
     APIGETDIXDERNIERCOMMANDE: endPoint + 'commande_detail/derniersCommandes/',
     APIGETCOMMANDEDETAILBYCOMMANDEID: endPoint + 'commande_detail/',
-
+    APICREATECOMMANDE: endPoint + 'commande',
+    APIDELETECOMMANDE: endPoint +'commande/delete_commande',
 
     APIGETARTICLE : endPoint + 'articles',
     APIGETARTICLEBYID: endPoint + 'articles/',
@@ -87,10 +88,6 @@ export const environment = {
     APIPOSTDESACTIVEFICHETECHNIQUES: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitations',
     APIUPDATEFICHETECHNIQUEEXPLOITATION: endPoint + 'fichetechniqueexploitation/delete_fichetechniqueexploitation/',
     
-    APICREATECOMMANDE: endPoint + 'commande',
-    APIDELETECOMMANDE: endPoint +'commande/delete_commande',
-
-
     APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID: endPoint + 'articlefournisseur/',
     APIGETARTICLEFOURNISSEURBYARTICLEID: endPoint + 'articlefournisseur/byarticleId/',
     ARTICLEFOURNISSEURBYARTICLE: endPoint+ 'articlefournisseur/byarticleId',
@@ -109,5 +106,7 @@ export const environment = {
     APIDELETEARTICLEZONESTOCKAGE:  endPoint + 'articlezonestockage/',
     APIGETARTICLEBYZONE: endPoint + 'articlezonestockage/',
     
-    APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage'
+    APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage',
+
+    APIGETLIVRAISONBYFOURNISSEUR : endPoint + 'livraison/fournisseur/',
 };

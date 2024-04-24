@@ -8,7 +8,6 @@ import { InterfaceCommandeDetails } from "./interface-commandedetail";
 
 export class BonCommande implements InterfaceBonCommandes {
   id?:            number | undefined;
-  quantiteCommande: number;
   remise: number;
   montantHT: number;
   montantTva: number;
@@ -28,7 +27,6 @@ export class BonCommande implements InterfaceBonCommandes {
   achat: InterfaceAchat[];
 
     constructor(bonCommandeInterface:InterfaceBonCommandes){
-      this.quantiteCommande=bonCommandeInterface.quantiteCommande;
       this.remise=bonCommandeInterface.remise;
       this.montantHT=bonCommandeInterface.montantHT;
       this.montantTva=bonCommandeInterface.montantTva;

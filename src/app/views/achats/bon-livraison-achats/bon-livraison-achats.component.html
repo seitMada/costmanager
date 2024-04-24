@@ -18,9 +18,9 @@
       </div>
     </div>
     <div class="bd-highlight">
-      <button class="btn btn-outline-success btn-sm me-1" (click)="addToggle()" title="Ajouter bon de livraison"><i class="fas fa-plus"></i></button>
-      <button class="btn btn-outline-primary btn-sm me-1" ><i class="fas fa-list"></i></button>
-      <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer bon de livraison">
+      <button class="btn btn-outline-success btn-sm me-1" [disabled]="!addLivraison" (click)="addToggle()" title="Ajouter bon de livraison"><i class="fas fa-plus"></i></button>
+      <button class="btn btn-outline-primary btn-sm me-1" [disabled]="!listLivraison" ><i class="fas fa-list"></i></button>
+      <button class="btn btn-outline-danger btn-sm me-1" *ngIf="deleteLivraison" title="Supprimer bon de livraison">
         <i class="fas fa-trash"></i>
       </button>
     </div>
@@ -28,7 +28,7 @@
 </div>
 
 <div class="card d-flex" *ngIf="!toggle">
-  <div class="card-header text-center fs-5 fw-bold"> - Bon de livraison du </div>
+  <div class="card-header text-center fs-5 fw-bold"> - Bon de livraison du {{ bonLivraison.dateLivraison | date: 'dd/MM/yyyy'}}</div>
   <ul class="list-group list-group-flush">
     <li class="list-group-item">
       <div class="card-body py-1">
@@ -36,15 +36,30 @@
           <div class="row m-2">
             <div class="col-sm-6">
               <div class="input-group">
-                <span class="input-group-text col-5" id="basic-addon1">Date de livraison</span>
-                <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datelivraison"  autocomplete="off">
+                <span class="input-group-text col-5" id="basic-addon1">Date de commande</span>
+                <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datecommande" [disabled]="inputModif"
+                  [(ngModel)]="dates.today" autocomplete="off">
               </div>
             </div>
-            
             <div class="col-sm-6">
               <div class="input-group">
                 <span class="input-group-text col-5" id="basic-addon1">Fournisseur</span>
                 <input type="text" class="form-control col-6" [(ngModel)]="fournisseur.raison_social"  name="fournisseurId" aria-label="fournisseur" [disabled]="true" aria-describedby="basic-addon1">
+              </div>
+            </div>
+          </div>
+          <div class="row m-2">
+            <div class="col-sm-6">
+              <div class="input-group">
+                <span class="input-group-text col-5" id="basic-addon1">Date de livraison</span>
+                <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datelivraison" [(ngModel)]="dates.tomorrow" autocomplete="off">
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="input-group">
+                <span class="input-group-text col-5" id="basic-addon1">Adresse Fournisseur</span>
+                <input type="text" class="form-control col-7" name="adressefournisseur" [value]="fournisseur.adresse.rue +' '+fournisseur.adresse.code_postal+' '+fournisseur.adresse.ville+' '+fournisseur.adresse.pays" aria-label="adresse"
+                  [disabled]="true" aria-describedby="basic-addon1">
               </div>
             </div>
           </div>
@@ -57,9 +72,15 @@
             </div>
             <div class="col-sm-6">
               <div class="input-group">
-                <span class="input-group-text col-5" id="basic-addon1">Adresse Fournisseur</span>
-                <input type="text" class="form-control col-7" name="adressefournisseur" [value]="fournisseur.adresse.rue +' '+fournisseur.adresse.code_postal+' '+fournisseur.adresse.ville+' '+fournisseur.adresse.pays" aria-label="adresse"
-                  [disabled]="true" aria-describedby="basic-addon1">
+                <span class="input-group-text col-5" id="basic-addon1">Adresse livraison</span>
+                <input type="text" class="form-control bg-white col-6" name="adresseLivraison" [(ngModel)]="adresse.rue" aria-label="adresseLivraison" aria-describedby="adresseLivraison"
+                  disabled="true">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="!inputModif" data-bs-toggle="dropdown" aria-expanded="false">
+                  <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                  <li *ngFor="let line of adresses"><span (click)="selectAdresse(line)">{{line.rue+' '+line.code_postal+' '+line.ville+' '+line.pays}}</span></li>
+                </ul>
               </div>
             </div>
           </div>
@@ -75,7 +96,7 @@
                 <span class="input-group-text col-5" id="basic-addon1">Centre de revenu</span>
                 <input type="text" class="form-control bg-white col-6" name="centreId" [(ngModel)]="centre.libelle"  aria-label="centre" aria-describedby="centre"
                   disabled="true">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"  data-bs-toggle="dropdown" aria-expanded="false">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="!inputModif" data-bs-toggle="dropdown" aria-expanded="false">
                   <span class="visually-hidden">Toggle Dropdown</span>
                 </button>
                 <ul class="dropdown-menu dropdown-menu-end">
@@ -84,33 +105,23 @@
               </div>
             </div>
           </div>
+          
           <div class="row m-2">
-            <div class="col-sm-6">
+            <div class="col-sm-12">
               <div class="input-group">
-                <span class="input-group-text col-5" id="basic-addon1">Adresse livraison</span>
-                <input type="text"  class="form-control col-7" name="adresseLivraison" aria-label="adresseLivraison" [disabled]="true" aria-describedby="basic-addon1">
-              </div>
-            </div>
-            <div class="col-sm-6">
-              <div class="input-group">
-                <span class="input-group-text col-5" id="basic-addon1">Commentaire</span>
-                <input type="text" class="form-control col-7"  name="commentaire" aria-describedby="basic-addon1">
+                <span class="input-group-text col-3" id="basic-addon1">Commentaire</span>
+                <input type="text" class="form-control col-9"  name="commentaire" aria-describedby="basic-addon1">
               </div>
             </div>
           </div>
-          
         </form>
       </div>
     </li>
     <li class="list-group-item">
       <div class="card d-flex py-1 mb-2">
         <div class="d-flex flex-row-reverse bd-highlight">
-          <button class="btn btn-outline-success btn-sm me-1" title="Ajouter article">
-            <i class="fas fa-plus"></i>
-          </button>
-          <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer bon de livraison">
-            <i class="fas fa-trash"></i>
-          </button>
+          <button class="btn btn-outline-success btn-sm me-1" title="Ajouter article"><i class="fas fa-plus"></i></button>
+          <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!showDeleteBtn" title="Supprimer bon de livraison"><i class="fas fa-trash"></i></button>
         </div>
       </div>
       <div class="card-body overflow-scroll my-1" style="height: 350px;">
@@ -128,7 +139,7 @@
             </tr>
           </thead>
           <tbody >
-            <tr>
+            <!-- <tr>
               <td class="col-1"><input class="form-check-input" type="checkbox" name="dc-" id="dc-" ></td>
               <td class="col-3"></td>
               <td class="col-3"></td>
@@ -137,7 +148,7 @@
               <td class="col-1 text-end"></td>
               <td class="col-1 text-end"></td>
               <td class="col-1"> </td>
-            </tr>
+            </tr> -->
           </tbody>
         </table>
       </div>
@@ -157,18 +168,24 @@
       <table class="table table-striped table-hover">
         <thead>
           <tr>
+            <th scope="col" rowspan="2" class="col-1"></th>
             <th scope="col" rowspan="2" class="col-2">BL Numero</th>
             <th scope="col" rowspan="2" class="col-1">Exploitation</th>
             <th scope="col" rowspan="2" class="col-2">Centre revenu</th>
-            <th scope="col" rowspan="2" class="col-2">Fournisseur </th>
             <th scope="col" rowspan="2" class="col-2">Date commande</th>
             <th scope="col" rowspan="2" class="col-2">Date livraison</th>
             <th scope="col" rowspan="2" class="col-1">Montant</th>
           </tr>
         </thead>
         <tbody>
-        <tr>
-          
+        <tr *ngFor="let item of bonLivraisons">
+          <td class="col-1"><input type="checkbox" name="livraison-{{item.id}}" id="livraison-{{item.id}}" [(ngModel)]="item.selected"></td>
+          <td class="col-2">{{ item.numLivraison }}</td>
+          <td class="col-1">{{ item.exploitation.libelle }}</td>
+          <td class="col-2">{{ item.centre.libelle }}</td>
+          <td class="col-2">{{ item.dateCommande | date: 'dd/MM/yyyy' }}</td>
+          <td class="col-2">{{ item.dateLivraison | date: 'dd/MM/yyyy' }}</td>
+          <td class="col-1">{{ item.montantHt - item.remise | number:'1.2-2' }} €</td>
         </tr>
         </tbody>
       </table>

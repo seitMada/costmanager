@@ -7,7 +7,6 @@ import { InterfaceCommandeDetails } from "./interface-commandedetail";
 
 export interface InterfaceBonCommandes {
     id?: number | undefined;
-    quantiteCommande: number;
     remise: number;
     montantHT: number;
     montantTva: number;
