@@ -424,73 +424,72 @@ export class BonCommandeAchatsComponent implements OnInit {
           
   }
 
-    generatePDF(commande: InterfaceBonCommandes) {
-      
-      if (!commande || !commande.noPiece || !commande.dateCommande || !commande.fournisseur || !commande.commandeDetail) {
-          console.error('Commande invalide.');
-          return;
-      }
-
-      const doc = new jsPDF() as any;
-      doc.setFont('Helvetica');
-      doc.text('Bon de commande',80,20,{styles: { fontSize: 15 }} );
-      doc.setFontSize(12);
-      doc.text(`N° ${commande.noPiece}`, 10, 30);
-      if (commande.fournisseur && commande.fournisseur.raison_social) {
-        doc.text(`Fournisseur: ${commande.fournisseur.raison_social}`, 90, 30);
-      } else {
-        console.error('Fournisseur invalide.');
+  generatePDF(commande: InterfaceBonCommandes) {
+    
+    if (!commande || !commande.noPiece || !commande.dateCommande || !commande.fournisseur || !commande.commandeDetail) {
+        console.error('Commande invalide.');
         return;
-      }
-      
-      doc.text(`Exploitation: ${commande.exploitation.libelle}`, 10, 40);
-      doc.text(`Adresse fournisseur: ${commande.fournisseur.adresse.rue}`+' ' +`${commande.fournisseur.adresse.code_postal}`+' ' +`${commande.fournisseur.adresse.ville}`+' ' +`${commande.fournisseur.adresse.pays}`, 90, 40);
-      doc.text(`Date: ${this.formatDate(commande.dateCommande, 'dd/MM/yyyy')}`, 10, 50);
+    }
 
-      const columns = ['Réf', 'Désignation', 'Quantité', 'Unité', 'Prix article', 'Montant'];
-      const rows =  commande.commandeDetail;
-      
-      
-      if (!rows || rows.length === 0) {
-          console.error('Détails de commande vides ou non définis.');
-          return;
-      }
-      let datas:any = [];
-      
-      rows.forEach((detail, index) => {
-          const row = [
-              detail.articlefournisseur.article.codeArticle,
-              detail.articlefournisseur.article.libelle,
-              detail.QteCommande,
-              detail.articlefournisseur.article.unite.abreviation,
-              detail.prixarticle +' €',
-              detail.QteCommande * detail.prixarticle+' €'
-          ];
-           
-          datas.push(row);
-      });
-      const options = {
-        startY: 60, 
-        styles: { fontSize: 11 }, 
-      };
-      
-      const sum = rows.slice(1).reduce((acc:any, row:any) => acc + row[5], 0);
-      console.log(sum);
-      
-     const footers = [['', '', '', '', 'Montant total', `${sum}`]];
-      // doc.autoTable({ head: [columns], body: datas,foot:footers });
+    const doc = new jsPDF() as any;
+    doc.setFont('Helvetica');
+    doc.text('Bon de commande',80,20,{styles: { fontSize: 15 }} );
+    doc.setFontSize(12);
+    doc.text(`N° ${commande.noPiece}`, 15, 40);
+    if (commande.fournisseur && commande.fournisseur.raison_social) {
+      doc.text(`Fournisseur: ${commande.fournisseur.raison_social}`, 90, 40);
+    } else {
+      console.error('Fournisseur invalide.');
+      return;
+    }
+    
+    doc.text(`Exploitation: ${commande.exploitation.libelle}`, 15, 50);
+    doc.text(`Adresse fournisseur: ${commande.fournisseur.adresse.rue}`+' ' +`${commande.fournisseur.adresse.code_postal}`+' ' +`${commande.fournisseur.adresse.ville}`+' ' +`${commande.fournisseur.adresse.pays}`, 90, 50);
+    doc.text(`Date: ${this.formatDate(commande.dateCommande, 'dd/MM/yyyy')}`, 15, 60);
 
-      doc.autoTable({
-        head: [columns], // En-tête du tableau
-        body: datas, // Corps du tableau
-        foot: footers, // Pied de page du tableau
-        columns: columns, // Colonnes du tableau
-        ...options // Autres options
+    const columns = ['Réf', 'Désignation', 'Quantité', 'Unité', 'Prix article', 'Montant'];
+    const rows =  commande.commandeDetail;
+    
+    
+    if (!rows || rows.length === 0) {
+        console.error('Détails de commande vides ou non définis.');
+        return;
+    }
+    let datas:any = [];
+    let montant = 0;
+    
+    rows.forEach((detail, index) => {
+        const row = [
+            detail.articlefournisseur.article.codeArticle,
+            detail.articlefournisseur.article.libelle,
+            detail.QteCommande,
+            detail.articlefournisseur.article.unite.abreviation,
+            detail.prixarticle +' €',
+            detail.QteCommande * detail.prixarticle+' €'
+        ];
+          montant += detail.prixarticle*detail.QteCommande;
+        datas.push(row);
     });
-      // doc.save(`BonCommande_${commande.noPiece}.pdf`); 
+    const options = {
+      startY: 70, 
+      styles: { fontSize: 11 }, 
+      headStyles: { align: 'right' },
+      bodyStyles: { align: 'right' }, 
+      footerStyles: { align: 'right' }
+    };
+    
+    const footers = [['', '', '', '', 'Montant total', `${montant} €`]];
+
+    doc.autoTable({
+      head: [columns],
+      body: datas, 
+      foot: footers, 
+      columns: columns, 
+      ...options
+    });
+    doc.save(`BonCommande_${commande.noPiece}.pdf`); 
   }
  
-
   listArticleDixDernierCommande(){
     const fournisseurId = this.fournisseur.id ? this.fournisseur.id:0;
     const exploitationId = this.exploitation.id ? this.exploitation.id: 0;

@@ -1,6 +1,5 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { InterfaceBonCommandes } from '../model/interface-bonCommande';
 import { InterfaceCommandeDetails } from '../model/interface-commandedetail';

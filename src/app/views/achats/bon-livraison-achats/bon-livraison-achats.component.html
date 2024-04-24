@@ -36,10 +36,11 @@
           <div class="row m-2">
             <div class="col-sm-6">
               <div class="input-group">
-                <span class="input-group-text col-5" id="basic-addon1">Date de commande</span>
+                <span class="input-group-text col-5" id="basic-addon1">Date de livraison</span>
                 <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datelivraison"  autocomplete="off">
               </div>
             </div>
+            
             <div class="col-sm-6">
               <div class="input-group">
                 <span class="input-group-text col-5" id="basic-addon1">Fournisseur</span>
@@ -50,8 +51,8 @@
           <div class="row m-2">
             <div class="col-sm-6">
               <div class="input-group">
-                <span class="input-group-text col-5" id="basic-addon1">Date de livraison</span>
-                <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datelivraison"  autocomplete="off">
+                <span class="input-group-text col-5" id="basic-addon1">Numéro bon de livraison</span>
+                <input type="text" class="form-control col-7" name="numBl" [(ngModel)]="num_livraison" autocomplete="off">
               </div>
             </div>
             <div class="col-sm-6">
@@ -61,22 +62,6 @@
                   [disabled]="true" aria-describedby="basic-addon1">
               </div>
             </div>
-  
-          </div>
-          <div class="row m-2">
-            <div class="col-sm-6">
-              <div class="input-group">
-                <span class="input-group-text col-5" id="basic-addon1">Numéro bon de livraison</span>
-                <input type="text" class="form-control col-7" name="numBl" [(ngModel)]="num_livraison" autocomplete="off">
-              </div>
-            </div>
-            <div class="col-sm-6">
-              <div class="input-group">
-                <span class="input-group-text col-5" id="basic-addon1">Adresse livraison</span>
-                <input type="text"  class="form-control col-7" name="adresseLivraison" aria-label="adresseLivraison" [disabled]="true" aria-describedby="basic-addon1">
-              </div>
-            </div>
-  
           </div>
           <div class="row m-2">
             <div class="col-sm-6">
@@ -100,13 +85,20 @@
             </div>
           </div>
           <div class="row m-2">
-            <div class="col-sm-12">
+            <div class="col-sm-6">
               <div class="input-group">
-                <span class="input-group-text col-2" id="basic-addon1">Commentaire</span>
-                <input type="text" class="form-control col-10"  name="commentaire" aria-describedby="basic-addon1">
+                <span class="input-group-text col-5" id="basic-addon1">Adresse livraison</span>
+                <input type="text"  class="form-control col-7" name="adresseLivraison" aria-label="adresseLivraison" [disabled]="true" aria-describedby="basic-addon1">
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <div class="input-group">
+                <span class="input-group-text col-5" id="basic-addon1">Commentaire</span>
+                <input type="text" class="form-control col-7"  name="commentaire" aria-describedby="basic-addon1">
               </div>
             </div>
           </div>
+          
         </form>
       </div>
     </li>
@@ -128,8 +120,8 @@
               <th class="col-1"></th>
               <th class="col-2">Famille</th>
               <th class="col-2">Designation</th>
-              <th class="col-2">Commandée</th>
-              <th class="col-2 text-center">Livrée</th>
+              <th class="col-2">Qté Commandée</th>
+              <th class="col-2 text-center">Qté Livrée</th>
               <th class="col-1">Prix</th>
               <th class="col-1">Montant</th>
               <th class="col-1">Remise</th>              
