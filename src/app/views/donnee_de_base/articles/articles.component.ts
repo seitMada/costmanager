@@ -86,11 +86,19 @@ export class ArticlesComponent implements OnInit {
   public zonestockages: InterfaceZonestockages[];
   public zonestockage: InterfaceZonestockages;
 
+  private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
   public exploitation = +(sessionStorage.getItem('exploitation') || 3);
 
   ngOnInit(): void {
     this.resetArticle();
     this.initArticle();
+  }
+  
+  public truncateWord(word: string, maxLength = 15) {
+    if (word.length > maxLength) {
+      return word.slice(0, maxLength) + "...";
+    }
+    return word;
   }
 
   initArticle() {
@@ -107,8 +115,9 @@ export class ArticlesComponent implements OnInit {
         this.unites = unite;
         this.categories = categorie;
         this.allergenes = allergene;
-        if (this.exploitation === 3) {
-          this.exploitations = exploitation;
+        // console.log(this.isAdmin)
+        if (this.isAdmin === true) {
+          this.exploitations = exploitation.filter((item: any) => item.id !== this.exploitation);
         } else {
           this.exploitations = exploitation.filter((item: any) => item.id === this.exploitation);
         }
@@ -296,7 +305,7 @@ export class ArticlesComponent implements OnInit {
     this.idArticle = 0;
     await this.resetArticle()
     const exploitationId: number[] = [];
-    exploitationId.push(this.exploitation)
+    exploitationId.push(this.isAdmin ? 0 : this.exploitation)
     this.zonestockageService.getZoneStockageByExploitationId(exploitationId).subscribe({
       next: (_data: any) => {
         this.lieustockages = _data;
@@ -363,15 +372,16 @@ export class ArticlesComponent implements OnInit {
   }
 
   changeZonestockage() {
-    // console.log(this.exploitations);
-    const exploitationId: number[] = [];
-    exploitationId.push(this.exploitation)
+    console.log(this.exploitations);
+    const exploitationId: number[] = [0];
+    // exploitationId.push(this.exploitation)
     this.exploitations.forEach((e: any) => {
       if (e.selected === true) {
         e.selected = true;
         exploitationId.push(e.id)
       }
     });
+    console.log(exploitationId);
     this.zonestockageService.getZoneStockageByExploitationId(exploitationId).subscribe({
       next: (_data: any) => {
         this.lieustockages = _data;
@@ -395,7 +405,7 @@ export class ArticlesComponent implements OnInit {
         next: (article: any) => {
           this.article = article;
           const exploitation: number[] = [];
-          exploitation.push(3)
+          exploitation.push(this.exploitation)
           for (const i of this.exploitations) {
             if (i.selected === true) {
               exploitation.push(i.id)
@@ -434,6 +444,7 @@ export class ArticlesComponent implements OnInit {
       this.articleService.updateArticle(this.article).subscribe((response) => {
         alert('Article modifier')
         const exploitation: number[] = [];
+        exploitation.push(this.exploitation);
         for (const i of this.exploitations) {
           if (i.selected === true) {
             exploitation.push(i.id)
@@ -484,7 +495,7 @@ export class ArticlesComponent implements OnInit {
 
   delete() {
     let exploitation: number[] = [];
-    if (this.exploitation === 3) {
+    if (this.isAdmin === true) {
       for (const e of this.exploitations) {
         exploitation.push(e.id)
       }
@@ -509,7 +520,7 @@ export class ArticlesComponent implements OnInit {
         selectedIds.push(article.id !== undefined ? article.id : 0);
       }
     }
-    if (this.exploitation === 3) {
+    if (this.isAdmin === true) {
       for (const e of this.exploitations) {
         exploitation.push(e.id)
       }

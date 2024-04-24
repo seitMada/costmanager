@@ -26,11 +26,13 @@ export class LoginService {
     console.log(operateurData)
     this.https.post(this.apiAuth, operateurData).subscribe(
       (response: any) => {
+        console.log(response)
         if (response.connect === true) {
           sessionStorage.setItem('exploitation', operateurData.exploitationId);
           // this.https.get(this.apiOperateurConnecte, operateurData.email).subscribe(
           //   (data: any) => {
           sessionStorage.setItem('id', response.id);
+          sessionStorage.setItem('admin', (response.code === '0000' ? '1' : '0'));
           this.router.navigate(['dash']);
           //   }
           // )

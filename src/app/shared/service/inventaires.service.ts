@@ -7,34 +7,55 @@ import { InterfaceInventaires, InterfaceInventairesDetails } from '../model/inte
   providedIn: 'root'
 })
 export class InventairesService {
-  private apiGetInventaireByCentreAndDate = environment.APIGETINVENTAIREBYCRANDDATE;
+  private apiGetInventaireByCentreAndDateGroupNumero = environment.APIGETINVENTAIREBYCRANDDATEGROUPENUMERO;
   private apiCreateInventaire = environment.APICREATEINVENTAIRE;
   private apiDeleteInventaire = environment.APIDELETEINVENTAIRE;
   private apiDeletesInventaire = environment.APIDELETESINVENTAIRE;
   private apiUpdateInventaire = environment.APIUPDATEINVENTAIRE;
   private apiGetInventaireById = environment.APIGETINVENTAIREBYID;
+  private apiGetInventaireDetailsByNumero = environment.APIGETINVENTAIREDETAILBYNUMERO;
 
   constructor(private https: HttpClient) { }
 
+  // getInventaireByCrAndDate(centreId: number, dateDebut: string, dateFin: string) {
+  //   return this.https.post(this.apiGetInventaireByCentreAndDate, { id: centreId, dateDebut: dateDebut, dateFin: dateFin });
+  // }
+
   getInventaireByCrAndDate(centreId: number, dateDebut: string, dateFin: string) {
-    return this.https.post(this.apiGetInventaireByCentreAndDate, { id: centreId, dateDebut: dateDebut, dateFin: dateFin });
+    return this.https.post(this.apiGetInventaireByCentreAndDateGroupNumero, { id: centreId, dateDebut: dateDebut, dateFin: dateFin });
   }
 
-  createInventaire(_inventaire: InterfaceInventaires, _inventairedetails: InterfaceInventairesDetails[]) {
-    return this.https.post(this.apiCreateInventaire, { inventaire: _inventaire, inventairedetails: _inventairedetails });
+  getInventaireDetailsByNumero(numero: string) {
+    return this.https.post(this.apiGetInventaireDetailsByNumero, { numero: numero });
   }
 
-  public deleteInventaire(_inventaire: InterfaceInventaires) {
-    return this.https.post(this.apiDeleteInventaire, _inventaire);
+  createInventaire(_inventaire: any) {
+    return this.https.post(this.apiCreateInventaire, { inventaire: _inventaire });
   }
 
-  public deleteInventaires(id: number[]) {
-    return this.https.post(this.apiDeletesInventaire, { id: id });
+  // createInventaire(_inventaire: InterfaceInventaires, _inventairedetails: InterfaceInventairesDetails[]) {
+  //   return this.https.post(this.apiCreateInventaire, { inventaire: _inventaire, inventairedetails: _inventairedetails });
+  // }
+
+  public deleteInventaire(_numero: string) {
+    return this.https.post(this.apiDeleteInventaire, {numero: _numero});
   }
 
-  public updateInventaire(_inventaire: InterfaceInventaires) {
-    return this.https.patch(this.apiUpdateInventaire, { inventaire: _inventaire, inventairedetail: _inventaire.inventairedetail });
+  public deleteInventaires(_numero: string[]) {
+    return this.https.post(this.apiDeletesInventaire, { numero: _numero });
   }
+
+  // public deleteInventaires(id: number[]) {
+  //   return this.https.post(this.apiDeletesInventaire, { id: id });
+  // }
+
+  public updateInventaire(_inventaire: any, _numero: string) {
+    return this.https.patch(this.apiUpdateInventaire, { inventaire: _inventaire, numero: _numero });
+  }
+
+  // public updateInventaire(_inventaire: InterfaceInventaires) {
+  //   return this.https.patch(this.apiUpdateInventaire, { inventaire: _inventaire, inventairedetail: _inventaire.inventairedetail });
+  // }
 
   public getInventaireById(id: number) {
     return this.https.get<any>(this.apiGetInventaireById + id);

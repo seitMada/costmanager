@@ -6,6 +6,7 @@ import { InterfaceZonestockages } from "./interface-zonestockages";
 export interface InterfaceInventaires {
     id?: number;
     date_inventaire: Date;
+    numero: string;
     commentaire: string;
     etat: boolean;
     zonestockageId: number;
@@ -26,6 +27,17 @@ export interface InterfaceInventairesDetails {
     uniteId:number;
     inventaireId:number;
     selected?: boolean;
+    numero: string;
 
     article: InterfaceArticle;
+}
+
+export interface InterfaceInventairesDetailsZone {
+    etat: boolean;
+    lieu?: string;
+    lieuId?: string;
+    zone?: string;
+    zoneId?: string;
+
+    inventairedetail: InterfaceInventairesDetails[]
 }

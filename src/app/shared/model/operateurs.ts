@@ -19,6 +19,7 @@ export class Operateur implements InterfaceOperateur {
     
     exploitationId?: number;
     centreId?: number;
+    isAdmin?: boolean | undefined;
 
     constructor (operateurInterface: InterfaceOperateur = {
         nom: '',
@@ -34,7 +35,8 @@ export class Operateur implements InterfaceOperateur {
         centreId: 0,
         telephone: '',
         civilite: '',
-        selected: false
+        selected: false,
+        isAdmin: false
     }) {
         this.nom = operateurInterface.nom.toUpperCase();
         this.prenom = operateurInterface.prenom.charAt(0).toUpperCase + operateurInterface.prenom.slice(1);
@@ -48,5 +50,6 @@ export class Operateur implements InterfaceOperateur {
         this.telephone = operateurInterface.telephone;
         this.civilite = operateurInterface.civilite;
         this.selected = operateurInterface.selected;
+        this.isAdmin = operateurInterface.isAdmin;
     }
 }

@@ -4,6 +4,10 @@ import { environment } from 'src/environments/environment';
 import { Fichetechnique } from '../model/fichetechniques';
 import { InterfaceFichetechnique } from '../model/interface-fichetechnique';
 import { InterfaceComposition } from '../model/interface-compositions';
+import { InterfaceCategories } from '../model/interface-categories';
+import { InterfaceFamilles } from '../model/interface-familles';
+import { InterfaceGroupeanalytiques } from '../model/interface-groupeanalytiques';
+import { InterfaceUnite } from '../model/interface-unite';
 
 @Injectable({
   providedIn: 'root'
@@ -73,5 +77,51 @@ export class FichetechniqueService {
 
   public getCompositionByFichetechnique(id: number) {
     return this.https.get<any>(this.apiGetCompositionByFichetechnique + id);
+  }
+
+  public resetFichetechnique() {
+    const categorie: InterfaceCategories = {
+      code: '',
+      libelle: '',
+      actif: false
+    }
+    const famille: InterfaceFamilles = {
+      libelle: '',
+      code_couleur: '',
+      groupeId: 0,
+      actif: false,
+      type: ''
+    }
+    const unite: InterfaceUnite = {
+      libelle: '',
+      code: '',
+      abreviation: '',
+      step: 0,
+      actif: false
+    }
+    const groupeAnalytique: InterfaceGroupeanalytiques = {
+      code_groupe: '',
+      groupe: '',
+      actif: false,
+      type: ''
+    }
+    const fichetechnique: InterfaceFichetechnique = {
+      libelle: '',
+      categorieId: 0,
+      familleId: 0,
+      uniteId: 0,
+      prix: 0,
+      cout: 0,
+      image: '',
+      groupeanalytiqueId: 0,
+
+      exploitation: [],
+      composition: [],
+      categorie: categorie,
+      famille: famille,
+      unite: unite,
+      groupeanalytique: groupeAnalytique,
+    };
+    return fichetechnique;
   }
 }

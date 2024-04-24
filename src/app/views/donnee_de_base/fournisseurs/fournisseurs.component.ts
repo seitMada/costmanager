@@ -23,11 +23,12 @@ import { Unite, Unites } from 'src/app/shared/model/unite';
 import { InterfaceUnite } from 'src/app/shared/model/interface-unite';
 import { UnitesService } from 'src/app/shared/service/unites.service';
 import { IntefaceConditionnement } from 'src/app/shared/model/inteface-conditionnements';
+import { TooltipModule } from '@coreui/angular';
 
 @Component({
   selector: 'app-fournisseurs',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule],
+  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule, TooltipModule],
   templateUrl: './fournisseurs.component.html',
   styleUrl: './fournisseurs.component.scss'
 })
@@ -78,12 +79,20 @@ export class FournisseursComponent {
   private modalService = inject(NgbModal);
   closeResult = '';
 
+  private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
   public exploitation = +(sessionStorage.getItem('exploitation') || 3);
 
   ngOnInit(): void {
     this.resetFournisseur();
     this.initFournisseur();
     this.initOperateur();
+  }
+
+  public truncateWord(word: string, maxLength = 15) {
+    if (word.length > maxLength) {
+      return word.slice(0, maxLength) + "...";
+    }
+    return word;
   }
 
   public initConditionnement(_article: InterfaceArticle) {
@@ -149,7 +158,11 @@ export class FournisseursComponent {
           }
         }
         this.fournisseurs = fournisseurs;
-        this.exploitations = exploitations;
+        if (this.isAdmin === true) {
+          this.exploitations = exploitations.filter((item: any) => item.id !== this.exploitation);
+        } else {
+          this.exploitations = exploitations.filter((item: any) => item.id === this.exploitation);
+        }
         this.unites = unites;
       }
     })
@@ -250,7 +263,7 @@ export class FournisseursComponent {
         selectedIds.push(fournisseur.id !== undefined ? fournisseur.id : 0);
       }
     }
-    if (this.exploitation === 3) {
+    if (this.isAdmin === true) {
       for (const e of this.exploitations) {
         exploitation.push(e.id || 0)
       }
@@ -271,7 +284,7 @@ export class FournisseursComponent {
 
   delete() {
     let exploitation: number[] = [];
-    if (this.exploitation === 3) {
+    if (this.isAdmin === true) {
       for (const e of this.exploitations) {
         exploitation.push(e.id || 0)
       }
@@ -328,7 +341,7 @@ export class FournisseursComponent {
           this.fournisseur = fournisseur;
           this.idFournisseur = fournisseur.id;
           const exploitation: number[] = [];
-          exploitation.push(3)
+          exploitation.push(this.exploitation);
           for (const i of this.exploitations) {
             if (i.selected === true) {
               exploitation.push(i.id ? i.id : 0)
@@ -345,6 +358,7 @@ export class FournisseursComponent {
     } else {
       this.fournisseurService.updateFournisseur(this.idFournisseur, this.fournisseur).subscribe((response) => {
         const exploitation: number[] = [];
+        exploitation.push(this.exploitation);
         for (const i of this.exploitations) {
           if (i.selected === true) {
             exploitation.push(i.id ? i.id : 0)
@@ -540,9 +554,11 @@ export class FournisseursComponent {
         this.operateurService.getOperateur(this.idFournisseur).subscribe({
           next: (operateur) => {
             this.fournisseur.operateur = operateur;
+            this.checkContact = [];
+            this.modifContactToggle = !this.modifContactToggle;
+            alert('Contacts supprimer')
           }
         })
-        alert('Contacts supprimer')
       }
     })
   }

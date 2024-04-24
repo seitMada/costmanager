@@ -52,10 +52,13 @@
               [(ngModel)]="line.selected">
           </td>
           <td class="col-3 fw-bold" (click)="show(line); toggleModal()">{{line.libelle}}</td>
-          <td class="col-2" (click)="show(line); toggleModal()">{{line.famille.libelle}}</td>
+          <td class="col-2 text-truncate" (click)="show(line); toggleModal()">{{truncateWord(line.famille.libelle, 25)}}
+          </td>
           <td class="col-1" (click)="show(line); toggleModal()">{{line.unite.abreviation}}</td>
-          <td class="col-2" (click)="show(line); toggleModal()">{{line.groupeanalytique.groupe}}</td>
-          <td class="col-2" (click)="show(line); toggleModal()">{{line.categorie.libelle}}</td>
+          <td class="col-2 text-truncate" (click)="show(line); toggleModal()">
+            {{truncateWord(line.groupeanalytique.groupe, 25)}}</td>
+          <td class="col-2 text-truncate" (click)="show(line); toggleModal()">{{truncateWord(line.categorie.libelle,
+            25)}}</td>
           <td class="col-1" (click)="show(line); toggleModal()">{{line.prix | number: '1.2-2'}} €</td>
           <td class="col-1" (click)="show(line); toggleModal()">{{line.cout | number: '1.2-2'}} €</td>
         </tr>
@@ -165,132 +168,146 @@
         </div>
       </div>
     </li>
-    <li class="list-group-item" style="height: 305px;">
-      <div class="row">
-        <div class="card col-7">
-          <div class=" text-center fs-7 fw-bold">VENTES</div>
-          <div class="row m-1">
-            <div class="input-group input-group-sm">
-              <span for="dateDebut" class="input-group-text col-2">
-                Date vente :
-              </span>
-              <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.debut"
-                name="dateDebut" bsDatepicker [bsConfig]="bsConfig" [maxDate]="dates.fin">
-              <span for="dateFin" class="input-group-text col-1">
-                au :
-              </span>
-              <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.fin"
-                [minDate]="dates.debut" name="dateFin" bsDatepicker [bsConfig]="bsConfig">
-              <button type="button" class="btn btn-outline-secondary col-1"><i class="fas fa-check"></i></button>
-            </div>
-            <div class="card-body overflow-y-scroll" style="height: 150px;">
-              <table class="table table-sm table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th scope="col" class="col-5">Date</th>
-                    <th scope="col" class="col-3">Quantite</th>
-                    <th scope="col" class="col-2">Prix</th>
-                    <th scope="col" class="col-2">C.A</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td scope="col" class="col-5">Date</td>
-                    <td scope="col" class="col-3">Quantite</td>
-                    <td scope="col" class="col-2">Prix</td>
-                    <td scope="col" class="col-2">C.A</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="col-6">
-              <div class="input-group input-group-sm">
-                <span class="input-group-text col-6 fw-bold">Total vente</span>
-                <span class="input-group-text bg-white col-6 fw-bold">0.00 €</span>
+    <li class="list-group-item" style="height: 460px;">
+      <ul ngbNav #nav2="ngbNav" [(activeId)]="active" class="nav-tabs">
+        <li [ngbNavItem]="1">
+          <button ngbNavLink>EXPLOITATIONS</button>
+          <ng-template ngbNavContent>
+            <div class="card col-5">
+              <div class=" text-center fs-7 fw-bold">EXPLOITATIONS</div>
+              <div class="card-body overflow-y-scroll" style="max-height: 400px;">
+                <table class="table table-striped table-hover">
+                  <tbody>
+                    <tr *ngFor="let line of exploitations">
+                      <td class="col-9">{{line.libelle}}</td>
+                      <td class="col-3">
+                        <input type="checkbox" name="exploitation-{{line.libelle}}" id="exploitation-{{line.id}}"
+                          [(ngModel)]="line.selected" [disabled]="modifToggle"
+                          *ngIf="line.id !== exploitation ? true : false">
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
-            <div class="col-6">
-              <div class="input-group input-group-sm">
-                <span class="input-group-text col-6 fw-bold">Quantité vente</span>
-                <span class="input-group-text bg-white col-6 fw-bold">0.00</span>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="2">
+          <button ngbNavLink>COMPOSITIONS</button>
+          <ng-template ngbNavContent>
+            <div class="card col-12">
+              <div class=" text-center fs-7 fw-bold">
+                <button type="button" class="btn btn-sm btn-light position-absolute top-0 start-0 m-1"
+                  (click)="open(content)" [disabled]="addToggle">
+                  <i class="fas fa-pencil"></i>
+                </button>
+                COMPOSITIONS
+              </div>
+              <div class="row m-1">
+                <div class="card-body overflow-y-scroll" style="max-height: 350px;">
+                  <table class="table table-sm table-striped table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="col-4">Désignation</th>
+                        <th scope="col" class="col-3">Quantité</th>
+                        <th scope="col" class="col-2">Unité</th>
+                        <th scope="col" class="col-1">Type</th>
+                        <th scope="col" class="col-2">Coût</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let line of compositions">
+                        <td class="col-4 text-truncate">{{ (line.article == null)?
+                          line.fichetechniqueCompositon?.libelle :
+                          line.article.libelle }}</td>
+                        <td class="col-3 text-truncate">{{line.quantite}}</td>
+                        <td class="col-2 text-truncate" cTooltip={{line.unite.libelle}} cTooltipPlacement="bottom">
+                          {{line.unite.abreviation}}</td>
+                        <td class="col-1 text-truncate">{{ (line.articleId == null)? 'FT' : 'A' }}</td>
+                        <td class="col-2 text-truncate">{{ line.cout * line.quantite | number: '1.2-2'}} €</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col-12 mb-1">
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text col-6 fw-bold">Coût FT</span>
+                    <span class="input-group-text bg-white col-6 fw-bold">{{cout.fichetechnique}} €</span>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text col-8 fw-bold">Coût alimentaire</span>
+                    <span class="input-group-text bg-white col-4 fw-bold">{{cout.alimentaire}} €</span>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text col-8 fw-bold">Coût emballage</span>
+                    <span class="input-group-text bg-white col-4 fw-bold">{{cout.emballage}} €</span>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        </div>
-        <div class="card col-5">
-          <div class=" text-center fs-7 fw-bold">
-            <button type="button" class="btn btn-sm btn-light position-absolute top-0 start-0 m-1"
-              (click)="open(content)" [disabled]="addToggle">
-              <i class="fas fa-pencil"></i>
-            </button>
-            COMPOSITIONS
-          </div>
-          <div class="row m-1">
-            <div class="card-body overflow-y-scroll" style="height: 180px;">
-              <table class="table table-sm table-striped table-hover">
-                <thead>
-                  <tr>
-                    <th scope="col" class="col-4">Désignation</th>
-                    <th scope="col" class="col-3">Quantité</th>
-                    <th scope="col" class="col-2">Unité</th>
-                    <th scope="col" class="col-1">Type</th>
-                    <th scope="col" class="col-2">Coût</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr *ngFor="let line of compositions">
-                    <td class="col-4">{{ (line.article == null)? line.fichetechniqueCompositon?.libelle :
-                      line.article.libelle }}</td>
-                    <td class="col-3">{{line.quantite}}</td>
-                    <td class="col-2">{{line.unite.libelle}}</td>
-                    <td class="col-1">{{ (line.articleId == null)? 'FT' : 'A' }}</td>
-                    <td class="col-2">{{ line.cout * line.quantite | number: '1.2-2'}} €</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-            <div class="col-12 mb-1">
-              <div class="input-group input-group-sm">
-                <span class="input-group-text col-6 fw-bold">Coût FT</span>
-                <span class="input-group-text bg-white col-6 fw-bold">{{cout.fichetechnique}} €</span>
+          </ng-template>
+        </li>
+        <li [ngbNavItem]="3">
+          <button ngbNavLink>VENTES</button>
+          <ng-template ngbNavContent>
+            <div class="card col-12">
+              <div class=" text-center fs-7 fw-bold">VENTES</div>
+              <div class="row m-1">
+                <div class="input-group input-group-sm">
+                  <span for="dateDebut" class="input-group-text col-2">
+                    Date vente :
+                  </span>
+                  <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.debut"
+                    name="dateDebut" bsDatepicker [bsConfig]="bsConfig" [maxDate]="dates.fin">
+                  <span for="dateFin" class="input-group-text col-1">
+                    au :
+                  </span>
+                  <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.fin"
+                    [minDate]="dates.debut" name="dateFin" bsDatepicker [bsConfig]="bsConfig">
+                  <button type="button" class="btn btn-outline-secondary col-1"><i class="fas fa-check"></i></button>
+                </div>
+                <div class="card-body overflow-y-scroll" style="max-height: 350px;">
+                  <table class="table table-sm table-striped table-hover">
+                    <thead>
+                      <tr>
+                        <th scope="col" class="col-5">Date</th>
+                        <th scope="col" class="col-3">Quantite</th>
+                        <th scope="col" class="col-2">Prix</th>
+                        <th scope="col" class="col-2">C.A</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td scope="col" class="col-5">Date</td>
+                        <td scope="col" class="col-3">Quantite</td>
+                        <td scope="col" class="col-2">Prix</td>
+                        <td scope="col" class="col-2">C.A</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="col-6">
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text col-6 fw-bold">Total vente</span>
+                    <span class="input-group-text bg-white col-6 fw-bold">0.00 €</span>
+                  </div>
+                </div>
+                <div class="col-6">
+                  <div class="input-group input-group-sm">
+                    <span class="input-group-text col-6 fw-bold">Quantité vente</span>
+                    <span class="input-group-text bg-white col-6 fw-bold">0.00</span>
+                  </div>
+                </div>
               </div>
             </div>
-            <div class="col-6">
-              <div class="input-group input-group-sm">
-                <span class="input-group-text col-8 fw-bold">Coût alimentaire</span>
-                <span class="input-group-text bg-white col-4 fw-bold">{{cout.alimentaire}} €</span>
-              </div>
-            </div>
-            <div class="col-6">
-              <div class="input-group input-group-sm">
-                <span class="input-group-text col-8 fw-bold">Coût emballage</span>
-                <span class="input-group-text bg-white col-4 fw-bold">{{cout.emballage}} €</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </li>
-    <li class="list-group-item" style="height: 170px;">
-      <div class="row">
-        <div class="card col-5">
-          <div class=" text-center fs-7 fw-bold">EXPLOITATIONS</div>
-          <div class="card-body overflow-y-scroll" style="height: 120px;">
-            <table class="table table-striped table-hover">
-              <tbody>
-                <tr *ngFor="let line of exploitations">
-                  <td class="col-9">{{line.libelle}}</td>
-                  <td class="col-3">
-                    <input type="checkbox" name="exploitation-{{line.libelle}}" id="exploitation-{{line.id}}"
-                      [(ngModel)]="line.selected" [disabled]="modifToggle"
-                      *ngIf="line.id !== exploitation ? true : false">
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+          </ng-template>
+        </li>
+      </ul>
+      <div [ngbNavOutlet]="nav2" class="mt-2"></div>
     </li>
   </ul>
 </div>

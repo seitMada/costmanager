@@ -97,17 +97,25 @@ export const environment = {
     
     APIGETADRESS: endPoint + 'adresse',
 
-    APIGETINVENTAIREBYCRANDDATE: endPoint + 'inventaire',
+    APIGETINVENTAIREBYCRANDDATEGROUPENUMERO: endPoint + 'inventaire',
     APICREATEINVENTAIRE: endPoint + 'inventaire/add',
     APIDELETEINVENTAIRE: endPoint + 'inventaire/delete',
-    APIDELETESINVENTAIRE: endPoint+ 'inventaire/deletes',
-    APIUPDATEINVENTAIRE: endPoint+ 'inventaire/update',
-    APIGETINVENTAIREBYID: endPoint+ 'inventaire/',
+    APIDELETESINVENTAIRE: endPoint + 'inventaire/deletes',
+    APIUPDATEINVENTAIRE: endPoint + 'inventaire/update',
+    APIGETINVENTAIREBYID: endPoint + 'inventaire/',
+    APIGETINVENTAIREDETAILBYNUMERO: endPoint + 'inventaire/numero',
     
     APIGETLIEUSTOCKAGEBYCENTREID: endPoint + 'lieustockage',
     APIGETZONESTOCKAGEBYEXPLOITATIONID: endPoint + 'zonestockage/exploitation',
-    APIDELETEARTICLEZONESTOCKAGE:  endPoint + 'articlezonestockage/',
-    APIGETARTICLEBYZONE: endPoint + 'articlezonestockage/',
+    // APIDELETEARTICLEZONESTOCKAGE:  endPoint + 'articlezonestockage/',
+    // APIGETARTICLEBYZONE: endPoint + 'articlezonestockage/',
     
-    APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage'
+    APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage',
+    APIGETARTICLEBYZONE: endPoint + 'zonestockage/article',
+
+    APIDELETEARTICLEZONESTOCKAGE: endPoint + 'articlezonestockage/delete/',
+
+    APIGETPPOBYCRANDDATE: endPoint + 'ppo',
+    APICREATEPPO: endPoint + 'ppo/create',
+    APIUPDATEPPO: endPoint + 'ppo/update',
 };

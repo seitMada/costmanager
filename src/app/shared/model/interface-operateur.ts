@@ -14,6 +14,7 @@ export interface InterfaceOperateur {
     telephone: string;
     civilite: string;
     selected?:boolean;
+    isAdmin?: boolean;
 }
 
 export interface InterfaceOperateurs {

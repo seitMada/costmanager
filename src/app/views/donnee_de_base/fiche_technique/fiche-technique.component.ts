@@ -28,11 +28,12 @@ import { Article } from 'src/app/shared/model/articles';
 import { ArticleService } from 'src/app/shared/service/article.service';
 import { InterfaceComposition } from 'src/app/shared/model/interface-compositions';
 import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
+import { TooltipModule } from '@coreui/angular';
 
 @Component({
   selector: 'app-fiche-technique',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule, BsDatepickerModule],
+  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule, BsDatepickerModule, TooltipModule],
   templateUrl: './fiche-technique.component.html',
   styleUrl: './fiche-technique.component.scss'
 })
@@ -89,12 +90,15 @@ export class FicheTechniqueComponent implements OnInit {
 
   private idFichetechnique: number = 0;
 
+  public active = 1;
   private today = new Date();
 
   public dates = {
     debut: new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate()),
     fin: this.today
   }
+
+  private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
   public exploitation = +(sessionStorage.getItem('exploitation') || 3);
 
   private modalService = inject(NgbModal);
@@ -104,6 +108,13 @@ export class FicheTechniqueComponent implements OnInit {
   ngOnInit(): void {
     this.resetFichetechnique();
     this.initFichetechnique();
+  }
+
+  public truncateWord(word: string, maxLength = 15) {
+    if (word.length > maxLength) {
+      return word.slice(0, maxLength) + "...";
+    }
+    return word;
   }
 
   async initFichetechnique() {
@@ -121,7 +132,11 @@ export class FicheTechniqueComponent implements OnInit {
         this.categories = categorie;
         this.groupeanalytiques = groupeanalytique;
         this.unites = unite;
-        this.exploitations = exploitations;
+        if (this.isAdmin === true) {
+          this.exploitations = exploitations.filter((item: any) => item.id !== this.exploitation);
+        } else {
+          this.exploitations = exploitations.filter((item: any) => item.id === this.exploitation);
+        }
         this.articles = articlesByExploitation;
       }
     })
@@ -171,7 +186,7 @@ export class FicheTechniqueComponent implements OnInit {
         next: (fichetechnique: any) => {
           this.fichetechnique = fichetechnique;
           const exploitation: number[] = [];
-          exploitation.push(3)
+          exploitation.push(this.exploitation)
           for (const i of this.exploitations) {
             if (i.selected === true) {
               exploitation.push(i.id ? i.id : 0)
@@ -195,6 +210,7 @@ export class FicheTechniqueComponent implements OnInit {
     } else {
       this.fichetechniqueService.updateFichetechnique(this.idFichetechnique, this.fichetechnique).subscribe(() => {
         const exploitation: number[] = [];
+        exploitation.push(this.exploitation)
         for (const i of this.exploitations) {
           if (i.selected === true) {
             exploitation.push(i.id ? i.id : 0)
@@ -243,7 +259,7 @@ export class FicheTechniqueComponent implements OnInit {
 
   delete() {
     let exploitation: number[] = [];
-    if (this.exploitation === 3) {
+    if (this.isAdmin === true) {
       for (const e of this.exploitations) {
         exploitation.push(e.id ? e.id : 0)
       }
@@ -268,7 +284,7 @@ export class FicheTechniqueComponent implements OnInit {
         selectedIds.push(fichetechnique.id !== undefined ? fichetechnique.id : 0);
       }
     }
-    if (this.exploitation === 3) {
+    if (this.isAdmin === true) {
       for (const e of this.exploitations) {
         exploitation.push(e.id ? e.id : 0)
       }

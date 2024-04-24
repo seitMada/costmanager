@@ -25,6 +25,7 @@ import { InterfaceBonCommandes } from 'src/app/shared/model/interface-bonCommand
 import { InterfaceCommandeDetails } from 'src/app/shared/model/interface-commandedetail';
 import { BonCommande } from 'src/app/shared/model/bonCommande';
 
+// import { jsPDF } from 'jspdf';
 
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';

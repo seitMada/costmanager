@@ -160,8 +160,8 @@
                 [disabled]="modifContactToggle"><i class="fas fa-plus"></i></button>
               <button type="button" class="btn btn-sm btn-secondary" *ngIf="modifContactToggle"
                 (click)="modfifOperateur()"><i class="fas fa-pencil"></i></button>
-              <button type="button" class="btn btn-sm btn-warning" (click)="deleteOperateur()"
-                [disabled]="modifContactToggle"><i class="fas fa-trash"></i></button>
+              <button type="button" class="btn btn-sm btn-warning" (click)="deleteOperateur()"><i
+                  class="fas fa-trash"></i></button>
             </div>
             CONTACTS
           </div>
@@ -225,10 +225,10 @@
                       [(ngModel)]="line.selected" (click)="checked($event, line)">
                   </td>
                   <td class="col-1">{{line.civilite}}</td>
-                  <td class="col-3">{{line.nom}}</td>
-                  <td class="col-2">{{line.prenom}}</td>
-                  <td class="col-3">{{line.email}}</td>
-                  <td class="col-2">{{line.telephone}}</td>
+                  <td class="col-3 text-truncate">{{ truncateWord(line.nom, 20)}}</td>
+                  <td class="col-2 text-truncate">{{truncateWord(line.prenom, 20)}}</td>
+                  <td class="col-3 text-truncate">{{line.email}}</td>
+                  <td class="col-2 text-truncate">{{line.telephone}}</td>
                 </tr>
               </tbody>
             </table>
@@ -333,7 +333,8 @@
 
 <ng-template #contentArticle let-modal>
   <div class="modal-header">
-    <h6 class="modal-title text-center" id="modal-basic-title-article">Articles fournisseur {{fournisseur.raison_social}}</h6>
+    <h6 class="modal-title text-center" id="modal-basic-title-article">Articles fournisseur
+      {{fournisseur.raison_social}}</h6>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
@@ -341,7 +342,8 @@
       <div class="d-flex bd-highlight">
         <div class="flex-grow-1 bd-highlight"></div>
         <div class="bd-highlight">
-          <button class="btn btn-sm btn-primary me-1" title="Ajouter articles" (click)="addArticle(contentListeArticle)">
+          <button class="btn btn-sm btn-primary me-1" title="Ajouter articles"
+            (click)="addArticle(contentListeArticle)">
             <i class="fas fa-plus"></i>
           </button>
         </div>
@@ -376,64 +378,70 @@
             <td scope="col" class="col-1"></td>
             <td scope="col" class="col-3">{{line.article.libelle}}</td>
             <td scope="col" class="col-1">
-              <tr *ngFor="let lines of line.conditionnement">
-                <td>{{lines.uniteCommande.libelle}}</td>
-              </tr>
+          <tr *ngFor="let lines of line.conditionnement" cTooltip={{lines.uniteCommande.libelle}}
+            cTooltipPlacement="bottom">
+            <td>{{lines.uniteCommande.abreviation}}
             </td>
-            <td scope="col" class="col-1">
-              <tr *ngFor="let lines of line.conditionnement">
-                <td>{{lines.prixAchat | number: '1.2-2'}} €</td>
-              </tr>
-            </td>
-            <td scope="col" class="col-1">
-              <tr *ngFor="let lines of line.conditionnement">
-                <td>{{lines.uniteAchat.libelle}}</td>
-              </tr>
-            </td>
-            <td scope="col" class="col-1">
-              <tr *ngFor="let lines of line.conditionnement">
-                <td>{{lines.prixAchat / lines.coefficientAchatCommande | number: '1.2-2'}} €</td>
-              </tr>
-            </td>
-            <td scope="col" class="col-1">
-              <tr *ngFor="let lines of line.conditionnement">
-                <td>{{lines.uniteInventaire.libelle}}</td>
-              </tr>
-            </td>
-            <td scope="col" class="col-1">
-              <tr *ngFor="let lines of line.conditionnement">
-                <td>{{lines.prixAchat / lines.coefficientAchatCommande / lines.coefficientInventaireAchat | number:
-                  '1.2-2'}} €</td>
-              </tr>
-            </td>
-            <td scope="col" class="col-1">
-              <tr *ngFor="let lines of line.conditionnement">
-                <td>{{lines.uniteFt.libelle}}</td>
-              </tr>
-            </td>
-            <td scope="col" class="col-1">
-              <tr *ngFor="let lines of line.conditionnement">
-                <td>{{lines.prixAchat / lines.coefficientAchatCommande / lines.coefficientInventaireAchat /
-                  lines.coefficientInventaire | number: '1.2-2'}} €</td>
-              </tr>
-            </td>
-            <td scope="col" class="col-1">
-              <tr *ngFor="let lines of line.conditionnement">
-                <td class="p-0">
-                  <div class="btn-group btn-group-sm">
-                    <button type="button" class="btn btn-outline-info px-2 py-0" title="Modifier cette article"
-                      (click)="updateArticleFournisseur(line, lines, contentUnite)"><i class="fas fa-pencil"
-                        style="font-size: xx-small;"></i></button>
-                    <button type="button" class="btn btn-outline-warning px-2 py-0" title="Supprimer cette article"
-                      (click)="deleteArticleFournisseur(line, lines)">
-                      <i class="fas fa-trash" style="font-size: xx-small;"></i></button>
-                    <button type="button" class="btn btn-outline-secondary px-2 py-0"
-                      title="Historique d'achat de cette article">
-                      <i class="fas fa-shopping-cart" style="font-size: xx-small;"></i></button>
-                  </div>
-                </td>
-              </tr>
-            </td>
+          </tr>
+          </td>
+          <td scope="col" class="col-1">
+            <tr *ngFor="let lines of line.conditionnement">
+              <td>{{lines.prixAchat | number: '1.2-2'}} €</td>
+            </tr>
+          </td>
+          <td scope="col" class="col-1">
+            <tr *ngFor="let lines of line.conditionnement" cTooltip={{lines.uniteAchat.libelle}}
+              cTooltipPlacement="bottom">
+              <td>{{lines.uniteAchat.abreviation}}</td>
+            </tr>
+          </td>
+          <td scope="col" class="col-1">
+            <tr *ngFor="let lines of line.conditionnement">
+              <td>{{lines.prixAchat / lines.coefficientAchatCommande | number: '1.2-2'}} €</td>
+            </tr>
+          </td>
+          <td scope="col" class="col-1">
+            <tr *ngFor="let lines of line.conditionnement" cTooltip={{lines.uniteInventaire.libelle}}
+              cTooltipPlacement="bottom">
+              <td>
+                {{lines.uniteInventaire.abreviation}}</td>
+            </tr>
+          </td>
+          <td scope="col" class="col-1">
+            <tr *ngFor="let lines of line.conditionnement">
+              <td>{{lines.prixAchat / lines.coefficientAchatCommande / lines.coefficientInventaireAchat | number:
+                '1.2-2'}} €</td>
+            </tr>
+          </td>
+          <td scope="col" class="col-1">
+            <tr *ngFor="let lines of line.conditionnement" cTooltip={{lines.uniteFt.libelle}}
+              cTooltipPlacement="bottom">
+              <td>{{lines.uniteFt.abreviation}}</td>
+            </tr>
+          </td>
+          <td scope="col" class="col-1">
+            <tr *ngFor="let lines of line.conditionnement">
+              <td>{{lines.prixAchat / lines.coefficientAchatCommande / lines.coefficientInventaireAchat /
+                lines.coefficientInventaire | number: '1.2-2'}} €</td>
+            </tr>
+          </td>
+          <td scope="col" class="col-1">
+            <tr *ngFor="let lines of line.conditionnement">
+              <td class="p-0">
+                <div class="btn-group btn-group-sm">
+                  <button type="button" class="btn btn-outline-info px-2 py-0" title="Modifier cette article"
+                    (click)="updateArticleFournisseur(line, lines, contentUnite)"><i class="fas fa-pencil"
+                      style="font-size: xx-small;"></i></button>
+                  <button type="button" class="btn btn-outline-warning px-2 py-0" title="Supprimer cette article"
+                    (click)="deleteArticleFournisseur(line, lines)">
+                    <i class="fas fa-trash" style="font-size: xx-small;"></i></button>
+                  <button type="button" class="btn btn-outline-secondary px-2 py-0"
+                    title="Historique d'achat de cette article">
+                    <i class="fas fa-shopping-cart" style="font-size: xx-small;"></i></button>
+                </div>
+              </td>
+            </tr>
+          </td>
           </tr>
         </tbody>
       </table>

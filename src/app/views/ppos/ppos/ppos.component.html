@@ -1,1 +1,378 @@
-<p>ppos works!</p>
+<div class="card d-flex py-1 mb-2">
+  <div class="d-flex bd-highlight">
+    <div class="flex-grow-1 bd-highlight">
+      <button type="button" class="btn btn-success btn-sm mx-1" *ngIf="!modifToggle"
+        (click)="submit()">Enregistrer</button>
+      <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
+    </div>
+    <div class="flex-grow-1 bd-highlight mx-1 col-4">
+      <div class="input-group input-group-sm" *ngIf="addToggle">
+        <span for="dateDebut" class="input-group-text col-4">
+          Inventaire :
+        </span>
+        <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.debut" name="dateDebut"
+          bsDatepicker [bsConfig]="bsConfig" [maxDate]="dates.fin" (ngModelChange)="selectCentreRevenus(centrerevenu)">
+        <span for="dateFin" class="input-group-text col-1">
+          au :
+        </span>
+        <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.fin" [minDate]="dates.debut"
+          name="dateFin" bsDatepicker [bsConfig]="bsConfig" (ngModelChange)="selectCentreRevenus(centrerevenu)">
+        <!-- <button type="button" class="btn btn-outline-secondary col-1"><i class="fas fa-check"></i></button> -->
+      </div>
+    </div>
+    <div class="flex-grow-1 bd-highlight mx-1 col-3">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text col-5" id="basic-addon1">Centre revenus</span>
+        <input type="text" class="form-control bg-white " [ngClass]="toggle ? 'col-6' : 'col-7'" aria-label="unite"
+          aria-describedby="fournisseur" [(ngModel)]="centrerevenu.libelle" disabled="true">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="toggle"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="visually-hidden">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li *ngFor="let line of centrerevenus"><span (click)="selectCentreRevenus(line)">{{line.libelle}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="bd-highlight">
+      <button class="btn btn-outline-primary btn-sm me-1" title="Liste fichetechniques" (click)="toggleModal()"
+        *ngIf="!toggle" [disabled]="!modifToggle">
+        <i class="fas fa-list"></i>
+      </button>
+      <button class="btn btn-outline-info btn-sm me-1" title="Modifier fichetechnique" (click)="modifToggleModal()"
+        *ngIf="!toggle" [disabled]="!modifToggle">
+        <i class="fas fa-pencil"></i>
+      </button>
+      <button class="btn btn-outline-success btn-sm me-1" title="Ajouter fichetechnique" (click)="open(content);"
+        [disabled]="!addToggle">
+        <i class="fas fa-plus"></i>
+      </button>
+      <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer fichetechnique" (click)="delete()"
+        *ngIf="!toggle" [disabled]="!deleteToggle">
+        <i class="fas fa-trash"></i>
+      </button>
+      <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer fichetechniques" (click)="deletes()"
+        *ngIf="toggle" [disabled]="!deleteToggle">
+        <i class="fas fa-trash"></i>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="card d-flex" *ngIf="toggle">
+  <div class="card-body overflow-y-scroll py-1" style="height: 650px;">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th scope="col" class="col-1">#</th>
+          <th scope="col" class="col-4">Date</th>
+          <th scope="col" class="col-3">Valorisation</th>
+          <th scope="col" class="col-4">Operateurs</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let line of ppos">
+          <td class="col-1">
+            <input type="checkbox" name="inventaire-{{line.date_ppo}}" id="inventaire-{{line.id}}"
+              [(ngModel)]="line.selected">
+          </td>
+          <td class="col-4" (click)="toggleModal(); show(line)">{{screenDate(line.date_ppo)}}</td>
+          <td class="col-3" (click)="toggleModal(); show(line)">{{valorisation(line.ppodetail) | number : '1.2-2'}} €
+          </td>
+          <td class="col-4" (click)="toggleModal(); show(line)">{{line.operateur.nom}} {{line.operateur.prenom}}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card d-flex" *ngIf="!toggle">
+  <div class="card-header text-center fs-5 fw-bold">
+    {{centrerevenu.libelle}} - Pertes du {{screenDate(ppo.date_ppo)}}
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">
+      <div class="card p-1 mb-2">
+        <div class="d-flex flex-row-reverse bd-highlight">
+          <button type="button" class="btn btn-sm btn-outline-info ms-1" (click)="openArticle(contentarticle)"
+            [disabled]="modifToggle" cTooltip="Ajouter des articles" cTooltipPlacement="bottom"><i
+              class="fas fa-plus"></i></button>
+          <button type="button" class="btn btn-sm btn-outline-primary ms-1" cTooltip="Ouvrir le PDF"
+            cTooltipPlacement="bottom"><i class="fas fa-file-pdf"></i></button>
+          <button type="button" class="btn btn-sm btn-outline-primary ms-1" cTooltip="Imprimer le PDF"
+            cTooltipPlacement="bottom"><i class="fas fa-print"></i></button>
+        </div>
+      </div>
+      <div class="card-body overflow-y-scroll py-1" style="height: 540px;">
+        <table class="table table-sm">
+          <tbody>
+            <tr>
+              <td colspan="6">
+                <table class="table table-striped table-hover table-sm">
+                  <thead>
+                    <tr>
+                      <th class="fw-bold" colspan="6">ARTICLES</th>
+                    </tr>
+                    <tr>
+                      <th>#</th>
+                      <th class="col-3">Libelle</th>
+                      <th class="col-2">Quantité</th>
+                      <th class="col-2">Unité</th>
+                      <th class="col-2">Cout</th>
+                      <th class="col-2">Valorisation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let line of ppodetailsarticles">
+                      <td></td>
+                      <td class="col-3">{{line.article.libelle}}</td>
+                      <td class="col-2">
+                        <input type="number" class="form-control form-control-sm bg-transparent"
+                          [(ngModel)]="line.quantite" [step]="line.unite.step" placeholder="0.00"
+                          [disabled]="modifToggle">
+                      </td>
+                      <td class="col-2">{{line.unite.libelle}}</td>
+                      <td class="col-2">{{line.article.cout | number : '1.2-2'}} €</td>
+                      <td class="col-2">{{line.quantite * line.article.cout | number : '1.2-2'}} €</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="6">
+                <table class="table table-striped table-hover table-sm">
+                  <thead>
+                    <tr>
+                      <th class="fw-bold" colspan="6">FICHETECHNIQUES</th>
+                    </tr>
+                    <tr>
+                      <th>#</th>
+                      <th class="col-3">Libelle</th>
+                      <th class="col-2">Quantité</th>
+                      <th class="col-2">Unité</th>
+                      <th class="col-2">Cout</th>
+                      <th class="col-2">Valorisation</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let line of ppodetailsfichetechniques">
+                      <td></td>
+                      <td class="col-3">{{line.fichetechnique.libelle}}</td>
+                      <td class="col-2">
+                        <input type="number" class="form-control form-control-sm bg-transparent"
+                          [(ngModel)]="line.quantite" [step]="line.unite.step" placeholder="0.00"
+                          [disabled]="modifToggle">
+                      </td>
+                      <td class="col-2">{{line.unite.libelle}}</td>
+                      <td class="col-2">{{calculeCoutComposition(line.fichetechnique.composition) | number : '1.2-2'}} €</td>
+                      <td class="col-2">{{line.quantite * line.fichetechnique.cout | number : '1.2-2'}} €</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </td>
+            </tr>
+        </table>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row fw-bold">
+        <div class="col-8"></div>
+        <div class="col-4">TOTAL {{valorisation(ppodetailsfichetechniques) + valorisation(ppodetailsarticles) | number: '1.2-2'}} €</div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title text-center" id="modal-basic-title">{{centrerevenu.libelle}} - Perte du
+      {{screenDate(ppo.date_ppo)}} -</h6>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <div class="card-body py-1">
+          <div class="card-body py-1">
+            <div class="row m-2">
+              <div class="col-sm-12">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="libelle">Date perte</span>
+                  <input type="text" class="form-control col-7 bg-white" aria-label="date" autocomplete="off"
+                    aria-describedby="date" name="date" [(ngModel)]="ppo.date_ppo" bsDatepicker [bsConfig]="bsConfig">
+                </div>
+              </div>
+            </div>
+            <div class="row m-2">
+              <div class="col-sm-12 mb-2">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="exploitation">Exploitation</span>
+                  <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
+                    aria-label="Code" aria-describedby="exploitation" [(ngModel)]="ppo.exploitation.libelle"
+                    disabled="true">
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li *ngFor="let line of exploitations"><span
+                        (click)="selectExploitation(line)">{{line.libelle}}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <div class="input-group"><span class="input-group-text col-5" id="centrerevenu">Centre Revenu</span>
+                  <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
+                    aria-label="Code" aria-describedby="centrerevenu" [(ngModel)]="ppo.centre.libelle" disabled="true">
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li *ngFor="let line of centrerevenus"><span
+                        (click)="selectCentreRevenu(line)">{{line.libelle}}</span>
+                    </li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-outline-success" (click)="modal.close('Save click')">Valider</button>
+  </div>
+</ng-template>
+
+<ng-template #contentarticle let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title text-center" id="modal-basic-title">Ajouter des articles et des fichetechniques </h6>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <ul ngbNav #nav2="ngbNav" [(activeId)]="active" class="nav-tabs">
+      <li [ngbNavItem]="1">
+        <button ngbNavLink>ARTICLES</button>
+        <ng-template ngbNavContent>
+          <div class="card-body overflow-y-scroll py-1" style="height: 500px;">
+            <table class="table table-striped table-hover table-sm">
+              <thead>
+                <tr>
+                  <th scope="col" class="col-1">#</th>
+                  <th scope="col" class="col-3">Libellé</th>
+                  <th scope="col" class="col-2">Unités</th>
+                  <th scope="col" class="col-2">Cout</th>
+                  <th scope="col" class="col-2">Familles</th>
+                  <th scope="col" class="col-2">Sous-familles</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let line of articles">
+                  <td class="col-1">
+                    <input type="checkbox" name="article-{{line.id}}" id="article-{{line.id}}"
+                      [(ngModel)]="line.selected">
+                  </td>
+                  <td class="col-3">{{line.libelle}}</td>
+                  <td class="col-2">{{line.unite.libelle}}</td>
+                  <td class="col-2">{{line.cout | number : '1.2-2'}} €</td>
+                  <td class="col-2 text-truncate">{{truncateWord(line.familles.libelle, 20)}}</td>
+                  <td class="col-2 text-truncate">{{truncateWord(line.sousfamilles.libelle, 20)}}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </ng-template>
+      </li>
+      <li [ngbNavItem]="2">
+        <button ngbNavLink>FICHETECHNIQUES</button>
+        <ng-template ngbNavContent>
+          <div class="row">
+            <div class="card-body col-8 overflow-y-scroll py-1" style="height: 500px;">
+              <table class="table table-striped table-hover table-sm">
+                <thead>
+                  <tr>
+                    <th scope="col" class="col-1">#</th>
+                    <th scope="col" class="col-5">Libellé</th>
+                    <th scope="col" class="col-2">Unités</th>
+                    <th scope="col" class="col-2">Cout</th>
+                    <th scope="col" class="col-2">Familles</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of fichetechniques" (click)="selectFichetechnique(line)">
+                    <td class="col-1">
+                      <input type="checkbox" name="article-{{line.id}}" id="article-{{line.id}}"
+                        [(ngModel)]="line.selected" (ngModelChange)="selectFichetechnique(line)">
+                    </td>
+                    <td class="col-5">{{line.libelle}}</td>
+                    <td class="col-2" cTooltip={{line.unite.libelle}} cTooltipPlacement="bottom">{{line.unite.abreviation}}</td>
+                    <td class="col-2">{{calculeCoutComposition(line.composition) | number : '1.2-2'}} €</td>
+                    <td class="col-2 text-truncate">{{truncateWord(line.famille.libelle, 20)}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card col-4">
+              <div class="fw-bold m-1">COMPOSITION -- {{fichetechnique.libelle}}</div>
+              <div class="card-body overflow-y-scroll" style="height: 460px;">
+                <table class="table table-sm table-striped table-hover">
+                  <thead>
+                    <tr>
+                      <th scope="col" class="col-4">Désignation</th>
+                      <th scope="col" class="col-3">Quantité</th>
+                      <th scope="col" class="col-2">Unité</th>
+                      <th scope="col" class="col-1">Type</th>
+                      <th scope="col" class="col-2">Coût</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let line of fichetechnique.composition">
+                      <td class="col-4 text-truncate">{{ (line.article == null)?
+                        line.fichetechniqueCompositon?.libelle :
+                        line.article.libelle }}</td>
+                      <td class="col-3 text-truncate">{{line.quantite}}</td>
+                      <td class="col-2 text-truncate" cTooltip={{line.unite.libelle}} cTooltipPlacement="bottom">
+                        {{line.unite.abreviation}}</td>
+                      <td class="col-1 text-truncate">{{ (line.articleId == null)? 'FT' : 'A' }}</td>
+                      <td class="col-2 text-truncate">{{ line.cout * line.quantite | number: '1.2-2'}} €</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="card p-1 m-1">
+                <div class="row">
+                  <div class="col-7 fw-bold justify-content-end">TOTAL</div>
+                  <div class="col-5"> {{calculeCoutComposition(fichetechnique.composition) | number: '1.2-2'}} €</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-template>
+      </li>
+    </ul>
+    <div [ngbNavOutlet]="nav2" class="mt-2"></div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-outline-success"
+      (click)="modal.close('Save click')">Séléctionner</button>
+  </div>
+</ng-template>
+
+<c-toaster [placement]="position" class="p-3" position="fixed">
+  <c-toast #toast="cToast"
+    (timer)="onTimerChange($event)"
+    (visibleChange)="onVisibleChange($event)"
+    [visible]="visible" color="{{color}}">
+    <c-toast-body>
+      <div class="row">
+        <div class="col-10 p-auto"><span [ngClass]="textcolor">{{message}}</span></div>
+        <div class="col-2"><button aria-label="close" class="btn btn-sm btn-outline-light no-border" (click)="toast.visible=false"><i class="fas fa-x"></i></button></div>
+      </div>
+    </c-toast-body>
+  </c-toast>
+</c-toaster>

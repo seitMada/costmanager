@@ -3,7 +3,7 @@ import { Component, OnInit, TemplateRef, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { InterfaceInventaires, InterfaceInventairesDetails } from '../../../shared/model/interface-inventaires';
+import { InterfaceInventaires, InterfaceInventairesDetails, InterfaceInventairesDetailsZone } from '../../../shared/model/interface-inventaires';
 import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
 
 import { InventairesService } from '../../../shared/service/inventaires.service';
@@ -20,10 +20,18 @@ import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { InterfaceArticleExploitation } from 'src/app/shared/model/interface-articleexploitations';
 import { ArticleService } from 'src/app/shared/service/article.service';
 
+import { AlertModule } from '@coreui/angular';
+import { TooltipModule } from '@coreui/angular';
+
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+// pdfMake.vfs = pdfFonts.pdfMake.vfs;
+import { PdfView } from '../../../shared/model/pdfView';
+
 @Component({
   selector: 'app-inventaires',
   standalone: true,
-  imports: [CommonModule, FormsModule, BsDatepickerModule],
+  imports: [CommonModule, FormsModule, BsDatepickerModule, AlertModule, TooltipModule],
   templateUrl: './inventaires.component.html',
   styleUrl: './inventaires.component.scss'
 })
@@ -51,10 +59,12 @@ export class InventairesComponent {
   private modalService = inject(NgbModal);
   closeResult = '';
 
+  private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
   public idexploitation = +(sessionStorage.getItem('exploitation') || 3);
   public idoperateur = +(sessionStorage.getItem('id') || 3);
   public idcentrerevenu: number = 0;
   public idinventaire: number = 0;
+  private numero: string;
 
   public centrerevenus: InterfaceCentreRevenu[];
   public centrerevenu: InterfaceCentreRevenu;
@@ -72,6 +82,7 @@ export class InventairesComponent {
   public articles: InterfaceArticle[];
   public inventaireArticle: InterfaceInventairesDetails;
   public inventaireArticles: InterfaceInventairesDetails[];
+  public inventairesDetailsZone: InterfaceInventairesDetailsZone[];
 
   constructor(
     public router: Router,
@@ -85,18 +96,21 @@ export class InventairesComponent {
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
-    this.resetinventaire()
+    this.resetinventaire();
+    this.numero = (this.formatDateUS(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
   }
 
-  private resetinventaire() {
+  private async resetinventaire() {
+    this.numero = (this.formatDateUS(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
     this.inventaire = {
       id: 0,
       date_inventaire: new Date(),
+      numero: this.numero,
       commentaire: '',
       etat: false,
       zonestockageId: 0,
-      operateurId: 0,
-      centreRevenuId: 0,
+      operateurId: this.idoperateur,
+      centreRevenuId: this.centrerevenu.id || 0,
       selected: false,
 
       centre: this.centrerevenu,
@@ -176,6 +190,8 @@ export class InventairesComponent {
     fin: this.today
   }
 
+  public depotSelectedId: number;
+  public depotSelected: string;
 
   ngOnInit(): void {
     // console.log(this.dates.debut, this.dates.fin)
@@ -185,16 +201,18 @@ export class InventairesComponent {
         this.centrerevenus = _centreRevenu;
         this.centrerevenu = _centreRevenu[0];
         await this.selectCentreRevenus(this.centrerevenu);
-        if (this.idexploitation === 3) {
+        if (this.isAdmin === true) {
           this.exploitationService.getExploitation().subscribe({
             next: (_exploitation) => {
               this.exploitations = _exploitation;
+              this.exploitation = _exploitation[0];
             }
           })
         } else {
           this.exploitationService.getExploitationById(this.idexploitation).subscribe({
             next: (_exploitation) => {
               this.exploitations.push(_exploitation);
+              this.exploitation = _exploitation[0];
             }
           })
         }
@@ -270,15 +288,33 @@ export class InventairesComponent {
     this.inventaire = _inventaire;
     this.inventaire.etat = _inventaire.etat;
     this.idinventaire = _inventaire.id || 0;
-    this.inventaire.inventairedetail = _inventaire.inventairedetail;
+    this.inventairesDetailsZone = [];
+    // this.inventaire.inventairedetail = _inventaire.inventairedetail;
     this.inventaire.date_inventaire = new Date(this.inventaire.date_inventaire);
-    console.log(this.inventaire)
-    this.zonelieuService.getLieuStockageByCentreId(this.inventaire.centre.id || 0).subscribe({
-      next: (_lieustockage: any) => {
-        this.lieustockages = _lieustockage;
-        this.zonelieuService.getZoneStockageByLieuId(this.inventaire.zonestockage.lieu.id || 0).subscribe({
-          next: (_zonestockage: any) => {
-            this.zonestockages = _zonestockage;
+    this.numero = this.inventaire.numero;
+    console.log(this.numero)
+    this.inventaireService.getInventaireDetailsByNumero(this.inventaire.numero).subscribe({
+      next: (_inventaireDetails: any) => {
+        this.zonelieuService.getLieuStockageByCentreId(this.inventaire.centre.id || 0).subscribe({
+          next: (_lieustockage: any) => {
+            this.lieustockages = _lieustockage;
+            this.zonelieuService.getZoneStockageByLieuId(this.inventaire.zonestockage.lieu.id || 0).subscribe({
+              next: (_zonestockage: any) => {
+                this.zonestockages = _zonestockage;
+                // console.log(_inventaireDetails)
+                this.idinventaire = _inventaireDetails[0].id || 0;
+                console.log(this.idinventaire)
+                for (const _invZone of _inventaireDetails) {
+                  Object.assign(_invZone, {
+                    lieu: _invZone.zonestockage.lieu.lieu,
+                    lieuId: _invZone.zonestockage.lieuId,
+                    zone: _invZone.zonestockage.zone,
+                    zoneId: _invZone.zonestockage.id,
+                  })
+                  this.inventairesDetailsZone.push(_invZone)
+                }
+              }
+            })
           }
         })
       }
@@ -289,12 +325,14 @@ export class InventairesComponent {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-
     if (fin == true) {
       return `${year}-${month}-${day} 23:59:59`;
     }
     return `${year}-${month}-${day} 00:00:00`;
-    // return this.datePipe.transform(date, format);
+  }
+
+  formatDateUS(date: Date | string, format: string = 'yyyy-MM-dd') {
+    return this.datePipe.transform(date, format);
   }
 
   screenDate(date: Date | string, format: string = 'dd/MM/yyyy') {
@@ -308,30 +346,46 @@ export class InventairesComponent {
       this.addToggle = true;
       this.resetinventaire();
     } else {
-      this.inventaireService.getInventaireById(this.inventaire.id || 0).subscribe({
-        next: (_inventaire) => {
-          this.inventaire = _inventaire;
-          this.inventaire.date_inventaire = new Date(_inventaire.date_inventaire);
-          this.modifToggle = !this.modifToggle;
-        },
-      })
+      this.show(this.inventaire);
+      this.modifToggle = !this.modifToggle;
+      // this.inventaireService.getInventaireById(this.inventaire.id || 0).subscribe({
+      //   next: (_inventaire) => {
+      //     this.inventaire = _inventaire;
+      //     this.inventaire.date_inventaire = new Date(_inventaire.date_inventaire);
+      //     this.modifToggle = !this.modifToggle;
+      //   },
+      // })
     }
   }
 
-  submit() {
-    if (this.inventaire.id == 0) {
+  async submit() {
+    if (this.idinventaire == 0) {
       this.inventaire.operateurId = this.idoperateur;
-      this.inventaireService.createInventaire(this.inventaire, this.inventaire.inventairedetail).subscribe({
-        next: () => {
-
+      const inventairetable = [];
+      for (const _lieu of this.inventairesDetailsZone) {
+        await this.resetinventaire();
+        this.inventaire.inventairedetail = _lieu.inventairedetail;
+        this.inventaire.zonestockageId = +(_lieu.zoneId || 0);
+        inventairetable.push(this.inventaire);
+      }
+      console.log(inventairetable)
+      this.inventaireService.createInventaire(inventairetable).subscribe({
+        next: async (value) => {
           this.modifToggle = !this.modifToggle;
+          this.show(this.inventaire)
           alert('Inventaire créer');
         }
       })
     } else {
-      this.inventaireService.updateInventaire(this.inventaire).subscribe({
+      for (const _lieu of this.inventairesDetailsZone) {
+        // await this.resetinventaire();
+        this.inventaire.inventairedetail = _lieu.inventairedetail;
+        this.inventaire.zonestockageId = +(_lieu.zoneId || 0);
+      }
+      this.inventaireService.updateInventaire(this.inventairesDetailsZone, this.inventaire.numero).subscribe({
         next: () => {
           alert('Inventaire modifier');
+          this.show(this.inventaire)
           this.modifToggle = !this.modifToggle;
         }
       })
@@ -339,6 +393,7 @@ export class InventairesComponent {
   }
 
   async toggleModal(_etat: boolean = true) {
+    console.log(this.centrerevenu)
     await this.selectCentreRevenus(this.centrerevenu);
     this.toggle = !this.toggle;
     // this.inventaire.etat = !this.toggle ? true : false;
@@ -364,30 +419,49 @@ export class InventairesComponent {
     this.addToggle = (this.addToggle === false ? true : false);
     this.listToggle = (this.listToggle !== false ? true : false);
     this.idinventaire = 0;
-    this.resetinventaire()
-    this.selectCentreRevenu(this.centrerevenu);
+    this.numero = (this.formatDateUS(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
+    // this.resetinventaire()
+    // this.selectCentreRevenu(this.centrerevenu);
+  }
+
+  deleteZero(_inventaires: InterfaceInventairesDetailsZone) {
+    _inventaires.inventairedetail = _inventaires.inventairedetail.filter(_i => _i.quantite > 0);
+    if (_inventaires.inventairedetail.length === 0) {
+      let index = 0;
+      for (const _inventairedetail of this.inventairesDetailsZone) {
+        console.log(_inventairedetail.lieuId + '  ' + _inventairedetail.zoneId)
+        if (_inventaires.lieuId == _inventairedetail.lieuId && _inventaires.zoneId == _inventairedetail.zoneId) {
+          console.log(index)
+          this.inventairesDetailsZone.splice(index, 1);
+        }
+        index++;
+      }
+    }
   }
 
   delete() {
-    this.inventaireService.deleteInventaire(this.inventaire).subscribe({
+    this.inventaireService.deleteInventaire(this.inventaire.numero).subscribe({
       next: () => {
         alert('Inventaire supprimer');
         this.resetinventaire();
         this.selectCentreRevenus(this.centrerevenu);
         this.toggle = !this.toggle;
+        this.modifToggle = !this.modifToggle ? false : true;
       }
     });
   }
 
   deletes() {
-    const selectedIds: number[] = [];
+    // const selectedIds: number[] = [];
+    const selectedNumero: string[] = [];
     for (const _inventaire of this.inventaires) {
       if (_inventaire.selected) {
-        selectedIds.push(_inventaire.id !== undefined ? _inventaire.id : 0);
+        selectedNumero.push(_inventaire.numero !== undefined ? _inventaire.numero : '0');
       }
     }
-    if (selectedIds.length > 0) {
-      this.inventaireService.deleteInventaires(selectedIds).subscribe(() => {
+    if (selectedNumero.length > 0) {
+      console.log(selectedNumero)
+      this.inventaireService.deleteInventaires(selectedNumero).subscribe(() => {
         alert('Inventaires supprimer');
         this.resetinventaire();
         this.selectCentreRevenus(this.centrerevenu);
@@ -406,7 +480,124 @@ export class InventairesComponent {
     }
   }
 
-  openArticle(content: TemplateRef<any>) {
+  openPdf(_inventaire: InterfaceInventairesDetailsZone, action: number) {
+    const dateinventaire = this.screenDate(new Date(this.inventaire.date_inventaire));
+    const dataInventaire: any[] = [];
+    let quantite = 0;
+    let prix = 0;
+    for (const _inv of _inventaire.inventairedetail) {
+      const data = {
+        'Article': _inv.article.libelle,
+        'Quantite': _inv.quantite,
+        'Unite': _inv.article.unite.libelle,
+        'Famille': this.truncateWord(_inv.article.familles.libelle),
+        'SousFamille': this.truncateWord(_inv.article.sousfamilles.libelle)
+      }
+      quantite += _inv.quantite;
+      prix += _inv.article.cout;
+      dataInventaire.push(data);
+    }
+    console.log(dataInventaire)
+    const docDefinition = {
+      content: [
+        {
+          text: `Inventaire du ${dateinventaire} n° ${this.inventaire.numero} -- ${_inventaire.lieu} - ${_inventaire.zone}`,
+          fontSize: 15, bold: true
+        },
+        '\n', '\n', '\n',
+        {
+          // alignment: 'left',
+          columns: [
+            {
+              text: [
+                { text: 'N° inventaire : ', fontSize: 12, bold: true },
+                `${this.inventaire.numero}\n`,
+                { text: 'Date : ', fontSize: 12, bold: true },
+                `${dateinventaire}\n`,
+                { text: 'Lieu de stockage : ', fontSize: 12, bold: true },
+                `${_inventaire.lieu}\n`,
+                { text: 'Zone de stockage : ', fontSize: 12, bold: true },
+                `${_inventaire.zone}\n`,
+                { text: 'Opérateur : ', fontSize: 12, bold: true },
+                `${this.inventaire.operateur.nom} ${this.inventaire.operateur.prenom}\n`,
+              ],
+            },
+          ],
+        },
+        '\n', // Add a line break after inventory details
+        {
+          style: 'tableExample',
+          table: {
+            widths: ['*', '*', '*', '*', '*'],
+            body: this.buildTableBody(dataInventaire, ['Article', 'Quantite', 'Unite', 'Famille', 'SousFamille'],
+              [
+                // { text: 'Réf', style: 'subheader' }, // subheader for 'Réf' column
+                { text: 'Articles', style: 'tableHeader' },
+                { text: 'Quantité', style: 'tableHeader' },
+                { text: 'Unité', style: 'tableHeader' },
+                { text: 'Familles', style: 'tableHeader' },
+                { text: 'Sous Familles', style: 'tableHeader' },
+              ]
+            ),
+          },
+        },
+        '\n', // Add a line break after inventory details
+        // {
+        //   style: 'tableExample',
+        //   table: {
+        //     widths: [120, '*'],
+        //     body: [
+        //       ['TOTAL', (prix * quantite).toString() + ' €'],
+        //     ]
+        //   }
+        // },
+
+      ],
+      defaultStyle: {
+
+      }
+    };
+    switch (action) {
+      case 1:
+        pdfMake.createPdf(docDefinition, undefined, undefined, pdfFonts.pdfMake.vfs).open();
+        break;
+
+      case 2:
+        pdfMake.createPdf(docDefinition, undefined, undefined, pdfFonts.pdfMake.vfs).print();
+        break;
+      default:
+        break;
+    }
+  }
+
+  public truncateWord(word: string, maxLength = 15) {
+    if (word.length > maxLength) {
+      return word.slice(0, maxLength) + "...";
+    }
+    return word;
+  }
+
+  buildTableBody(tableau: any[], cle: any[], entete: { text: string; style: string; }[]) {
+    const body = [];
+    body.push(entete);
+    tableau.forEach(function (row: { [x: string]: { toString: () => any; }; }) {
+      const dataRow: string[] = [];
+      cle.forEach(function (column: string) {
+        dataRow.push(row[column].toString());
+        // tslint:disable-next-line:triple-equals
+        // if (column == 'CoutArticle' || column == 'MontantTotalLigneHT') {
+        //   const cout = Math.round(Number(row[column]) * 100) / 100;
+        //   dataRow.push(cout.toString() + '€');
+        // } else {
+        //   dataRow.push(row[column].toString());
+        // }
+      })
+      body.push(dataRow);
+    });
+    return body;
+  }
+
+  openArticle(content: TemplateRef<any>, lieu: InterfaceInventairesDetailsZone) {
     this.articleService.getArticlesByExploitation(this.idexploitation).subscribe({
       next: (_articles) => {
         this.articles = _articles;
@@ -419,13 +610,14 @@ export class InventairesComponent {
             uniteId: _a.uniteId,
             inventaireId: 0,
             selected: false,
+            numero: '',
 
             article: _a,
           }
           this.inventaireArticles.push(this.inventaireArticle);
         }
         this.inventaireArticles = this.inventaireArticles.filter(article => {
-          return !this.inventaire.inventairedetail.some(fondArticle => fondArticle.articleId === article.articleId);
+          return !lieu.inventairedetail.some(fondArticle => fondArticle.articleId === article.articleId);
         });
         this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
           (result) => {
@@ -435,10 +627,11 @@ export class InventairesComponent {
               for (const _a of this.inventaireArticles) {
                 if (_a.selected === true) {
                   _a.selected = false;
-                  this.inventaire.inventairedetail.push(_a);
+                  lieu.inventairedetail.push(_a);
+                  // this.inventaire.inventairedetail.push(_a);
                 }
               }
-              console.log(this.inventaire.inventairedetail)
+              // console.log(this.inventaire.inventairedetail)
             }
           },
           (reason) => {
@@ -451,20 +644,37 @@ export class InventairesComponent {
     });
   }
 
-  deselectArticles(_inventairedetais: InterfaceInventairesDetails[]) {
-    this.inventaire.inventairedetail = _inventairedetais.filter(_i => _i.selected === false || _i.selected == undefined)
+  deselectArticles(lieu: InterfaceInventairesDetailsZone) {
+    lieu.inventairedetail = lieu.inventairedetail.filter(_i => _i.selected === false || _i.selected == undefined)
+    if (lieu.inventairedetail.length === 0) {
+      let index = 0;
+      for (const _inventairedetail of this.inventairesDetailsZone) {
+        console.log(_inventairedetail.lieuId + '  ' + _inventairedetail.zoneId)
+        if (lieu.lieuId == _inventairedetail.lieuId && lieu.zoneId == _inventairedetail.zoneId) {
+          console.log(index)
+          this.inventairesDetailsZone.splice(index, 1);
+        }
+        index++;
+      }
+    }
   }
 
   validInventaire() {
-    this.inventaire.etat = true;
-    this.inventaireService.updateInventaire(this.inventaire).subscribe({
+    // this.inventaire.etat = true;
+
+    for (const _lieu of this.inventairesDetailsZone) {
+      _lieu.etat = true;
+    }
+    this.inventaireService.updateInventaire(this.inventairesDetailsZone, this.numero).subscribe({
       next: () => {
+        this.inventaire.etat = true;
         alert('L\'inventaire du ' + this.screenDate(this.inventaire.date_inventaire) + ' pour le centre de revenu ' + this.centrerevenu.libelle + ' a été valider')
       }
     })
   }
 
   openInventaire(content: TemplateRef<any>) {
+    this.today = new Date();
     this.resetinventaire()
     this.selectCentreRevenu(this.centrerevenu);
     const exploitationId: number[] = [];
@@ -479,7 +689,7 @@ export class InventairesComponent {
         }
       }
     })
- 
+
     this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
@@ -495,8 +705,41 @@ export class InventairesComponent {
             }
           }
           this.articleService.getArticlesByZone(zonestockageId).subscribe({
-            next: (_article) => {
+            next: (_article: any) => {
               console.log(_article)
+              this.inventaire.inventairedetail = [];
+              this.inventairesDetailsZone = [];
+              let _inventairesDetailsZone: InterfaceInventairesDetailsZone;
+              for (const _lieu of _article) {
+                for (const _zone of _lieu.zonestockage) {
+                  _inventairesDetailsZone = {
+                    lieu: _lieu.lieu,
+                    lieuId: _lieu.id,
+                    zone: _zone.zone,
+                    zoneId: _zone.id,
+                    etat: _lieu.etat,
+
+                    inventairedetail: [],
+                  }
+                  for (const _article of _zone.articlezonestockages) {
+                    this.inventaireArticle = {
+                      articleId: _article.articlesId || 0,
+                      quantite: 0,
+                      uniteId: _article.articles.uniteId,
+                      inventaireId: 0,
+                      selected: false,
+                      numero: '',
+
+                      article: _article.articles,
+                    }
+                    _inventairesDetailsZone.inventairedetail.push(this.inventaireArticle);
+                    // this.inventaire.inventairedetail.push(this.inventaireArticle);
+                  }
+                  this.inventairesDetailsZone.push(_inventairesDetailsZone)
+                }
+              }
+              this.addToggleModal()
+              // console.log(this.inventaire.inventairedetail)
             }
           })
         }
@@ -507,6 +750,25 @@ export class InventairesComponent {
 
       },
     );
+  }
+
+  calculsoustotal(_datas: InterfaceInventairesDetails[]) {
+    let prix = 0;
+    for (const _data of _datas) {
+      prix += _data.quantite * _data.article.cout || 0
+    }
+    return prix;
+  }
+
+  calcultotal(_datas: InterfaceInventairesDetailsZone[]) {
+    
+    let prix = 0;
+    for (const _data of _datas) {
+      for (const _i of _data.inventairedetail) {
+        prix += _i.quantite * _i.article.cout || 0
+      }
+    }
+    return prix;
   }
 
 }
