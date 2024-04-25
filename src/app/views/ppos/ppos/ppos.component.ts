@@ -186,21 +186,21 @@ export class PposComponent {
     this.ppo.ppodetail = this.ppo.ppodetail.concat(this.ppodetailsarticles);
     this.ppo.ppodetail = this.ppo.ppodetail.concat(this.ppodetailsfichetechniques);
     console.log(this.ppo)
-    if (this.idPpo === 0) {
-      this.ppoService.createPpo(this.ppo).subscribe({
-        next: () => {
-          this.toggleToast('Perte du ' + this.screenDate(this.ppo.date_ppo) + ' enregistrer');
-          this.modifToggle = !this.modifToggle;
-        }
-      })
-    } else {
-      this.ppoService.updatePpo(this.ppo).subscribe({
-        next: () => {
-          this.toggleToast('Perte du ' + this.screenDate(this.ppo.date_ppo) + ' modifier')
-          this.modifToggle = !this.modifToggle;
-        }
-      })
-    }
+    // if (this.idPpo === 0) {
+    //   this.ppoService.createPpo(this.ppo).subscribe({
+    //     next: () => {
+    //       this.toggleToast('Perte du ' + this.screenDate(this.ppo.date_ppo) + ' enregistrer');
+    //       this.modifToggle = !this.modifToggle;
+    //     }
+    //   })
+    // } else {
+    //   this.ppoService.updatePpo(this.ppo).subscribe({
+    //     next: () => {
+    //       this.toggleToast('Perte du ' + this.screenDate(this.ppo.date_ppo) + ' modifier')
+    //       this.modifToggle = !this.modifToggle;
+    //     }
+    //   })
+    // }
   }
 
   cancel() {
@@ -209,6 +209,7 @@ export class PposComponent {
 
   async toggleModal() {
     await this.selectCentreRevenus(this.centrerevenu);
+    this.ppo.date_ppo = !this.toggle ? new Date() : this.ppo.date_ppo;
     this.toggle = !this.toggle;
     this.addToggle = !this.addToggle;
   }
@@ -217,8 +218,8 @@ export class PposComponent {
     this.modifToggle = !this.modifToggle;
   }
 
-  addToggleModal() {
-    this.resetPpo();
+  async addToggleModal() {
+    await this.resetPpo();
     this.modifToggle = !this.modifToggle;
     this.toggle = (this.toggle === false ? true : false);
     this.addToggle = (this.addToggle === false ? true : false);
@@ -275,6 +276,7 @@ export class PposComponent {
         this.closeResult = `Closed with: ${result}`;
         // console.log(this.closeResult)
         if (this.closeResult == 'Closed with: Save click') {
+          this.resetPpo();
           this.addToggleModal();
         }
       },
@@ -315,6 +317,9 @@ export class PposComponent {
   }
 
   private async resetPpo() {
+    this.idPpo = 0;
+    this.ppodetailsarticles = [];
+    this.ppodetailsfichetechniques = [];
     this.ppo = {
       date_ppo: new Date(),
       centreId: this.centrerevenu.id || 0,

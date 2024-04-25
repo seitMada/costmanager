@@ -8,7 +8,7 @@
     <div class="flex-grow-1 bd-highlight mx-1 col-4">
       <div class="input-group input-group-sm" *ngIf="addToggle">
         <span for="dateDebut" class="input-group-text col-4">
-          Inventaire :
+          Pertes du :
         </span>
         <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.debut" name="dateDebut"
           bsDatepicker [bsConfig]="bsConfig" [maxDate]="dates.fin" (ngModelChange)="selectCentreRevenus(centrerevenu)">
@@ -200,8 +200,10 @@
               <div class="col-sm-12">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="libelle">Date perte</span>
-                  <input type="text" class="form-control col-7 bg-white" aria-label="date" autocomplete="off"
-                    aria-describedby="date" name="date" [(ngModel)]="ppo.date_ppo" bsDatepicker [bsConfig]="bsConfig">
+                  <!-- <input type="text" class="form-control col-7 bg-white" aria-label="date" autocomplete="off"
+                    aria-describedby="date" name="date" [(ngModel)]="ppo.date_ppo" bsDatepicker [bsConfig]="bsConfig"> -->
+                    <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="ppo.date_ppo" name="dateppo"
+                      bsDatepicker [bsConfig]="bsConfig">
                 </div>
               </div>
             </div>
