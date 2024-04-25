@@ -1,25 +1,29 @@
 import { CommonModule, DatePipe } from '@angular/common';
-import { Component, ElementRef, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef } from '@angular/core';
 import { FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalDismissReasons, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
+import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
+import { ExploitationService } from 'src/app/shared/service/exploitation.service';
+import { FournisseurService } from 'src/app/shared/service/fournisseur.service';
+import { BonlivraisonService } from 'src/app/shared/service/bonlivraison.service';
+
 import { Adress, Adresse } from 'src/app/shared/model/adresse';
+import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { Centrerevenu, Centrerevenus } from 'src/app/shared/model/centrerevenu';
 import { Fournisseur, Fournisseurs } from 'src/app/shared/model/fournisseurs';
 import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
 import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
 import { InterfaceFournisseur } from 'src/app/shared/model/interface-fournisseurs';
 import { InterfaceBonLivraisons } from 'src/app/shared/model/interface-bonLivraison';
-
-import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
-import { ExploitationService } from 'src/app/shared/service/exploitation.service';
-import { FournisseurService } from 'src/app/shared/service/fournisseur.service';
-import { BonlivraisonService } from 'src/app/shared/service/bonlivraison.service';
-import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
+import { InterfaceLivraisonDetails } from 'src/app/shared/model/interface-livraisondetail';
 import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-articlefournisseurs';
 import { InterfaceArticleExploitation, InterfaceArticleExploitations } from 'src/app/shared/model/interface-articleexploitations';
+import { InterfaceBonCommandes } from 'src/app/shared/model/interface-bonCommande';
+import { InterfaceCommandeDetails } from 'src/app/shared/model/interface-commandedetail';
+
 @Component({
   selector: 'app-bon-livraison-achats',
   standalone: true,
@@ -36,21 +40,29 @@ export class BonLivraisonAchatsComponent implements OnInit{
   public adresse: Adress;
   public adresses: Adresse;
 
-  public exploitation: InterfaceExploitations;
-  public bonLivraison: InterfaceBonLivraisons;
-  public bonLivraisons: InterfaceBonLivraisons[];
   public article: InterfaceArticle;
   public articles: InterfaceArticle[];
+  public exploitation: InterfaceExploitations;
+  public bonCommande: InterfaceBonCommandes;
+  public bonCommandes: InterfaceBonCommandes[];
+  public bonLivraison: InterfaceBonLivraisons;
+  public bonLivraisons: InterfaceBonLivraisons[];
+  public commandeDetail : InterfaceCommandeDetails;
+  public commadeDetails :InterfaceCommandeDetails[];
+  public livraisonDetail : InterfaceLivraisonDetails;
+  public livraisonDetails : InterfaceLivraisonDetails[];
   public articleFournisseur: InterfaceArticlefournisseurs;
   public articleFournisseurs: InterfaceArticlefournisseurs[];
   public articleExploitation: InterfaceArticleExploitation;
   public articleExploitations: InterfaceArticleExploitations;
-  // public livraisonDetail = 
 
   public artExploitationArticleId: any[] = [];
 
   public idFournisseur =0;
   public idBonLivraison = 0;
+  public montantTTc=0;
+  public montantRemise =0;
+  public montantTva =0;
   public exploitationId = +(sessionStorage.getItem('exploitation') || 3);
 
   public num_livraison:string;
@@ -63,6 +75,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
   public bonLivraisonForm = FormGroup;
+  closeResult = '';
 
   public toggle = true;
   public addLivraison = true;
@@ -89,6 +102,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
     this.resetFournisseur();
     this.resetCentre();
     this.resetLivraison();
+    this.resetDetailLivraison();
  }
 
   formatDate(date: Date | string, format: string = 'yyyy-MM-dd') {
@@ -104,6 +118,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
     this.showAllAdresse();
   }
 
+  
+
   showAllAdresse(){
     this.fournisseurService.getAllAdresse().subscribe({
       next :(adresses) => {
@@ -113,35 +129,21 @@ export class BonLivraisonAchatsComponent implements OnInit{
     })
   }
 
-  listArticleFournisseurs(){
-    const exploitationId = Number(this.exploitationId);
-    this.selectFounisseur(this.fournisseur);
-    this.livraisonService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
-      next: (artExploitation) => {         
-        if (artExploitation) {
-          this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
-          this.livraisonService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
-            next: (artFournisseur: any) => {
-              this.articleFournisseurs = artFournisseur;
+  addBonLivraison(){
+    this.bonLivraison = this.bonLivraison;
+    this.livraisonDetails = this.livraisonDetails;
+    if (this.livraisonDetails.length>0) {
+      console.log(this.bonLivraison);
+      console.log(this.livraisonDetails);
+      // this.livraisonService.createNewBonLivraison(this.bonLivraison,this.livraisonDetails).subscribe({
+      //   next:(livraison:any) =>{
+      //     alert('Bon de livraison n° '+ this.bonLivraison.numLivraison+ ' crée avec succès!');
+      //   },
+      // })
+    }else{
+      alert('Veuillez réessayer!');
+    }
     
-              for (const articlefournisseur of artFournisseur) {
-                  // this.commandeDetail = {
-                  //   commandeId: 0,
-                  //   articlefournisseurId: articlefournisseur.id ? articlefournisseur.id :0,
-                  //   QteCommande: 0,
-                  //   prixarticle: articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat: 0,
-                  //   remise: 0,
-                  //   validationdetailbc: false,
-                  //   articlefournisseur: articlefournisseur,
-                  //   selected:false
-                  // }
-                  // this.commandes.push(this.commandeDetail)
-              }
-            }
-          })
-        }
-      }
-    });
   }
 
 
@@ -184,7 +186,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
               commentaire:'',
               adresseId: this.adresse.id ? this.adresse.id :0,
               fournisseurId:this.fournisseur.id ? this.fournisseur.id :0,
-              exploitaionId:this.exploitation.id ? this.exploitation.id :0,
+              exploitationId:this.exploitation.id ? this.exploitation.id :0,
               centreId:this.centre.id ? this.centre.id :0,
               selected:false,
               adresse:this.adresse,
@@ -202,15 +204,22 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
 
-
   addToggle(){
     this.toggle = !this.toggle;
     this.listLivraison = !this.listLivraison;
+    this.resetLivraison();
   }
 
   async selectFounisseur(data: InterfaceFournisseur) {
     this.fournisseur =data; 
-    this.fournisseur.id = data.id ? data.id:0 ;    
+    this.fournisseur.id = data.id ? data.id:0 ;   
+    this.livraisonService.getListLivraisonByFournisseurExploitation(this.fournisseur.id,this.exploitation.id ? this.exploitation.id:0).subscribe({
+      next: (livraisons) =>{
+        this.livraisonDetails = [];
+        this.bonLivraisons = livraisons;
+        this.livraisonDetails = livraisons.map((livraison: any) => livraison.livraisonDetail);
+      },
+    }) 
   }
 
   selectCentreRevenu(data: InterfaceCentreRevenu) {
@@ -222,6 +231,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
     this.adresse = data;
     this.adresse.id = data.id;
   }
+
+  
 
   public resetFournisseur() {
     this.adresse = {
@@ -287,6 +298,21 @@ export class BonLivraisonAchatsComponent implements OnInit{
     }
   }
 
+  public resetDetailLivraison(){
+    this.livraisonDetail = {
+      articlefournisseurId:0,
+      livraisonId: 0,
+      quantiteCommandee: 0,
+      quantiteLivree: 0,
+      prixarticle: 0,
+      remise: 0,
+      valeurTva: 0,
+      selected:false,
+      articlefournisseur:this.articleFournisseur,
+      livraison:[]
+    }
+  }
+
   public resetLivraison(){
     this.bonLivraison = {
       numLivraison:this.num_livraison,
@@ -299,7 +325,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
       commentaire:'',
       adresseId: this.adresse.id ? this.adresse.id :0,
       fournisseurId:this.fournisseur.id ? this.fournisseur.id :0,
-      exploitaionId:this.exploitation.id ? this.exploitation.id :0,
+      exploitationId:this.exploitation.id ? this.exploitation.id :0,
       centreId:this.centre.id ? this.centre.id :0,
       selected:false,
 
@@ -307,6 +333,66 @@ export class BonLivraisonAchatsComponent implements OnInit{
       fournisseur:this.fournisseur,
       exploitation:this.exploitation,
       centre:this.centre,
+    }
+  }
+
+  public openModalArticle(content: TemplateRef<any>) { 
+    this.livraisonService.getCommandeByFournisseurExploitationValidate(this.fournisseur.id? this.fournisseur.id:0,this.exploitation.id ?this.exploitation.id:0).subscribe({
+      next:(commandes) =>{    
+        this.bonCommandes = commandes;  
+        this.toggle = !this.toggle;
+        this.addLivraison = !this.addLivraison;
+        this.listLivraison = !this.listLivraison;
+          this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+            (result) => {
+              this.closeResult = `Closed with: ${result}`;
+              console.log(this.closeResult)
+              if (this.closeResult == 'Closed with: Save click') {
+                for(const commande of commandes){
+                  this.livraisonDetails = [];
+                  if (commande.selected) {
+                    this.livraisonService.getListDetailCommandeByCommandeId(commande.id ? commande.id:0).subscribe({
+                      next :(commandeDetail) => {
+                        for(const commande of commandeDetail){
+                          this.livraisonDetail = {
+                            articlefournisseurId:commande.articlefournisseurId,
+                            livraisonId: 0,
+                            quantiteCommandee: commande.QteCommande,
+                            quantiteLivree: 0,
+                            prixarticle: commande.prixarticle,
+                            remise: commande.remise,
+                            valeurTva: 0,
+                            selected:false,
+                            articlefournisseur:commande.articlefournisseur,
+                            livraison:[]
+                          };
+                          this.livraisonDetails.push(this.livraisonDetail);
+                        }
+                        console.log(this.livraisonDetails);
+                      },
+                    })
+                  }
+                }
+              }
+            },
+            (reason) => {
+              this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+              console.log(this.closeResult)
+            },
+          ); 
+      }, 
+    });
+  }
+
+  getTotalMontant(): number {    
+    let montantTTc=0;
+    if (this.livraisonDetails) {
+      for (const line of this.livraisonDetails) {
+        montantTTc += (line.quantiteLivree * line.prixarticle - line.remise)+line.valeurTva;
+      }
+      return montantTTc;
+    }else{
+      return 0;
     }
   }
 
@@ -321,10 +407,15 @@ export class BonLivraisonAchatsComponent implements OnInit{
     }
   }
 
-  addToggleModal(){
-    this.selectOnFournisseur();
-    this.modalService.dismissAll();
+  annuler(){
+    this.toggle = !this.toggle;
+    this.addLivraison = true;
+    this.listLivraison = true;
+    this.showAllFournisseur();
+    this.resetLivraison();
+    this.resetDetailLivraison();
   }
+
 
   public selectOnFournisseur() {
 
@@ -338,5 +429,14 @@ export class BonLivraisonAchatsComponent implements OnInit{
         console.log(error);
       }
     })
+  }
+
+  checkSelectedRows(){
+    this.showDeleteBtn = this.livraisonDetails.some(line => line.selected);
+  }
+
+  deleteSelectedRows() {
+    this.livraisonDetails = this.livraisonDetails.filter(line => !line.selected);
+    this.showDeleteBtn = false;
   }
 }

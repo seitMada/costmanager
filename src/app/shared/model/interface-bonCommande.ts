@@ -17,7 +17,7 @@ export interface InterfaceBonCommandes {
     fournisseurId: number;
     exploitationId: number;
     centreId: number;
-    selected:false,
+    selected?:boolean,
 
     fournisseur: InterfaceFournisseur;
     centre: InterfaceCentreRevenu;

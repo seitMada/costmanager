@@ -10,6 +10,7 @@ export interface InterfaceLivraisonDetails{
     prixarticle:number;
     remise:number;
     valeurTva:number;
+    selected:boolean;
 
     articlefournisseur:InterfaceArticlefournisseurs;
     livraison: InterfaceBonLivraisons[]

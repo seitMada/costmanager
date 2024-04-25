@@ -17,7 +17,7 @@ export class BonCommande implements InterfaceBonCommandes {
   dateCommande: Date;
   fournisseurId: number;
   exploitationId: number;
-  selected: false;
+  selected: boolean;
   centreId: number;
   fournisseur: InterfaceFournisseur;
   centre: InterfaceCentreRevenu;

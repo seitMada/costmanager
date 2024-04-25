@@ -15,9 +15,9 @@ export interface InterfaceBonLivraisons{
     commentaire:string;
     adresseId:number;
     fournisseurId:number;
-    exploitaionId:number;
+    exploitationId:number;
     centreId:number;
-    selected:false;
+    selected:boolean;
 
     adresse:Adress;
     fournisseur:InterfaceFournisseur;

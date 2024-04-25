@@ -66,7 +66,6 @@ export class BonCommandeAchatsComponent implements OnInit {
   public articleFournisseurId = 0;
   public montantTTc=0;
   public montantRemise =0;
-  public maxPrixAchat = 0;
 
   public num_commande: string;
 
@@ -193,7 +192,6 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.commandeService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
             next: (artFournisseur: any) => {
               this.articleFournisseurs = artFournisseur;
-    
               for (const articlefournisseur of artFournisseur) {
                   this.commandeDetail = {
                     commandeId: 0,
@@ -498,7 +496,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
 
-  showCommande(bonCommande: BonCommande) {
+  showCommande(bonCommande: InterfaceBonCommandes) {
     this.boncommande = bonCommande;
     this.idBonCommande =bonCommande.id ? bonCommande.id :0;
     this.dates = {

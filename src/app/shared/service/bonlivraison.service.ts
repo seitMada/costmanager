@@ -1,6 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
+import { InterfaceBonLivraisons } from '../model/interface-bonLivraison';
+import { InterfaceLivraisonDetails } from '../model/interface-livraisondetail';
 
 @Injectable({
   providedIn: 'root'
@@ -10,22 +12,23 @@ export class BonlivraisonService {
   constructor(private https:HttpClient) { }
 
   private apiGetLivraisonByfournisseur = environment.APIGETLIVRAISONBYFOURNISSEUR;
-  private apiArticleExploitationByExploitationId = environment.APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID;
-  private apiArticleFournisseurByArticleId = environment.APIGETARTICLEFOURNISSEURBYARTICLEID;
+  private apiGetCommandeByFournisseurExploitation = environment.APIGETCOMMANDEBYFOURNISSEUREXPLOITATIONVALIDATE;
+  private apiGetDetailCommandeByCommandeId = environment.APIGETCOMMANDEDETAILBYCOMMANDEID;
+  private apiCreateBonLivraison = environment.APICREATEBONLIVRAISON;
 
   public getListLivraisonByFournisseurExploitation(fournisseurId:number,exploitationId:number){
     return this.https.get<any>(this.apiGetLivraisonByfournisseur+fournisseurId, {params : {exploitationId:exploitationId}});
   }
-
-  public getArticleExploitaionByExploitationId(exploitationId:number){
-    return this.https.get<any>(this.apiArticleExploitationByExploitationId+exploitationId);
+  
+  public getCommandeByFournisseurExploitationValidate(fournisseurId:number,exploitationId:number){
+    return this.https.get<any>(this.apiGetCommandeByFournisseurExploitation+fournisseurId,{params : {exploitationId:exploitationId} });
   }
 
-  public getArticleFournisseurByArticleId(fournisseurId:number,articleId:any[]) {
-    return this.https.get<any>(this.apiArticleFournisseurByArticleId+fournisseurId,{ params: { articleId: articleId.join(',') } })
+  public getListDetailCommandeByCommandeId(commandeId:number){
+    return this.https.get<any>(this.apiGetDetailCommandeByCommandeId+commandeId);
   }
 
-  public getListArticleInCommandeValidate(fournisseurId:number,exploitationId:number){
-
+  public createNewBonLivraison(bonLivraison:InterfaceBonLivraisons,livraisonDetails:InterfaceLivraisonDetails[]){
+    return this.https.post<any>(this.apiCreateBonLivraison,{bonLivraison,livraisonDetails});
   }
 }

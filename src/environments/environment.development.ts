@@ -32,6 +32,7 @@ export const environment = {
     APIGETEXPLOITATIONBYFOURNISSEUR: endPoint + 'fournisseurexploitation/',
 
     APIGETCOMMANDEBYFOURNISSEUREXPLOITATION: endPoint + 'commande/fournisseur/',
+    APIGETCOMMANDEBYFOURNISSEUREXPLOITATIONVALIDATE: endPoint + 'commande/fournisseurValidate/',
     APICREATECOMMANDEDETAIL :endPoint + 'commande/commandeDetail',
     APIGETDIXDERNIERCOMMANDE: endPoint + 'commande_detail/derniersCommandes/',
     APIGETCOMMANDEDETAILBYCOMMANDEID: endPoint + 'commande_detail/',
@@ -109,4 +110,5 @@ export const environment = {
     APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage',
 
     APIGETLIVRAISONBYFOURNISSEUR : endPoint + 'livraison/fournisseur/',
+    APICREATEBONLIVRAISON: endPoint + 'livraison',
 };

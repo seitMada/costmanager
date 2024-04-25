@@ -16,9 +16,9 @@ export class BonLivraison implements InterfaceBonLivraisons{
     commentaire:string;
     adresseId:number;
     fournisseurId:number;
-    exploitaionId:number;
+    exploitationId:number;
     centreId:number;
-    selected:false;
+    selected:boolean;
 
     adresse:Adress;
     fournisseur:InterfaceFournisseur;
@@ -36,7 +36,7 @@ export class BonLivraison implements InterfaceBonLivraisons{
         this.commentaire= bonLivraisonInterface.commentaire;
         this.adresseId= bonLivraisonInterface.adresseId;
         this.fournisseurId= bonLivraisonInterface.fournisseurId;
-        this.exploitaionId= bonLivraisonInterface.exploitaionId;
+        this.exploitationId= bonLivraisonInterface.exploitationId;
         this.centreId= bonLivraisonInterface.centreId;
         this.adresse= bonLivraisonInterface.adresse;
         this.fournisseur= bonLivraisonInterface.fournisseur;

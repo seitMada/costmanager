@@ -11,7 +11,7 @@ export class CommandeDetail{
     remise:number;
     validationdetailbc:boolean;
 
-    commande:BonCommande;
+    commande?:BonCommande;
     articlefournisseur:Articlefournisseur;
     
 
