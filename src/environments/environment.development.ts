@@ -111,4 +111,6 @@ export const environment = {
 
     APIGETLIVRAISONBYFOURNISSEUR : endPoint + 'livraison/fournisseur/',
     APICREATEBONLIVRAISON: endPoint + 'livraison',
+    APIGETDETAILLIVRAISONBYLIVRAISONID : endPoint + 'livraison/',
+    DELETEBONLIVRAISON: endPoint + 'livraison/delete',
 };

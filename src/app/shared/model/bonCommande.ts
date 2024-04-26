@@ -12,7 +12,7 @@ export class BonCommande implements InterfaceBonCommandes {
   montantHT: number;
   montantTva: number;
   noPiece: string;
-  validation: boolean;
+  validation: number;
   commentaire: string;
   dateCommande: Date;
   fournisseurId: number;

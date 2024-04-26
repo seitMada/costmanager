@@ -133,13 +133,12 @@ export class BonLivraisonAchatsComponent implements OnInit{
     this.bonLivraison = this.bonLivraison;
     this.livraisonDetails = this.livraisonDetails;
     if (this.livraisonDetails.length>0) {
-      console.log(this.bonLivraison);
-      console.log(this.livraisonDetails);
-      // this.livraisonService.createNewBonLivraison(this.bonLivraison,this.livraisonDetails).subscribe({
-      //   next:(livraison:any) =>{
-      //     alert('Bon de livraison n° '+ this.bonLivraison.numLivraison+ ' crée avec succès!');
-      //   },
-      // })
+      this.livraisonService.createNewBonLivraison(this.bonLivraison,this.livraisonDetails,this.bonCommande).subscribe({
+        next:(livraison:any) =>{
+          alert('Bon de livraison n° '+ this.bonLivraison.numLivraison+ ' crée avec succès!');
+          this.inputModif = !this.inputModif;
+        },
+      })
     }else{
       alert('Veuillez réessayer!');
     }
@@ -192,7 +191,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
               adresse:this.adresse,
               fournisseur:this.fournisseur,
               exploitation:this.exploitation,
-              centre:_centre
+              centre:_centre,
+              livraisonDetail:this.livraisonDetails
             }
           },
         });
@@ -316,7 +316,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
   public resetLivraison(){
     this.bonLivraison = {
       numLivraison:this.num_livraison,
-      dateCommande: new Date(),
+      dateCommande: this.dates.today,
       dateLivraison: this.dates.tomorrow,
       remise:0,
       montantHt:0,
@@ -333,6 +333,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
       fournisseur:this.fournisseur,
       exploitation:this.exploitation,
       centre:this.centre,
+      livraisonDetail:this.livraisonDetails
     }
   }
 
@@ -350,28 +351,34 @@ export class BonLivraisonAchatsComponent implements OnInit{
               if (this.closeResult == 'Closed with: Save click') {
                 for(const commande of commandes){
                   this.livraisonDetails = [];
+                  this.bonCommande = commande;
                   if (commande.selected) {
                     this.livraisonService.getListDetailCommandeByCommandeId(commande.id ? commande.id:0).subscribe({
                       next :(commandeDetail) => {
-                        for(const commande of commandeDetail){
+                        this.dates = {
+                          today:new Date(commande.dateCommande),
+                          tomorrow: new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate())
+                        };
+                        for(const comm of commandeDetail){
                           this.livraisonDetail = {
-                            articlefournisseurId:commande.articlefournisseurId,
+                            articlefournisseurId:comm.articlefournisseurId,
                             livraisonId: 0,
-                            quantiteCommandee: commande.QteCommande,
+                            quantiteCommandee: comm.QteCommande,
                             quantiteLivree: 0,
-                            prixarticle: commande.prixarticle,
-                            remise: commande.remise,
+                            prixarticle: comm.prixarticle,
+                            remise: comm.remise,
                             valeurTva: 0,
                             selected:false,
-                            articlefournisseur:commande.articlefournisseur,
+                            articlefournisseur:comm.articlefournisseur,
                             livraison:[]
                           };
+                          this.montantTTc += (this.livraisonDetail.quantiteLivree * this.livraisonDetail.prixarticle -this.livraisonDetail.remise) + this.livraisonDetail.valeurTva;
                           this.livraisonDetails.push(this.livraisonDetail);
                         }
-                        console.log(this.livraisonDetails);
                       },
                     })
                   }
+                  console.log(this.bonCommande);
                 }
               }
             },
@@ -384,17 +391,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
     });
   }
 
-  getTotalMontant(): number {    
-    let montantTTc=0;
-    if (this.livraisonDetails) {
-      for (const line of this.livraisonDetails) {
-        montantTTc += (line.quantiteLivree * line.prixarticle - line.remise)+line.valeurTva;
-      }
-      return montantTTc;
-    }else{
-      return 0;
-    }
-  }
+  
 
   private getDismissReason(reason:any):string{
     switch(reason){
@@ -408,27 +405,44 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
   annuler(){
+    this.livraisonDetails = [];
     this.toggle = !this.toggle;
     this.addLivraison = true;
     this.listLivraison = true;
+    this.inputModif = !this.inputModif;
     this.showAllFournisseur();
     this.resetLivraison();
     this.resetDetailLivraison();
   }
 
+  showLivraison(bonLivraison:InterfaceBonLivraisons){
+    this.bonLivraison = bonLivraison;
+    this.dates = {
+      today: new Date(this.bonLivraison.dateCommande),
+      tomorrow: new Date(this.bonLivraison.dateLivraison)
+    };
+    this.livraisonDetails = this.bonLivraison.livraisonDetail;
+    this.montantTTc =0;
+    for (const livraison of this.livraisonDetails) {
+      this.montantTTc += livraison.quantiteLivree * livraison.prixarticle;
+    }
+    this.toggle = !this.toggle;
+    this.addLivraison = !this.addLivraison;
+    this.listLivraison = !this.listLivraison;
+    this.inputModif = !this.inputModif;
+    
+  }
 
-  public selectOnFournisseur() {
-
-    this.fournisseurService.getOneFournisseur(this.fournisseur).subscribe({
-      next: (fournisseur) => {
-        this.fournisseur = fournisseur;
-        console.log(this.fournisseur);
-
-      },
-      error: (error) => {
-        console.log(error);
+  getTotalMontant() {    
+    let montantTTc=0;
+    if (this.livraisonDetails) {
+      for (const line of this.livraisonDetails) {
+        montantTTc += (line.quantiteLivree * line.prixarticle - line.remise)+line.valeurTva;
       }
-    })
+      return montantTTc;
+    }else{
+      return 0;
+    }
   }
 
   checkSelectedRows(){
@@ -438,5 +452,25 @@ export class BonLivraisonAchatsComponent implements OnInit{
   deleteSelectedRows() {
     this.livraisonDetails = this.livraisonDetails.filter(line => !line.selected);
     this.showDeleteBtn = false;
+  }
+
+  selectBonLivraison(){
+    this.deleteLivraison = this.bonLivraisons.some(line => line.selected);
+  }
+
+  deleteSelectedRowsLivraison() {
+    const selectedBonLivraisons = this.bonLivraisons.filter(line => line.selected);
+    for (const bonLivraison of selectedBonLivraisons) {
+     if (!bonLivraison.validation) {
+      this.livraisonService.deleteBonLivraison(bonLivraison).subscribe({
+        next:(value) =>{
+          this.bonLivraisons = this.bonLivraisons.filter(line => line !== bonLivraison);
+          this.deleteLivraison = this.bonLivraisons.some(line => line.selected);
+        },
+      });
+     }else{
+      alert(`Ce bon de livraison n° ${bonLivraison.numLivraison} ne peut pas supprimer!`)
+     }      
+    }
   }
 }

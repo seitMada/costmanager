@@ -11,7 +11,7 @@ export interface InterfaceBonCommandes {
     montantHT: number;
     montantTva: number;
     noPiece: string;
-    validation: boolean;
+    validation: number;
     commentaire: string;
     dateCommande: Date;
     fournisseurId: number;

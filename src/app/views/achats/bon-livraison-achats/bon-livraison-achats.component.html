@@ -19,8 +19,8 @@
     </div>
     <div class="bd-highlight">
       <button class="btn btn-outline-success btn-sm me-1" [disabled]="!addLivraison" (click)="openModalArticle(content)" title="Ajout bon de livraison"><i class="fas fa-plus"></i></button>
-      <button class="btn btn-outline-primary btn-sm me-1" [disabled]="!listLivraison" ><i class="fas fa-list"></i></button>
-      <button class="btn btn-outline-danger btn-sm me-1" *ngIf="deleteLivraison" title="Supprimer bon de livraison">
+      <!-- <button class="btn btn-outline-primary btn-sm me-1" [disabled]="!listLivraison" ><i class="fas fa-list"></i></button> -->
+      <button class="btn btn-outline-danger btn-sm me-1" *ngIf="deleteLivraison" (click)="deleteSelectedRowsLivraison()" title="Supprimer bon de livraison">
         <i class="fas fa-trash"></i>
       </button>
     </div>
@@ -52,7 +52,7 @@
             <div class="col-sm-6">
               <div class="input-group">
                 <span class="input-group-text col-5" id="basic-addon1">Date de livraison</span>
-                <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datelivraison" [(ngModel)]="dates.tomorrow" autocomplete="off">
+                <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datelivraison" [disabled]="inputModif" [(ngModel)]="dates.tomorrow" autocomplete="off">
               </div>
             </div>
             <div class="col-sm-6">
@@ -67,7 +67,7 @@
             <div class="col-sm-6">
               <div class="input-group">
                 <span class="input-group-text col-5" id="basic-addon1">Numéro bon de livraison</span>
-                <input type="text" class="form-control col-7" name="numBl" [(ngModel)]="num_livraison" autocomplete="off">
+                <input type="text" class="form-control col-7" [disabled]="inputModif" name="numBl" [(ngModel)]="bonLivraison.numLivraison" autocomplete="off">
               </div>
             </div>
             <div class="col-sm-6">
@@ -110,7 +110,7 @@
             <div class="col-sm-12">
               <div class="input-group">
                 <span class="input-group-text col-3" id="basic-addon1">Commentaire</span>
-                <input type="text" class="form-control col-9"  name="commentaire" aria-describedby="basic-addon1">
+                <input type="text" [disabled]="inputModif" class="form-control col-9" [(ngModel)]="bonLivraison.commentaire" name="commentaire" aria-describedby="basic-addon1">
               </div>
             </div>
           </div>
@@ -128,32 +128,32 @@
           <thead>
             <tr>
               <th class="col-1"></th>
-              <th class="col-2">Famille</th>
               <th class="col-3">Designation</th>
               <th class="col-2 text-center">Qté Commandé</th>
               <th class="col-1">Qté Livré</th>
-              <th class="col-1">Prix</th>
+              <th class="col-1">Unité</th>
+              <th class="col-2 text-center">Prix</th>
               <th class="col-1">Montant</th>
               <th class="col-1">Remise</th>              
             </tr>
           </thead>
           <tbody >
             <tr *ngFor="let line of livraisonDetails">
-              <td class="col-1"><input class="form-check-input" type="checkbox" name="dl-{{line.id}}" id="dl-{{line.id}}" [(ngModel)]="line.selected" (change)="checkSelectedRows()"></td>
-              <td class="col-2">{{line.articlefournisseur.article.familles.libelle}}</td>
+              <td class="col-1"><input class="form-check-input" type="checkbox" name="dl-{{line.id}}" [disabled]="inputModif" id="dl-{{line.id}}" [(ngModel)]="line.selected" (change)="checkSelectedRows()"></td>
               <td class="col-3">{{line.articlefournisseur.article.libelle}}</td>
-              <td class="col-2"><input type="text" class="form-control form-control-sm w-50 m-auto" [disabled]="inputModif" name="qte_commande[]" [(ngModel)]="line.quantiteCommandee"></td>
-              <td class="col-1"><input type="text" class="form-control form-control-sm" [disabled]="inputModif" name="qte_commande[]" [(ngModel)]="line.quantiteLivree"></td>
-              <td class="col-1">
-                <div class="input-group input-group-sm">
-                  <input type="text" class="form-control form-control-sm" [disabled]="inputModif"  name="prix_unitaire[]" [(ngModel)]="line.prixarticle">
+              <td class="col-2"><input type="number" class="form-control form-control-sm w-50 m-auto" [disabled]="inputModif" placeholder="0.00" [step]="line.articlefournisseur.article.unite.step" name="qte_commande[]" [(ngModel)]="line.quantiteCommandee"></td>
+              <td class="col-1"><input type="number" class="form-control form-control-sm" [disabled]="inputModif" placeholder="0.00" [step]="line.articlefournisseur.article.unite.step" name="qte_commande[]" [(ngModel)]="line.quantiteLivree"></td>
+              <td class="col-1">{{line.articlefournisseur.article.unite.abreviation }}</td>
+              <td class="col-2">
+                <div class="input-group input-group-sm w-50 m-auto">
+                  <input type="number" class="form-control form-control-sm " [disabled]="inputModif" placeholder="0.00" [step]="line.articlefournisseur.article.unite.step"  name="prix_unitaire[]" [(ngModel)]="line.prixarticle">
                   <span class="input-group-text">€</span>
                 </div>
               </td>
               <td class="col-1 text-end">{{line.quantiteLivree * line.prixarticle | number:'1.2-2'}} €</td>
               <td class="col-1">
                 <div class="input-group input-group-sm">
-                  <input type="text" class="form-control" [disabled]="inputModif" name="remise[]" [(ngModel)]="line.remise">
+                  <input type="number" class="form-control" [disabled]="inputModif" placeholder="0.00" [step]="line.articlefournisseur.article.unite.step" name="remise[]" [(ngModel)]="line.remise">
                   <span class="input-group-text">€</span>
                 </div>
               </td>
@@ -164,7 +164,7 @@
       <div class="card d-flex">
         <div class="d-flex flex-row-reverse bd-highlight fw-bold p-1">
           <span class="col-1"></span>
-          <span class="col-1 ms-2 text-end">{{getTotalMontant() | number:'1.2-2'}} €</span>
+          <span class="col-1 ms-2 text-end">{{ montantTTc? montantTTc:getTotalMontant() | number:'1.2-2'}} €</span>
           <span class="me-1">Montant Total</span>
         </div>
       </div>
@@ -188,13 +188,13 @@
         </thead>
         <tbody>
         <tr *ngFor="let item of bonLivraisons">
-          <td class="col-1"><input type="checkbox" name="livraison-{{item.id}}" id="livraison-{{item.id}}" [(ngModel)]="item.selected"></td>
-          <td class="col-2">{{ item.numLivraison }}</td>
-          <td class="col-1">{{ item.exploitation.libelle }}</td>
-          <td class="col-2">{{ item.centre.libelle }}</td>
-          <td class="col-2">{{ item.dateCommande | date: 'dd/MM/yyyy' }}</td>
-          <td class="col-2">{{ item.dateLivraison | date: 'dd/MM/yyyy' }}</td>
-          <td class="col-1">{{ item.montantHt - item.remise | number:'1.2-2' }} €</td>
+          <td class="col-1"><input type="checkbox" name="livraison-{{item.id}}" id="livraison-{{item.id}}" [(ngModel)]="item.selected" (change)="selectBonLivraison()"></td>
+          <td class="col-2" (click)="showLivraison(item)">{{ item.numLivraison }}</td>
+          <td class="col-1" (click)="showLivraison(item)">{{ item.exploitation.libelle }}</td>
+          <td class="col-2" (click)="showLivraison(item)">{{ item.centre.libelle }}</td>
+          <td class="col-2" (click)="showLivraison(item)">{{ item.dateCommande | date: 'dd/MM/yyyy' }}</td>
+          <td class="col-2" (click)="showLivraison(item)">{{ item.dateLivraison | date: 'dd/MM/yyyy' }}</td>
+          <td class="col-1" (click)="showLivraison(item)">{{ item.montantHt - item.remise | number:'1.2-2' }} €</td>
         </tr>
         </tbody>
       </table>

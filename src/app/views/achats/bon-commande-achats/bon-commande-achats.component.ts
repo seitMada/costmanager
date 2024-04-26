@@ -160,7 +160,7 @@ export class BonCommandeAchatsComponent implements OnInit {
               montantHT:0,
               montantTva: 0,
               noPiece: this.num_commande,
-              validation: false,
+              validation: 0,
               commentaire: '',
               dateCommande: this.dates.today,
               fournisseurId: this.fournisseur.id ? this.fournisseur.id: 0,
@@ -270,7 +270,7 @@ export class BonCommandeAchatsComponent implements OnInit {
       montantHT: 0,
       montantTva: 0,
       noPiece: this.num_commande,
-      validation: false,
+      validation: 0,
       commentaire: '',
       dateCommande: new Date(),
       fournisseurId: this.fournisseur.id ? this.fournisseur.id:0,
@@ -504,7 +504,8 @@ export class BonCommandeAchatsComponent implements OnInit {
     };
     this.commandeService.getCommandeDetailByCommandeId(this.idBonCommande).subscribe({
       next:(commandeDetail) =>{
-        this.commandes =[];        
+        this.commandes =[];  
+        this.montantTTc=0;      
         for(const detailComm of commandeDetail){
           this.commandeDetail = {
             commandeId: detailComm.commandeId,
@@ -516,6 +517,8 @@ export class BonCommandeAchatsComponent implements OnInit {
             articlefournisseur: detailComm.articlefournisseur,
             selected:false
           }
+          
+          this.montantTTc += (detailComm.QteCommande * detailComm.prixarticle) -detailComm.remise;
           this.commandes.push(this.commandeDetail)
         }
         this.addCommande = !this.addCommande;
@@ -544,6 +547,8 @@ export class BonCommandeAchatsComponent implements OnInit {
           alert('veuillez réessayer!');
         }
       });
+    }else{
+      alert('veuillez sélectionné un article!');
     } 
   }
 
