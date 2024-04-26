@@ -38,6 +38,13 @@
             <div class="row m-2">
               <div class="col-sm-6">
                 <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Date de commande</span>
+                  <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datecommande" [disabled]="inputModif"
+                    [(ngModel)]="dates.today" autocomplete="off">
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Fournisseur</span>
                   <input type="text" class="form-control col-6" [(ngModel)]="boncommande.fournisseur.raison_social" name="fournisseurId" 
                     aria-label="fournisseur" [disabled]="true" aria-describedby="basic-addon1">
@@ -100,11 +107,11 @@
             <thead>
               <tr>
                 <th class="col-1"></th>
-                <th class="col-3">Famille</th>
+                <th class="col-2">Famille</th>
                 <th class="col-3">Designation</th>
                 <th class="col-1">Quantité</th>
                 <th class="col-1 text-center">Unité</th>
-                <th class="col-1">Prix</th>
+                <th class="col-2 text-center">Prix</th>
                 <th class="col-1">Montant</th>
                 <th class="col-1">Remise</th>
                 <!-- <th>Qté commandé FT</th>
@@ -115,22 +122,22 @@
             <tbody >
               <tr *ngFor="let line of commandes">
                 <td  class="col-1">
-                    <input class="form-check-input" type="checkbox" name="dc-{{line.id}}" id="dc-{{line.id}}" [(ngModel)]="line.selected" (change)="checkSelectedRows()">
+                    <input class="form-check-input" [disabled]="inputModif" type="checkbox" name="dc-{{line.id}}" id="dc-{{line.id}}" [(ngModel)]="line.selected" (change)="checkSelectedRows()">
                 </td>
-                <td class="col-3">{{line.articlefournisseur.article.familles.libelle}}</td>
+                <td class="col-2">{{line.articlefournisseur.article.familles.libelle}}</td>
                 <td class="col-3">{{line.articlefournisseur.article.libelle}}</td>
-                <td class="col-1 text-end"><input type="text" class="form-control form-control-sm" [disabled]="inputModif" name="qte_commande[]" [(ngModel)]="line.QteCommande"></td>
+                <td class="col-1 text-end"><input type="number" class="form-control form-control-sm" [disabled]="inputModif" placeholder="0.00" [step]="line.articlefournisseur.article.unite.step" name="qte_commande[]" [(ngModel)]="line.QteCommande"></td>
                 <td class="col-1 text-center">{{line.articlefournisseur.article.unite.abreviation}}</td>
-                <td class="col-1 text-end">
-                  <div class="input-group input-group-sm">
-                    <input type="text" class="form-control form-control-sm" [disabled]="inputModif"  name="prix_unitaire[]" [(ngModel)]="line.prixarticle">
+                <td class="col-2">
+                  <div class="input-group input-group-sm w-50 m-auto">
+                    <input type="number" class="form-control form-control-sm" [disabled]="inputModif" placeholder="0.00" [step]="line.articlefournisseur.article.unite.step"  name="prix_unitaire[]" [(ngModel)]="line.prixarticle">
                     <span class="input-group-text">€</span>
                   </div>
                 </td>
-                <td class="col-1 text-end">{{line.QteCommande * line.prixarticle}} €</td>
+                <td class="col-1 text-end">{{line.QteCommande * line.prixarticle | number:'1.2-2'}} €</td>
                 <td class="col-1">
                   <div class="input-group input-group-sm">
-                    <input type="text" class="form-control" [disabled]="inputModif" name="remise[]" [(ngModel)]="line.remise">
+                    <input type="number" class="form-control" [disabled]="inputModif" placeholder="0.00" [step]="line.articlefournisseur.article.unite.step" name="remise[]" [(ngModel)]="line.remise">
                     <span class="input-group-text">€</span>
                   </div>
                 </td>
@@ -144,7 +151,7 @@
         <div class="card d-flex">
           <div class="d-flex flex-row-reverse bd-highlight fw-bold p-1">
             <span class="col-1"></span>
-            <span class="col-1 ms-2 text-end">{{getTotalMontant() - getTotalRemise() | number:'1.2-2'}} €</span>
+            <span class="col-1 ms-2 text-end">{{ montantTTc? montantTTc:getTotalMontant() - getTotalRemise() | number:'1.2-2'}} €</span>
             <span class="me-1">Montant Total</span>
           </div>
         </div>
@@ -167,12 +174,16 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let line of boncommandes" [ngClass]="line.validation ===false ? 'table-light' : 'table-info'">
-          <td class="col-1"><input type="checkbox" name="af-{{line.id}}" id="af-{{line.id}}" [(ngModel)]="line.selected" (change)="selectBoncomm()"></td>
-          <td class="col-3" (click)="showCommande(line)">{{line.noPiece}}</td>
-          <td class="col-2" (click)="showCommande(line)">{{line.dateCommande | date :'dd/MM/yyyy'}}</td>
-          <td class="col-3" (click)="showCommande(line)">{{line.montantHT | number:'1.2-2'}} €</td>
-          <td class="col-2 text-info"><i (click)="generatePDF(line)" class="fas fa-print" title="Télécharger PDF"></i></td>
+        <tr *ngFor="let lines of boncommandes" [ngClass]="{
+          'table-light': lines.validation === 0,
+          'table-info': lines.validation === 1,
+          'table-primary': lines.validation !== 0 && lines.validation !== 1
+        }">
+          <td class="col-1"><input type="checkbox" name="af-{{lines.id}}" id="af-{{lines.id}}" [(ngModel)]="lines.selected" (change)="selectBoncomm()"></td>
+          <td class="col-3" (click)="showCommande(lines)">{{lines.noPiece}}</td>
+          <td class="col-2" (click)="showCommande(lines)">{{lines.dateCommande | date :'dd/MM/yyyy'}}</td>
+          <td class="col-3" (click)="showCommande(lines)">{{lines.montantHT | number:'1.2-2'}} €</td>
+          <td class="col-2 text-info"><i (click)="generatePDF(lines)" class="fas fa-print" title="Télécharger PDF"></i></td>
         </tr>
       </tbody>
     </table>

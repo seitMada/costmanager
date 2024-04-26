@@ -32,10 +32,12 @@ export const environment = {
     APIGETEXPLOITATIONBYFOURNISSEUR: endPoint + 'fournisseurexploitation/',
 
     APIGETCOMMANDEBYFOURNISSEUREXPLOITATION: endPoint + 'commande/fournisseur/',
+    APIGETCOMMANDEBYFOURNISSEUREXPLOITATIONVALIDATE: endPoint + 'commande/fournisseurValidate/',
     APICREATECOMMANDEDETAIL :endPoint + 'commande/commandeDetail',
     APIGETDIXDERNIERCOMMANDE: endPoint + 'commande_detail/derniersCommandes/',
     APIGETCOMMANDEDETAILBYCOMMANDEID: endPoint + 'commande_detail/',
-
+    APICREATECOMMANDE: endPoint + 'commande',
+    APIDELETECOMMANDE: endPoint +'commande/delete_commande',
 
     APIGETARTICLE : endPoint + 'articles',
     APIGETARTICLEBYID: endPoint + 'articles/',
@@ -87,10 +89,6 @@ export const environment = {
     APIPOSTDESACTIVEFICHETECHNIQUES: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitations',
     APIUPDATEFICHETECHNIQUEEXPLOITATION: endPoint + 'fichetechniqueexploitation/delete_fichetechniqueexploitation/',
     
-    APICREATECOMMANDE: endPoint + 'commande',
-    APIDELETECOMMANDE: endPoint +'commande/delete_commande',
-
-
     APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID: endPoint + 'articlefournisseur/',
     APIGETARTICLEFOURNISSEURBYARTICLEID: endPoint + 'articlefournisseur/byarticleId/',
     ARTICLEFOURNISSEURBYARTICLE: endPoint+ 'articlefournisseur/byarticleId',
@@ -118,4 +116,9 @@ export const environment = {
     APIGETPPOBYCRANDDATE: endPoint + 'ppo',
     APICREATEPPO: endPoint + 'ppo/create',
     APIUPDATEPPO: endPoint + 'ppo/update',
+
+    APIGETLIVRAISONBYFOURNISSEUR : endPoint + 'livraison/fournisseur/',
+    APICREATEBONLIVRAISON: endPoint + 'livraison',
+    APIGETDETAILLIVRAISONBYLIVRAISONID : endPoint + 'livraison/',
+    DELETEBONLIVRAISON: endPoint + 'livraison/delete',
 };

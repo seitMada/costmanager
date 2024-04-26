@@ -67,7 +67,6 @@ export class BonCommandeAchatsComponent implements OnInit {
   public articleFournisseurId = 0;
   public montantTTc=0;
   public montantRemise =0;
-  public maxPrixAchat = 0;
 
   public num_commande: string;
 
@@ -158,12 +157,11 @@ export class BonCommandeAchatsComponent implements OnInit {
             this.centres = _centre;
             this.centre = _centre[0];
             this.boncommande = {
-              quantiteCommande: 0,
               remise: 0,
               montantHT:0,
               montantTva: 0,
               noPiece: this.num_commande,
-              validation: false,
+              validation: 0,
               commentaire: '',
               dateCommande: this.dates.today,
               fournisseurId: this.fournisseur.id ? this.fournisseur.id: 0,
@@ -195,13 +193,11 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.commandeService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
             next: (artFournisseur: any) => {
               this.articleFournisseurs = artFournisseur;
-    
               for (const articlefournisseur of artFournisseur) {
                   this.commandeDetail = {
                     commandeId: 0,
                     articlefournisseurId: articlefournisseur.id ? articlefournisseur.id :0,
                     QteCommande: 0,
-                    QteLivre: 0,
                     prixarticle: articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat: 0,
                     remise: 0,
                     validationdetailbc: false,
@@ -271,12 +267,11 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   public resetCommande(){
     this.boncommande = {
-      quantiteCommande: 0,
       remise: 0,
       montantHT: 0,
       montantTva: 0,
       noPiece: this.num_commande,
-      validation: false,
+      validation: 0,
       commentaire: '',
       dateCommande: new Date(),
       fournisseurId: this.fournisseur.id ? this.fournisseur.id:0,
@@ -372,7 +367,6 @@ export class BonCommandeAchatsComponent implements OnInit {
                       commandeId: 0,
                       articlefournisseurId: articlefournisseur.id ? articlefournisseur.id:0,
                       QteCommande: 0,
-                      QteLivre: 0,
                       prixarticle: articlefournisseur.prixReference,
                       remise: 0,
                       validationdetailbc: false,
@@ -404,7 +398,6 @@ export class BonCommandeAchatsComponent implements OnInit {
                   commandeId: 0,
                   articlefournisseurId: articlefournisseur.id ? articlefournisseur.id:0,
                   QteCommande: 0,
-                  QteLivre: 0,
                   prixarticle: articlefournisseur.prixReference,
                   remise: 0,
                   validationdetailbc: false,
@@ -504,7 +497,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
 
-  showCommande(bonCommande: BonCommande) {
+  showCommande(bonCommande: InterfaceBonCommandes) {
     this.boncommande = bonCommande;
     this.idBonCommande =bonCommande.id ? bonCommande.id :0;
     this.dates = {
@@ -512,19 +505,21 @@ export class BonCommandeAchatsComponent implements OnInit {
     };
     this.commandeService.getCommandeDetailByCommandeId(this.idBonCommande).subscribe({
       next:(commandeDetail) =>{
-        this.commandes =[];        
+        this.commandes =[];  
+        this.montantTTc=0;      
         for(const detailComm of commandeDetail){
           this.commandeDetail = {
             commandeId: detailComm.commandeId,
             articlefournisseurId: detailComm.articlefournisseurId,
             QteCommande: detailComm.QteCommande,
-            QteLivre: detailComm.QteLivre,
             prixarticle: detailComm.prixarticle,
             remise: detailComm.remise,
             validationdetailbc: detailComm.validationdetailbc,
             articlefournisseur: detailComm.articlefournisseur,
             selected:false
           }
+          
+          this.montantTTc += (detailComm.QteCommande * detailComm.prixarticle) -detailComm.remise;
           this.commandes.push(this.commandeDetail)
         }
         this.addCommande = !this.addCommande;
@@ -553,6 +548,8 @@ export class BonCommandeAchatsComponent implements OnInit {
           alert('veuillez réessayer!');
         }
       });
+    }else{
+      alert('veuillez sélectionné un article!');
     } 
   }
 

@@ -7,18 +7,17 @@ import { InterfaceCommandeDetails } from "./interface-commandedetail";
 
 export interface InterfaceBonCommandes {
     id?: number | undefined;
-    quantiteCommande: number;
     remise: number;
     montantHT: number;
     montantTva: number;
     noPiece: string;
-    validation: boolean;
+    validation: number;
     commentaire: string;
     dateCommande: Date;
     fournisseurId: number;
     exploitationId: number;
     centreId: number;
-    selected:false,
+    selected?:boolean,
 
     fournisseur: InterfaceFournisseur;
     centre: InterfaceCentreRevenu;
