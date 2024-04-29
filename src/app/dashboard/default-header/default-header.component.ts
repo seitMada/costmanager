@@ -2,8 +2,8 @@ import { Component, Input } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 
 import { ClassToggleService, HeaderComponent } from '@coreui/angular';
-import { InterfaceOperateur } from 'src/app/shared/model/interface-operateur';
-import { LoginService } from 'src/app/shared/service/login.service';
+import { InterfaceOperateur } from '../../shared/model/interface-operateur';
+import { LoginService } from '../../shared/service/login.service';
 
 @Component({
   selector: 'app-default-header',

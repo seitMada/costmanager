@@ -4,6 +4,7 @@ import { FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ModalDismissReasons, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+<<<<<<< Updated upstream
 
 import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
 import { ExploitationService } from 'src/app/shared/service/exploitation.service';
@@ -23,6 +24,17 @@ import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-art
 import { InterfaceArticleExploitation, InterfaceArticleExploitations } from 'src/app/shared/model/interface-articleexploitations';
 import { InterfaceBonCommandes } from 'src/app/shared/model/interface-bonCommande';
 import { InterfaceCommandeDetails } from 'src/app/shared/model/interface-commandedetail';
+=======
+import { Adress } from '../../../shared/model/adresse';
+import { Centrerevenu, Centrerevenus } from '../../../shared/model/centrerevenu';
+import { Fournisseur, Fournisseurs } from '../../../shared/model/fournisseurs';
+import { InterfaceCentreRevenu } from '../../../shared/model/interface-centrerevenu';
+import { InterfaceExploitations } from '../../../shared/model/interface-exploitations';
+import { InterfaceFournisseur } from '../../../shared/model/interface-fournisseurs';
+import { CentreRevenuService } from '../../../shared/service/centre-revenu.service';
+import { ExploitationService } from '../../../shared/service/exploitation.service';
+import { FournisseurService } from '../../../shared/service/fournisseur.service';
+>>>>>>> Stashed changes
 
 @Component({
   selector: 'app-bon-livraison-achats',

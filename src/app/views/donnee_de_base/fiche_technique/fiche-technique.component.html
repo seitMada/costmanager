@@ -84,14 +84,14 @@
             <div class="row g-2">
               <div class="input-group col">
                 <span class="input-group-text col-6" id="cout">Coût</span>
-                <input type="text" class="form-control col-3 bg-white" aria-label="cout" aria-describedby="basic-addon1"
-                  [(ngModel)]="fichetechnique.cout" disabled="true">
+                <input type="number" class="form-control col-3 bg-white" aria-label="cout" aria-describedby="basic-addon1"
+                  [(ngModel)]="fichetechnique.cout" disabled="true" step=".00">
                 <span class="input-group-text col-2">€</span>
               </div>
               <div class="input-group col">
                 <span class="input-group-text col-6" id="prix">Prix de vente</span>
-                <input type="text" class="form-control col-3 bg-white" aria-label="prix" aria-describedby="basic-addon1"
-                  [(ngModel)]="fichetechnique.prix" [disabled]="modifToggle">
+                <input type="number" class="form-control col-3 bg-white" aria-label="prix" aria-describedby="basic-addon1"
+                  [(ngModel)]="fichetechnique.prix" [disabled]="modifToggle"step=".00">
                 <span class="input-group-text col-2">€</span>
               </div>
             </div>
@@ -232,19 +232,19 @@
                 <div class="col-12 mb-1">
                   <div class="input-group input-group-sm">
                     <span class="input-group-text col-6 fw-bold">Coût FT</span>
-                    <span class="input-group-text bg-white col-6 fw-bold">{{cout.fichetechnique}} €</span>
+                    <span class="input-group-text bg-white col-6 fw-bold">{{cout.fichetechnique | number : '1.2-2'}} €</span>
                   </div>
                 </div>
                 <div class="col-6">
                   <div class="input-group input-group-sm">
                     <span class="input-group-text col-8 fw-bold">Coût alimentaire</span>
-                    <span class="input-group-text bg-white col-4 fw-bold">{{cout.alimentaire}} €</span>
+                    <span class="input-group-text bg-white col-4 fw-bold">{{cout.alimentaire | number : '1.2-2'}} €</span>
                   </div>
                 </div>
                 <div class="col-6">
                   <div class="input-group input-group-sm">
                     <span class="input-group-text col-8 fw-bold">Coût emballage</span>
-                    <span class="input-group-text bg-white col-4 fw-bold">{{cout.emballage}} €</span>
+                    <span class="input-group-text bg-white col-4 fw-bold">{{cout.emballage | number : '1.2-2'}} €</span>
                   </div>
                 </div>
               </div>
@@ -401,3 +401,16 @@
       (click)="modal.close('Save click')">Enregistrer</button>
   </div>
 </ng-template>
+
+<c-toaster [placement]="position" class="p-3" position="fixed">
+  <c-toast #toast="cToast" (timer)="onTimerChange($event)" (visibleChange)="onVisibleChange($event)" [visible]="visible"
+    color="{{color}}">
+    <c-toast-body>
+      <div class="row">
+        <div class="col-10 p-auto"><span [ngClass]="textcolor">{{message}}</span></div>
+        <div class="col-2"><button aria-label="close" class="btn btn-sm btn-outline-light no-border"
+            (click)="toast.visible=false"><i class="fas fa-x"></i></button></div>
+      </div>
+    </c-toast-body>
+  </c-toast>
+</c-toaster>

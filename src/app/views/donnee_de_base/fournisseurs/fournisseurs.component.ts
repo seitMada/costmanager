@@ -11,29 +11,51 @@ import { ExploitationService } from '../../../shared/service/exploitation.servic
 import { FournisseurService } from '../../../shared/service/fournisseur.service';
 import { OperateursService } from "../../../shared/service/operateurs.service";
 import { ArticleService } from "../../../shared/service/article.service";
-import { Exploitations } from 'src/app/shared/model/exploitations';
-import { InterfaceContact, InterfaceOperateur } from 'src/app/shared/model/interface-operateur';
+import { Exploitations } from '../../../shared/model/exploitations';
+import { InterfaceContact, InterfaceOperateur } from '../../../shared/model/interface-operateur';
 import { PAYS } from "../../../../assets/pays";
-import { Fournisseur, Fournisseurs } from 'src/app/shared/model/fournisseurs';
+import { Fournisseur, Fournisseurs } from '../../../shared/model/fournisseurs';
 import { Adress, Adresse } from "../../../shared/model/adresse";
-import { Article } from 'src/app/shared/model/articles';
-import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-articlefournisseurs';
-import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
-import { Unite, Unites } from 'src/app/shared/model/unite';
-import { InterfaceUnite } from 'src/app/shared/model/interface-unite';
-import { UnitesService } from 'src/app/shared/service/unites.service';
-import { IntefaceConditionnement } from 'src/app/shared/model/inteface-conditionnements';
+import { Article } from '../../../shared/model/articles';
+import { InterfaceArticlefournisseurs } from '../../../shared/model/interface-articlefournisseurs';
+import { InterfaceArticle } from '../../../shared/model/interface-articles';
+import { Unite, Unites } from '../../../shared/model/unite';
+import { InterfaceUnite } from '../../../shared/model/interface-unite';
+import { UnitesService } from '../../../shared/service/unites.service';
+import { IntefaceConditionnement } from '../../../shared/model/inteface-conditionnements';
 import { TooltipModule } from '@coreui/angular';
+import { ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderComponent } from '@coreui/angular';
 
 @Component({
   selector: 'app-fournisseurs',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule, TooltipModule],
+  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule, TooltipModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
   templateUrl: './fournisseurs.component.html',
   styleUrl: './fournisseurs.component.scss'
 })
 export class FournisseursComponent {
 
+  position = 'top-end';
+  visible = false;
+  percentage = 0;
+  public message = '';
+  public color = 'success';
+  public textcolor = 'text-light';
+
+  toggleToast(_message: string) {
+    this.message = _message;
+    this.visible = !this.visible;
+  }
+
+  onVisibleChange($event: boolean) {
+    this.visible = $event;
+    this.percentage = !this.visible ? 0 : this.percentage;
+  }
+
+  onTimerChange($event: number) {
+    this.percentage = $event * 25;
+  }
+  
   constructor(
     public router: Router,
     public route: ActivatedRoute,
@@ -276,7 +298,7 @@ export class FournisseursComponent {
         exploitationsId: exploitation
       }
       this.fournisseurService.desactiveFournisseursExploitation(data).subscribe(() => {
-        alert('Fournisseurs supprimer');
+        this.toggleToast('Fournisseurs supprimer');
         this.initFournisseur();
       })
     }
@@ -293,7 +315,7 @@ export class FournisseursComponent {
     }
     this.fournisseurService.desactiveFournisseurExploitation(this.idFournisseur, exploitation).subscribe({
       next: (data) => {
-        alert('Fournisseur supprimer');
+        this.toggleToast('Fournisseur supprimer');
         this.resetFournisseur();
         this.initFournisseur();
         this.toggle = !this.toggle;
@@ -349,7 +371,7 @@ export class FournisseursComponent {
           }
           this.fournisseurService.updateFournisseurExploitation(fournisseur.id, exploitation).subscribe({
             next: () => {
-              alert('Fournisseur enregistrer')
+              this.toggleToast('Fournisseur enregistrer')
               this.modifToggle = !this.modifToggle;
             }
           });
@@ -372,7 +394,7 @@ export class FournisseursComponent {
           next: (data) => {
             const { fournisseur, updateExploitationFournisseur, fournisseurExploitation } = data;
             this.fournisseur = fournisseur;
-            alert('Fournisseur modifier')
+            this.toggleToast('Fournisseur modifier')
             for (const item of this.exploitations) {
               const comparisonItem = fournisseurExploitation.find((i: any) => i.exploitationsId === item.id);
               if (comparisonItem != undefined) {
@@ -518,7 +540,7 @@ export class FournisseursComponent {
               this.fournisseur.operateur = operateur;
             }
           })
-          alert('Contacts ajouter')
+          this.toggleToast('Contacts ajouter')
         }
       });
     } else {
@@ -531,7 +553,7 @@ export class FournisseursComponent {
               this.modifContactToggle = false;
             }
           })
-          alert('Contacts modifier')
+          this.toggleToast('Contacts modifier')
         }
       })
     }
@@ -556,7 +578,7 @@ export class FournisseursComponent {
             this.fournisseur.operateur = operateur;
             this.checkContact = [];
             this.modifContactToggle = !this.modifContactToggle;
-            alert('Contacts supprimer')
+            this.toggleToast('Contacts supprimer')
           }
         })
       }
@@ -627,13 +649,13 @@ export class FournisseursComponent {
                       this.articleFournisseurs = _article;
                     }
                   })
-                  alert('Article fournisseur ajouter')
+                  this.toggleToast('Article fournisseur ajouter')
                 }
               })
             }
           });
         } else {
-          // alert('annuler')
+          // this.toggleToast('annuler')
         }
       },
       (reason) => {
@@ -699,7 +721,7 @@ export class FournisseursComponent {
                         this.articleFournisseurs = _article;
                       }
                     })
-                    alert('Article fournisseur ajouter')
+                    this.toggleToast('Article fournisseur ajouter')
                   }
                 })
               }
@@ -713,7 +735,7 @@ export class FournisseursComponent {
                       this.articleFournisseurs = _article;
                     }
                   })
-                  alert('Conditionnement ajouter')
+                  this.toggleToast('Conditionnement ajouter')
                 }
               })
             } else {
@@ -724,13 +746,13 @@ export class FournisseursComponent {
                       this.articleFournisseurs = _article;
                     }
                   })
-                  alert('Conditionnement Modifier')
+                  this.toggleToast('Conditionnement Modifier')
                 }
               })
             }
           }
         } else {
-          // alert('annuler')
+          // this.toggleToast('annuler')
         }
       },
       (reason) => {
@@ -762,7 +784,7 @@ export class FournisseursComponent {
                     this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
                       next: (_article) => {
                         this.articleFournisseurs = _article;
-                        alert('Article fournisseur supprimer');
+                        this.toggleToast('Article fournisseur supprimer');
                       }
                     })
                   }
@@ -771,7 +793,7 @@ export class FournisseursComponent {
             }
           }
         })
-        alert('Conditionnement supprimer');
+        this.toggleToast('Conditionnement supprimer');
       },
     })
   }

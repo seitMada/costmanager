@@ -15,18 +15,17 @@ import { InterfacePpoDetail, InterfacePpos } from '../../../shared/model/interfa
 import { CentreRevenuService } from "../../../shared/service/centre-revenu.service";
 import { ExploitationService } from "../../../shared/service/exploitation.service";
 import { PpoService } from "../../../shared/service/ppo.service";
-import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
-import { ArticleService } from 'src/app/shared/service/article.service';
-import { InterfaceFichetechnique } from 'src/app/shared/model/interface-fichetechnique';
-import { FichetechniqueService } from 'src/app/shared/service/fichetechnique.service';
-import { InterfaceComposition } from 'src/app/shared/model/interface-compositions';
+import { InterfaceArticle } from '../../../shared/model/interface-articles';
+import { ArticleService } from '../../../shared/service/article.service';
+import { InterfaceFichetechnique } from '../../../shared/model/interface-fichetechnique';
+import { FichetechniqueService } from '../../../shared/service/fichetechnique.service';
+import { InterfaceComposition } from '../../../shared/model/interface-compositions';
 
-import {
-  ToastBodyComponent,
-  ToastComponent,
-  ToasterComponent,
-  ToastHeaderComponent
-} from '@coreui/angular';
+import { ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderComponent } from '@coreui/angular';
+
+import { PdfserviceService } from 'src/app/shared/service/pdfservice.service';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
 
 @Component({
@@ -77,6 +76,7 @@ export class PposComponent {
   public active = 1;
 
   public centrerevenus: InterfaceCentreRevenu[];
+  public centrerevenusdefault: InterfaceCentreRevenu[];
   public centrerevenu: InterfaceCentreRevenu;
   public exploitations: InterfaceExploitations[];
   public exploitation: InterfaceExploitations;
@@ -100,6 +100,7 @@ export class PposComponent {
     private articleService: ArticleService,
     private fichetetchniqueService: FichetechniqueService,
     private datePipe: DatePipe,
+    private pdfService: PdfserviceService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
@@ -107,6 +108,7 @@ export class PposComponent {
     this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
       next: async (_centreRevenu) => {
         this.centrerevenus = _centreRevenu;
+        this.centrerevenusdefault = _centreRevenu;
         this.centrerevenu = _centreRevenu[0];
         await this.selectCentreRevenus(this.centrerevenu);
         if (this.isAdmin === true) {
@@ -136,7 +138,6 @@ export class PposComponent {
     this.ppoService.getPpoByCrAndDate(this.idcentrerevenu, this.formatDate(this.dates.debut), this.formatDate(this.dates.fin, true)).subscribe({
       next: (_ppos: any) => {
         this.ppos = _ppos;
-        console.log(_ppos)
       }
     })
   }
@@ -179,28 +180,28 @@ export class PposComponent {
   }
 
   ngOnInit(): void {
+
   }
 
   submit() {
     this.ppo.ppodetail = [];
     this.ppo.ppodetail = this.ppo.ppodetail.concat(this.ppodetailsarticles);
     this.ppo.ppodetail = this.ppo.ppodetail.concat(this.ppodetailsfichetechniques);
-    console.log(this.ppo)
-    // if (this.idPpo === 0) {
-    //   this.ppoService.createPpo(this.ppo).subscribe({
-    //     next: () => {
-    //       this.toggleToast('Perte du ' + this.screenDate(this.ppo.date_ppo) + ' enregistrer');
-    //       this.modifToggle = !this.modifToggle;
-    //     }
-    //   })
-    // } else {
-    //   this.ppoService.updatePpo(this.ppo).subscribe({
-    //     next: () => {
-    //       this.toggleToast('Perte du ' + this.screenDate(this.ppo.date_ppo) + ' modifier')
-    //       this.modifToggle = !this.modifToggle;
-    //     }
-    //   })
-    // }
+    if (this.idPpo === 0) {
+      this.ppoService.createPpo(this.ppo).subscribe({
+        next: () => {
+          this.toggleToast('Perte du ' + this.screenDate(this.ppo.date_ppo) + ' enregistrer');
+          this.modifToggle = !this.modifToggle;
+        }
+      })
+    } else {
+      this.ppoService.updatePpo(this.ppo).subscribe({
+        next: () => {
+          this.toggleToast('Perte du ' + this.screenDate(this.ppo.date_ppo) + ' modifier')
+          this.modifToggle = !this.modifToggle;
+        }
+      })
+    }
   }
 
   cancel() {
@@ -219,18 +220,75 @@ export class PposComponent {
   }
 
   async addToggleModal() {
-    await this.resetPpo();
-    this.modifToggle = !this.modifToggle;
-    this.toggle = (this.toggle === false ? true : false);
-    this.addToggle = (this.addToggle === false ? true : false);
+    // this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+    //   next: async (_centrerevenu) => {
+        // this.centrerevenus = _centrerevenu;
+        await this.resetPpo();
+        this.modifToggle = !this.modifToggle;
+        this.toggle = (this.toggle === false ? true : false);
+        this.addToggle = (this.addToggle === false ? true : false);
+    //   }
+    // })
   }
 
   delete() {
-    throw new Error('Method not implemented.');
+    this.ppoService.deletePpo(this.idPpo || 0).subscribe({
+      next: () => {
+        // this.addToggleModal();
+        this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+          next: async (_centrerevenu) => {
+            this.centrerevenus = _centrerevenu;
+            await this.selectCentreRevenus(_centrerevenu[0]);
+            await this.resetPpo();
+            this.toggle = (this.toggle === false ? true : false);
+            this.addToggle = (this.addToggle === false ? true : false);
+            this.toggleToast('Perte du ' + this.screenDate(this.ppo.date_ppo) + ' supprimer');
+          }
+        })
+      }
+    })
   }
 
   deletes() {
-    throw new Error('Method not implemented.');
+    const selectedIds: number[] = [];
+    for (const _ppo of this.ppos) {
+      if (_ppo.selected) {
+        selectedIds.push(_ppo.id !== undefined ? _ppo.id : 0);
+      }
+    }
+    this.ppoService.deletePpos(selectedIds).subscribe({
+      next: () => {
+        // this.addToggleModal();
+        this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+          next: async (_centrerevenu) => {
+            this.centrerevenus = _centrerevenu;
+            await this.selectCentreRevenus(_centrerevenu[0]);
+            await this.resetPpo();
+            // this.addToggle = (this.addToggle === false ? true : false);
+            this.toggleToast('Les pertes ont été supprimer');
+          }
+        })
+      }
+    })
+  }
+
+  deselect() {
+    let index = 0;
+    for (const _article of this.ppodetailsarticles) {
+      if (_article.selected == true) {
+        console.log(index)
+        this.ppodetailsarticles.splice(index, 1);
+      }
+      index++;
+    }
+    index = 0;
+    for (const _fichetechnique of this.ppodetailsfichetechniques) {
+      if (_fichetechnique.selected == true) {
+        console.log(index)
+        this.ppodetailsfichetechniques.splice(index, 1);
+      }
+      index++;
+    }
   }
 
   show(_ppo: InterfacePpos) {
@@ -259,15 +317,135 @@ export class PposComponent {
   }
 
   valorisation(_ppodetails: InterfacePpoDetail[]) {
-    let cout = 0;
+    let _cout = 0;
     for (const _ppodetail of _ppodetails) {
-      if (_ppodetail.article && !_ppodetail.fichetechnique) {
-        cout += _ppodetail.article.cout * _ppodetail.quantite || 0;
-      } else if (_ppodetail.fichetechnique && !_ppodetail.article) {
-        cout += _ppodetail.fichetechnique.cout * _ppodetail.quantite || 0;
+      if (_ppodetail.articleId == null && _ppodetail.fichetechniqueId != null) {
+        _cout += this.calculeCoutComposition(_ppodetail.fichetechnique.composition) * _ppodetail.quantite || 0;
+      }
+      if (_ppodetail.articleId != null && _ppodetail.fichetechniqueId == null) {
+        _cout += _ppodetail.article.cout * _ppodetail.quantite || 0;
       }
     }
-    return cout;
+    return _cout;
+  }
+
+  openPdf(_ppo: InterfacePpos, action: number) {
+    const dateppo = this.screenDate(new Date(this.ppo.date_ppo));
+    const dataPpoArticle: any[] = [];
+    const dataPpoFicheyechnique: any[] = [];
+
+    // let quantite = 0;
+    // let prix = 0;
+    for (const _ppoArticle of this.ppodetailsarticles) {
+      const data = {
+        'Article': _ppoArticle.article.libelle,
+        'Quantite': _ppoArticle.quantite,
+        'Cout': _ppoArticle.article.cout,
+        'Valorisation': _ppoArticle.article.cout * _ppoArticle.quantite,
+        'Unite': _ppoArticle.unite.libelle,
+        'Famille': this.truncateWord(_ppoArticle.article.familles.libelle),
+        'SousFamille': this.truncateWord(_ppoArticle.article.sousfamilles.libelle)
+      }
+      // quantite += _inv.quantite;
+      // prix += _inv.article.cout;
+      console.log(data)
+      dataPpoArticle.push(data);
+    }
+    for (const _ppoFichetechnique of this.ppodetailsfichetechniques) {
+      const data = {
+        'Article': _ppoFichetechnique.fichetechnique.libelle,
+        'Quantite': _ppoFichetechnique.quantite,
+        'Cout': this.calculeCoutComposition(_ppoFichetechnique.fichetechnique.composition),
+        'Valorisation': this.calculeCoutComposition(_ppoFichetechnique.fichetechnique.composition) * _ppoFichetechnique.quantite,
+        'Unite': _ppoFichetechnique.unite.libelle,
+        'Famille': this.truncateWord(_ppoFichetechnique.fichetechnique.famille.libelle)
+      }
+      // quantite += _inv.quantite;
+      // prix += _inv.article.cout;
+      dataPpoFicheyechnique.push(data);
+
+      const docDefinition = {
+        content: [
+          {
+            text: `Perte du ${dateppo} -- Centre revenu ${this.centrerevenu.libelle}`,
+            fontSize: 15, bold: true
+          },
+          '\n', '\n', '\n',
+          {
+            text: `ARTICLES`,
+            fontSize: 15, bold: true
+          },
+          '\n', // Add a line break after inventory details
+          {
+            style: 'tableExample',
+            table: {
+              widths: ['*', '*', '*', '*', '*', '*', '*'],
+              body: this.pdfService.buildTableBody(dataPpoArticle, ['Article', 'Quantite', 'Cout', 'Valorisation', 'Unite', 'Famille', 'SousFamille'],
+                [
+                  // { text: 'Réf', style: 'subheader' }, // subheader for 'Réf' column
+                  { text: 'Articles', style: 'tableHeader' },
+                  { text: 'Quantité', style: 'tableHeader' },
+                  { text: 'Cout', style: 'tableHeader' },
+                  { text: 'Valorisation', style: 'tableHeader' },
+                  { text: 'Unité', style: 'tableHeader' },
+                  { text: 'Familles', style: 'tableHeader' },
+                  { text: 'Sous Familles', style: 'tableHeader' },
+                ]
+              ),
+            },
+          },
+          '\n', // Add a line break after inventory details
+          {
+            text: `FICHE TECHNIQUES`,
+            fontSize: 15, bold: true
+          },
+          '\n', // Add a line break after inventory details
+          {
+            style: 'tableExample',
+            table: {
+              widths: ['*', '*', '*', '*', '*', '*'],
+              body: this.pdfService.buildTableBody(dataPpoFicheyechnique, ['Article', 'Quantite', 'Cout', 'Valorisation', 'Unite', 'Famille'],
+                [
+                  // { text: 'Réf', style: 'subheader' }, // subheader for 'Réf' column
+                  { text: 'Articles', style: 'tableHeader' },
+                  { text: 'Quantité', style: 'tableHeader' },
+                  { text: 'Cout', style: 'tableHeader' },
+                  { text: 'Valorisation', style: 'tableHeader' },
+                  { text: 'Unité', style: 'tableHeader' },
+                  { text: 'Familles', style: 'tableHeader' },
+                ]
+              ),
+            },
+          },
+          // {
+          //   style: 'tableExample',
+          //   table: {
+          //     widths: [120, '*'],
+          //     body: [
+          //       ['TOTAL', (prix * quantite).toString() + ' €'],
+          //     ]
+          //   }
+          // },
+
+        ],
+        defaultStyle: {
+
+        }
+      };
+
+      switch (action) {
+        case 1:
+          pdfMake.createPdf(docDefinition, undefined, undefined, pdfFonts.pdfMake.vfs).open();
+          break;
+
+        case 2:
+          pdfMake.createPdf(docDefinition, undefined, undefined, pdfFonts.pdfMake.vfs).print();
+          break;
+        default:
+          break;
+      }
+    }
+
   }
 
   open(content: TemplateRef<any>) {
@@ -345,18 +523,14 @@ export class PposComponent {
     }
   }
 
-  // calculePerte(_perte: InterfacePpoDetail) {
-  //   let cout = 0;
-  //   for (const _c of _composition) {
-  //     cout += (_c.article ? _c.article.cout : 0) * _c.quantite;
-  //   }
-  //   return cout;
-  // }
-
   calculeCoutComposition(_composition: InterfaceComposition[]) {
     let cout = 0;
     for (const _c of _composition) {
-      cout += (_c.article ? _c.article.cout : 0) * _c.quantite;
+      if (_c.articleId != null) {
+        cout += (_c.article ? _c.article.cout : 0) * _c.quantite;
+      } else {
+        cout += (_c.fichetechniqueCompositon ? _c.fichetechniqueCompositon.cout : 0) * _c.quantite;
+      }
     }
     return cout;
   }
@@ -385,9 +559,9 @@ export class PposComponent {
                       article: _article,
                       articleId: _article.id || 0,
                       // code: null,
-                      cout: 0,
+                      cout: _article.cout,
                       fichetechnique: this.fichetetchniqueService.resetFichetechnique(),
-                      fichetechniqueId: 0,
+                      fichetechniqueId: null,
                       ppoId: this.idPpo,
                       quantite: 0,
                       unite: _article.unite,
@@ -400,9 +574,9 @@ export class PposComponent {
                   for (const _fichetechnique of this.fichetechniques) {
                     this.ppodetailsfichetechnique = {
                       article: this.articleService.resetArticle(),
-                      articleId: 0,
+                      articleId: null,
                       // code: null,
-                      cout: 0,
+                      cout: this.calculeCoutComposition(_fichetechnique.composition),
                       fichetechnique: _fichetechnique,
                       fichetechniqueId: _fichetechnique.id || 0,
                       ppoId: this.idPpo,
@@ -412,6 +586,7 @@ export class PposComponent {
                     }
                     if (_fichetechnique.selected === true) {
                       this.ppodetailsfichetechniques.push(this.ppodetailsfichetechnique)
+                      console.log(this.ppodetailsfichetechnique)
                     }
                   }
                 }

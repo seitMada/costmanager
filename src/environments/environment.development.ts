@@ -116,9 +116,14 @@ export const environment = {
     APIGETPPOBYCRANDDATE: endPoint + 'ppo',
     APICREATEPPO: endPoint + 'ppo/create',
     APIUPDATEPPO: endPoint + 'ppo/update',
+<<<<<<< Updated upstream
 
     APIGETLIVRAISONBYFOURNISSEUR : endPoint + 'livraison/fournisseur/',
     APICREATEBONLIVRAISON: endPoint + 'livraison',
     APIGETDETAILLIVRAISONBYLIVRAISONID : endPoint + 'livraison/',
     DELETEBONLIVRAISON: endPoint + 'livraison/delete',
+=======
+    APIDELETEPPO: endPoint + 'ppo/delete',
+    APIDELETESPPO: endPoint + 'ppo/deletes',
+>>>>>>> Stashed changes
 };

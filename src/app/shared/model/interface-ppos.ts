@@ -23,8 +23,8 @@ export interface InterfacePpos {
 export interface InterfacePpoDetail {
     id?: number;
     ppoId?: number;
-    articleId: number;
-    fichetechniqueId: number;
+    articleId: number | null;
+    fichetechniqueId: number | null;
     quantite: number;
     cout: number;
     uniteId:number;

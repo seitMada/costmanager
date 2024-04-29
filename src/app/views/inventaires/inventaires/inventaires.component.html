@@ -30,7 +30,7 @@
           <span class="visually-hidden">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end">
-          <li *ngFor="let line of centrerevenus"><span (click)="selectCentreRevenus(line)">{{line.libelle}}</span>
+          <li *ngFor="let line of centrerevenusdefault"><span (click)="selectCentreRevenus(line)">{{line.libelle}}</span>
           </li>
         </ul>
       </div>
@@ -82,7 +82,7 @@
       <tbody>
         <tr *ngFor="let line of inventaires" [ngClass]="line.etat === false ? 'table-danger' : 'table-info'">
           <td class="col-1">
-            <input type="checkbox" name="inventaire-{{line.date_inventaire}}" id="inventaire-{{line.id}}"
+            <input type="checkbox" class="form-check-input" name="inventaire-{{line.date_inventaire}}" id="inventaire-{{line.id}}"
               [(ngModel)]="line.selected">
           </td>
           <td class="col-3" (click)="toggleModal(line.etat); show(line)">{{line.numero}}</td>
@@ -149,7 +149,7 @@
                   <tbody>
                     <tr *ngFor="let article of lieu.inventairedetail">
                       <td class="col-1">
-                        <input type="checkbox" name="inventaire-{{article.articleId}}" id="inventaire-{{article.id}}"
+                        <input type="checkbox" class="form-check-input" name="inventaire-{{article.articleId}}" id="inventaire-{{article.id}}"
                           [(ngModel)]="article.selected" *ngIf="!modifToggle">
                       </td>
                       <td class="col-3" cTooltip={{article.article.libelle}} cTooltipPlacement="bottom">
@@ -214,7 +214,7 @@
         <tbody>
           <tr *ngFor="let line of inventaireArticles">
             <td class="col-1">
-              <input type="checkbox" name="article-{{line.articleId}}" id="article-{{line.id}}"
+              <input type="checkbox" class="form-check-input" name="article-{{line.articleId}}" id="article-{{line.id}}"
                 [(ngModel)]="line.selected">
             </td>
             <td class="col-3">{{line.article.libelle}}</td>
@@ -326,3 +326,16 @@
     <button type="button" class="btn btn-sm btn-outline-success" (click)="modal.close('Save click')">Valider</button>
   </div>
 </ng-template>
+
+<c-toaster [placement]="position" class="p-3" position="fixed">
+  <c-toast #toast="cToast" (timer)="onTimerChange($event)" (visibleChange)="onVisibleChange($event)" [visible]="visible"
+    color="{{color}}">
+    <c-toast-body>
+      <div class="row">
+        <div class="col-10 p-auto"><span [ngClass]="textcolor">{{message}}</span></div>
+        <div class="col-2"><button aria-label="close" class="btn btn-sm btn-outline-light no-border"
+            (click)="toast.visible=false"><i class="fas fa-x"></i></button></div>
+      </div>
+    </c-toast-body>
+  </c-toast>
+</c-toaster>

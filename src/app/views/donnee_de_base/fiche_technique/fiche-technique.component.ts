@@ -21,23 +21,45 @@ import { Unites } from "../../../shared/model/unite";
 import { UnitesService } from "../../../shared/service/unites.service";
 import { InterfaceUnite } from '../../../shared/model/interface-unite';
 import { InterfaceGroupeanalytiques } from '../../../shared/model/interface-groupeanalytiques';
-import { InterfaceCategories } from 'src/app/shared/model/interface-categories';
-import { ExploitationService } from 'src/app/shared/service/exploitation.service';
+import { InterfaceCategories } from '../../../shared/model/interface-categories';
+import { ExploitationService } from '../../../shared/service/exploitation.service';
 import { Exploitations } from "../../../shared/model/exploitations";
-import { Article } from 'src/app/shared/model/articles';
-import { ArticleService } from 'src/app/shared/service/article.service';
-import { InterfaceComposition } from 'src/app/shared/model/interface-compositions';
-import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
+import { Article } from '../../../shared/model/articles';
+import { ArticleService } from '../../../shared/service/article.service';
+import { InterfaceComposition } from '../../../shared/model/interface-compositions';
+import { InterfaceArticle } from '../../../shared/model/interface-articles';
 import { TooltipModule } from '@coreui/angular';
+import { ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderComponent } from '@coreui/angular';
 
 @Component({
   selector: 'app-fiche-technique',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule, BsDatepickerModule, TooltipModule],
+  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule, BsDatepickerModule, TooltipModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
   templateUrl: './fiche-technique.component.html',
   styleUrl: './fiche-technique.component.scss'
 })
 export class FicheTechniqueComponent implements OnInit {
+
+  position = 'top-end';
+  visible = false;
+  percentage = 0;
+  public message = '';
+  public color = 'success';
+  public textcolor = 'text-light';
+
+  toggleToast(_message: string) {
+    this.message = _message;
+    this.visible = !this.visible;
+  }
+
+  onVisibleChange($event: boolean) {
+    this.visible = $event;
+    this.percentage = !this.visible ? 0 : this.percentage;
+  }
+
+  onTimerChange($event: number) {
+    this.percentage = $event * 25;
+  }
 
   constructor(
     public router: Router,
@@ -198,7 +220,7 @@ export class FicheTechniqueComponent implements OnInit {
               this.compositions = [];
                 this.fichetechniqueService.getFichetechniqueById(fichetechnique.id).subscribe({
                   next: (fichetechnique) => {
-                    alert('Fichetechnique ajouter')
+                    this.toggleToast('Fichetechnique ajouter')
                     this.modifToggle = !this.modifToggle;
                     this.compositions = fichetechnique.composition;
                   }
@@ -231,7 +253,7 @@ export class FicheTechniqueComponent implements OnInit {
                     }
                   }
                   this.modifToggle = !this.modifToggle;
-                  alert('Fichetechnique modifier')
+                  this.toggleToast('Fichetechnique modifier')
                 }
               })
             }
@@ -268,7 +290,7 @@ export class FicheTechniqueComponent implements OnInit {
     }
     this.fichetechniqueService.desactiveFichetechnique(this.idFichetechnique, exploitation).subscribe({
       next: (data) => {
-        alert('Fichetechnique supprimer');
+        this.toggleToast('Fichetechnique supprimer');
         this.resetFichetechnique();
         this.initFichetechnique();
         this.toggle = !this.toggle;
@@ -297,7 +319,7 @@ export class FicheTechniqueComponent implements OnInit {
         exploitationsId: exploitation
       }
       this.fichetechniqueService.desactiveFichetechniques(data).subscribe(() => {
-        alert('Fichetechniques supprimer');
+        this.toggleToast('Fichetechniques supprimer');
         this.initFichetechnique();
       })
     }
@@ -412,7 +434,7 @@ export class FicheTechniqueComponent implements OnInit {
                 this.compositions = [];
                 this.fichetechniqueService.getFichetechniqueById(this.idFichetechnique).subscribe({
                   next: (fichetechnique) => {
-                    alert('Composition du fichetechnique mis à jour');
+                    this.toggleToast('Composition du fichetechnique mis à jour');
                     this.compositions = fichetechnique.composition;
                   }
                 });

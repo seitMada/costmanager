@@ -11,6 +11,8 @@ export class PpoService {
   private apiGetPpoByCentreAndDate = environment.APIGETPPOBYCRANDDATE;
   private apiCreatePpo = environment.APICREATEPPO;
   private apiUpdatePpo = environment.APIUPDATEPPO;
+  private apiDeletePpo = environment.APIDELETEPPO;
+  private apiDeletePpos = environment.APIDELETESPPO;
 
   constructor(private https: HttpClient) { }
 
@@ -24,5 +26,13 @@ export class PpoService {
 
   updatePpo(ppo: InterfacePpos) {
     return this.https.patch(this.apiUpdatePpo, { ppo: ppo });
+  }
+
+  deletePpo(id: number) {
+    return this.https.post(this.apiDeletePpo, { id: id });
+  }
+
+  deletePpos(id: number[]) {
+    return this.https.post(this.apiDeletePpos, { id: id });
   }
 }

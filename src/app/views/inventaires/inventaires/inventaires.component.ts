@@ -4,21 +4,22 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 import { InterfaceInventaires, InterfaceInventairesDetails, InterfaceInventairesDetailsZone } from '../../../shared/model/interface-inventaires';
-import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
+import { InterfaceCentreRevenu } from '../../../shared/model/interface-centrerevenu';
 
 import { InventairesService } from '../../../shared/service/inventaires.service';
 import { CentreRevenuService } from "../../../shared/service/centre-revenu.service";
 import { ExploitationService } from "../../../shared/service/exploitation.service";
 import { ZonestockagesService } from "../../../shared/service/zonestockages.service";
 
-import { InterfaceExploitations, InterfaceExploitationss } from 'src/app/shared/model/interface-exploitations';
-import { Adress } from 'src/app/shared/model/adresse';
-import { InterfaceLieustockages } from 'src/app/shared/model/interface-lieustockages';
-import { InterfaceZonestockages } from 'src/app/shared/model/interface-zonestockages';
+import { InterfaceExploitations, InterfaceExploitationss } from '../../../shared/model/interface-exploitations';
+import { Adress } from '../../../shared/model/adresse';
+import { InterfaceLieustockages } from '../../../shared/model/interface-lieustockages';
+import { InterfaceZonestockages } from '../../../shared/model/interface-zonestockages';
 import { NgbModal, ModalDismissReasons } from '@ng-bootstrap/ng-bootstrap';
-import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
-import { InterfaceArticleExploitation } from 'src/app/shared/model/interface-articleexploitations';
-import { ArticleService } from 'src/app/shared/service/article.service';
+import { InterfaceArticle } from '../../../shared/model/interface-articles';
+// import { InterfaceArticleExploitation } from '../../../shared/model/interface-articleexploitations';
+import { ArticleService } from '../../../shared/service/article.service';
+import { PdfserviceService } from "../../../shared/service/pdfservice.service";
 
 import { AlertModule } from '@coreui/angular';
 import { TooltipModule } from '@coreui/angular';
@@ -26,16 +27,38 @@ import { TooltipModule } from '@coreui/angular';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 // pdfMake.vfs = pdfFonts.pdfMake.vfs;
-import { PdfView } from '../../../shared/model/pdfView';
+// import { PdfView } from '../../../shared/model/pdfView';
+import { ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderComponent } from '@coreui/angular';
 
 @Component({
   selector: 'app-inventaires',
   standalone: true,
-  imports: [CommonModule, FormsModule, BsDatepickerModule, AlertModule, TooltipModule],
+  imports: [CommonModule, FormsModule, BsDatepickerModule, AlertModule, TooltipModule, TooltipModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
   templateUrl: './inventaires.component.html',
   styleUrl: './inventaires.component.scss'
 })
 export class InventairesComponent {
+
+  position = 'top-end';
+  visible = false;
+  percentage = 0;
+  public message = '';
+  public color = 'success';
+  public textcolor = 'text-light';
+
+  toggleToast(_message: string) {
+    this.message = _message;
+    this.visible = !this.visible;
+  }
+
+  onVisibleChange($event: boolean) {
+    this.visible = $event;
+    this.percentage = !this.visible ? 0 : this.percentage;
+  }
+
+  onTimerChange($event: number) {
+    this.percentage = $event * 25;
+  }
 
   public bsConfig: { containerClass: string; locale: string; dateInputFormat: string; };
 
@@ -67,6 +90,7 @@ export class InventairesComponent {
   private numero: string;
 
   public centrerevenus: InterfaceCentreRevenu[];
+  public centrerevenusdefault: InterfaceCentreRevenu[];
   public centrerevenu: InterfaceCentreRevenu;
   public exploitations: InterfaceExploitations[];
   public exploitation: InterfaceExploitations;
@@ -93,6 +117,7 @@ export class InventairesComponent {
     private zonelieuService: ZonestockagesService,
     private articleService: ArticleService,
     private datePipe: DatePipe,
+    private pdfService: PdfserviceService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
@@ -199,6 +224,7 @@ export class InventairesComponent {
     this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
       next: async (_centreRevenu) => {
         this.centrerevenus = _centreRevenu;
+        this.centrerevenusdefault = _centreRevenu;
         this.centrerevenu = _centreRevenu[0];
         await this.selectCentreRevenus(this.centrerevenu);
         if (this.isAdmin === true) {
@@ -348,13 +374,6 @@ export class InventairesComponent {
     } else {
       this.show(this.inventaire);
       this.modifToggle = !this.modifToggle;
-      // this.inventaireService.getInventaireById(this.inventaire.id || 0).subscribe({
-      //   next: (_inventaire) => {
-      //     this.inventaire = _inventaire;
-      //     this.inventaire.date_inventaire = new Date(_inventaire.date_inventaire);
-      //     this.modifToggle = !this.modifToggle;
-      //   },
-      // })
     }
   }
 
@@ -373,7 +392,7 @@ export class InventairesComponent {
         next: async (value) => {
           this.modifToggle = !this.modifToggle;
           this.show(this.inventaire)
-          alert('Inventaire créer');
+          this.toggleToast('Inventaire du ' + this.screenDate(this.inventaire.date_inventaire) + ' enregistrer');
         }
       })
     } else {
@@ -384,7 +403,7 @@ export class InventairesComponent {
       }
       this.inventaireService.updateInventaire(this.inventairesDetailsZone, this.inventaire.numero).subscribe({
         next: () => {
-          alert('Inventaire modifier');
+          this.toggleToast('Inventaire du ' + this.screenDate(this.inventaire.date_inventaire) + ' enregistrer');
           this.show(this.inventaire)
           this.modifToggle = !this.modifToggle;
         }
@@ -413,15 +432,18 @@ export class InventairesComponent {
   }
 
   addToggleModal() {
-    this.modifToggle = !this.modifToggle;
-    this.toggle = (this.toggle === false ? true : false);
-    this.toggleEtat = (this.toggleEtat !== false ? true : false);
-    this.addToggle = (this.addToggle === false ? true : false);
-    this.listToggle = (this.listToggle !== false ? true : false);
-    this.idinventaire = 0;
-    this.numero = (this.formatDateUS(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
-    // this.resetinventaire()
-    // this.selectCentreRevenu(this.centrerevenu);
+    
+    this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+      next: async (_centrerevenu) => {
+        this.modifToggle = !this.modifToggle;
+        this.toggle = (this.toggle === false ? true : false);
+        this.toggleEtat = (this.toggleEtat !== false ? true : false);
+        this.addToggle = (this.addToggle === false ? true : false);
+        this.listToggle = (this.listToggle !== false ? true : false);
+        this.idinventaire = 0;
+        this.numero = (this.formatDateUS(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
+      }
+    })
   }
 
   deleteZero(_inventaires: InterfaceInventairesDetailsZone) {
@@ -442,7 +464,7 @@ export class InventairesComponent {
   delete() {
     this.inventaireService.deleteInventaire(this.inventaire.numero).subscribe({
       next: () => {
-        alert('Inventaire supprimer');
+        this.toggleToast('Inventaire du ' + this.screenDate(this.inventaire.date_inventaire) + ' supprimer');
         this.resetinventaire();
         this.selectCentreRevenus(this.centrerevenu);
         this.toggle = !this.toggle;
@@ -452,7 +474,6 @@ export class InventairesComponent {
   }
 
   deletes() {
-    // const selectedIds: number[] = [];
     const selectedNumero: string[] = [];
     for (const _inventaire of this.inventaires) {
       if (_inventaire.selected) {
@@ -462,7 +483,7 @@ export class InventairesComponent {
     if (selectedNumero.length > 0) {
       console.log(selectedNumero)
       this.inventaireService.deleteInventaires(selectedNumero).subscribe(() => {
-        alert('Inventaires supprimer');
+        this.toggleToast('Les inventaire ont été supprimer');
         this.resetinventaire();
         this.selectCentreRevenus(this.centrerevenu);
       })
@@ -490,6 +511,7 @@ export class InventairesComponent {
         'Article': _inv.article.libelle,
         'Quantite': _inv.quantite,
         'Unite': _inv.article.unite.libelle,
+        'Prix': _inv.article.cout * _inv.quantite,
         'Famille': this.truncateWord(_inv.article.familles.libelle),
         'SousFamille': this.truncateWord(_inv.article.sousfamilles.libelle)
       }
@@ -528,13 +550,14 @@ export class InventairesComponent {
         {
           style: 'tableExample',
           table: {
-            widths: ['*', '*', '*', '*', '*'],
-            body: this.buildTableBody(dataInventaire, ['Article', 'Quantite', 'Unite', 'Famille', 'SousFamille'],
+            widths: ['*', '*', '*', '*', '*', '*'],
+            body: this.pdfService.buildTableBody(dataInventaire, ['Article', 'Quantite', 'Unite', 'Prix', 'Famille', 'SousFamille'],
               [
                 // { text: 'Réf', style: 'subheader' }, // subheader for 'Réf' column
                 { text: 'Articles', style: 'tableHeader' },
                 { text: 'Quantité', style: 'tableHeader' },
                 { text: 'Unité', style: 'tableHeader' },
+                { text: 'Prix', style: 'tableHeader' },
                 { text: 'Familles', style: 'tableHeader' },
                 { text: 'Sous Familles', style: 'tableHeader' },
               ]
@@ -542,15 +565,15 @@ export class InventairesComponent {
           },
         },
         '\n', // Add a line break after inventory details
-        // {
-        //   style: 'tableExample',
-        //   table: {
-        //     widths: [120, '*'],
-        //     body: [
-        //       ['TOTAL', (prix * quantite).toString() + ' €'],
-        //     ]
-        //   }
-        // },
+        {
+          style: 'tableExample',
+          table: {
+            widths: [120, '*'],
+            body: [
+              ['TOTAL', (this.calculsoustotal(_inventaire.inventairedetail)).toString() + ' €'],
+            ]
+          }
+        },
 
       ],
       defaultStyle: {
@@ -577,25 +600,7 @@ export class InventairesComponent {
     return word;
   }
 
-  buildTableBody(tableau: any[], cle: any[], entete: { text: string; style: string; }[]) {
-    const body = [];
-    body.push(entete);
-    tableau.forEach(function (row: { [x: string]: { toString: () => any; }; }) {
-      const dataRow: string[] = [];
-      cle.forEach(function (column: string) {
-        dataRow.push(row[column].toString());
-        // tslint:disable-next-line:triple-equals
-        // if (column == 'CoutArticle' || column == 'MontantTotalLigneHT') {
-        //   const cout = Math.round(Number(row[column]) * 100) / 100;
-        //   dataRow.push(cout.toString() + '€');
-        // } else {
-        //   dataRow.push(row[column].toString());
-        // }
-      })
-      body.push(dataRow);
-    });
-    return body;
-  }
+  
 
   openArticle(content: TemplateRef<any>, lieu: InterfaceInventairesDetailsZone) {
     this.articleService.getArticlesByExploitation(this.idexploitation).subscribe({
@@ -668,7 +673,7 @@ export class InventairesComponent {
     this.inventaireService.updateInventaire(this.inventairesDetailsZone, this.numero).subscribe({
       next: () => {
         this.inventaire.etat = true;
-        alert('L\'inventaire du ' + this.screenDate(this.inventaire.date_inventaire) + ' pour le centre de revenu ' + this.centrerevenu.libelle + ' a été valider')
+        this.toggleToast('L\'inventaire du ' + this.screenDate(this.inventaire.date_inventaire) + ' pour le centre de revenu ' + this.centrerevenu.libelle + ' a été valider');
       }
     })
   }

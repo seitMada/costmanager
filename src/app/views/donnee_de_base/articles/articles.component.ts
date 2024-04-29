@@ -19,14 +19,15 @@ import { FamillesService } from "../../../shared/service/familles.service";
 import { SousfamillesService } from "../../../shared/service/sousfamilles.service";
 import { ExploitationService } from "../../../shared/service/exploitation.service";
 import { AllergenesService } from "../../../shared/service/allergenes.service";
-import { ZonestockagesService } from 'src/app/shared/service/zonestockages.service';
-import { InterfaceLieustockages } from 'src/app/shared/model/interface-lieustockages';
-import { InterfaceZonestockages } from 'src/app/shared/model/interface-zonestockages';
+import { ZonestockagesService } from '../../../shared/service/zonestockages.service';
+import { InterfaceLieustockages } from '../../../shared/model/interface-lieustockages';
+import { InterfaceZonestockages } from '../../../shared/model/interface-zonestockages';
+import { ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderComponent } from '@coreui/angular';
 
 @Component({
   selector: 'app-articles',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule],
+  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
   templateUrl: './articles.component.html',
   styleUrl: './articles.component.scss'
 })
@@ -47,7 +48,27 @@ export class ArticlesComponent implements OnInit {
 
   private modalService = inject(NgbModal);
   closeResult = '';
+  
+  position = 'top-end';
+  visible = false;
+  percentage = 0;
+  public message = '';
+  public color = 'success';
+  public textcolor = 'text-light';
 
+  toggleToast(_message: string) {
+    this.message = _message;
+    this.visible = !this.visible;
+  }
+
+  onVisibleChange($event: boolean) {
+    this.visible = $event;
+    this.percentage = !this.visible ? 0 : this.percentage;
+  }
+
+  onTimerChange($event: number) {
+    this.percentage = $event * 25;
+  }
 
   public toggle = true;
   public addToggle = true;
@@ -429,7 +450,7 @@ export class ArticlesComponent implements OnInit {
                     next: async (_article) => {
                       this.article = _article;
                       await this.showArticle(_article);
-                      alert('Article ajouter');
+                      this.toggleToast('Article ajouter');
                       this.modifToggle = !this.modifToggle;
                       this.addToggle = !this.addToggle;
                     }
@@ -442,7 +463,7 @@ export class ArticlesComponent implements OnInit {
       })
     } else {
       this.articleService.updateArticle(this.article).subscribe((response) => {
-        alert('Article modifier')
+        this.toggleToast('Article modifier')
         const exploitation: number[] = [];
         exploitation.push(this.exploitation);
         for (const i of this.exploitations) {
@@ -504,7 +525,7 @@ export class ArticlesComponent implements OnInit {
     }
     this.articleService.desactiveArticle(this.idArticle, exploitation).subscribe({
       next: (data) => {
-        alert('Article supprimer');
+        this.toggleToast('Article supprimer');
         this.resetArticle();
         this.initArticle();
         this.toggle = !this.toggle;
@@ -533,7 +554,7 @@ export class ArticlesComponent implements OnInit {
         exploitationsId: exploitation
       }
       this.articleService.desactiveArticles(data).subscribe(() => {
-        alert('Articles supprimer');
+        this.toggleToast('Articles supprimer');
         this.initArticle();
       })
     }
