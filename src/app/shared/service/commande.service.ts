@@ -20,6 +20,7 @@ export class CommandeService {
   private apiGetArticleFournisseurByArticle = environment.ARTICLEFOURNISSEURBYARTICLE;
   private apiCreateCommandeDetail = environment.APICREATECOMMANDEDETAIL;
   private apiDeleteCommande = environment.APIDELETECOMMANDE;
+  private apiValidateCommande = environment.APIVALIDATECOMMANDE;
 
   public getCommandeByFournisseurExploitation(fournisseurId:number,exploitationId:number){
     return this.https.get<any>(this.apiGetCommandeByFournisseurExploitation+fournisseurId,{params : {exploitationId:exploitationId} });
@@ -52,6 +53,10 @@ export class CommandeService {
 
   public getCommandeDetailByCommandeId(commandeId:number){
     return this.https.get<any>(this.apiGetCommandeDetailByCommandeId+commandeId);
+  }
+
+  public validateCommande(commande:InterfaceBonCommandes){
+    return this.https.post<any>(this.apiValidateCommande,commande);
   }
 
 }

@@ -38,6 +38,7 @@ export const environment = {
     APIGETCOMMANDEDETAILBYCOMMANDEID: endPoint + 'commande_detail/',
     APICREATECOMMANDE: endPoint + 'commande',
     APIDELETECOMMANDE: endPoint +'commande/delete_commande',
+    APIVALIDATECOMMANDE: endPoint + 'commande/validate',
 
     APIGETARTICLE : endPoint + 'articles',
     APIGETARTICLEBYID: endPoint + 'articles/',
