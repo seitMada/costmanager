@@ -33,7 +33,7 @@ import { ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderCompon
   templateUrl: './fournisseurs.component.html',
   styleUrl: './fournisseurs.component.scss'
 })
-export class FournisseursComponent {
+export class FournisseursComponent implements OnInit {
 
   position = 'top-end';
   visible = false;
@@ -289,6 +289,7 @@ export class FournisseursComponent {
       for (const e of this.exploitations) {
         exploitation.push(e.id || 0)
       }
+      exploitation.push(this.exploitation);
     } else {
       exploitation = [this.exploitation]
     }
@@ -310,6 +311,7 @@ export class FournisseursComponent {
       for (const e of this.exploitations) {
         exploitation.push(e.id || 0)
       }
+      exploitation.push(this.exploitation)
     } else {
       exploitation = [this.exploitation]
     }

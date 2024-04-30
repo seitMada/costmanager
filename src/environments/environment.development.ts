@@ -5,6 +5,7 @@ export const environment = {
     APIGETEXPLOITATION: endPoint + 'exploitation',
     APIGETEXPLOITATIONBYID: endPoint+'exploitation/',
     APIGETCREXPLOITATION: endPoint + 'centre-revenu/exploitation/',
+    APIGETCENTREREVENUS: endPoint + 'centre-revenu',
 
     APIGETEXPLOITATIONBYARTICLE: endPoint + 'articleexploitation/article_exploitation/',
     APIPOSTDELETEARTICLEEXPLOITATIONBYARTICLE: endPoint + 'articleexploitation/delete_articleexploitation/',
@@ -125,4 +126,6 @@ export const environment = {
     
     APIDELETEPPO: endPoint + 'ppo/delete',
     APIDELETESPPO: endPoint + 'ppo/deletes',
+    APIPPOEXPLOITATION: endPoint + 'ppo/exploitation',
+    APIPPOCENTREREVENU: endPoint + 'ppo/centrerevenu',
 };

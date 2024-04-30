@@ -520,6 +520,7 @@ export class ArticlesComponent implements OnInit {
       for (const e of this.exploitations) {
         exploitation.push(e.id)
       }
+      exploitation.push(this.exploitation)
     } else {
       exploitation = [this.exploitation]
     }
@@ -545,6 +546,7 @@ export class ArticlesComponent implements OnInit {
       for (const e of this.exploitations) {
         exploitation.push(e.id)
       }
+      exploitation.push(this.exploitation);
     } else {
       exploitation = [this.exploitation]
     }

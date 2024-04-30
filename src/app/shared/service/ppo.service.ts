@@ -13,6 +13,8 @@ export class PpoService {
   private apiUpdatePpo = environment.APIUPDATEPPO;
   private apiDeletePpo = environment.APIDELETEPPO;
   private apiDeletePpos = environment.APIDELETESPPO;
+  private apiPpoExploitation = environment.APIPPOEXPLOITATION;
+  private apiPpoCentreRevenu = environment.APIPPOCENTREREVENU;
 
   constructor(private https: HttpClient) { }
 
@@ -34,5 +36,13 @@ export class PpoService {
 
   deletePpos(id: number[]) {
     return this.https.post(this.apiDeletePpos, { id: id });
+  }
+
+  getPpoExploitation(data: any) {
+    return this.https.post(this.apiPpoExploitation, data);
+  }
+  
+  getPpoCentreRevenu(data: any) {
+    return this.https.post(this.apiPpoCentreRevenu, data);
   }
 }

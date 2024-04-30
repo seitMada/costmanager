@@ -83,7 +83,7 @@ export class FicheTechniqueComponent implements OnInit {
   public deleteToggle = true;
   public modifToggle = true;
   public exploitationToggle = true;
-  
+
 
   public articles: InterfaceArticle[];
   public fichetechniques: InterfaceFichetechnique[];
@@ -110,7 +110,7 @@ export class FicheTechniqueComponent implements OnInit {
     }
   ];
 
-  private idFichetechnique: number = 0;
+  public idFichetechnique: number = 0;
 
   public active = 1;
   private today = new Date();
@@ -218,13 +218,13 @@ export class FicheTechniqueComponent implements OnInit {
           this.fichetechniqueService.updateFichetechniqueExploitation(fichetechnique.id, exploitation).subscribe({
             next: () => {
               this.compositions = [];
-                this.fichetechniqueService.getFichetechniqueById(fichetechnique.id).subscribe({
-                  next: (fichetechnique) => {
-                    this.toggleToast('Fichetechnique ajouter')
-                    this.modifToggle = !this.modifToggle;
-                    this.compositions = fichetechnique.composition;
-                  }
-                });
+              this.fichetechniqueService.getFichetechniqueById(fichetechnique.id).subscribe({
+                next: (fichetechnique) => {
+                  this.toggleToast('Fichetechnique ajouter')
+                  this.modifToggle = !this.modifToggle;
+                  this.compositions = fichetechnique.composition;
+                }
+              });
             }
           })
         }
@@ -285,6 +285,7 @@ export class FicheTechniqueComponent implements OnInit {
       for (const e of this.exploitations) {
         exploitation.push(e.id ? e.id : 0)
       }
+      exploitation.push(this.exploitation);
     } else {
       exploitation = [this.exploitation]
     }
@@ -310,6 +311,7 @@ export class FicheTechniqueComponent implements OnInit {
       for (const e of this.exploitations) {
         exploitation.push(e.id ? e.id : 0)
       }
+      exploitation.push(this.exploitation);
     } else {
       exploitation = [this.exploitation]
     }
@@ -355,6 +357,7 @@ export class FicheTechniqueComponent implements OnInit {
         this.categories = categorie;
         this.groupeanalytiques = groupeAnalytique;
         this.familles = famille;
+        this.compositions = [];
         this.fichetechnique = {
           libelle: '',
           categorieId: 0,
@@ -427,19 +430,37 @@ export class FicheTechniqueComponent implements OnInit {
         this.closeResult = `Closed with: ${result}`;
         // console.log(this.closeResult)
         if (this.closeResult == 'Closed with: Save click') {
-          this.fichetechniqueService.updateComposition(this.idFichetechnique, this.compositions).subscribe(async () => {
-            await this.calculCout(this.compositions);
-            this.fichetechniqueService.updateFichetechnique(this.idFichetechnique, this.fichetechnique).subscribe({
-              next: () => {
-                this.compositions = [];
-                this.fichetechniqueService.getFichetechniqueById(this.idFichetechnique).subscribe({
-                  next: (fichetechnique) => {
-                    this.toggleToast('Composition du fichetechnique mis à jour');
-                    this.compositions = fichetechnique.composition;
-                  }
-                });
+          this.fichetechnique.id = 0;
+          this.fichetechniqueService.addFichetechnique(this.fichetechnique).subscribe({
+            next: (idfichetechnique: any) => {
+              // this.compositions = [];
+              this.idFichetechnique = idfichetechnique;
+              // this.fichetechnique = fichetechnique;
+              const exploitation: number[] = [];
+              exploitation.push(this.exploitation)
+              for (const i of this.exploitations) {
+                if (i.selected === true) {
+                  exploitation.push(i.id ? i.id : 0)
+                }
               }
-            })
+              this.fichetechniqueService.updateFichetechniqueExploitation(idfichetechnique, exploitation).subscribe({
+                next: () => {
+                  this.fichetechniqueService.updateComposition(idfichetechnique, this.compositions).subscribe({
+                    next: () => {
+                      this.fichetechniqueService.getFichetechniqueById(idfichetechnique).subscribe({
+                        next: async (fichetechnique: any) => {
+                          await this.calculCout(this.compositions);
+                          this.fichetechnique = fichetechnique;
+                          this.toggleToast('Composition et fiche technique mis à jour')
+                          // this.modifToggle = !this.modifToggle;
+                          this.compositions = fichetechnique.composition;
+                        }
+                      });
+                    }
+                  });
+                }
+              });
+            }
           });
         }
       },
@@ -464,7 +485,7 @@ export class FicheTechniqueComponent implements OnInit {
       ftId: null,
       quantite: 0,
       uniteId: article.uniteId,
-      cout: article.cout + (article.cout * ( article.coefficientPonderation / 100 )),
+      cout: article.cout + (article.cout * (article.coefficientPonderation / 100)),
 
       article: article,
       fichetechniqueCompositon: null,

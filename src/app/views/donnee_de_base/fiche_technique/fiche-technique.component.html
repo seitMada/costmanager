@@ -103,7 +103,7 @@
               <span class="input-group-text col-5" id="unite">Unité</span>
               <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
                 aria-label="Code" aria-describedby="unite" [(ngModel)]="fichetechnique.unite.libelle"
-                [disabled]="modifToggle">
+                [disabled]="true">
               <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                 data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
                 <span class="visually-hidden">Toggle Dropdown</span>
@@ -119,7 +119,7 @@
               <span class="input-group-text col-5" id="groupe">Groupe analytique</span>
               <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
                 aria-label="Code" aria-describedby="groupe" [(ngModel)]="fichetechnique.groupeanalytique.groupe"
-                [disabled]="modifToggle">
+                [disabled]="true">
               <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                 data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
                 <span class="visually-hidden">Toggle Dropdown</span>
@@ -138,7 +138,7 @@
               <span class="input-group-text col-5" id="famille">Famille</span>
               <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
                 aria-label="Code" aria-describedby="famille" [(ngModel)]="fichetechnique.famille.libelle"
-                [disabled]="modifToggle">
+                [disabled]="true">
               <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                 data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
                 <span class="visually-hidden">Toggle Dropdown</span>
@@ -154,7 +154,7 @@
               <span class="input-group-text col-5" id="categorie">Catégorie</span>
               <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
                 aria-label="categorie" aria-describedby="basic-addon1" [(ngModel)]="fichetechnique.categorie.libelle"
-                [disabled]="modifToggle">
+                [disabled]="true">
               <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                 data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
                 <span class="visually-hidden">Toggle Dropdown</span>
@@ -198,7 +198,7 @@
             <div class="card col-12">
               <div class=" text-center fs-7 fw-bold">
                 <button type="button" class="btn btn-sm btn-light position-absolute top-0 start-0 m-1"
-                  (click)="open(content)" [disabled]="addToggle">
+                  (click)="open(content)" [disabled]="idFichetechnique == 0">
                   <i class="fas fa-pencil"></i>
                 </button>
                 COMPOSITIONS

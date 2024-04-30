@@ -35,7 +35,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
   templateUrl: './ppos.component.html',
   styleUrl: './ppos.component.scss'
 })
-export class PposComponent {
+export class PposComponent implements OnInit {
 
   position = 'top-end';
   visible = false;

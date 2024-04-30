@@ -287,7 +287,7 @@
               <tbody>
                 <tr *ngFor="let line of articles">
                   <td class="col-1">
-                    <input type="checkbox" name="article-{{line.id}}" id="article-{{line.id}}"
+                    <input type="checkbox" class="form-check-input" name="article-{{line.id}}" id="article-{{line.id}}"
                       [(ngModel)]="line.selected">
                   </td>
                   <td class="col-3">{{line.libelle}}</td>
@@ -319,7 +319,7 @@
                 <tbody>
                   <tr *ngFor="let line of fichetechniques" (click)="selectFichetechnique(line)">
                     <td class="col-1">
-                      <input type="checkbox" name="article-{{line.id}}" id="article-{{line.id}}"
+                      <input type="checkbox" class="form-check-input" name="article-{{line.id}}" id="article-{{line.id}}"
                         [(ngModel)]="line.selected" (ngModelChange)="selectFichetechnique(line)">
                     </td>
                     <td class="col-5">{{line.libelle}}</td>

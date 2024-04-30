@@ -4,6 +4,7 @@ import { InterfaceExploitations } from "./interface-exploitations";
 import { InterfaceLieustockages } from "./interface-lieustockages";
 
 export interface InterfaceCentreRevenu {
+    selected?: any;
     id?: number;
     code: string;
     libelle: string;
