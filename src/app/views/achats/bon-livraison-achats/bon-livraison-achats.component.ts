@@ -433,7 +433,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
                             articlefournisseurId:comm.articlefournisseurId,
                             livraisonId: 0,
                             quantiteCommandee: comm.QteCommande,
-                            quantiteLivree: 0,
+                            quantiteLivree: comm.QteCommande,
                             prixarticle: comm.prixarticle,
                             remise: comm.remise,
                             valeurTva: 0,
@@ -569,6 +569,25 @@ export class BonLivraisonAchatsComponent implements OnInit{
       });
      }else{
       alert(`Ce bon de livraison n° ${bonLivraison.numLivraison} ne peut pas supprimer!`)
+     }      
+    }
+  }
+
+  validateLivraison(){
+    const selectedBonLivraisons = this.bonLivraisons.filter(line => line.selected);
+    for (const bonLivraison of selectedBonLivraisons) {
+     if (this.bonLivraison.validation == false) {
+      this.livraisonService.validateLivraison(bonLivraison).subscribe({
+        next:(value) =>{
+          this.showAllFournisseur();
+          this.toggle = this.toggle;
+          this.deleteLivraison = !this.deleteLivraison;
+          alert('Bon de livraison n° '+bonLivraison.numLivraison+' a été validé');
+        },
+      });
+     }else{
+      alert('Ce bon de livraison est déjà validé!');
+      this.deleteLivraison = !this.deleteLivraison;
      }      
     }
   }

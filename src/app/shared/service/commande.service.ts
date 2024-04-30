@@ -18,7 +18,6 @@ export class CommandeService {
   private apiArticleFournisseurByArticleId = environment.APIGETARTICLEFOURNISSEURBYARTICLEID;
   private apiDixDernierCommande = environment.APIGETDIXDERNIERCOMMANDE;
   private apiGetArticleFournisseurByArticle = environment.ARTICLEFOURNISSEURBYARTICLE;
-  private apiCreateCommandeDetail = environment.APICREATECOMMANDEDETAIL;
   private apiDeleteCommande = environment.APIDELETECOMMANDE;
   private apiValidateCommande = environment.APIVALIDATECOMMANDE;
 

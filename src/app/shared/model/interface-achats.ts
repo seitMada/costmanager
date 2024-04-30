@@ -4,23 +4,19 @@ import { InterfaceFournisseur } from "./interface-fournisseurs";
 
 export interface InterfaceAchat{
     id?:number;
+    dateAchat:Date;
+    dateFacture:Date;
+    dateLivraison:Date;
+    numFacture:string;
+    montantHt:number;
+    montantTva:number;
+    montantRemise:number;
+    fournisseurId:number;
     exploitationId:number;
     centreId:number;
-    dateAchat:Date;
-    nopiece:string;
-    montantHt:number;
-    montantTtc:number;
-    montantTva:number;
-    fournisseurId:number;
-    commandeId:number;
 
     exploitation: InterfaceExploitations;
     centre:InterfaceCentreRevenu;
     fournisseur:InterfaceFournisseur;
-    // commande:InterfaceBonCommande
     // achatDetail
-}
-
-export interface InterfaceAchats{
-    achats: InterfaceAchat[];
 }
