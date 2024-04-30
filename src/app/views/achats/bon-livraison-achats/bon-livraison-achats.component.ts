@@ -23,6 +23,7 @@ import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-art
 import { InterfaceArticleExploitation, InterfaceArticleExploitations } from 'src/app/shared/model/interface-articleexploitations';
 import { InterfaceBonCommandes } from 'src/app/shared/model/interface-bonCommande';
 import { InterfaceCommandeDetails } from 'src/app/shared/model/interface-commandedetail';
+import { CommandeService } from 'src/app/shared/service/commande.service';
 
 @Component({
   selector: 'app-bon-livraison-achats',
@@ -66,12 +67,13 @@ export class BonLivraisonAchatsComponent implements OnInit{
   public exploitationId = +(sessionStorage.getItem('exploitation') || 3);
 
   public num_livraison:string;
+  public newNumLivraison: string[];
 
   public bsConfig: { containerClass: string; locale: string; dateInputFormat: string; };
   private today = new Date();
   public dates = {
     today:new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate()),
-    tomorrow: new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate()+1)
+    tomorrow: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()+1)
   }
 
   public bonLivraisonForm = FormGroup;
@@ -80,9 +82,12 @@ export class BonLivraisonAchatsComponent implements OnInit{
   public toggle = true;
   public addLivraison = true;
   public listLivraison = true;
+  public modifToggle = true;
   public deleteLivraison = false;
   public showDeleteBtn = false;
   public inputModif = false;
+  public addBtn = false;
+  
 
  constructor(
   public router: Router,
@@ -103,6 +108,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
     this.resetCentre();
     this.resetLivraison();
     this.resetDetailLivraison();
+    this.resetArticleFournisseur();
  }
 
   formatDate(date: Date | string, format: string = 'yyyy-MM-dd') {
@@ -116,9 +122,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
     this.showExploitationFournisseur();
     this.showAllFournisseur();
     this.showAllAdresse();
+    // this.listArticleFournisseurs();
   }
-
-  
 
   showAllAdresse(){
     this.fournisseurService.getAllAdresse().subscribe({
@@ -128,23 +133,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
       },
     })
   }
-
-  addBonLivraison(){
-    this.bonLivraison = this.bonLivraison;
-    this.livraisonDetails = this.livraisonDetails;
-    if (this.livraisonDetails.length>0) {
-      this.livraisonService.createNewBonLivraison(this.bonLivraison,this.livraisonDetails,this.bonCommande).subscribe({
-        next:(livraison:any) =>{
-          alert('Bon de livraison n° '+ this.bonLivraison.numLivraison+ ' crée avec succès!');
-          this.inputModif = !this.inputModif;
-        },
-      })
-    }else{
-      alert('Veuillez réessayer!');
-    }
-    
-  }
-
 
   showAllFournisseur() {
     this.fournisseurService.getAllFournisseurByExploitation(this.exploitationId).subscribe({
@@ -203,7 +191,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
     });
   }
 
-
   addToggle(){
     this.toggle = !this.toggle;
     this.listLivraison = !this.listLivraison;
@@ -217,6 +204,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
       next: (livraisons) =>{
         this.livraisonDetails = [];
         this.bonLivraisons = livraisons;
+        console.log(this.bonLivraisons);
+        
         this.livraisonDetails = livraisons.map((livraison: any) => livraison.livraisonDetail);
       },
     }) 
@@ -230,9 +219,9 @@ export class BonLivraisonAchatsComponent implements OnInit{
   selectAdresse(data: Adress) {
     this.adresse = data;
     this.adresse.id = data.id;
-  }
+  } 
 
-  
+ 
 
   public resetFournisseur() {
     this.adresse = {
@@ -313,6 +302,41 @@ export class BonLivraisonAchatsComponent implements OnInit{
     }
   }
 
+  listArticleFournisseurs(){
+    const exploitationId = Number(this.exploitationId);
+    this.selectFounisseur(this.fournisseur);
+    this.resetDetailLivraison();
+    this.livraisonService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
+      next: (artExploitation) => {         
+        if (artExploitation) {
+          this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
+          this.livraisonService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
+            next: (artFournisseur: any) => {
+              this.articleFournisseurs = artFournisseur;
+              console.log(this.articleFournisseurs);
+            }
+          })
+        }
+      }
+    });
+  }
+
+  public resetArticleFournisseur(){
+    this.articleFournisseur = {
+      articleId: 0,
+      fournisseurId: this.fournisseur.id ? this.fournisseur.id:0,
+      marque: '',
+      prixReference: 0,
+      prixReferencePrecedent: 0,
+      commentaire: '',
+      selected: false,
+
+      article: this.article,
+      fournisseur: this.fournisseur,
+      conditionnement: []
+    }
+  }
+
   public resetLivraison(){
     this.bonLivraison = {
       numLivraison:this.num_livraison,
@@ -337,28 +361,73 @@ export class BonLivraisonAchatsComponent implements OnInit{
     }
   }
 
-  public openModalArticle(content: TemplateRef<any>) { 
+  public openModalArticle(contentArticle: TemplateRef<any>){
+    
+    this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${result}`;
+        console.log(this.closeResult)
+        if (this.closeResult == 'Closed with: Save click') {
+          this.livraisonDetails = [];
+          this.inputModif = this.inputModif;              
+          for (const articlefournisseur of this.articleFournisseurs) {
+            if (articlefournisseur.selected == true) {
+              this.livraisonDetail = {
+                articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                livraisonId: 0,
+                quantiteCommandee: 0,
+                quantiteLivree: 0,
+                prixarticle: articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat: 0,
+                remise: 0,
+                valeurTva: 0,
+                selected:false,
+                articlefournisseur:articlefournisseur,
+                livraison:[]
+              }
+              this.livraisonDetails.push(this.livraisonDetail);
+            }
+          }
+          console.log(this.livraisonDetails);
+        }
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        console.log(this.closeResult)
+      },
+    );
+  }
+
+  public openModalCommande(content: TemplateRef<any>) { 
+    this.livraisonDetails = [];
     this.livraisonService.getCommandeByFournisseurExploitationValidate(this.fournisseur.id? this.fournisseur.id:0,this.exploitation.id ?this.exploitation.id:0).subscribe({
       next:(commandes) =>{    
         this.bonCommandes = commandes;  
-        this.toggle = !this.toggle;
         this.addLivraison = !this.addLivraison;
         this.listLivraison = !this.listLivraison;
+        this.bonLivraison.fournisseurId = this.fournisseur.id ?this.fournisseur.id:0;
+        
           this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
             (result) => {
               this.closeResult = `Closed with: ${result}`;
               console.log(this.closeResult)
-              if (this.closeResult == 'Closed with: Save click') {
+              if (this.closeResult == 'Closed with: validate click') {
+                this.toggle = !this.toggle;
+                this.modifToggle = this.modifToggle;
+                this.addBtn = false;
+                this.inputModif = false;
                 for(const commande of commandes){
-                  this.livraisonDetails = [];
                   this.bonCommande = commande;
                   if (commande.selected) {
                     this.livraisonService.getListDetailCommandeByCommandeId(commande.id ? commande.id:0).subscribe({
                       next :(commandeDetail) => {
                         this.dates = {
                           today:new Date(commande.dateCommande),
-                          tomorrow: new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate())
+                          tomorrow: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()+1)
                         };
+                        const numLiv = commande.noPiece;
+                        this.newNumLivraison = numLiv.split('-');
+                        this.bonLivraison.numLivraison = 'LIV-'+this.newNumLivraison[1];
+                        
                         for(const comm of commandeDetail){
                           this.livraisonDetail = {
                             articlefournisseurId:comm.articlefournisseurId,
@@ -377,21 +446,36 @@ export class BonLivraisonAchatsComponent implements OnInit{
                         }
                       },
                     })
+                  }else{
+                    this.addBtn = true;
                   }
-                  console.log(this.bonCommande);
                 }
+              }else if(this.closeResult == 'Closed with: Create click'){
+                this.toggle = !this.toggle;
+                this.resetLivraison();
+                this.modifToggle = this.modifToggle;
+                this.addBtn = true;
+                this.inputModif = false;
+                this.livraisonDetails = [];
+                this.dates = {
+                  today:new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate()),
+                  tomorrow: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()+1)
+                }
+
               }
             },
             (reason) => {
               this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
               console.log(this.closeResult)
+              this.toggle = this.toggle;
+              this.addLivraison = true;
+              this.inputModif = false;
+              this.livraisonDetails = [];
             },
           ); 
       }, 
     });
   }
-
-  
 
   private getDismissReason(reason:any):string{
     switch(reason){
@@ -430,7 +514,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
     this.addLivraison = !this.addLivraison;
     this.listLivraison = !this.listLivraison;
     this.inputModif = !this.inputModif;
-    
   }
 
   getTotalMontant() {    
@@ -442,6 +525,22 @@ export class BonLivraisonAchatsComponent implements OnInit{
       return montantTTc;
     }else{
       return 0;
+    }
+  }
+
+  addBonLivraison(){
+    this.bonLivraison = this.bonLivraison;
+    this.livraisonDetails = this.livraisonDetails;
+    if (this.livraisonDetails.length>0) {
+      this.livraisonService.createNewBonLivraison(this.bonLivraison,this.livraisonDetails,this.bonCommande).subscribe({
+        next:(livraison:any) =>{
+          alert('Bon de livraison n° '+ this.bonLivraison.numLivraison+ ' crée avec succès!');
+          this.inputModif = !this.inputModif;
+          this.modifToggle = !this.modifToggle;
+        },
+      })
+    }else{
+      alert('Veuillez réessayer!');
     }
   }
 

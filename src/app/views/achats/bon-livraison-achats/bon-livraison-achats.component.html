@@ -18,8 +18,7 @@
       </div>
     </div>
     <div class="bd-highlight">
-      <button class="btn btn-outline-success btn-sm me-1" [disabled]="!addLivraison" (click)="openModalArticle(content)" title="Ajout bon de livraison"><i class="fas fa-plus"></i></button>
-      <!-- <button class="btn btn-outline-primary btn-sm me-1" [disabled]="!listLivraison" ><i class="fas fa-list"></i></button> -->
+      <button class="btn btn-outline-success btn-sm me-1" [disabled]="!addLivraison" (click)="openModalCommande(content)" title="Ajout bon de livraison"><i class="fas fa-plus"></i></button>
       <button class="btn btn-outline-danger btn-sm me-1" *ngIf="deleteLivraison" (click)="deleteSelectedRowsLivraison()" title="Supprimer bon de livraison">
         <i class="fas fa-trash"></i>
       </button>
@@ -109,8 +108,8 @@
           <div class="row m-2">
             <div class="col-sm-12">
               <div class="input-group">
-                <span class="input-group-text col-3" id="basic-addon1">Commentaire</span>
-                <input type="text" [disabled]="inputModif" class="form-control col-9" [(ngModel)]="bonLivraison.commentaire" name="commentaire" aria-describedby="basic-addon1">
+                <span class="input-group-text col-2" id="basic-addon1">Commentaire</span>
+                <textarea  class="form-control col-10" [disabled]="inputModif" [(ngModel)]="bonLivraison.commentaire" name="commentaire" aria-describedby="basic-addon1"></textarea>
               </div>
             </div>
           </div>
@@ -120,6 +119,9 @@
     <li class="list-group-item">
       <div class="card d-flex py-1 mb-2" *ngIf="(!toggle )">
         <div class="d-flex flex-row-reverse bd-highlight">
+          <button class="btn btn-outline-success btn-sm me-1" [disabled]="!modifToggle" *ngIf="(!toggle && addBtn)" (click)="listArticleFournisseurs();openModalArticle(contentArticle)" title="Ajouter article">
+            <i class="fas fa-plus"></i>
+          </button>
           <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!showDeleteBtn" (click)="deleteSelectedRows()" title="Supprimer bon de livraison"><i class="fas fa-trash"></i></button>
         </div>
       </div>
@@ -173,39 +175,39 @@
 </div>
 <div class="card d-flex" *ngIf="toggle">
   <div class="card-header text-center fs-5 fw-bold"> Tous les Bons de livraison du fournisseur {{fournisseur.raison_social}}</div>
-    <div class="card-body overflow-scroll py-1" style="height: 650px;">
-      <table class="table table-striped table-hover">
-        <thead>
-          <tr>
-            <th scope="col" rowspan="2" class="col-1"></th>
-            <th scope="col" rowspan="2" class="col-2">BL Numero</th>
-            <th scope="col" rowspan="2" class="col-1">Exploitation</th>
-            <th scope="col" rowspan="2" class="col-2">Centre revenu</th>
-            <th scope="col" rowspan="2" class="col-2">Date commande</th>
-            <th scope="col" rowspan="2" class="col-2">Date livraison</th>
-            <th scope="col" rowspan="2" class="col-1">Montant</th>
-          </tr>
-        </thead>
-        <tbody>
-        <tr *ngFor="let item of bonLivraisons">
-          <td class="col-1"><input type="checkbox" name="livraison-{{item.id}}" id="livraison-{{item.id}}" [(ngModel)]="item.selected" (change)="selectBonLivraison()"></td>
-          <td class="col-2" (click)="showLivraison(item)">{{ item.numLivraison }}</td>
-          <td class="col-1" (click)="showLivraison(item)">{{ item.exploitation.libelle }}</td>
-          <td class="col-2" (click)="showLivraison(item)">{{ item.centre.libelle }}</td>
-          <td class="col-2" (click)="showLivraison(item)">{{ item.dateCommande | date: 'dd/MM/yyyy' }}</td>
-          <td class="col-2" (click)="showLivraison(item)">{{ item.dateLivraison | date: 'dd/MM/yyyy' }}</td>
-          <td class="col-1" (click)="showLivraison(item)">{{ item.montantHt - item.remise | number:'1.2-2' }} €</td>
+  <div class="card-body overflow-scroll py-1" style="height: 650px;">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th scope="col" rowspan="2" class="col-1"></th>
+          <th scope="col" rowspan="2" class="col-2">BL Numero</th>
+          <th scope="col" rowspan="2" class="col-1">Exploitation</th>
+          <th scope="col" rowspan="2" class="col-2">Centre revenu</th>
+          <th scope="col" rowspan="2" class="col-2">Date commande</th>
+          <th scope="col" rowspan="2" class="col-2">Date livraison</th>
+          <th scope="col" rowspan="2" class="col-1">Montant</th>
         </tr>
-        </tbody>
-      </table>
-    </div>
+      </thead>
+      <tbody>
+      <tr *ngFor="let item of bonLivraisons">
+        <td class="col-1"><input type="checkbox" name="livraison-{{item.id}}" id="livraison-{{item.id}}" [(ngModel)]="item.selected" (change)="selectBonLivraison()"></td>
+        <td class="col-2" (click)="showLivraison(item)">{{ item.numLivraison }}</td>
+        <td class="col-1" (click)="showLivraison(item)">{{ item.exploitation.libelle }}</td>
+        <td class="col-2" (click)="showLivraison(item)">{{ item.centre.libelle }}</td>
+        <td class="col-2" (click)="showLivraison(item)">{{ item.dateCommande | date: 'dd/MM/yyyy' }}</td>
+        <td class="col-2" (click)="showLivraison(item)">{{ item.dateLivraison | date: 'dd/MM/yyyy' }}</td>
+        <td class="col-1" (click)="showLivraison(item)">{{ (item.montantHt - item.remise) | number:'1.2-2' }} €</td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
 </div>
 <ng-template #content let-modal let-c="close" let-d="dismiss">
   <div class="modal-header">
     <h5 class="modal-title text-center">Séléction bon de commande du {{fournisseur.raison_social}}</h5>
     <button class="btn-close" type="button" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
   </div>
-  <div class="modal-body overflow-scroll-y" style="height: 400px;">
+  <div class="modal-body overflow-scroll-y" style="height: 300px;">
     <table class="table table-striped">
       <thead>
         <tr>
@@ -251,7 +253,49 @@
     </table>
   </div>
   <div class="modal-footer">
-    <button type="button" class="btn btn-sm btn-success" (click)="modal.close('Save click')">Sélectionner</button>
+    <button type="button" class="btn btn-sm btn-info" (click)="modal.close('Create click')">Créer</button>
+    <button type="button" class="btn btn-sm btn-success" (click)="modal.close('validate click')">Valider</button>
+    <button class="btn btn-sm btn-danger m-1" (click)="modal.dismiss('Cross click')" type="button" data-coreui-dismiss="modal">Annuler</button>
+  </div>
+</ng-template>
+
+<ng-template #contentArticle let-modal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h5 class="modal-title text-center">Ajout Article</h5>
+    <button class="btn-close" type="button" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+  </div>
+  <div class="modal-body overflow-scroll-y" style="height: 400px;">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th class="col-1"></th>
+          <th class="col-3">Désignation</th>
+          <th class="col-2">Code</th>
+          <th class="col-2">Famille</th>
+          <th class="col-1">Prix</th>
+          <th class="col-1">Unite</th>
+          <!-- <th class="col-1">Prix FT</th>
+          <th class="col-1">Unite FT</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of articleFournisseurs">
+          <td class="col-1">
+            <input type="checkbox" name="af-{{item.id}}" id="af-{{item.id}}" [(ngModel)]="item.selected">
+          </td>
+          <td class="col-3">{{ item.article.libelle}}</td>
+          <td class="col-2">{{ item.article.codeArticle}}</td>
+          <td class="col-2">{{ item.article.familles.libelle}}</td>
+          <td class="col-1">{{ item.conditionnement[0].prixAchat | number:'1.2-2'}} €</td>
+          <td class="col-1">{{ item.article.unite.abreviation}}</td>
+          <!-- <td class="col-1"></td>
+          <td class="col-1"></td> -->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-success" (click)="modal.close('Save click')">Valider</button>
     <button class="btn btn-sm btn-danger m-1" (click)="modal.dismiss('Cross click')" type="button" data-coreui-dismiss="modal">Annuler</button>
   </div>
 </ng-template>

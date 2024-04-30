@@ -348,6 +348,25 @@ export class BonCommandeAchatsComponent implements OnInit {
     }
   }
 
+  validateCommande(){
+    const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
+    for (const bonCommande of selectedBonCommandes) {
+     if (bonCommande.validation == 0) {
+      this.commandeService.validateCommande(bonCommande).subscribe({
+        next:(value) =>{
+          this.showAllFournisseur();
+          this.toggle = this.toggle;
+          this.showDeleteBtnCom = !this.showDeleteBtnCom;
+          alert('Bon de commande n° '+bonCommande.noPiece+' a été validé');
+        },
+      });
+     }else{
+      alert('Ce bon de commande est déjà validé!');
+      this.showDeleteBtnCom = !this.showDeleteBtnCom;
+     }      
+    }
+  }
+
   public openModalArticle(content: TemplateRef<any>) { 
     this.resetArticleFournisseur();
     if(this.commandes.length >0){
@@ -586,13 +605,15 @@ export class BonCommandeAchatsComponent implements OnInit {
   deleteSelectedRowsComm() {
     const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
     for (const bonCommande of selectedBonCommandes) {
-     if (!bonCommande.validation) {
+     if (bonCommande.validation == 0) {
       this.commandeService.deleteOneCommande(bonCommande).subscribe({
         next:(value) =>{
           this.boncommandes = this.boncommandes.filter(line => line !== bonCommande);
           this.showDeleteBtnCom = this.boncommandes.some(line => line.selected);
         },
       });
+     }else{
+      alert('Ce bon de commande ne peut pas supprimer!')!
      }      
     }
   }

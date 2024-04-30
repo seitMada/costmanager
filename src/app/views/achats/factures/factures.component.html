@@ -1,1 +1,208 @@
-<p>factures works!</p>
+<div class="card d-flex py-1 my-2 mb-2">
+    <div class="d-flex bd-highlight">
+        <div class="flex-grow-1 bd-highlight">
+            <button type="button" class="btn btn-success btn-sm mx-1">Enregistrer</button>
+            <button type="button" class="btn btn-danger btn-sm mx-1">Annuler</button>
+        </div>
+        <div class="bd-highlight mx-2 my-0">
+            <div class="input-group input-group-sm">
+            <span class="input-group-text col-5" id="basic-addon1">Fournisseurs</span>
+            <input type="text" class="form-control bg-white col-6" name="fournisseur" aria-label="fournisseur" aria-describedby="fournisseur" [(ngModel)]="fournisseur.raison_social" disabled="true">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"  data-bs-toggle="dropdown" aria-expanded="false">
+                <span class="visually-hidden">Toggle Dropdown</span>
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end">
+                <li *ngFor="let line of fournisseurs"><span (click)="selectFounisseur(line)" >{{line.raison_social}}</span>
+                </li>
+            </ul>
+            </div>
+        </div>
+        <div class="bd-highlight">
+            <button class="btn btn-outline-success btn-sm me-1" title="Ajout bon de livraison"><i class="fas fa-plus"></i></button>
+            <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer bon de livraison">
+            <i class="fas fa-trash"></i>
+            </button>
+        </div>
+    </div>
+</div>
+<div class="card d-flex" *ngIf="!toggle">
+    <div class="card-header text-center fs-5 fw-bold"> Tous les Factures du fournisseur {{fournisseur.raison_social}}</div>
+    <div class="card-body overflow-scroll py-1" style="height: 650px;">
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th scope="col" class="col-2">N° Facture</th>
+                    <th scope="col" class="col-2">Exploitation</th>
+                    <th scope="col" class="col-2">Centre revenu</th>
+                    <th scope="col" class="col-2">Date Achat</th>
+                    <th scope="col" class="col-2">Date livraison</th>
+                    <th scope="col" class="col-1">MontantHt</th>
+                    <th scope="col" class="col-1">MontantTva</th>
+                </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="col-2"></td>
+                <td class="col-2"></td>
+                <td class="col-2"></td>
+                <td class="col-2"></td>
+                <td class="col-2"></td>
+                <td class="col-1"></td>
+                <td class="col-1"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+ </div>
+ <div class="card d-flex" *ngIf="toggle">
+    <div class="card-header text-center fs-5 fw-bold"> - Facture du </div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <div class="card-body py-1">
+          <form #bonFactureForm="ngForm">
+            <div class="row m-2">
+              <div class="col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Date Achat</span>
+                  <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="dateachat" [(ngModel)]="dates.today" autocomplete="off">
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Fournisseur</span>
+                  <input type="text" class="form-control col-6" [(ngModel)]="fournisseur.raison_social"  name="fournisseurId" aria-label="fournisseur" [disabled]="true" aria-describedby="basic-addon1">
+                </div>
+              </div>
+            </div>
+            <div class="row m-2">
+              <div class="col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Date de livraison</span>
+                  <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datelivraison"  [(ngModel)]="dates.tomorrow" autocomplete="off">
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Adresse Fournisseur</span>
+                  <input type="text" class="form-control col-7" name="adressefournisseur" [value]="fournisseur.adresse.rue +' '+fournisseur.adresse.code_postal+' '+fournisseur.adresse.ville+' '+fournisseur.adresse.pays" aria-label="adresse"
+                    [disabled]="true" aria-describedby="basic-addon1">
+                </div>
+              </div>
+            </div>
+            <div class="row m-2">
+                <div class="col-sm-6">
+                  <div class="input-group">
+                    <span class="input-group-text col-5" id="basic-addon1">Date de facture</span>
+                    <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datefacture"  [(ngModel)]="dates.today" autocomplete="off">
+                  </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="input-group">
+                      <span class="input-group-text col-5" id="basic-addon1">Exploitation</span>
+                      <input type="text" class="form-control col-7"  name="exploitationId" [(ngModel)]="exploitation.libelle" [disabled]="true" aria-label="exploitation" aria-describedby="basic-addon1">
+                    </div>
+                  </div>
+              </div>
+            <div class="row m-2">
+              <div class="col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Numéro bon de livraison</span>
+                  <input type="text" class="form-control col-7"  name="numBl"  autocomplete="off">
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Adresse livraison</span>
+                  <input type="text" class="form-control bg-white col-6" name="adresseLivraison" [(ngModel)]="adresse.rue" aria-label="adresseLivraison" aria-describedby="adresseLivraison"
+                    disabled="true">
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"  data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li *ngFor="let line of adresses"><span (click)="selectAdresse(line)">{{line.rue+' '+line.code_postal+' '+line.ville+' '+line.pays}}</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            <div class="row m-2">
+              
+              <div class="col-sm-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Centre de revenu</span>
+                  <input type="text" class="form-control bg-white col-6" name="centreId" [(ngModel)]="centre.libelle"  aria-label="centre" aria-describedby="centre"
+                    disabled="true">
+                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"  data-bs-toggle="dropdown" aria-expanded="false">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                  </button>
+                  <ul class="dropdown-menu dropdown-menu-end">
+                    <li *ngFor="let item of centres"><span (click)="selectCentreRevenu(item)">{{item.libelle}}</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+            
+            <div class="row m-2">
+              <div class="col-sm-12">
+                <div class="input-group">
+                  <span class="input-group-text col-3" id="basic-addon1">Commentaire</span>
+                  <input type="text"  class="form-control col-9" name="commentaire" aria-describedby="basic-addon1">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </li>
+      <li class="list-group-item">
+        <div class="card d-flex py-1 mb-2" *ngIf="(!toggle )">
+          <div class="d-flex flex-row-reverse bd-highlight">
+            <button class="btn btn-outline-danger btn-sm me-1"  title="Supprimer"><i class="fas fa-trash"></i></button>
+          </div>
+        </div>
+        <div class="card-body overflow-scroll my-1" style="height: 350px;">
+          <table class="table table-striped" >
+            <thead>
+              <tr>
+                <th class="col-1"></th>
+                <th class="col-3">Designation</th>
+                <th class="col-2 text-center">Qté Commandé</th>
+                <th class="col-1">Qté Livré</th>
+                <th class="col-1">Unité</th>
+                <th class="col-2 text-center">Prix</th>
+                <th class="col-1">Montant</th>
+                <th class="col-1">Remise</th>              
+              </tr>
+            </thead>
+            <tbody >
+              <tr>
+                <td class="col-1"><input class="form-check-input" type="checkbox" name="dl-"  id="dl-"></td>
+                <td class="col-3"></td>
+                <td class="col-2"><input type="number" class="form-control form-control-sm w-50 m-auto"  placeholder="0.00" name="qte_commande[]"></td>
+                <td class="col-1"><input type="number" class="form-control form-control-sm"  placeholder="0.00" name="qte_commande[]"></td>
+                <td class="col-1"></td>
+                <td class="col-2">
+                  <div class="input-group input-group-sm w-50 m-auto">
+                    <input type="number" class="form-control form-control-sm" placeholder="0.00" name="prix_unitaire[]" >
+                    <span class="input-group-text">€</span>
+                  </div>
+                </td>
+                <td class="col-1 text-end"></td>
+                <td class="col-1">
+                  <div class="input-group input-group-sm">
+                    <input type="number" class="form-control"  placeholder="0.00"  name="remise[]">
+                    <span class="input-group-text">€</span>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card d-flex">
+          <div class="d-flex flex-row-reverse bd-highlight fw-bold p-1">
+            <span class="col-1"></span>
+            <span class="col-1 ms-2 text-end"></span>
+            <span class="me-1">Montant Total</span>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </div>
