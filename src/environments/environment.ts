@@ -73,6 +73,7 @@ export const environment = {
 
     APIGETGROUPE: endPoint + 'groupe_analytique',
     APIGETFAMILLEBYGROUPE: endPoint + 'familles/groupe/',
+    APIGETFAMILLEBYTYPE: endPoint + 'familles/type/',
 
     APIGETSOUSFAMILLEBYGROUPE: endPoint + 'sousfamilles/famille/',
 

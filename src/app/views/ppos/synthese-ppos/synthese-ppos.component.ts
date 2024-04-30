@@ -13,6 +13,9 @@ import { PpoService } from 'src/app/shared/service/ppo.service';
 
 import { HighchartsChartModule } from 'highcharts-angular';
 import * as Highcharts from 'highcharts';
+import { InterfaceFamilles } from 'src/app/shared/model/interface-familles';
+import { FamillesService } from 'src/app/shared/service/familles.service';
+import { InterfacePpoDetail, InterfacePpos } from 'src/app/shared/model/interface-ppos';
 
 @Component({
   selector: 'app-synthese-ppos',
@@ -28,6 +31,12 @@ export class SynthesePposComponent implements OnInit {
   public centrerevenusselected: number[];
   public exploitations: InterfaceExploitations[];
   public exploitationsselected: number[];
+  public famillesarticles: InterfaceFamilles[];
+  public famillesfichetechniques: InterfaceFamilles[];
+  public pposarticle: InterfacePpos[] = [];
+  public ppodetailsarticle: InterfacePpoDetail[] = [];
+  public pposft: InterfacePpos[] = [];
+  public ppodetailsft: InterfacePpoDetail[] = [];
 
   Highcharts: typeof Highcharts = Highcharts;
 
@@ -71,91 +80,149 @@ export class SynthesePposComponent implements OnInit {
     fin: this.today
   }
 
-  public chartOptionsQuantitePerte: Highcharts.Options;
-  public chartOptionsMontantPerte: Highcharts.Options;
+  public chartOptionsQuantitePerteArticle: Highcharts.Options;
+  public chartOptionsMontantPerteArticle: Highcharts.Options;
+  public chartOptionsQuantitePerteFt: Highcharts.Options;
+  public chartOptionsMontantPerteFt: Highcharts.Options;
+
+  // public chartDataQuantitePerteArticle: {
+  //   categories: string[],
+  //   data: {
+  //     y: 0,
+  //     names: '',
+  //     colors: ''
+  //   }
+  // }
+
+  // public chartDataQuantitePerteFt: {
+  //   categories: string[],
+  //   data: [{
+  //     y: 0,
+  //     names: '',
+  //     colors: ''
+  //   }]
+  // }
 
   constructor(
     public router: Router,
     public route: ActivatedRoute,
     private centrerevenuService: CentreRevenuService,
     private exploitationService: ExploitationService,
+    private familleService: FamillesService,
     private ppoService: PpoService,
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
+
+    
+  }
+
+  async ngOnInit(): Promise<void> {
     this.exploitations = [];
     this.centrerevenus = [];
-    // this.chartOptions = {};
-    // Highcharts.setOptions({
-    //   accessibility: {
-    //     enabled: true // Enable accessibility features
-    //   }
-    // });
-    if (this.isAdmin === true) {
-      this.exploitationService.getExploitation().subscribe({
-        next: (_exploitations) => {
-          this.exploitations = _exploitations;
-          if (this.isAdmin === true) {
-            this.exploitations = this.exploitations.filter(e => e.id !== this.idexploitation)
+    this.exploitationService.getExploitation().subscribe({
+      next: async (_exploitations) => {
+        this.exploitations = _exploitations;
+        this.exploitations[0].selected = true;
+        this.exploitationsselected = [_exploitations[0].id];
+        this.centrerevenuService.getcentrerevenu().subscribe({
+          next: async (_centrerevenus) => {
+            this.centrerevenus = _centrerevenus;
+            if (this.isAdmin === true) {
+              this.exploitations = this.exploitations.filter(e => e.id !== this.idexploitation);
+              this.centrerevenus = this.centrerevenus.filter(c => c.exploitationsId !== this.idexploitation);
+            }
+            const data = {
+              date: {
+                dateDebut: new Date(this.dates.debut),
+                dateFin: new Date(this.dates.fin)
+              },
+              idexploitation: this.exploitationsselected
+            }
+            await this.synthesePerteArticle();
+            // this.ppoService.getPpoExploitation(data).subscribe({
+            //   next: async (_ppo: any) => {
+            //     for (const _p of _ppo) {
+            //       for (const _pd of _p.ppodetail) {
+            //         if (_pd.article !== null) {
+            //           this.ppodetailsarticle.push(_pd);
+            //         } else {
+            //           this.ppodetailsft.push(_pd);
+            //         }
+            //       }
+            //     }
+            //     await this.synthesePerteArticle();
+            //   }
+            // })
           }
-          this.exploitations[0].selected = true;
-          this.exploitationsselected = [_exploitations[0].id];
-          this.centrerevenuService.getcentrerevenu().subscribe({
-            next: (_centrerevenus) => {
-              this.centrerevenus = _centrerevenus;
-              if (this.isAdmin === true) {
-                this.centrerevenus = this.centrerevenus.filter(c => c.exploitationsId !== this.idexploitation);
-                const data = {
-                  date: {
-                    dateDebut: new Date(this.dates.debut),
-                    dateFin: new Date(this.dates.fin)
-                  },
-                  idexploitation: this.exploitationsselected
-                }
-                this.ppoService.getPpoExploitation(data).subscribe({
-                  next: (_ppo) => {
-                    console.log(_ppo)
-                  }
-                })
-              }
-            }
-          });
-        }
-      });
-    } else {
-      this.exploitationService.getExploitationById(this.idexploitation).subscribe({
-        next: (_exploitations) => {
-          this.exploitations = _exploitations;
-          this.exploitationsselected = [_exploitations.id];
-          this.exploitations[0].selected = true;
-          this.centrerevenuService.getCrExploitation(_exploitations.id).subscribe({
-            next: (_centrerevenus) => {
-              this.centrerevenus = _centrerevenus;
-              const data = {
-                date: {
-                  dateDebut: new Date(this.dates.debut),
-                  dateFin: new Date(this.dates.fin)
-                },
-                idexploitation: this.exploitationsselected
-              }
-              this.ppoService.getPpoExploitation(data).subscribe({
-                next: (_ppo) => {
-                  console.log(_ppo)
-                }
-              })
-            }
-          })
-        }
-      })
+        });
+      }
+    });
+  }
+
+  generateRandomHexColor() {
+    const letters = '0123456789ABCDEF';
+    let color = '#';
+    for (let i = 0; i < 6; i++) {
+      color += letters[Math.floor(Math.random() * 16)];
     }
+    return color;
   }
 
-  ngOnInit(): void {
-    this.syntheseQuantitePerte();
-    this.syntheseMontantPerte();
+  private removeDuplicates<T>(array: T[]): T[] {
+    const uniqueSet = new Set(array);
+    return Array.from(uniqueSet);
   }
 
-  private syntheseMontantPerte() {
-    this.chartOptionsMontantPerte = {
+  private async synthesePerteArticle() {
+    const data = {
+      date: {
+        dateDebut: new Date(this.dates.debut),
+        dateFin: new Date(this.dates.fin)
+      },
+      idexploitation: this.exploitationsselected,
+      type: 'A'
+    };
+    this.ppoService.getPpoExploitation(data).subscribe({
+      next: (_ppo) => {
+        this.familleService.getFamilleByType('A').subscribe({
+          next: async (_familles) => {
+            this.famillesarticles = _familles;
+            console.log(_ppo);
+            // let _categories = [];
+            // const _data = [{
+            //   y: 0,
+            //   names: '',
+            //   colors: ''
+            // }];
+            // let perteqtearticle = [];
+            // let pertemontantarticle = [];
+            // for (const _ppodetails of this.ppodetailsarticle) {
+            //   _categories.push(_ppodetails.article.familles.libelle)
+    
+            // }
+            // // this.chartDataQuantitePerteFt.categories = _categories;
+            // _categories = this.removeDuplicates(_categories)
+            
+            // _categories.forEach(famille => {
+            //   console.log(famille);
+            //   for (const _ppodetails of this.ppodetailsarticle) {
+                
+            //   }
+            // });
+            // console.log()
+            await this.syntheseQuantitePerteArticle();
+            await this.syntheseMontantPerteArticle();
+          }
+        });
+      }
+    });
+  }
+
+  private async syntheseMontantPerteArticle() {
+    this.chartOptionsMontantPerteArticle = {
+      time: {
+        Date: new Date(),
+      },
       accessibility: {
         enabled: false,
       },
@@ -179,8 +246,8 @@ export class SynthesePposComponent implements OnInit {
         enabled: false
       },
       tooltip: {
-          headerFormat: '',
-          pointFormat: '<span>{series.name} {point.name}</span> : <b>{point.y:.2f} €</b>'
+        headerFormat: '',
+        pointFormat: '<span>{series.name} {point.name}</span> : <b>{point.y:.2f} €</b>'
       },
       series: [{
         type: 'column',
@@ -204,8 +271,11 @@ export class SynthesePposComponent implements OnInit {
     };
   }
 
-  private syntheseQuantitePerte() {
-    this.chartOptionsQuantitePerte = {
+  private async syntheseQuantitePerteArticle() {
+     this.chartOptionsQuantitePerteArticle = {
+      time: {
+        Date: new Date(),
+      },
       accessibility: {
         enabled: false,
       },
@@ -214,7 +284,6 @@ export class SynthesePposComponent implements OnInit {
           dataLabels: {
             enabled: true,
             format: '<b>{point.name}</b>: {point.percentage:.2f} %',
-            // connectorColor: 'silver'
             softConnector: true,
             connectorWidth: 2
           },
@@ -229,14 +298,11 @@ export class SynthesePposComponent implements OnInit {
         style: {
           fontSize: "16px",
           fontWeight: "bold"
-        },
+        }
       },
       series: [
         {
           type: 'pie',
-          // data: [1, 2, 3, 4, 5],
-          // name: 'Percentage',
-          // colorByPoint: true,
           data: [
             {
               name: 'Water',
@@ -245,8 +311,6 @@ export class SynthesePposComponent implements OnInit {
             },
             {
               name: 'Fat',
-              // sliced: true,
-              // selected: true,
               y: 26.71
             },
             {
