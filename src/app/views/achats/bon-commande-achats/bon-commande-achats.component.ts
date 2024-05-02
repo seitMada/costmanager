@@ -26,6 +26,19 @@ import { InterfaceCommandeDetails } from '../../../shared/model/interface-comman
 import { BonCommande } from '../../../shared/model/bonCommande';
 
 // import { jsPDF } from 'jspdf';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+// (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+
+// pdfMake.fonts = {
+//   Roboto: {
+//     normal: 'Roboto-Regular.ttf',
+//     bold: 'Roboto-Bold.ttf',
+//     italics: 'Roboto-Italic.ttf',
+//     bolditalics: 'Roboto-BoldItalic.ttf'
+//   }
+// };
+
 
 // import { jsPDF } from 'jspdf';
 // import 'jspdf-autotable';
@@ -40,6 +53,7 @@ import { BonCommande } from '../../../shared/model/bonCommande';
 })
 export class BonCommandeAchatsComponent implements OnInit {
 
+  
   public fournisseur: Fournisseurs;
   public fournisseurs: Fournisseur;
   public centres: Centrerevenus;
@@ -437,71 +451,190 @@ export class BonCommandeAchatsComponent implements OnInit {
           
   }
 
-  generatePDF(commande: InterfaceBonCommandes) {
-    
-    // if (!commande || !commande.noPiece || !commande.dateCommande || !commande.fournisseur || !commande.commandeDetail) {
-    //     console.error('Commande invalide.');
-    //     return;
-    // }
+  generatePDF(commande: InterfaceBonCommandes){
+    // playground requires you to assign document definition to a variable called dd
 
-    // const doc = new jsPDF() as any;
-    // doc.setFont('Helvetica');
-    // doc.text('Bon de commande',80,20,{styles: { fontSize: 15 }} );
-    // doc.setFontSize(12);
-    // doc.text(`N° ${commande.noPiece}`, 15, 40);
-    // if (commande.fournisseur && commande.fournisseur.raison_social) {
-    //   doc.text(`Fournisseur: ${commande.fournisseur.raison_social}`, 90, 40);
-    // } else {
-    //   console.error('Fournisseur invalide.');
-    //   return;
+    // const documentDefinition = {
+    //   content: [
+    //     {text: 'Tables', style: 'header'},
+    //     'Official documentation is in progress, this document is just a glimpse of what is possible with pdfmake and its layout engine.',
+    //     {text: 'A simple table (no headers, no width specified, no spans, no styling)', style: 'subheader'},
+    //     'The following table has nothing more than a body array',
+    //     {
+    //       style: 'tableExample',
+    //       table: {
+    //         body: [
+    //           ['Column 1', 'Column 2', 'Column 3'],
+    //           ['One value goes here', 'Another one here', 'OK?']
+    //         ]
+    //       }
+    //     },
+    //     {text: 'Optional border', fontSize: 14, bold: true, pageBreak: 'before', margin: [0, 0, 0, 8]},
+    //     'Each cell contains an optional border property: an array of 4 booleans for left border, top border, right border, bottom border.',
+    //     {
+    //       style: 'tableExample',
+    //       table: {
+    //         body: [
+    //           [
+    //             {
+    //               border: [false, true, false, false],
+    //               fillColor: '#eeeeee',
+    //               text: 'border:\n[false, true, false, false]'
+    //             },
+    //             {
+    //               border: [false, false, false, false],
+    //               fillColor: '#dddddd',
+    //               text: 'border:\n[false, false, false, false]'
+    //             },
+    //             {
+    //               border: [true, true, true, true],
+    //               fillColor: '#eeeeee',
+    //               text: 'border:\n[true, true, true, true]'
+    //             }
+    //           ],
+    //           [
+    //             {
+    //               rowSpan: 3,
+    //               border: [true, true, true, true],
+    //               fillColor: '#eeeeff',
+    //               text: 'rowSpan: 3\n\nborder:\n[true, true, true, true]'
+    //             },
+    //             {
+    //               border: undefined,
+    //               fillColor: '#eeeeee',
+    //               text: 'border:\nundefined'
+    //             },
+    //             {
+    //               border: [true, false, false, false],
+    //               fillColor: '#dddddd',
+    //               text: 'border:\n[true, false, false, false]'
+    //             }
+    //           ],
+    //           [
+    //             '',
+    //             {
+    //               colSpan: 2,
+    //               border: [true, true, true, true],
+    //               fillColor: '#eeffee',
+    //               text: 'colSpan: 2\n\nborder:\n[true, true, true, true]'
+    //             },
+    //             ''
+    //           ],
+    //           [
+    //             '',
+    //             {
+    //               border: undefined,
+    //               fillColor: '#eeeeee',
+    //               text: 'border:\nundefined'
+    //             },
+    //             {
+    //               border: [false, false, true, true],
+    //               fillColor: '#dddddd',
+    //               text: 'border:\n[false, false, true, true]'
+    //             }
+    //           ]
+    //         ]
+    //       },
+    //       layout: {
+    //         defaultBorder: false,
+    //       }
+    //     },
+    //   ],
+    //   styles: {
+    //     header: {
+    //       fontSize: 18,
+    //       bold: true,
+    //     },
+    //     subheader: {
+    //       fontSize: 16,
+    //       bold: true,
+    //     },
+    //     tableHeader: {
+    //       bold: true,
+    //       fontSize: 13,
+    //       color: 'black'
+    //     }
+    //   },      
     // }
-    
-    // doc.text(`Exploitation: ${commande.exploitation.libelle}`, 15, 50);
-    // doc.text(`Adresse fournisseur: ${commande.fournisseur.adresse.rue}`+' ' +`${commande.fournisseur.adresse.code_postal}`+' ' +`${commande.fournisseur.adresse.ville}`+' ' +`${commande.fournisseur.adresse.pays}`, 90, 50);
-    // doc.text(`Date: ${this.formatDate(commande.dateCommande, 'dd/MM/yyyy')}`, 15, 60);
+   
 
-    // const columns = ['Réf', 'Désignation', 'Quantité', 'Unité', 'Prix article', 'Montant'];
-    // const rows =  commande.commandeDetail;
-    
-    
-    // if (!rows || rows.length === 0) {
-    //     console.error('Détails de commande vides ou non définis.');
-    //     return;
-    // }
-    // let datas:any = [];
-    // let montant = 0;
-    
-    // rows.forEach((detail, index) => {
-    //     const row = [
-    //         detail.articlefournisseur.article.codeArticle,
-    //         detail.articlefournisseur.article.libelle,
-    //         detail.QteCommande,
-    //         detail.articlefournisseur.article.unite.abreviation,
-    //         detail.prixarticle +' €',
-    //         detail.QteCommande * detail.prixarticle+' €'
-    //     ];
-    //       montant += detail.prixarticle*detail.QteCommande;
-    //     datas.push(row);
-    // });
-    // const options = {
-    //   startY: 70, 
-    //   styles: { fontSize: 11 }, 
-    //   headStyles: { align: 'right' },
-    //   bodyStyles: { align: 'right' }, 
-    //   footerStyles: { align: 'right' }
-    // };
-    
-    // const footers = [['', '', '', '', 'Montant total', `${montant} €`]];
+    // pdfMake.createPdf(documentDefinition).download('example.pdf');
 
-    // doc.autoTable({
-    //   head: [columns],
-    //   body: datas, 
-    //   foot: footers, 
-    //   columns: columns, 
-    //   ...options
-    // });
-    // doc.save(`BonCommande_${commande.noPiece}.pdf`); 
+    const documentDefinition = {
+      content: [
+        { text: 'Hello, World!', fontSize: 18, bold: true },
+        { text: 'This is a PDF generated with pdfmake in Angular.', fontSize: 12 },
+      ]
+    };
+  
+    pdfMake.createPdf(documentDefinition).download('example.pdf');
   }
+
+  // generatePDF(commande: InterfaceBonCommandes) {
+    
+  //   if (!commande || !commande.noPiece || !commande.dateCommande || !commande.fournisseur || !commande.commandeDetail) {
+  //       console.error('Commande invalide.');
+  //       return;
+  //   }
+
+  //   const doc = new jsPDF() as any;
+  //   doc.setFont('Helvetica');
+  //   doc.text('Bon de commande',80,20,{styles: { fontSize: 15 }} );
+  //   doc.setFontSize(12);
+  //   doc.text(`N° ${commande.noPiece}`, 15, 40);
+  //   if (commande.fournisseur && commande.fournisseur.raison_social) {
+  //     doc.text(`Fournisseur: ${commande.fournisseur.raison_social}`, 90, 40);
+  //   } else {
+  //     console.error('Fournisseur invalide.');
+  //     return;
+  //   }
+    
+  //   doc.text(`Exploitation: ${commande.exploitation.libelle}`, 15, 50);
+  //   doc.text(`Adresse fournisseur: ${commande.fournisseur.adresse.rue}`+' ' +`${commande.fournisseur.adresse.code_postal}`+' ' +`${commande.fournisseur.adresse.ville}`+' ' +`${commande.fournisseur.adresse.pays}`, 90, 50);
+  //   doc.text(`Date: ${this.formatDate(commande.dateCommande, 'dd/MM/yyyy')}`, 15, 60);
+
+  //   const columns = ['Réf', 'Désignation', 'Quantité', 'Unité', 'Prix article', 'Montant'];
+  //   const rows =  commande.commandeDetail;
+    
+    
+  //   if (!rows || rows.length === 0) {
+  //       console.error('Détails de commande vides ou non définis.');
+  //       return;
+  //   }
+  //   let datas:any = [];
+  //   let montant = 0;
+    
+  //   rows.forEach((detail, index) => {
+  //       const row = [
+  //           detail.articlefournisseur.article.codeArticle,
+  //           detail.articlefournisseur.article.libelle,
+  //           detail.QteCommande,
+  //           detail.articlefournisseur.article.unite.abreviation,
+  //           detail.prixarticle +' €',
+  //           detail.QteCommande * detail.prixarticle+' €'
+  //       ];
+  //         montant += detail.prixarticle*detail.QteCommande;
+  //       datas.push(row);
+  //   });
+  //   const options = {
+  //     startY: 70, 
+  //     styles: { fontSize: 11 }, 
+  //     headStyles: { align: 'right' },
+  //     bodyStyles: { align: 'right' }, 
+  //     footerStyles: { align: 'right' }
+  //   };
+    
+  //   const footers = [['', '', '', '', 'Montant total', `${montant} €`]];
+
+  //   doc.autoTable({
+  //     head: [columns],
+  //     body: datas, 
+  //     foot: footers, 
+  //     columns: columns, 
+  //     ...options
+  //   });
+  //   doc.save(`BonCommande_${commande.noPiece}.pdf`); 
+  // }
  
   listArticleDixDernierCommande(){
     const fournisseurId = this.fournisseur.id ? this.fournisseur.id:0;

@@ -20,7 +20,7 @@ export class BonlivraisonService {
   private apiArticleFournisseurByArticleId = environment.APIGETARTICLEFOURNISSEURBYARTICLEID;
   private apiArticleExploitationByExploitationId = environment.APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID;
   private apiGetCommandeByFournisseurExploitation = environment.APIGETCOMMANDEBYFOURNISSEUREXPLOITATIONVALIDATE;
-  
+  private apiValidateLivraison = environment.APIVALIDATELIVRAISON;
   
 
   public getListLivraisonByFournisseurExploitation(fournisseurId:number,exploitationId:number){
@@ -53,5 +53,9 @@ export class BonlivraisonService {
 
   public getArticleFournisseurByArticleId(fournisseurId:number,articleId:any[]) {
     return this.https.get<any>(this.apiArticleFournisseurByArticleId+fournisseurId,{ params: { articleId: articleId.join(',') } })
+  }
+
+  public validateLivraison(livraison:InterfaceBonLivraisons){
+    return this.https.post<any>(this.apiValidateLivraison,livraison)
   }
 }

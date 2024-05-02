@@ -18,6 +18,9 @@
       </div>
     </div>
     <div class="bd-highlight">
+      <button class="btn btn-outline-warning btn-sm me-1" *ngIf="deleteLivraison" (click)="validateLivraison()" title="Valider bon de commande">
+        <i class="fas fa-check"></i>
+      </button>
       <button class="btn btn-outline-success btn-sm me-1" [disabled]="!addLivraison" (click)="openModalCommande(content)" title="Ajout bon de livraison"><i class="fas fa-plus"></i></button>
       <button class="btn btn-outline-danger btn-sm me-1" *ngIf="deleteLivraison" (click)="deleteSelectedRowsLivraison()" title="Supprimer bon de livraison">
         <i class="fas fa-trash"></i>
@@ -145,7 +148,7 @@
               <td class="col-3">{{line.articlefournisseur.article.libelle}}</td>
               <td class="col-2"><input type="number" class="form-control form-control-sm w-50 m-auto" [disabled]="inputModif" placeholder="0.00" [step]="line.articlefournisseur.article.unite.step" name="qte_commande[]" [(ngModel)]="line.quantiteCommandee"></td>
               <td class="col-1"><input type="number" class="form-control form-control-sm" [disabled]="inputModif" placeholder="0.00" [step]="line.articlefournisseur.article.unite.step" name="qte_commande[]" [(ngModel)]="line.quantiteLivree"></td>
-              <td class="col-1">{{line.articlefournisseur.article.unite.abreviation }}</td>
+              <td class="col-1">{{line.articlefournisseur.conditionnement[0].uniteCommande.abreviation }}</td>
               <td class="col-2">
                 <div class="input-group input-group-sm w-50 m-auto">
                   <input type="number" class="form-control form-control-sm " [disabled]="inputModif" placeholder="0.00" [step]="line.articlefournisseur.article.unite.step"  name="prix_unitaire[]" [(ngModel)]="line.prixarticle">
@@ -189,8 +192,8 @@
         </tr>
       </thead>
       <tbody>
-      <tr *ngFor="let item of bonLivraisons">
-        <td class="col-1"><input type="checkbox" name="livraison-{{item.id}}" id="livraison-{{item.id}}" [(ngModel)]="item.selected" (change)="selectBonLivraison()"></td>
+      <tr *ngFor="let item of bonLivraisons" [ngClass]="item.validation == true? 'table-info':'table-light'">
+        <td class="col-1"><input type="checkbox" name="livraison-{{item.id}}" [disabled]="item.validation==false? 'false':'true'" id="livraison-{{item.id}}" [(ngModel)]="item.selected" (change)="selectBonLivraison()"></td>
         <td class="col-2" (click)="showLivraison(item)">{{ item.numLivraison }}</td>
         <td class="col-1" (click)="showLivraison(item)">{{ item.exploitation.libelle }}</td>
         <td class="col-2" (click)="showLivraison(item)">{{ item.centre.libelle }}</td>
@@ -207,47 +210,28 @@
     <h5 class="modal-title text-center">Séléction bon de commande du {{fournisseur.raison_social}}</h5>
     <button class="btn-close" type="button" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
   </div>
-  <div class="modal-body overflow-scroll-y" style="height: 300px;">
-    <table class="table table-striped">
+  <div class="modal-body overflow-scroll-y py-1" style="height: 400px;">
+    <table class="table table-striped table-hover table-sm">
       <thead>
         <tr>
           <th scope="col" class="col-1"></th>
           <th scope="col" class="col-3">N° </th>
-          <th scope="col" class="col-2">Date </th>
-          <th scope="col" class="col-3">Désignation</th>
-          <th scope="col" class="col-1">Quantité</th>
-          <th scope="col" class="col-1">Unité</th>
-          <th scope="col" class="col-2">Prix</th>
-        </tr>
-        <tr>
-
+          <th scope="col" class="col-1">Date </th>
+          <th scope="col" class="col-1">Montant</th>
+          <th scope="col" class="col-2">Exploitation</th>
+          <th scope="col" class="col-2">Centre</th>
+          <th scope="col" class="col-1">Article</th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let item of bonCommandes">
           <td scope="col" class="col-1"><input type="radio" class="form-check-input" name="commande-{{item.id}}" [value]="item.id" [(ngModel)]="item.selected"></td>
           <td scope="col" class="col-3">{{ item.noPiece }}</td>
-          <td scope="col" class="col-2">{{ item.dateCommande | date:'dd/MM/yyyy' }}</td>
-          <td scope="col" class="col-3">
-            <tr *ngFor="let items of item.commandeDetail">
-              <td>{{ items.articlefournisseur.article.libelle }}</td>
-            </tr>
-          </td>
-          <td scope="col" class="col-1">
-            <tr *ngFor="let items of item.commandeDetail">
-              <td>{{ items.QteCommande}}</td>
-            </tr>
-          </td>
-          <td scope="col" class="col-1">
-            <tr *ngFor="let items of item.commandeDetail">
-              <td>{{ items.articlefournisseur.article.unite.abreviation}}</td>
-            </tr>
-          </td>
-          <td scope="col" class="col-2">
-            <tr *ngFor="let items of item.commandeDetail">
-              <td>{{ items.prixarticle }} €</td>
-            </tr>
-          </td>
+          <td scope="col" class="col-1">{{ item.dateCommande | date:'dd/MM/yyyy' }}</td>
+          <td scope="col" class="col-1 text-center">{{ item.montantHT - item.remise}} €</td>
+          <td scope="col" class="col-2">{{ item.exploitation.libelle }}</td>
+          <td scope="col" class="col-2">{{ item.centre.libelle }}</td>
+          <td scope="col" class="col-1 text-center"><span (click)="selectArticle(contentCommandeArticle,item)"><i class="fas fa-angle-right"></i></span></td>
         </tr>
       </tbody>
     </table>
@@ -264,8 +248,8 @@
     <h5 class="modal-title text-center">Ajout Article</h5>
     <button class="btn-close" type="button" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
   </div>
-  <div class="modal-body overflow-scroll-y" style="height: 400px;">
-    <table class="table table-striped">
+  <div class="modal-body overflow-scroll-y py-1" style="height: 400px;">
+    <table class="table table-striped table-hover table-sm">
       <thead>
         <tr>
           <th class="col-1"></th>
@@ -274,8 +258,6 @@
           <th class="col-2">Famille</th>
           <th class="col-1">Prix</th>
           <th class="col-1">Unite</th>
-          <!-- <th class="col-1">Prix FT</th>
-          <th class="col-1">Unite FT</th> -->
         </tr>
       </thead>
       <tbody>
@@ -287,9 +269,8 @@
           <td class="col-2">{{ item.article.codeArticle}}</td>
           <td class="col-2">{{ item.article.familles.libelle}}</td>
           <td class="col-1">{{ item.conditionnement[0].prixAchat | number:'1.2-2'}} €</td>
-          <td class="col-1">{{ item.article.unite.abreviation}}</td>
-          <!-- <td class="col-1"></td>
-          <td class="col-1"></td> -->
+          <td class="col-1">{{ item.conditionnement[0].uniteCommande.abreviation}}</td>
+          
         </tr>
       </tbody>
     </table>
@@ -297,5 +278,35 @@
   <div class="modal-footer">
     <button type="button" class="btn btn-sm btn-success" (click)="modal.close('Save click')">Valider</button>
     <button class="btn btn-sm btn-danger m-1" (click)="modal.dismiss('Cross click')" type="button" data-coreui-dismiss="modal">Annuler</button>
+  </div>
+</ng-template>
+
+<ng-template #contentCommandeArticle let-modal let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h5 class="modal-title text-center">Liste article du commande {{ bonCommande.noPiece }}</h5>
+    <button class="btn-close" type="button" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+  </div>
+  <div class="modal-body overflow-scroll-y py-1" style="height: 400px;">
+    <table class="table table-striped table-hover table-sm">
+      <thead>
+        <tr>
+          <th class="col-2">Code</th>
+          <th class="col-3">Désignation</th>
+          <th class="col-2">Famille</th>
+          <th class="col-1">Prix</th>
+          <th class="col-1">Unite</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let item of commadeDetails">
+          <td class="col-2">{{ item.articlefournisseur.article.codeArticle}}</td>
+          <td class="col-3">{{ item.articlefournisseur.article.libelle }}</td>
+          <td class="col-2">{{ item.articlefournisseur.article.familles.libelle }}</td>
+          <td class="col-1">{{ item.articlefournisseur.conditionnement[0].prixAchat | number:'1.2-2'}} €</td>
+          <td class="col-1">{{ item.articlefournisseur.conditionnement[0].uniteCommande.abreviation}}</td>
+          
+        </tr>
+      </tbody>
+    </table>
   </div>
 </ng-template>

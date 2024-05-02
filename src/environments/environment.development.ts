@@ -124,9 +124,14 @@ export const environment = {
     APICREATEBONLIVRAISON: endPoint + 'livraison',
     APIGETDETAILLIVRAISONBYLIVRAISONID : endPoint + 'livraison/',
     DELETEBONLIVRAISON: endPoint + 'livraison/delete',
+    APIVALIDATELIVRAISON: endPoint + 'livraison/validate',
     
     APIDELETEPPO: endPoint + 'ppo/delete',
     APIDELETESPPO: endPoint + 'ppo/deletes',
     APIPPOEXPLOITATION: endPoint + 'ppo/exploitation',
     APIPPOCENTREREVENU: endPoint + 'ppo/centrerevenu',
+
+    APIGETFACTUREBYFOURNISSEUREXPLOITATION: endPoint + 'achat/facture/',
+    APICREATEFACTURE: endPoint + 'achat',
 };
+   
