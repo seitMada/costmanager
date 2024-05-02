@@ -361,6 +361,21 @@ export class BonLivraisonAchatsComponent implements OnInit{
     }
   }
 
+  public selectArticle(contentCommandeArticle:TemplateRef<any>,commande:InterfaceBonCommandes){
+    this.commadeDetails = commande.commandeDetail;
+    this.bonCommande = commande;
+    this.modalService.open(contentCommandeArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${result}`;
+        console.log(this.closeResult)
+        if (this.closeResult == 'Closed with: Save click') {}},
+        (reason) => {
+          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+          console.log(this.closeResult)
+        },
+      );
+  }
+
   public openModalArticle(contentArticle: TemplateRef<any>){
     
     this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
