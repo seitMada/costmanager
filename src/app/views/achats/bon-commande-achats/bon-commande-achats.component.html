@@ -19,7 +19,7 @@
       </div>
     </div>
     <div class="bd-highlight">
-      <button class="btn btn-outline-warning btn-sm me-1" *ngIf="showDeleteBtnCom" (click)="validateCommande()" title="Valider bon de commande">
+      <button class="btn btn-outline-warning btn-sm me-1" *ngIf="showvalidateBtn" (click)="validateCommande()" title="Valider bon de commande">
         <i class="fas fa-check"></i>
       </button>
       <button class="btn btn-outline-success btn-sm me-1" [disabled]="!addTogle" (click)="toggleModal(); listArticleFournisseurs()" title="Ajouter bon de commande"><i class="fas fa-t"></i></button>
@@ -185,7 +185,7 @@
           <td class="col-1"><input type="checkbox" name="af-{{lines.id}}" [disabled]="lines.validation!=0? 'true':'false'" id="af-{{lines.id}}" [(ngModel)]="lines.selected" (change)="selectBoncomm()"></td>
           <td class="col-3" (click)="showCommande(lines)">{{lines.noPiece}}</td>
           <td class="col-2" (click)="showCommande(lines)">{{lines.dateCommande | date :'dd/MM/yyyy'}}</td>
-          <td class="col-3" (click)="showCommande(lines)">{{lines.montantHT | number:'1.2-2'}} €</td>
+          <td class="col-3" (click)="showCommande(lines)">{{lines.montantHT -lines.remise| number:'1.2-2'}} €</td>
           <td class="col-2 text-info"><i (click)="generatePDF(lines)" class="fas fa-print" title="Télécharger PDF"></i></td>
         </tr>
       </tbody>
@@ -240,8 +240,6 @@
           <th class="col-2">Famille</th>
           <th class="col-1">Prix</th>
           <th class="col-1">Unite</th>
-          <!-- <th class="col-1">Prix FT</th>
-          <th class="col-1">Unite FT</th> -->
         </tr>
       </thead>
       <tbody>
@@ -254,8 +252,6 @@
           <td class="col-2">{{ item.article.familles.libelle}}</td>
           <td class="col-1">{{ item.conditionnement[0].prixAchat | number:'1.2-2'}} €</td>
           <td class="col-1">{{ item.article.unite.abreviation}}</td>
-          <!-- <td class="col-1"></td>
-          <td class="col-1"></td> -->
         </tr>
       </tbody>
     </table>

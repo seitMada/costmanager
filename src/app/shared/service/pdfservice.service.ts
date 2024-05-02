@@ -14,7 +14,7 @@ export class PdfserviceService {
     tableau.forEach(function (row: { [x: string]: { toString: () => any; }; }) {
       const dataRow: string[] = [];
       cle.forEach(function (column: string) {
-        if (column == 'Cout' || column == 'Valorisation' || column == 'Prix') {
+        if (column == 'Cout' || column == 'Valorisation' || column == 'Prix' || column == 'Montant') {
           const cout = Math.round(Number(row[column]) * 100) / 100;
           dataRow.push(cout.toString() + '€');
         } else {

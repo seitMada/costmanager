@@ -25,23 +25,10 @@ import { InterfaceBonCommandes } from '../../../shared/model/interface-bonComman
 import { InterfaceCommandeDetails } from '../../../shared/model/interface-commandedetail';
 import { BonCommande } from '../../../shared/model/bonCommande';
 
-// import { jsPDF } from 'jspdf';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-// (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+import { PdfserviceService } from 'src/app/shared/service/pdfservice.service';
 
-// pdfMake.fonts = {
-//   Roboto: {
-//     normal: 'Roboto-Regular.ttf',
-//     bold: 'Roboto-Bold.ttf',
-//     italics: 'Roboto-Italic.ttf',
-//     bolditalics: 'Roboto-BoldItalic.ttf'
-//   }
-// };
-
-
-// import { jsPDF } from 'jspdf';
-// import 'jspdf-autotable';
 
 @Component({
   selector: 'app-bon-commande-achats',
@@ -93,6 +80,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   public addBtn = false;
   public showDeleteBtn = false;
   public showDeleteBtnCom = false;
+  public showvalidateBtn = false;
   public btnTenRecord = false;
   public inputModif = false;
 
@@ -113,6 +101,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     private commandeService: CommandeService,
     private exploitationService: ExploitationService,
     private centreRevenuService: CentreRevenuService,
+    private pdfService: PdfserviceService,
     private modalService: NgbModal,
     config: NgbModalConfig,
     private datePipe: DatePipe,
@@ -370,13 +359,15 @@ export class BonCommandeAchatsComponent implements OnInit {
         next:(value) =>{
           this.showAllFournisseur();
           this.toggle = this.toggle;
-          this.showDeleteBtnCom = !this.showDeleteBtnCom;
+          // this.showDeleteBtnCom = !this.showDeleteBtnCom;
+          this.showvalidateBtn = !this.showvalidateBtn;
           alert('Bon de commande n° '+bonCommande.noPiece+' a été validé');
         },
       });
      }else{
       alert('Ce bon de commande est déjà validé!');
-      this.showDeleteBtnCom = !this.showDeleteBtnCom;
+      // this.showDeleteBtnCom = !this.showDeleteBtnCom;
+      this.showvalidateBtn = !this.showvalidateBtn;
      }      
     }
   }
@@ -452,189 +443,81 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   generatePDF(commande: InterfaceBonCommandes){
-    // playground requires you to assign document definition to a variable called dd
+    const dataCommande:any[]= [];
+    const dateCommande = this.formatDate(commande.dateCommande, 'dd/MM/yyyy');
+    let montant = 0;
+    for(const com of commande.commandeDetail){
+      const data = {
+        'Réf':com.articlefournisseur.article.codeArticle,
+        'Désignation':com.articlefournisseur.article.libelle,
+        'Quantité':com.QteCommande,
+        'Unité': com.articlefournisseur.conditionnement[0].uniteCommande.abreviation,
+        'Prix': com.articlefournisseur.conditionnement[0].prixAchat,
+        'Montant':com.QteCommande * com.articlefournisseur.conditionnement[0].prixAchat
+      }
+      montant += com.QteCommande * com.articlefournisseur.conditionnement[0].prixAchat;
 
-    // const documentDefinition = {
-    //   content: [
-    //     {text: 'Tables', style: 'header'},
-    //     'Official documentation is in progress, this document is just a glimpse of what is possible with pdfmake and its layout engine.',
-    //     {text: 'A simple table (no headers, no width specified, no spans, no styling)', style: 'subheader'},
-    //     'The following table has nothing more than a body array',
-    //     {
-    //       style: 'tableExample',
-    //       table: {
-    //         body: [
-    //           ['Column 1', 'Column 2', 'Column 3'],
-    //           ['One value goes here', 'Another one here', 'OK?']
-    //         ]
-    //       }
-    //     },
-    //     {text: 'Optional border', fontSize: 14, bold: true, pageBreak: 'before', margin: [0, 0, 0, 8]},
-    //     'Each cell contains an optional border property: an array of 4 booleans for left border, top border, right border, bottom border.',
-    //     {
-    //       style: 'tableExample',
-    //       table: {
-    //         body: [
-    //           [
-    //             {
-    //               border: [false, true, false, false],
-    //               fillColor: '#eeeeee',
-    //               text: 'border:\n[false, true, false, false]'
-    //             },
-    //             {
-    //               border: [false, false, false, false],
-    //               fillColor: '#dddddd',
-    //               text: 'border:\n[false, false, false, false]'
-    //             },
-    //             {
-    //               border: [true, true, true, true],
-    //               fillColor: '#eeeeee',
-    //               text: 'border:\n[true, true, true, true]'
-    //             }
-    //           ],
-    //           [
-    //             {
-    //               rowSpan: 3,
-    //               border: [true, true, true, true],
-    //               fillColor: '#eeeeff',
-    //               text: 'rowSpan: 3\n\nborder:\n[true, true, true, true]'
-    //             },
-    //             {
-    //               border: undefined,
-    //               fillColor: '#eeeeee',
-    //               text: 'border:\nundefined'
-    //             },
-    //             {
-    //               border: [true, false, false, false],
-    //               fillColor: '#dddddd',
-    //               text: 'border:\n[true, false, false, false]'
-    //             }
-    //           ],
-    //           [
-    //             '',
-    //             {
-    //               colSpan: 2,
-    //               border: [true, true, true, true],
-    //               fillColor: '#eeffee',
-    //               text: 'colSpan: 2\n\nborder:\n[true, true, true, true]'
-    //             },
-    //             ''
-    //           ],
-    //           [
-    //             '',
-    //             {
-    //               border: undefined,
-    //               fillColor: '#eeeeee',
-    //               text: 'border:\nundefined'
-    //             },
-    //             {
-    //               border: [false, false, true, true],
-    //               fillColor: '#dddddd',
-    //               text: 'border:\n[false, false, true, true]'
-    //             }
-    //           ]
-    //         ]
-    //       },
-    //       layout: {
-    //         defaultBorder: false,
-    //       }
-    //     },
-    //   ],
-    //   styles: {
-    //     header: {
-    //       fontSize: 18,
-    //       bold: true,
-    //     },
-    //     subheader: {
-    //       fontSize: 16,
-    //       bold: true,
-    //     },
-    //     tableHeader: {
-    //       bold: true,
-    //       fontSize: 13,
-    //       color: 'black'
-    //     }
-    //   },      
-    // }
-   
+      dataCommande.push(data);
+    }
 
-    // pdfMake.createPdf(documentDefinition).download('example.pdf');
-
-    const documentDefinition = {
+    const docDefinition = {
       content: [
-        { text: 'Hello, World!', fontSize: 18, bold: true },
-        { text: 'This is a PDF generated with pdfmake in Angular.', fontSize: 12 },
+        {
+          text: `Bon de commande du ${dateCommande} n° ${commande.noPiece}`,
+          fontSize: 15, bold:true
+        },
+        '\n','\n','\n',
+        {
+          columns : [
+            {
+              text: [
+                { text: 'N° commande : ', fontSize: 12, bold: true },
+                `${commande.noPiece}\n`,
+                { text: 'Date : ', fontSize: 12, bold: true },
+                `${dateCommande}\n`,
+                { text: 'Fournisseur : ', fontSize: 12, bold: true },
+                `${commande.fournisseur.raison_social}\n`,
+                { text: 'Adresse fournisseur : ', fontSize: 12, bold: true },
+                `${commande.fournisseur.adresse.rue}`+' ' +`${commande.fournisseur.adresse.code_postal}`+' ' +`${commande.fournisseur.adresse.ville}`+' ' +`${commande.fournisseur.adresse.pays} \n`,
+                { text: 'Exploitation : ', fontSize: 12, bold: true },
+                `${commande.exploitation.libelle}\n`,
+              ]
+            }
+          ]
+        },
+        '\n',
+        {
+          style: 'tableExample',
+          table: {
+            widths: ['*', '*', '*', '*', '*', '*'],
+            body: this.pdfService.buildTableBody(dataCommande, ['Réf', 'Désignation', 'Quantité', 'Unité', 'Prix', 'Montant'],
+              [
+                { text: 'Réf', style: 'tableHeader' },
+                { text: 'Désignation', style: 'tableHeader' },
+                { text: 'Quantité', style: 'tableHeader' },
+                { text: 'Unité', style: 'tableHeader' },
+                { text: 'Prix', style: 'tableHeader' },
+                { text: 'Montant', style: 'tableHeader' },
+              ]
+            ),
+          },
+        },
+        '\n',
+        {
+          style: 'tableExample',
+          table: {
+            widths: [420, '*'],
+            body: [
+              ['TOTAL', (montant).toString() + ' €'],
+            ]
+          }
+        },
       ]
     };
-  
-    pdfMake.createPdf(documentDefinition).download('example.pdf');
+
+    pdfMake.createPdf(docDefinition, undefined, undefined, pdfFonts.pdfMake.vfs).open();
   }
 
-  // generatePDF(commande: InterfaceBonCommandes) {
-    
-  //   if (!commande || !commande.noPiece || !commande.dateCommande || !commande.fournisseur || !commande.commandeDetail) {
-  //       console.error('Commande invalide.');
-  //       return;
-  //   }
-
-  //   const doc = new jsPDF() as any;
-  //   doc.setFont('Helvetica');
-  //   doc.text('Bon de commande',80,20,{styles: { fontSize: 15 }} );
-  //   doc.setFontSize(12);
-  //   doc.text(`N° ${commande.noPiece}`, 15, 40);
-  //   if (commande.fournisseur && commande.fournisseur.raison_social) {
-  //     doc.text(`Fournisseur: ${commande.fournisseur.raison_social}`, 90, 40);
-  //   } else {
-  //     console.error('Fournisseur invalide.');
-  //     return;
-  //   }
-    
-  //   doc.text(`Exploitation: ${commande.exploitation.libelle}`, 15, 50);
-  //   doc.text(`Adresse fournisseur: ${commande.fournisseur.adresse.rue}`+' ' +`${commande.fournisseur.adresse.code_postal}`+' ' +`${commande.fournisseur.adresse.ville}`+' ' +`${commande.fournisseur.adresse.pays}`, 90, 50);
-  //   doc.text(`Date: ${this.formatDate(commande.dateCommande, 'dd/MM/yyyy')}`, 15, 60);
-
-  //   const columns = ['Réf', 'Désignation', 'Quantité', 'Unité', 'Prix article', 'Montant'];
-  //   const rows =  commande.commandeDetail;
-    
-    
-  //   if (!rows || rows.length === 0) {
-  //       console.error('Détails de commande vides ou non définis.');
-  //       return;
-  //   }
-  //   let datas:any = [];
-  //   let montant = 0;
-    
-  //   rows.forEach((detail, index) => {
-  //       const row = [
-  //           detail.articlefournisseur.article.codeArticle,
-  //           detail.articlefournisseur.article.libelle,
-  //           detail.QteCommande,
-  //           detail.articlefournisseur.article.unite.abreviation,
-  //           detail.prixarticle +' €',
-  //           detail.QteCommande * detail.prixarticle+' €'
-  //       ];
-  //         montant += detail.prixarticle*detail.QteCommande;
-  //       datas.push(row);
-  //   });
-  //   const options = {
-  //     startY: 70, 
-  //     styles: { fontSize: 11 }, 
-  //     headStyles: { align: 'right' },
-  //     bodyStyles: { align: 'right' }, 
-  //     footerStyles: { align: 'right' }
-  //   };
-    
-  //   const footers = [['', '', '', '', 'Montant total', `${montant} €`]];
-
-  //   doc.autoTable({
-  //     head: [columns],
-  //     body: datas, 
-  //     foot: footers, 
-  //     columns: columns, 
-  //     ...options
-  //   });
-  //   doc.save(`BonCommande_${commande.noPiece}.pdf`); 
-  // }
  
   listArticleDixDernierCommande(){
     const fournisseurId = this.fournisseur.id ? this.fournisseur.id:0;
@@ -652,6 +535,9 @@ export class BonCommandeAchatsComponent implements OnInit {
   showCommande(bonCommande: InterfaceBonCommandes) {
     this.boncommande = bonCommande;
     this.idBonCommande =bonCommande.id ? bonCommande.id :0;
+    if (bonCommande.validation == 0) {
+      this.showvalidateBtn = !this.showvalidateBtn;
+    }
     this.dates = {
       today: new Date(this.boncommande.dateCommande)
     };
@@ -674,7 +560,7 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.montantTTc += (detailComm.QteCommande * detailComm.prixarticle) -detailComm.remise;
           this.commandes.push(this.commandeDetail)
         }
-        this.addCommande = !this.addCommande;
+        this.addCommande = (this.addCommande===false ? true: false);
         this.addTogle = !this.addTogle;
         this.listArts = !this.listArts;
         this.toggle = !this.toggle;
@@ -733,6 +619,7 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   selectBoncomm(){
     this.showDeleteBtnCom = this.boncommandes.some(line => line.selected);
+    this.showvalidateBtn = this.boncommandes.some(line => line.selected);
   }
 
   deleteSelectedRowsComm() {
@@ -743,6 +630,7 @@ export class BonCommandeAchatsComponent implements OnInit {
         next:(value) =>{
           this.boncommandes = this.boncommandes.filter(line => line !== bonCommande);
           this.showDeleteBtnCom = this.boncommandes.some(line => line.selected);
+          this.showvalidateBtn = this.boncommandes.some(line => line.selected);
         },
       });
      }else{
