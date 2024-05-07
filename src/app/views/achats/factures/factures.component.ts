@@ -565,7 +565,7 @@ export class FacturesComponent implements OnInit {
     this.toggle = !this.toggle;
     this.addFacture = !this.addFacture;
     this.listFacture = !this.listFacture;
-    this.inputModif = !this.inputModif;
+    this.inputModif = true;
   }
 
   private getDismissReason(reason:any):string{
