@@ -135,7 +135,7 @@ export class PposComponent implements OnInit {
   async selectCentreRevenus(_centrerevenu: InterfaceCentreRevenu) {
     this.centrerevenu = _centrerevenu;
     this.idcentrerevenu = _centrerevenu.id ? _centrerevenu.id : 0;
-    this.ppoService.getPpoByCrAndDate(this.idcentrerevenu, this.formatDate(this.dates.debut), this.formatDate(this.dates.fin, true)).subscribe({
+    this.ppoService.getPpoByCrAndDate([this.idcentrerevenu], this.formatDate(this.dates.debut), this.formatDate(this.dates.fin, true), false).subscribe({
       next: (_ppos: any) => {
         this.ppos = _ppos;
       }
@@ -566,6 +566,7 @@ export class PposComponent implements OnInit {
                       quantite: 0,
                       unite: _article.unite,
                       uniteId: _article.unite.id || 0,
+                      // ppo: this.ppo
                     }
                     if (_article.selected === true) {
                       this.ppodetailsarticles.push(this.ppodetailsarticle)
@@ -583,6 +584,7 @@ export class PposComponent implements OnInit {
                       quantite: 0,
                       unite: _fichetechnique.unite,
                       uniteId: _fichetechnique.unite.id || 0,
+                      // ppo: this.ppo
                     }
                     if (_fichetechnique.selected === true) {
                       this.ppodetailsfichetechniques.push(this.ppodetailsfichetechnique)

@@ -15,11 +15,20 @@ export class PpoService {
   private apiDeletePpos = environment.APIDELETESPPO;
   private apiPpoExploitation = environment.APIPPOEXPLOITATION;
   private apiPpoCentreRevenu = environment.APIPPOCENTREREVENU;
+  private apiPpoDetailExploitation = environment.APIPPODETAILEXPLOITATION;
+  private apiPpoDetailCentreRevenu = environment.APIPPODETAILCENTREREVENU;
+  private apiGetPpoDetail = environment.APIGETPPODETAIL;
+  private apiGetPpoDetailData = environment.APIGETPPODETAILDATA;
+  private apiGetPpoDetailDataFamille = environment.APIGETPPODETAILDATAFAMILLE;
 
   constructor(private https: HttpClient) { }
 
-  getPpoByCrAndDate(centreId: number, dateDebut: string, dateFin: string) {
-    return this.https.post(this.apiGetPpoByCentreAndDate, { id: centreId, dateDebut: dateDebut, dateFin: dateFin });
+  getPpoByCrAndDate(id: number[], dateDebut: string, dateFin: string, exploitation: boolean = false) {
+    return this.https.post(this.apiGetPpoByCentreAndDate, { id: id, dateDebut: dateDebut, dateFin: dateFin, exploitation: exploitation });
+  }
+
+  getPpoDetails(id: number[], dateDebut: string, dateFin: string, exploitation: boolean = false) {
+    return this.https.post(this.apiGetPpoDetail, { id: id, dateDebut: dateDebut, dateFin: dateFin, exploitation: exploitation });
   }
 
   createPpo(ppo: InterfacePpos) {
@@ -38,11 +47,27 @@ export class PpoService {
     return this.https.post(this.apiDeletePpos, { id: id });
   }
 
-  getPpoExploitation(data: any) {
-    return this.https.post(this.apiPpoExploitation, data);
+  // getPpoExploitation(data: any) {
+  //   return this.https.post(this.apiPpoExploitation, data);
+  // }
+  
+  // getPpoCentreRevenu(data: any) {
+  //   return this.https.post(this.apiPpoCentreRevenu, data);
+  // }
+
+  // getPpoDetailExploitation(data: any) {
+  //   return this.https.post(this.apiPpoDetailExploitation, data);
+  // }
+  
+  // getPpoDetailCentreRevenu(data: any) {
+  //   return this.https.post(this.apiPpoDetailCentreRevenu, data);
+  // }
+
+  getPpoDetailData(data: any) {
+    return this.https.post(this.apiGetPpoDetailData, data);
   }
   
-  getPpoCentreRevenu(data: any) {
-    return this.https.post(this.apiPpoCentreRevenu, data);
+  getPpoDetailDataFamille(data: any) {
+    return this.https.post(this.apiGetPpoDetailDataFamille, data);
   }
 }
