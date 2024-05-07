@@ -1,14 +1,14 @@
 <div class="card d-flex py-1 my-2 mb-2">
     <div class="d-flex bd-highlight">
         <div class="flex-grow-1 bd-highlight">
-            <button type="button" class="btn btn-success btn-sm mx-1">Enregistrer</button>
-            <button type="button" class="btn btn-danger btn-sm mx-1">Annuler</button>
+            <button type="button" *ngIf="!toggle" [disabled]="inputModif" (click)="addNewFacture()" class="btn btn-success btn-sm mx-1">Enregistrer</button>
+            <button type="button" *ngIf="!toggle" (click)="annuler()" class="btn btn-danger btn-sm mx-1">Annuler</button>
         </div>
         <div class="bd-highlight mx-2 my-0">
             <div class="input-group input-group-sm">
             <span class="input-group-text col-5" id="basic-addon1">Fournisseurs</span>
             <input type="text" class="form-control bg-white col-6" name="fournisseur" aria-label="fournisseur" aria-describedby="fournisseur" [(ngModel)]="fournisseur.raison_social" disabled="true">
-            <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"  data-bs-toggle="dropdown" aria-expanded="false">
+            <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="toggle" data-bs-toggle="dropdown" aria-expanded="false">
                 <span class="visually-hidden">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
@@ -18,14 +18,17 @@
             </div>
         </div>
         <div class="bd-highlight">
-            <button class="btn btn-outline-success btn-sm me-1" title="Ajout bon de livraison"><i class="fas fa-plus"></i></button>
-            <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer bon de livraison">
+          <button class="btn btn-outline-warning btn-sm me-1" *ngIf="showvalidateBtn" (click)="validateFacture()" title="Valider Facture">
+            <i class="fas fa-check"></i>
+          </button>
+            <button class="btn btn-outline-success btn-sm me-1"  [disabled]="!addFacture" (click)="openModalLivraison(content)" title="Nouvelle facture"><i class="fas fa-plus"></i></button>
+            <button class="btn btn-outline-danger btn-sm me-1" *ngIf="deleteFacture" title="Supprimer facture">
             <i class="fas fa-trash"></i>
             </button>
         </div>
     </div>
 </div>
-<div class="card d-flex" *ngIf="!toggle">
+<div class="card d-flex" *ngIf="toggle">
     <div class="card-header text-center fs-5 fw-bold"> Tous les Factures du fournisseur {{fournisseur.raison_social}}</div>
     <div class="card-body overflow-scroll py-1" style="height: 650px;">
         <table class="table table-striped table-hover">
@@ -41,21 +44,21 @@
                 </tr>
             </thead>
             <tbody>
-            <tr>
-                <td class="col-2"></td>
-                <td class="col-2"></td>
-                <td class="col-2"></td>
-                <td class="col-2"></td>
-                <td class="col-2"></td>
-                <td class="col-1"></td>
-                <td class="col-1"></td>
+            <tr *ngFor="let line of factures" (click)="showFacture(line)" [ngClass]="line.validation ==true?'table-info':'table-light'">
+                <td class="col-2">{{ line.numFacture }}</td>
+                <td class="col-2">{{ line.exploitation.libelle }}</td>
+                <td class="col-2">{{ line.centre.libelle }}</td>
+                <td class="col-2">{{ line.dateAchat | date:'dd/MM/yyyy' }}</td>
+                <td class="col-2">{{ line.dateLivraison | date:'dd/MM/yyyy' }}</td>
+                <td class="col-1">{{ line.montantHt -line.montantRemise | number:'1.2-2' }} €</td>
+                <td class="col-1">{{ line.montantTva | number:'1.2-2' }} €</td>
             </tr>
             </tbody>
         </table>
     </div>
  </div>
- <div class="card d-flex" *ngIf="toggle">
-    <div class="card-header text-center fs-5 fw-bold"> - Facture du </div>
+ <div class="card d-flex" *ngIf="!toggle">
+    <div class="card-header text-center fs-5 fw-bold"> - Facture du {{ facture.dateFacture | date:'dd/MM/yyyy' }}</div>
     <ul class="list-group list-group-flush">
       <li class="list-group-item">
         <div class="card-body py-1">
@@ -64,7 +67,7 @@
               <div class="col-sm-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Date Achat</span>
-                  <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="dateachat" [(ngModel)]="dates.today" autocomplete="off">
+                  <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="dateachat" [(ngModel)]="dates.today" autocomplete="off" [disabled]="inputModif">
                 </div>
               </div>
               <div class="col-sm-6">
@@ -78,13 +81,13 @@
               <div class="col-sm-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Date de livraison</span>
-                  <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datelivraison"  [(ngModel)]="dates.tomorrow" autocomplete="off">
+                  <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datelivraison" [disabled]="inputModif" [(ngModel)]="dates.tomorrow" autocomplete="off">
                 </div>
               </div>
               <div class="col-sm-6">
                 <div class="input-group">
-                  <span class="input-group-text col-5" id="basic-addon1">Facture</span>
-                  <input type="text" class="form-control col-7"  name="numfacture"  autocomplete="off">
+                  <span class="input-group-text col-5" id="basic-addon1">Exploitation</span>
+                  <input type="text" class="form-control col-7"  name="exploitationId" [(ngModel)]="exploitation.libelle" [disabled]="true" aria-label="exploitation" aria-describedby="basic-addon1">
                 </div>
               </div>
             </div>
@@ -92,43 +95,38 @@
                 <div class="col-sm-6">
                   <div class="input-group">
                     <span class="input-group-text col-5" id="basic-addon1">Date de facture</span>
-                    <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datefacture"  [(ngModel)]="dates.today" autocomplete="off">
+                    <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datefacture" [disabled]="inputModif" [(ngModel)]="dates.today" autocomplete="off">
                   </div>
                 </div>
                 <div class="col-sm-6">
-                    <div class="input-group">
-                      <span class="input-group-text col-5" id="basic-addon1">Exploitation</span>
-                      <input type="text" class="form-control col-7"  name="exploitationId" [(ngModel)]="exploitation.libelle" [disabled]="true" aria-label="exploitation" aria-describedby="basic-addon1">
-                    </div>
+                  <div class="input-group">
+                    <span class="input-group-text col-5" id="basic-addon1">Centre de revenu</span>
+                    <input type="text" class="form-control bg-white col-7" name="centreId" [(ngModel)]="centre.libelle"  aria-label="centre" aria-describedby="centre"
+                      disabled="true">
+                    <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"  data-bs-toggle="dropdown" aria-expanded="false">
+                      <span class="visually-hidden">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                      <li *ngFor="let item of centres"><span (click)="selectCentreRevenu(item)">{{item.libelle}}</span></li>
+                    </ul>
                   </div>
+                </div>
               </div>
             <div class="row m-2">
               <div class="col-sm-6">
                 <div class="input-group">
-                  <span class="input-group-text col-5" id="basic-addon1">Numéro bon de livraison</span>
-                  <input type="text" class="form-control col-7"  name="numBl"  autocomplete="off">
+                  <span class="input-group-text col-5" id="basic-addon1">Facture</span>
+                  <input type="text" class="form-control col-7" [(ngModel)]="facture.numFacture" [disabled]="inputModif" name="numfacture"  autocomplete="off">
                 </div>
               </div>
-              <div class="col-sm-6">
-                <div class="input-group">
-                  <span class="input-group-text col-5" id="basic-addon1">Centre de revenu</span>
-                  <input type="text" class="form-control bg-white col-7" name="centreId" [(ngModel)]="centre.libelle"  aria-label="centre" aria-describedby="centre"
-                    disabled="true">
-                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"  data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="visually-hidden">Toggle Dropdown</span>
-                  </button>
-                  <ul class="dropdown-menu dropdown-menu-end">
-                    <li *ngFor="let item of centres"><span (click)="selectCentreRevenu(item)">{{item.libelle}}</span></li>
-                  </ul>
-                </div>
-              </div>
+              
             </div>
             
             <div class="row m-2">
               <div class="col-sm-12">
                 <div class="input-group">
                   <span class="input-group-text col-2" id="basic-addon1">Commentaire</span>
-                  <textarea  class="form-control col-10"  name="commentaire" aria-describedby="basic-addon1"></textarea>
+                  <textarea  class="form-control col-10"  name="commentaire" aria-describedby="basic-addon1" [disabled]="inputModif"></textarea>
                 </div>
               </div>
             </div>
@@ -136,9 +134,12 @@
         </div>
       </li>
       <li class="list-group-item">
-        <div class="card d-flex py-1 mb-2" *ngIf="(!toggle )">
+        <div class="card d-flex py-1 mb-2">
           <div class="d-flex flex-row-reverse bd-highlight">
-            <button class="btn btn-outline-danger btn-sm me-1"  title="Supprimer"><i class="fas fa-trash"></i></button>
+            <button class="btn btn-outline-success btn-sm me-1" [disabled]="!modifToggle" *ngIf="(!toggle && addBtn)" (click)="openModalArticle(contentArticle)" title="Ajouter article">
+              <i class="fas fa-plus"></i>
+            </button>
+            <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!showDeleteBtn" (click)="deleteSelectedRows()" title="Supprimer"><i class="fas fa-trash"></i></button>
           </div>
         </div>
         <div class="card-body overflow-scroll my-1" style="height: 350px;">
@@ -146,23 +147,40 @@
             <thead>
               <tr>
                 <th class="col-1"></th>
-                <th class="col-4">Designation</th>
+                <th class="col-3">Designation</th>
                 <th class="col-2">Quantité</th>
-                <th class="col-2">Prix unitaire</th>
+                <th class="col-1">Unité</th>
+                <th class="col-1">Prix</th>
                 <th class="col-1">TVA</th>
                 <th class="col-1">Montant</th>
                 <th class="col-1">Remise</th>              
               </tr>
             </thead>
-            <tbody >
-              <tr>
-                <td class="col-1"><input class="form-check-input" type="checkbox" name="dl-"  id="dl-"></td>
-                <td class="col-4"></td>
-                <td class="col-2"></td>
-                <td class="col-2"></td>
-                <td class="col-1"></td>
-                <td class="col-1"></td>
-                <td class="col-1"></td>
+            <tbody>
+              <tr *ngFor="let itemes of detailFactures">
+                <td class="col-1"><input class="form-check-input" type="checkbox" name="df-{{itemes.id}}" id="df-{{itemes.id}}" [(ngModel)]="itemes.selected" (change)="checkSelectedRows()"></td>
+                <td class="col-4">{{itemes.articlefournisseur.article.libelle }}</td>
+                <td class="col-2"><input type="number" class="form-control form-control-sm w-50 m-auto" [disabled]="inputModif" placeholder="0.00" [step]="itemes.articlefournisseur.conditionnement[0].uniteAchat.step" name="quantite[]" [(ngModel)]="itemes.quantite"></td>
+                <td class="col-1">{{ itemes.articlefournisseur.conditionnement[0].uniteAchat.abreviation }}</td>
+                <td class="col-1">
+                  <div class="input-group input-group-sm">
+                    <input type="number" class="form-control form-control-sm " [disabled]="inputModif" placeholder="0.00" [step]="itemes.articlefournisseur.conditionnement[0].uniteAchat.step"  name="prix_unitaire[]" [(ngModel)]="itemes.prixArticle">
+                    <span class="input-group-text">€</span>
+                  </div>
+                </td>
+                <td class="col-1">
+                  <div class="input-group input-group-sm">
+                    <input type="number" class="form-control" [disabled]="inputModif" placeholder="0.00" [step]="itemes.articlefournisseur.conditionnement[0].uniteAchat.step" name="taxe[]" [(ngModel)]="itemes.valeurTva">
+                    <span class="input-group-text">%</span>
+                  </div>
+                </td>
+                <td class="col-1">{{itemes.quantite * itemes.prixArticle | number:'1.2-2'}} €</td>
+                <td class="col-1">
+                  <div class="input-group input-group-sm">
+                    <input type="number" class="form-control" [disabled]="inputModif" placeholder="0.00" [step]="itemes.articlefournisseur.conditionnement[0].uniteAchat.step" name="remise[]" [(ngModel)]="itemes.remise">
+                    <span class="input-group-text">€</span>
+                  </div>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -170,10 +188,115 @@
         <div class="card d-flex">
           <div class="d-flex flex-row-reverse bd-highlight fw-bold p-1">
             <span class="col-1"></span>
-            <span class="col-1 ms-2 text-end"></span>
+            <span class="col-1 ms-2 text-end">{{ montantTTc? montantTTc:getTotalMontant(detailFactures) | number:'1.2-2'}} €</span>
             <span class="me-1">Montant Total</span>
           </div>
         </div>
       </li>
     </ul>
   </div>
+
+  <ng-template #content let-modal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+      <h5 class="modal-title text-center">Séléction bon de livraison du {{fournisseur.raison_social}}</h5>
+      <button class="btn-close" type="button" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+    </div>
+    <div class="modal-body overflow-scroll-y py-1" style="height: 400px;">
+      <table class="table table-striped table-hover table-sm">
+        <thead>
+          <tr>
+            <th scope="col" class="col-1"></th>
+            <th scope="col" class="col-3">N° </th>
+            <th scope="col" class="col-1">Date </th>
+            <th scope="col" class="col-1">Montant</th>
+            <th scope="col" class="col-2">Exploitation</th>
+            <th scope="col" class="col-2">Centre</th>
+            <th scope="col" class="col-1">Article</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of bonLivraisons">
+            <td scope="col" class="col-1"><input type="radio" class="form-check-input" name="commande-{{item.id}}" [value]="item.id" [(ngModel)]="item.selected"></td>
+            <td scope="col" class="col-3">{{ item.numLivraison }}</td>
+            <td scope="col" class="col-1">{{ item.dateLivraison| date:'dd/MM/yyyy' }}</td>
+            <td scope="col" class="col-1 text-center">{{ item.montantHt - item.remise| number:'1.2-2' }} €</td>
+            <td scope="col" class="col-2">{{ item.exploitation.libelle }}</td>
+            <td scope="col" class="col-2">{{ item.centre.libelle }}</td>
+            <td scope="col" class="col-1 text-center"><span (click)="selectArticle(contentLivraisonArticle,item)"><i class="fas fa-angle-right"></i></span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-info" (click)="modal.close('Create click')">Créer</button>
+      <button type="button" class="btn btn-sm btn-success" (click)="modal.close('validate click')">Valider</button>
+      <button class="btn btn-sm btn-danger m-1" (click)="modal.dismiss('Cross click')" type="button" data-coreui-dismiss="modal">Annuler</button>
+    </div>
+  </ng-template>
+
+  <ng-template #contentArticle let-modal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+      <h5 class="modal-title text-center">Ajout Article</h5>
+      <button class="btn-close" type="button" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+    </div>
+    <div class="modal-body overflow-scroll-y py-1" style="height: 400px;">
+      <table class="table table-striped table-hover table-sm">
+        <thead>
+          <tr>
+            <th class="col-1"></th>
+            <th class="col-3">Désignation</th>
+            <th class="col-2">Code</th>
+            <th class="col-2">Famille</th>
+            <th class="col-1">Prix</th>
+            <th class="col-1">Unite</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let items of articleFournisseurs">
+            <td class="col-1">
+              <input type="checkbox" name="af-{{items.id}}" id="af-{{items.id}}" [(ngModel)]="items.selected">
+            </td>
+            <td class="col-3">{{ items.article.libelle}}</td>
+            <td class="col-2">{{ items.article.codeArticle}}</td>
+            <td class="col-2">{{ items.article.familles.libelle}}</td>
+            <td class="col-1">{{ items.conditionnement[0].prixAchat | number:'1.2-2'}} €</td>
+            <td class="col-1">{{ items.conditionnement[0].uniteCommande.abreviation}}</td>
+            
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-sm btn-success" (click)="modal.close('Save click')">Valider</button>
+      <button class="btn btn-sm btn-danger m-1" (click)="modal.dismiss('Cross click')" type="button" data-coreui-dismiss="modal">Annuler</button>
+    </div>
+  </ng-template>
+  <ng-template #contentLivraisonArticle let-modal let-c="close" let-d="dismiss">
+    <div class="modal-header">
+      <h5 class="modal-title text-center">Liste article du livraison {{ bonLivraison.numLivraison }}</h5>
+      <button class="btn-close" type="button" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+    </div>
+    <div class="modal-body overflow-scroll-y py-1" style="height: 400px;">
+      <table class="table table-striped table-hover table-sm">
+        <thead>
+          <tr>
+            <th class="col-2">Code</th>
+            <th class="col-3">Désignation</th>
+            <th class="col-2">Famille</th>
+            <th class="col-1">Prix</th>
+            <th class="col-1">Unite</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of livraisonDetails">
+            <td class="col-2">{{ item.articlefournisseur.article.codeArticle}}</td>
+            <td class="col-3">{{ item.articlefournisseur.article.libelle }}</td>
+            <td class="col-2">{{ item.articlefournisseur.article.familles.libelle }}</td>
+            <td class="col-1">{{ item.articlefournisseur.conditionnement[0].prixAchat | number:'1.2-2'}} €</td>
+            <td class="col-1">{{ item.articlefournisseur.conditionnement[0].uniteAchat.abreviation}}</td>
+            
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </ng-template>

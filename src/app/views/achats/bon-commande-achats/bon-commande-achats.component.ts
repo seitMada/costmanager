@@ -9,12 +9,14 @@ import { FournisseurService } from "../../../shared/service/fournisseur.service"
 import { CommandeService } from "../../../shared/service/commande.service";
 import { ExploitationService } from '../../../shared/service/exploitation.service';
 import { CentreRevenuService } from '../../../shared/service/centre-revenu.service';
+import { PdfserviceService } from 'src/app/shared/service/pdfservice.service';
 
 import { Article } from '../../../shared/model/articles';
 import { InterfaceArticle } from '../../../shared/model/interface-articles';
 import { InterfaceFournisseur } from '../../../shared/model/interface-fournisseurs';
 import { Fournisseur, Fournisseurs } from '../../../shared/model/fournisseurs';
 import { Adress } from '../../../shared/model/adresse';
+import { BonCommande } from '../../../shared/model/bonCommande';
 import { InterfaceCentreRevenu } from '../../../shared/model/interface-centrerevenu';
 import { InterfaceExploitations } from '../../../shared/model/interface-exploitations';
 import { Centrerevenu, Centrerevenus } from "../../../shared/model/centrerevenu";
@@ -23,12 +25,10 @@ import { InterfaceArticlefournisseurs } from '../../../shared/model/interface-ar
 
 import { InterfaceBonCommandes } from '../../../shared/model/interface-bonCommande';
 import { InterfaceCommandeDetails } from '../../../shared/model/interface-commandedetail';
-import { BonCommande } from '../../../shared/model/bonCommande';
+
 
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
-import { PdfserviceService } from 'src/app/shared/service/pdfservice.service';
-
 
 @Component({
   selector: 'app-bon-commande-achats',
@@ -67,7 +67,6 @@ export class BonCommandeAchatsComponent implements OnInit {
   public idBonCommande = 0;
   public articleFournisseurId = 0;
   public montantTTc=0;
-  public montantRemise =0;
 
   public num_commande: string;
 
@@ -322,17 +321,9 @@ export class BonCommandeAchatsComponent implements OnInit {
   getTotalMontant(): number {
     let montantTTc=0;
     for (const line of this.commandes) {
-      montantTTc += line.QteCommande * line.prixarticle;
+      montantTTc += ( line.QteCommande * line.prixarticle) - line.remise;
     }
     return montantTTc;
-  }
-
-  getTotalRemise(): number {
-    let montantRemise=0;
-    for (const line of this.commandes) {
-      montantRemise += line.remise;
-    }
-    return montantRemise;
   }
 
   public selectOnFournisseur() {
@@ -352,23 +343,35 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   validateCommande(){
-    const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
-    for (const bonCommande of selectedBonCommandes) {
-     if (bonCommande.validation == 0) {
-      this.commandeService.validateCommande(bonCommande).subscribe({
+    this.idBonCommande = this.boncommande.id ? this.boncommande.id :0;
+    if (this.idBonCommande == 0) {
+      const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
+      for (const bonCommande of selectedBonCommandes) {
+        if (bonCommande.validation == 0) {
+         this.commandeService.validateCommande(bonCommande).subscribe({
+           next:(value) =>{
+             this.showAllFournisseur();
+             alert('Bon de commande n° '+bonCommande.noPiece+' a été validé');
+             this.toggle = this.toggle;
+             
+             this.showvalidateBtn = !this.showvalidateBtn;
+             
+           },
+         });
+        }else{
+         alert('Ce bon de commande est déjà validé!');
+         this.showvalidateBtn = !this.showvalidateBtn;
+        }      
+       }
+      
+    } else {
+      this.commandeService.validateCommande(this.boncommande).subscribe({
         next:(value) =>{
-          this.showAllFournisseur();
-          this.toggle = this.toggle;
-          // this.showDeleteBtnCom = !this.showDeleteBtnCom;
+          alert('Bon de commande n° '+this.boncommande.noPiece+' a été validé');
+          this.inputModif = true;
           this.showvalidateBtn = !this.showvalidateBtn;
-          alert('Bon de commande n° '+bonCommande.noPiece+' a été validé');
         },
       });
-     }else{
-      alert('Ce bon de commande est déjà validé!');
-      // this.showDeleteBtnCom = !this.showDeleteBtnCom;
-      this.showvalidateBtn = !this.showvalidateBtn;
-     }      
     }
   }
 
@@ -557,15 +560,15 @@ export class BonCommandeAchatsComponent implements OnInit {
             selected:false
           }
           
-          this.montantTTc += (detailComm.QteCommande * detailComm.prixarticle) -detailComm.remise;
+          this.montantTTc += (detailComm.QteCommande * detailComm.prixarticle) - detailComm.remise;
           this.commandes.push(this.commandeDetail)
         }
-        this.addCommande = (this.addCommande===false ? true: false);
-        this.addTogle = !this.addTogle;
-        this.listArts = !this.listArts;
-        this.toggle = !this.toggle;
-        this.btnTenRecord = this.btnTenRecord;
-        this.inputModif = !this.inputModif;
+        this.addCommande = false;
+        this.addTogle = false;
+        this.listArts = false;
+        this.toggle = false;
+        this.btnTenRecord =false;
+        this.inputModif = true;
       },
     })
   }
@@ -592,10 +595,12 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   annuler(){
-    this.toggle = !this.toggle;
-    this.addTogle = true;
-    this.addCommande = true;
-    this.listArts = true;
+    this.toggle = (this.toggle === false ? true: false);
+    this.addTogle = (this.addTogle === false ? true: false);
+    this.addCommande = (this.addCommande === false ? true: false);
+    this.listArts = (this.listArts === false ? true: false);
+    this.showvalidateBtn = false;
+    this.montantTTc = 0;
     this.showAllFournisseur();
     this.resetCommande();
   }

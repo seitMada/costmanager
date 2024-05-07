@@ -58,4 +58,5 @@ export class BonlivraisonService {
   public validateLivraison(livraison:InterfaceBonLivraisons){
     return this.https.post<any>(this.apiValidateLivraison,livraison)
   }
+
 }

@@ -1,4 +1,5 @@
 import { Achat } from "./achats";
+import { InterfaceAchat } from "./interface-achats";
 import { InterfaceArticlefournisseurs } from "./interface-articlefournisseurs";
 
 export interface InterfaceAchatDetail{
@@ -6,11 +7,11 @@ export interface InterfaceAchatDetail{
     achatId:number;
     articlefournisseurId:number;
     quantite: number;
-    prixarticle:number;
+    prixArticle	:number;
     remise:number;
-    valeurtva:number;
+    valeurTva:number;
     selected?:boolean;
 
-    achat?:Achat;
-    articlefournisseur : InterfaceArticlefournisseurs
+    achat:InterfaceAchat;
+    articlefournisseur : InterfaceArticlefournisseurs;
 }

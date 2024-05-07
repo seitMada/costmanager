@@ -13,7 +13,7 @@ export class BonLivraison implements InterfaceBonLivraisons{
     remise:number;
     montantHt:number;
     montantTva:number;
-    validation:boolean;
+    validation:number;
     commentaire:string;
     adresseId:number;
     fournisseurId:number;
