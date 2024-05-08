@@ -186,6 +186,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   listArticleFournisseurs(){
+    this.dates.today = new Date();
     const exploitationId = Number(this.exploitationId);
     this.selectFounisseur(this.fournisseur);
     this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
@@ -523,6 +524,7 @@ export class BonCommandeAchatsComponent implements OnInit {
 
  
   listArticleDixDernierCommande(){
+    this.dates.today = new Date();
     const fournisseurId = this.fournisseur.id ? this.fournisseur.id:0;
     const exploitationId = this.exploitation.id ? this.exploitation.id: 0;
     this.commandeService.getDixDernierCommandes(fournisseurId,Number(exploitationId)).subscribe({
@@ -541,6 +543,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     if (bonCommande.validation == 0) {
       this.showvalidateBtn = !this.showvalidateBtn;
     }
+    console.log(this.boncommande.dateCommande)
     this.dates = {
       today: new Date(this.boncommande.dateCommande)
     };
@@ -677,6 +680,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.listArts = !this.listArts;
     this.commandes = [];
     this.inputModif = false;
+    this.dates.today = new Date();
   }
 
   showListCommande(){

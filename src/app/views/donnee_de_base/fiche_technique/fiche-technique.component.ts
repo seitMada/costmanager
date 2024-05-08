@@ -215,7 +215,7 @@ export class FicheTechniqueComponent implements OnInit {
             }
           }
           this.idFichetechnique = fichetechnique.id;
-          this.fichetechniqueService.updateFichetechniqueExploitation(fichetechnique.id, exploitation).subscribe({
+          this.fichetechniqueService.updateFichetechniqueExploitation(fichetechnique.id, fichetechnique.id, exploitation).subscribe({
             next: () => {
               this.compositions = [];
               this.fichetechniqueService.getFichetechniqueById(fichetechnique.id).subscribe({
@@ -238,7 +238,7 @@ export class FicheTechniqueComponent implements OnInit {
             exploitation.push(i.id ? i.id : 0)
           }
         }
-        this.fichetechniqueService.updateFichetechniqueExploitation(this.idFichetechnique, exploitation).subscribe(() => {
+        this.fichetechniqueService.updateFichetechniqueExploitation(this.idFichetechnique, this.idFichetechnique, exploitation).subscribe(() => {
           this.fichetechniqueService.getFichetechniqueById(this.idFichetechnique).subscribe({
             next: (fichetechnique: InterfaceFichetechnique) => {
               this.fichetechnique = fichetechnique;
@@ -430,7 +430,8 @@ export class FicheTechniqueComponent implements OnInit {
         this.closeResult = `Closed with: ${result}`;
         // console.log(this.closeResult)
         if (this.closeResult == 'Closed with: Save click') {
-          this.fichetechnique.id = 0;
+          // const oldidft = this.fichetechnique.id || 0;
+          // this.fichetechnique.id = 0;
           this.fichetechniqueService.addFichetechnique(this.fichetechnique).subscribe({
             next: (idfichetechnique: any) => {
               // this.compositions = [];
@@ -443,7 +444,7 @@ export class FicheTechniqueComponent implements OnInit {
                   exploitation.push(i.id ? i.id : 0)
                 }
               }
-              this.fichetechniqueService.updateFichetechniqueExploitation(idfichetechnique, exploitation).subscribe({
+              this.fichetechniqueService.updateFichetechniqueExploitation(idfichetechnique, this.fichetechnique.id || 0, exploitation).subscribe({
                 next: () => {
                   this.fichetechniqueService.updateComposition(idfichetechnique, this.compositions).subscribe({
                     next: () => {
@@ -452,7 +453,6 @@ export class FicheTechniqueComponent implements OnInit {
                           await this.calculCout(this.compositions);
                           this.fichetechnique = fichetechnique;
                           this.toggleToast('Composition et fiche technique mis à jour')
-                          // this.modifToggle = !this.modifToggle;
                           this.compositions = fichetechnique.composition;
                         }
                       });

@@ -116,7 +116,7 @@ export class PposComponent implements OnInit {
             next: (_exploitation) => {
               this.exploitations = _exploitation;
               this.exploitation = _exploitation[0];
-              this.resetPpo();
+              this.resetPpo(new Date());
             }
           })
         } else {
@@ -124,7 +124,7 @@ export class PposComponent implements OnInit {
             next: (_exploitation) => {
               this.exploitations.push(_exploitation);
               this.exploitation = _exploitation[0];
-              this.resetPpo();
+              this.resetPpo(new Date());
             }
           })
         }
@@ -223,7 +223,7 @@ export class PposComponent implements OnInit {
     // this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
     //   next: async (_centrerevenu) => {
         // this.centrerevenus = _centrerevenu;
-        await this.resetPpo();
+        // await this.resetPpo(new Date());
         this.modifToggle = !this.modifToggle;
         this.toggle = (this.toggle === false ? true : false);
         this.addToggle = (this.addToggle === false ? true : false);
@@ -239,7 +239,7 @@ export class PposComponent implements OnInit {
           next: async (_centrerevenu) => {
             this.centrerevenus = _centrerevenu;
             await this.selectCentreRevenus(_centrerevenu[0]);
-            await this.resetPpo();
+            await this.resetPpo(new Date());
             this.toggle = (this.toggle === false ? true : false);
             this.addToggle = (this.addToggle === false ? true : false);
             this.toggleToast('Perte du ' + this.screenDate(this.ppo.date_ppo) + ' supprimer');
@@ -263,7 +263,7 @@ export class PposComponent implements OnInit {
           next: async (_centrerevenu) => {
             this.centrerevenus = _centrerevenu;
             await this.selectCentreRevenus(_centrerevenu[0]);
-            await this.resetPpo();
+            await this.resetPpo(new Date());
             // this.addToggle = (this.addToggle === false ? true : false);
             this.toggleToast('Les pertes ont été supprimer');
           }
@@ -454,7 +454,7 @@ export class PposComponent implements OnInit {
         this.closeResult = `Closed with: ${result}`;
         // console.log(this.closeResult)
         if (this.closeResult == 'Closed with: Save click') {
-          this.resetPpo();
+          this.resetPpo(this.ppo.date_ppo);
           this.addToggleModal();
         }
       },
@@ -494,12 +494,12 @@ export class PposComponent implements OnInit {
     this.ppo.centreId = _centrerevenu.id || 0;
   }
 
-  private async resetPpo() {
+  private async resetPpo(_date: Date) {
     this.idPpo = 0;
     this.ppodetailsarticles = [];
     this.ppodetailsfichetechniques = [];
     this.ppo = {
-      date_ppo: new Date(),
+      date_ppo: _date,
       centreId: this.centrerevenu.id || 0,
       centre: this.centrerevenu,
       exploitationId: this.exploitation.id || 0,

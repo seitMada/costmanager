@@ -81,7 +81,7 @@ export class SynthesePposComponent implements OnInit {
   private modalService = inject(NgbModal);
   closeResult = '';
   active = 1;
-  activeperte = 4;
+  activeperte = 5;
   activeperteft = 1;
   activehistogramme = 1;
 
@@ -385,6 +385,9 @@ export class SynthesePposComponent implements OnInit {
         min: 0,
         title: {
           text: 'Euro €'
+        },
+        stackLabels: {
+          enabled: true
         }
       },
       legend: {
@@ -438,6 +441,9 @@ export class SynthesePposComponent implements OnInit {
         min: 0,
         title: {
           text: 'Euro €'
+        },
+        stackLabels: {
+          enabled: true
         }
       },
       legend: {
@@ -491,6 +497,9 @@ export class SynthesePposComponent implements OnInit {
         min: 0,
         title: {
           text: 'Euro €'
+        },
+        stackLabels: {
+          enabled: true
         }
       },
       legend: {
@@ -540,6 +549,9 @@ export class SynthesePposComponent implements OnInit {
         min: 0,
         title: {
           text: 'Euro €'
+        },
+        stackLabels: {
+          enabled: true
         }
       },
       legend: {
@@ -658,13 +670,13 @@ export class SynthesePposComponent implements OnInit {
       series: data,
     });
 
-    // this.chartOptionsHistogramme = {};
+    // HISTOGRAMME SEMAINE ******************************************************************************
     this.ppoService.getPpoDetails(this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected, this.formatDate(this.dates.debut), this.formatDate(this.dates.fin, true), this.exploitationsselected.length > 0).subscribe({
       next: (_ppo: any) => {
         data = [];
         let ppodetails_tranche = [];
         for (const _date of this.tranchedatesemaine) {
-          ppodetails_tranche = _ppo.filter((details: { ppo: { date_ppo: string | number | Date; }; }) => new Date(details.ppo.date_ppo) >= new Date(_date.debut) && new Date(details.ppo.date_ppo) <= new Date(_date.fin));
+          ppodetails_tranche = _ppo.filter((details: { ppo: { date_ppo: string | number | Date; }; }) => this.formatDate(new Date(details.ppo.date_ppo)) >= this.formatDate(new Date(_date.debut)) && this.formatDate(new Date(details.ppo.date_ppo)) <= this.formatDate(new Date(_date.fin)));
           const datadetail: any[] = [];
           if (ppodetails_tranche.length > 0) {
             for (const famille of familles) {
@@ -689,10 +701,11 @@ export class SynthesePposComponent implements OnInit {
           series: data,
         });
 
+        // HISTOGRAMME MOIS ******************************************************************************
         data = [];
         ppodetails_tranche = [];
         for (const _date of this.tranchedatemois) {
-          ppodetails_tranche = _ppo.filter((details: { ppo: { date_ppo: string | number | Date; }; }) => new Date(details.ppo.date_ppo) >= new Date(_date.debut) && new Date(details.ppo.date_ppo) <= new Date(_date.fin));
+          ppodetails_tranche = _ppo.filter((details: { ppo: { date_ppo: string | number | Date; }; }) => this.formatDate(new Date(details.ppo.date_ppo)) >= this.formatDate(new Date(_date.debut)) && this.formatDate(new Date(details.ppo.date_ppo)) <= this.formatDate(new Date(_date.fin)));
           const datadetail: any[] = [];
           if (ppodetails_tranche.length > 0) {
             for (const famille of familles) {
@@ -717,10 +730,12 @@ export class SynthesePposComponent implements OnInit {
           series: data,
         });
 
+
+        // HISTOGRAMME ANNEE ******************************************************************************
         data = [];
         ppodetails_tranche = [];
         for (const _date of this.tranchedateannee) {
-          ppodetails_tranche = _ppo.filter((details: { ppo: { date_ppo: string | number | Date; }; }) => new Date(details.ppo.date_ppo) >= new Date(_date.debut) && new Date(details.ppo.date_ppo) <= new Date(_date.fin));
+          ppodetails_tranche = _ppo.filter((details: { ppo: { date_ppo: string | number | Date; }; }) => this.formatDate(new Date(details.ppo.date_ppo)) >= this.formatDate(new Date(_date.debut)) && this.formatDate(new Date(details.ppo.date_ppo)) <= this.formatDate(new Date(_date.fin)));
           const datadetail: any[] = [];
           if (ppodetails_tranche.length > 0) {
             for (const famille of familles) {
@@ -799,9 +814,9 @@ export class SynthesePposComponent implements OnInit {
   }
 
   valorisationppodetails(_ppodetails: InterfacePpoDetail[], isArticle: boolean = true, familleId: number = 0) {
-    let _unite: { unite: string, quantite: number, cout: number }[] = [];
-    let dataarticle = { cout: 0, quantite: 0, unite: _unite };
-    let dataft = { cout: 0, quantite: 0, unite: _unite };
+    let _famille: { famille: string, quantite: number, cout: number }[] = [];
+    let dataarticle = { cout: 0, quantite: 0, famille: _famille };
+    let dataft = { cout: 0, quantite: 0, famille: _famille };
     let data = { article: dataarticle, ft: dataft };
     if (_ppodetails) {
       for (const item of _ppodetails) {
@@ -809,11 +824,11 @@ export class SynthesePposComponent implements OnInit {
           if (item.article != null) {
             dataarticle.quantite += item.quantite;
             dataarticle.cout += +item.cout;
-            if (!dataarticle.unite.some(existingValue => JSON.stringify(existingValue.unite) === JSON.stringify(item.unite.libelle))) {
-              dataarticle.unite.push({ unite: item.unite.libelle, quantite: item.quantite, cout: +item.cout });
+            if (!dataarticle.famille.some(existingValue => JSON.stringify(existingValue.famille) === JSON.stringify(item.article.familles.libelle))) {
+              dataarticle.famille.push({ famille: item.article.familles.libelle, quantite: +item.quantite, cout: +item.cout });
             } else {
-              dataarticle.unite.forEach(element => {
-                if (element.unite === item.unite.libelle) {
+              dataarticle.famille.forEach(element => {
+                if (element.famille === item.article.familles.libelle) {
                   element.quantite += +item.quantite;
                   element.cout += +item.cout;
                 }
@@ -824,11 +839,11 @@ export class SynthesePposComponent implements OnInit {
           if (item.article == null) {
             dataft.quantite += item.quantite;
             dataft.cout += +item.cout;
-            if (!dataft.unite.some(existingValue => JSON.stringify(existingValue.unite) === JSON.stringify(item.unite.libelle))) {
-              dataft.unite.push({ unite: item.unite.libelle, quantite: item.quantite, cout: +item.cout });
+            if (!dataft.famille.some(existingValue => JSON.stringify(existingValue.famille) === JSON.stringify(item.fichetechnique.famille.libelle))) {
+              dataft.famille.push({ famille: item.fichetechnique.famille.libelle, quantite: +item.quantite, cout: +item.cout });
             } else {
-              dataft.unite.forEach(element => {
-                if (element.unite === item.unite.libelle) {
+              dataft.famille.forEach(element => {
+                if (element.famille === item.fichetechnique.famille.libelle) {
                   element.quantite += +item.quantite;
                   element.cout += +item.cout;
                 }
@@ -895,7 +910,6 @@ export class SynthesePposComponent implements OnInit {
       next: async (_response: any) => {
         this.ppoService.getPpoDetails(this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected, this.formatDate(this.dates.debut), this.formatDate(this.dates.fin, true), this.exploitationsselected.length > 0).subscribe({
           next: (_ppo: any) => {
-            console.log(_response.article)
             let _categories: any[] = [];
             const _dataquantityarticle: { y: number; name: any; color: any; id: any; exploitation: boolean; }[] | { y: number; name: string; color: string; }[] = [];
             const _datacostarticle = [];
@@ -961,14 +975,14 @@ export class SynthesePposComponent implements OnInit {
             for (const item of _ppo) {
               if (item.article == null) {
                 if (!this.ppodetails.some(existingValue => JSON.stringify(existingValue.fichetechniqueId) === JSON.stringify(item.fichetechniqueId))) {
-                  item.cout = item.cout * item.quantite;
+                  item.cout = +item.cout * +item.quantite;
                   this.ppodetails.push(item);
                   this.nbft++;
                 } else {
                   // let valorisation = 0;
                   this.ppodetails.forEach(ppodetail => {
                     if (ppodetail.fichetechniqueId === item.fichetechniqueId) {
-                      ppodetail.quantite += item.quantite;
+                      ppodetail.quantite += +item.quantite;
                       ppodetail.cout += (+item.quantite * +item.cout);
                     }
                   });
@@ -976,15 +990,14 @@ export class SynthesePposComponent implements OnInit {
               }
               if (item.fichetechnique == null) {
                 if (!this.ppodetails.some(existingValue => JSON.stringify(existingValue.articleId) === JSON.stringify(item.articleId))) {
-                  item.cout = item.cout * item.quantite;
+                  item.cout = +item.cout * +item.quantite;
                   this.ppodetails.push(item);
                   this.nbarticle++;
                 } else {
                   // let valorisation = 0;
                   this.ppodetails.forEach(ppodetail => {
                     if (ppodetail.articleId === item.articleId) {
-                      console.log(ppodetail.quantite, ppodetail.articleId)
-                      ppodetail.quantite += item.quantite;
+                      ppodetail.quantite += +item.quantite;
                       ppodetail.cout += (+item.quantite * +item.cout);
                     }
                   });

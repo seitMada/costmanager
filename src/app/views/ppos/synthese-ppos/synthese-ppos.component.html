@@ -100,207 +100,141 @@
 <div class="card d-flex" *ngIf="toggle">
   <ul ngbNav #navperte="ngbNav" [(activeId)]="activeperte" class="nav-tabs">
     <li [ngbNavItem]="2">
-      <button ngbNavLink>DETAILS ARTICLES PERDUES</button>
+      <button ngbNavLink>DETAILS ARTICLES </button>
       <ng-template ngbNavContent>
-        <div class="card d-flex border-light">
-          <ul ngbNav #navperteft="ngbNav" [(activeId)]="activeperteft" class="nav-tabs">
-            <li [ngbNavItem]="1">
-              <button ngbNavLink>QUANTITES</button>
-              <ng-template ngbNavContent>
-                <div class="row">
-                  <div class="col-6">
-                    <div class="card-body py-1" style="height: 600px;">
-                      <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsQuantitePerteArticle"
-                        style="width: 100%; height: 500px; display: block;"></highcharts-chart>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="overflow-y-scroll" style="height: 500px;">
-                      <table class="table table-sm table-bordered table-hover table-striped"
-                        [ngStyle]="{'border-color': bordercolor}">
-                        <thead>
-                          <th>Article</th>
-                          <th>Quantité</th>
-                          <th>Valorisation</th>
-                          <th title="% par rapport à la valorisation totale">{{truncateWord('% par rapport à la
-                            valorisation totale')}} </th>
-                        </thead>
-                        <tbody>
-                          <tr *ngFor="let line of ppodetailsarticlebyfamille">
-                            <td>{{line.libelle}}</td>
-                            <td>{{line.totalQuantity | number : '1.2-2'}} {{line.unite}}</td>
-                            <td>{{line.totalCost | number : '1.2-2'}} €</td>
-                            <td>{{((+line.totalCost) * 100 / calculCout(ppodetailsarticlebyfamille).cout) | number :
-                              '1.2-2'}} %</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="card">
-                      <div class="row fw-bold">
-                        <div class="col-6"></div>
-                        <div class="col-2">Total:</div>
-                        <div class="col-4">
-                          {{calculCout(ppodetailsarticlebyfamille).cout}} €
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+        <div class="row">
+          <div class="col-6">
+            <div class="card-body py-1" style="height: 600px;">
+              <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerteArticle"
+                style="width: 100%; height: 500px; display: block;"></highcharts-chart>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="overflow-y-scroll" style="height: 500px;">
+              <table class="table table-sm table-bordered table-hover table-striped"
+                [ngStyle]="{'border-color': bordercolor}">
+                <thead>
+                  <th>Article</th>
+                  <th>Quantité</th>
+                  <th>Valorisation</th>
+                  <th title="% par rapport à la valorisation totale">{{truncateWord('% par rapport à la
+                    valorisation totale')}} </th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of ppodetailsarticlebyfamille">
+                    <td>{{line.libelle}}</td>
+                    <td>{{line.totalQuantity | number : '1.2-2'}} {{line.unite}}</td>
+                    <td>{{line.totalCost | number : '1.2-2'}} €</td>
+                    <td>{{((+line.totalCost) * 100 / calculCout(ppodetailsarticlebyfamille).cout) | number : '1.2-2'}} %</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="row fw-bold">
+                <div class="col-6"></div>
+                <div class="col-2">Total:</div>
+                <div class="col-4">
+                  {{calculCout(ppodetailsarticlebyfamille).cout  | number : '1.2-2'}} €
                 </div>
-              </ng-template>
-            </li>
-            <li [ngbNavItem]="2">
-              <button ngbNavLink>VALORISATIONS</button>
-              <ng-template ngbNavContent>
-                <div class="row">
-                  <div class="col-6">
-                    <div class="card-body py-1" style="height: 600px;">
-                      <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerteArticle"
-                        style="width: 100%; height: 500px; display: block;"></highcharts-chart>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="overflow-y-scroll" style="height: 500px;">
-                      <table class="table table-sm table-bordered table-hover table-striped"
-                        [ngStyle]="{'border-color': bordercolor}">
-                        <thead>
-                          <th>Article</th>
-                          <th>Quantité</th>
-                          <th>Valorisation</th>
-                          <th title="% par rapport à la valorisation totale">{{truncateWord('% par rapport à la
-                            valorisation totale')}} </th>
-                        </thead>
-                        <tbody>
-                          <tr *ngFor="let line of ppodetailsarticlebyfamille">
-                            <td>{{line.libelle}}</td>
-                            <td>{{line.totalQuantity | number : '1.2-2'}} {{line.unite}}</td>
-                            <td>{{line.totalCost | number : '1.2-2'}} €</td>
-                            <td>{{((+line.totalCost) * 100 / calculCout(ppodetailsarticlebyfamille).cout) | number :
-                              '1.2-2'}} %</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="card">
-                      <div class="row fw-bold">
-                        <div class="col-6"></div>
-                        <div class="col-2">Total:</div>
-                        <div class="col-4">
-                          {{calculCout(ppodetailsarticlebyfamille).cout}} €
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </ng-template>
-            </li>
-          </ul>
-          <div [ngbNavOutlet]="navperteft" class="mt-2"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </ng-template>
     </li>
     <li [ngbNavItem]="3">
-      <button ngbNavLink>DETAILS FICHETECHNIQUES PERDUES</button>
+      <button ngbNavLink>DETAILS FICHETECHNIQUES </button>
       <ng-template ngbNavContent>
-        <div class="card d-flex border-light">
-          <ul ngbNav #navperteft="ngbNav" [(activeId)]="activeperteft" class="nav-tabs">
-            <li [ngbNavItem]="1">
-              <button ngbNavLink>QUANTITES</button>
-              <ng-template ngbNavContent>
-                <div class="row">
-                  <div class="col-6">
-                    <div class="card-body py-1" style="height: 600px;">
-                      <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsQuantitePerteFt"
-                        style="width: 100%; height: 500px; display: block;"></highcharts-chart>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="overflow-y-scroll" style="height: 500px;">
-                      <table class="table table-sm table-bordered table-hover table-striped"
-                        [ngStyle]="{'border-color': bordercolor}">
-                        <thead>
-                          <th>Article</th>
-                          <th>Quantité</th>
-                          <th>Valorisation</th>
-                          <th title="% par rapport à la valorisation totale">{{truncateWord('% par rapport à la
-                            valorisation totale')}} </th>
-                        </thead>
-                        <tbody>
-                          <tr *ngFor="let line of ppodetailsftbyfamille">
-                            <td>{{line.libelle}}</td>
-                            <td>{{line.totalQuantity | number : '1.2-2'}} {{line.unite}}</td>
-                            <td>{{line.totalCost | number : '1.2-2'}} €</td>
-                            <td>{{((+line.totalCost) * 100 / calculCout(ppodetailsftbyfamille).cout) | number :
-                              '1.2-2'}} %</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="card">
-                      <div class="row fw-bold">
-                        <div class="col-6"></div>
-                        <div class="col-2">Total:</div>
-                        <div class="col-4">
-                          {{calculCout(ppodetailsftbyfamille).cout}} €
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+        <div class="row">
+          <div class="col-6">
+            <div class="card-body py-1" style="height: 600px;">
+              <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerteFt"
+                style="width: 100%; height: 500px; display: block;"></highcharts-chart>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="overflow-y-scroll" style="height: 500px;">
+              <table class="table table-sm table-bordered table-hover table-striped"
+                [ngStyle]="{'border-color': bordercolor}">
+                <thead>
+                  <th>Fichetechnique</th>
+                  <th>Quantité</th>
+                  <th>Valorisation</th>
+                  <th title="% par rapport à la valorisation totale">{{truncateWord('% par rapport à la
+                    valorisation totale')}} </th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of ppodetailsftbyfamille">
+                    <td>{{line.libelle}}</td>
+                    <td>{{line.totalQuantity | number : '1.2-2'}} {{line.unite}}</td>
+                    <td>{{line.totalCost | number : '1.2-2'}} €</td>
+                    <td>{{((+line.totalCost) * 100 / calculCout(ppodetailsftbyfamille).cout) | number :
+                      '1.2-2'}} %</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="row fw-bold">
+                <div class="col-6"></div>
+                <div class="col-2">Total:</div>
+                <div class="col-4">
+                  {{calculCout(ppodetailsftbyfamille).cout  | number : '1.2-2'}} €
                 </div>
-              </ng-template>
-            </li>
-            <li [ngbNavItem]="2">
-              <button ngbNavLink>VALORISATIONS</button>
-              <ng-template ngbNavContent>
-                <div class="row">
-                  <div class="col-6">
-                    <div class="card-body py-1" style="height: 600px;">
-                      <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerteFt"
-                        style="width: 100%; height: 500px; display: block;"></highcharts-chart>
-                    </div>
-                  </div>
-                  <div class="col-6">
-                    <div class="overflow-y-scroll" style="height: 500px;">
-                      <table class="table table-sm table-bordered table-hover table-striped"
-                        [ngStyle]="{'border-color': bordercolor}">
-                        <thead>
-                          <th>Article</th>
-                          <th>Quantité</th>
-                          <th>Valorisation</th>
-                          <th title="% par rapport à la valorisation totale">{{truncateWord('% par rapport à la
-                            valorisation totale')}} </th>
-                        </thead>
-                        <tbody>
-                          <tr *ngFor="let line of ppodetailsftbyfamille">
-                            <td>{{line.libelle}}</td>
-                            <td>{{line.totalQuantity | number : '1.2-2'}} {{line.unite}}</td>
-                            <td>{{line.totalCost | number : '1.2-2'}} €</td>
-                            <td>{{((+line.totalCost) * 100 / calculCout(ppodetailsftbyfamille).cout) | number :
-                              '1.2-2'}} %</td>
-                          </tr>
-                        </tbody>
-                      </table>
-                    </div>
-                    <div class="card">
-                      <div class="row fw-bold">
-                        <div class="col-6"></div>
-                        <div class="col-2">Total:</div>
-                        <div class="col-4">
-                          {{calculCout(ppodetailsftbyfamille).cout}} €
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </ng-template>
-            </li>
-          </ul>
-          <div [ngbNavOutlet]="navperteft" class="mt-2"></div>
+              </div>
+            </div>
+          </div>
         </div>
       </ng-template>
     </li>
     <li [ngbNavItem]="4">
-      <button ngbNavLink>TABLEAU DE SYNTHESE PERTES</button>
+      <button ngbNavLink>DETAILS COMPOSANT FICHETECHNIQUES / ARTICLES </button>
+      <ng-template ngbNavContent>
+        <div class="row">
+          <div class="col-6">
+            <div class="card-body py-1" style="height: 600px;">
+              <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerteFt"
+                style="width: 100%; height: 500px; display: block;"></highcharts-chart>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="overflow-y-scroll" style="height: 500px;">
+              <table class="table table-sm table-bordered table-hover table-striped"
+                [ngStyle]="{'border-color': bordercolor}">
+                <thead>
+                  <th>Fichetechnique</th>
+                  <th>Quantité</th>
+                  <th>Valorisation</th>
+                  <th title="% par rapport à la valorisation totale">{{truncateWord('% par rapport à la
+                    valorisation totale')}} </th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of ppodetailsftbyfamille">
+                    <td>{{line.libelle}}</td>
+                    <td>{{line.totalQuantity | number : '1.2-2'}} {{line.unite}}</td>
+                    <td>{{line.totalCost | number : '1.2-2'}} €</td>
+                    <td>{{((+line.totalCost) * 100 / calculCout(ppodetailsftbyfamille).cout) | number :
+                      '1.2-2'}} %</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="row fw-bold">
+                <div class="col-6"></div>
+                <div class="col-2">Total:</div>
+                <div class="col-4">
+                  {{calculCout(ppodetailsftbyfamille).cout  | number : '1.2-2'}} €
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
+    </li>
+    <li [ngbNavItem]="5">
+      <button ngbNavLink>TABLEAU DE SYNTHESE</button>
       <ng-template ngbNavContent>
         <div class="card-body overflow-y-scroll" style="height: 450px;">
           <table class="table table-sm">
@@ -369,8 +303,8 @@
               <div class="col-12 p-1 border-light">
                 <div class="row text-left">
                   <div class="card col-4 border-light"
-                    *ngFor="let line of valorisationppodetails(ppodetails).article.unite">
-                    {{line.quantite | number: '1.2-2'}} {{line.unite}}<i class=" fw-bold">({{line.cout | number:
+                    *ngFor="let line of valorisationppodetails(ppodetails).article.famille">
+                    {{line.famille}}<i class=" fw-bold">({{line.cout | number:
                       '1.2-2'}} €)</i>
                   </div>
                 </div>
@@ -387,8 +321,8 @@
               <div class="col-12 p-1 border-light">
                 <div class="row text-left">
                   <div class="card col-4 border-light"
-                    *ngFor="let line of valorisationppodetails(ppodetails, false).ft.unite">
-                    {{line.quantite | number: '1.2-2'}} {{line.unite}}<i class=" fw-bold">({{line.cout | number:
+                    *ngFor="let line of valorisationppodetails(ppodetails, false).ft.famille">
+                    {{line.famille}}<i class=" fw-bold">({{line.cout | number:
                       '1.2-2'}} €)</i>
                   </div>
                 </div>
@@ -399,8 +333,8 @@
         </div>
       </ng-template>
     </li>
-    <li [ngbNavItem]="5" (click)="histogramme(ppodetails, categoriesfamille,  activehistogramme)">
-      <button ngbNavLink>HISTOGRAMME PERTES VALORISEE</button>
+    <li [ngbNavItem]="6" (click)="histogramme(ppodetails, categoriesfamille,  activehistogramme)">
+      <button ngbNavLink>HISTOGRAMME VALORISE</button>
       <ng-template ngbNavContent>
         <div class="card-body" style="height: 600px;">
           <ul ngbNav #navhistogramme="ngbNav" [(activeId)]="activehistogramme" class="nav-tabs">
