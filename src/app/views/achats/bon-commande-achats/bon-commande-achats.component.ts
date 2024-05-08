@@ -72,6 +72,7 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   public toggle = true;
   public modifToggle = true;
+  public toggleArticle = true;
   public addTogle = true;
   public addCommande = true;
   public listArts = true;

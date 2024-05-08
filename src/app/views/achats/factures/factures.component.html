@@ -1,8 +1,8 @@
 <div class="card d-flex py-1 my-2 mb-2">
     <div class="d-flex bd-highlight">
         <div class="flex-grow-1 bd-highlight">
-            <button type="button" *ngIf="!toggle" [disabled]="inputModif" (click)="addNewFacture()" class="btn btn-success btn-sm mx-1">Enregistrer</button>
-            <button type="button" *ngIf="!toggle" (click)="annuler()" class="btn btn-danger btn-sm mx-1">Annuler</button>
+            <button type="button" *ngIf="!modifToggle" [disabled]="inputModif" (click)="addNewFacture()" class="btn btn-success btn-sm mx-1">Enregistrer</button>
+            <button type="button" *ngIf="!modifToggle" (click)="annuler()" class="btn btn-danger btn-sm mx-1">Annuler</button>
         </div>
         <div class="bd-highlight mx-2 my-0">
             <div class="input-group input-group-sm">
@@ -18,13 +18,16 @@
             </div>
         </div>
         <div class="bd-highlight">
+          <button class="btn btn-outline-primary btn-sm me-1" *ngIf="!toggle" (click)="annuler()" [disabled]="!modifToggle" title="Liste Facture">
+            <i class="fas fa-list"></i>
+          </button>
           <button class="btn btn-outline-warning btn-sm me-1" *ngIf="showvalidateBtn" (click)="validateFacture()" title="Valider Facture">
             <i class="fas fa-check"></i>
           </button>
-            <button class="btn btn-outline-success btn-sm me-1"  [disabled]="!addFacture" (click)="openModalLivraison(content)" title="Nouvelle facture"><i class="fas fa-plus"></i></button>
-            <button class="btn btn-outline-danger btn-sm me-1" *ngIf="deleteFacture" title="Supprimer facture">
-            <i class="fas fa-trash"></i>
-            </button>
+          <button class="btn btn-outline-success btn-sm me-1"  [disabled]="!addFacture" (click)="openModalLivraison(content)" title="Nouvelle facture"><i class="fas fa-plus"></i></button>
+          <button class="btn btn-outline-danger btn-sm me-1" *ngIf="deleteFacture" title="Supprimer facture">
+          <i class="fas fa-trash"></i>
+          </button>
         </div>
     </div>
 </div>
@@ -136,7 +139,7 @@
       <li class="list-group-item">
         <div class="card d-flex py-1 mb-2">
           <div class="d-flex flex-row-reverse bd-highlight">
-            <button class="btn btn-outline-success btn-sm me-1" [disabled]="!modifToggle" *ngIf="(!toggle && addBtn)" (click)="openModalArticle(contentArticle)" title="Ajouter article">
+            <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleArticle" *ngIf="(!toggle && addBtn)" (click)="openModalArticle(contentArticle)" title="Ajouter article">
               <i class="fas fa-plus"></i>
             </button>
             <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!showDeleteBtn" (click)="deleteSelectedRows()" title="Supprimer"><i class="fas fa-trash"></i></button>
@@ -147,8 +150,8 @@
             <thead>
               <tr>
                 <th class="col-1"></th>
-                <th class="col-3">Designation</th>
-                <th class="col-2">Quantité</th>
+                <th class="col-4">Designation</th>
+                <th class="col-1">Quantité</th>
                 <th class="col-1">Unité</th>
                 <th class="col-1">Prix</th>
                 <th class="col-1">TVA</th>
@@ -160,7 +163,7 @@
               <tr *ngFor="let itemes of detailFactures">
                 <td class="col-1"><input class="form-check-input" type="checkbox" name="df-{{itemes.id}}" id="df-{{itemes.id}}" [(ngModel)]="itemes.selected" (change)="checkSelectedRows()"></td>
                 <td class="col-4">{{itemes.articlefournisseur.article.libelle }}</td>
-                <td class="col-2"><input type="number" class="form-control form-control-sm w-50 m-auto" [disabled]="inputModif" placeholder="0.00" [step]="itemes.articlefournisseur.conditionnement[0].uniteAchat.step" name="quantite[]" [(ngModel)]="itemes.quantite"></td>
+                <td class="col-1"><input type="number" class="form-control form-control-sm" [disabled]="inputModif" placeholder="0.00" [step]="itemes.articlefournisseur.conditionnement[0].uniteAchat.step" name="quantite[]" [(ngModel)]="itemes.quantite"></td>
                 <td class="col-1">{{ itemes.articlefournisseur.conditionnement[0].uniteAchat.abreviation }}</td>
                 <td class="col-1">
                   <div class="input-group input-group-sm">
@@ -229,7 +232,7 @@
     </div>
     <div class="modal-footer">
       <button type="button" class="btn btn-sm btn-info" (click)="modal.close('Create click')">Créer</button>
-      <button type="button" class="btn btn-sm btn-success" (click)="modal.close('validate click')">Valider</button>
+      <button type="button" class="btn btn-sm btn-success" (click)="modal.close('validate click')">Ouvrir</button>
       <button class="btn btn-sm btn-danger m-1" (click)="modal.dismiss('Cross click')" type="button" data-coreui-dismiss="modal">Annuler</button>
     </div>
   </ng-template>

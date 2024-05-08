@@ -26,10 +26,12 @@ import { InterfaceLivraisonDetails } from 'src/app/shared/model/interface-livrai
 import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { InterfaceBonLivraisons } from 'src/app/shared/model/interface-bonLivraison';
 
+import { ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
+
 @Component({
   selector: 'app-factures',
   standalone: true,
-  imports: [CommonModule, FormsModule, BsDatepickerModule],
+  imports: [CommonModule, FormsModule, BsDatepickerModule,ToasterComponent,ToastComponent,ToastHeaderComponent,ToastBodyComponent],
   templateUrl: './factures.component.html',
   styleUrl: './factures.component.scss',
   providers: [NgbModalConfig, NgbModal]
@@ -58,10 +60,18 @@ export class FacturesComponent implements OnInit {
   public articleExploitation: InterfaceArticleExploitation;
   public articleExploitations: InterfaceArticleExploitations;
 
+  public num_facture:string;
+
+  public exploitationId = +(sessionStorage.getItem('exploitation') || 3);
+  public idFournisseur = 0;
+  public idFacture = 0;
+  public montantTTc = 0;
+
   public toggle = true;
   public addFacture = true;
   public listFacture = true;
   public modifToggle = true;
+  public toggleArticle = true;
   public deleteFacture = false;
   public showDeleteBtn = false;
   public inputModif = false;
@@ -73,12 +83,27 @@ export class FacturesComponent implements OnInit {
 
   public bonFactureForm = FormGroup;
   closeResult = '';
-  public num_facture:string;
 
-  public exploitationId = +(sessionStorage.getItem('exploitation') || 3);
-  public idFournisseur = 0;
-  public idFacture = 0;
-  public montantTTc = 0;
+  position: 'top-end';
+  visible =false;
+  percentage = 0;
+  public message = '';
+  public color = 'success';
+  public textcolor: 'text-light';
+
+  toggleToast(_message: string) {
+    this.message = _message;
+    this.visible = !this.visible;
+  }
+
+  onVisibleChange($event: boolean) {
+    this.visible = $event;
+    this.percentage = !this.visible ? 0 : this.percentage;
+  }
+
+  onTimerChange($event: number) {
+    this.percentage = $event * 25;
+  }
 
   public bsConfig: { containerClass: string; locale: string; dateInputFormat: string; };
   private today = new Date();
@@ -338,6 +363,7 @@ export class FacturesComponent implements OnInit {
     this.addFacture = true;
     this.listFacture = true;
     this.inputModif = !this.inputModif;
+    this.modifToggle = !this.modifToggle;
     this.addBtn = false;
     this.montantTTc = 0;
     this.showvalidateBtn =false;
@@ -351,8 +377,10 @@ export class FacturesComponent implements OnInit {
     if (this.detailFactures.length > 0) {
       this.factureService.createFacture(this.facture,this.detailFactures,this.bonLivraison).subscribe({
         next:(value) =>{
+          // this.toggleToast('La facture n° '+this.facture.numFacture+' a été crée avec succès!');
           alert('La facture n° '+this.facture.numFacture+' a été crée avec succès!');
           this.inputModif = !this.inputModif;
+          this.toggleArticle = !this.toggleArticle;
           this.modifToggle = !this.modifToggle;
         },
       })
@@ -383,8 +411,9 @@ export class FacturesComponent implements OnInit {
             this.closeResult = `Closed with: ${result}`;
             console.log(this.closeResult)
             if (this.closeResult == 'Closed with: validate click') {
-              this.toggle = false;
-              this.modifToggle = this.modifToggle;
+              this.modifToggle = !this.modifToggle;
+              this.toggle = (this.toggle === false ? true : false);
+              this.toggleArticle = this.toggleArticle;
               this.inputModif = false;
 
               for (const livraison of _livraisons) {
@@ -427,8 +456,9 @@ export class FacturesComponent implements OnInit {
                 }                
               }
             }else if(this.closeResult == 'Closed with: Create click'){
-              this.toggle = !this.toggle;
-              this.modifToggle = this.modifToggle;
+              this.modifToggle = !this.modifToggle;
+              this.toggle = (this.toggle === false ? true : false);
+              this.toggleArticle = this.toggleArticle;
               this.resetFacture();
               this.addBtn = true;
               this.inputModif = false;
