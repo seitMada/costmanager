@@ -23,7 +23,5 @@ export interface InterfaceBonCommandes {
     centre: InterfaceCentreRevenu;
     exploitation: InterfaceExploitations;
     commandeDetail:InterfaceCommandeDetails[];
-    achat: InterfaceAchat[];
-
 
 }

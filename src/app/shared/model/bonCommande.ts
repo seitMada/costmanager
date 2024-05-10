@@ -24,8 +24,6 @@ export class BonCommande implements InterfaceBonCommandes {
   exploitation: InterfaceExploitations;
   commandeDetail:InterfaceCommandeDetails[];
 
-  achat: InterfaceAchat[];
-
     constructor(bonCommandeInterface:InterfaceBonCommandes){
       this.remise=bonCommandeInterface.remise;
       this.montantHT=bonCommandeInterface.montantHT;
@@ -38,7 +36,6 @@ export class BonCommande implements InterfaceBonCommandes {
       this.centreId=bonCommandeInterface.centreId;
       this.fournisseur=bonCommandeInterface.fournisseur;
       this.centre=bonCommandeInterface.centre;
-      this.achat=bonCommandeInterface.achat;
       this.commandeDetail = bonCommandeInterface.commandeDetail;
     }
 }

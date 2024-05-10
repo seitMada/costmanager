@@ -2,7 +2,9 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { GestionUtilisateursComponent } from "./gestion-utilisateurs/gestion-utilisateurs.component";
+import { ExploitationsComponent } from "./exploitations/exploitations.component";
 import { PrixArticlesComponent } from "./prix-articles/prix-articles.component";
+import { CentrerevenusComponent } from './centrerevenus/centrerevenus.component';
 
 const routes: Routes = [
   {
@@ -17,7 +19,21 @@ const routes: Routes = [
         redirectTo: 'settings',
       },
       {
-        path: 'users',
+        path: 'options/exploitation',
+        component: ExploitationsComponent,
+        data: {
+          title: 'Gestions d\'exploitation',
+        },
+      },
+      {
+        path: 'options/centrerevenu',
+        component: CentrerevenusComponent,
+        data: {
+          title: 'Centre Revenu',
+        },
+      },
+      {
+        path: 'options/user',
         component: GestionUtilisateursComponent,
         data: {
           title: 'Gestions utilisateurs',

@@ -1,8 +1,8 @@
 <div class="card d-flex py-1 my-2 mb-2">
   <div class="d-flex bd-highlight">
     <div class="flex-grow-1 bd-highlight">
-      <button type="button" (click)="addBonCommande()" [disabled]="inputModif" class="btn btn-success btn-sm mx-1" *ngIf="(!toggle && !btnTenRecord)">Enregistrer</button>
-      <button type="button" class="btn btn-danger btn-sm mx-1"  *ngIf="(!toggle && !btnTenRecord) " (click)="annuler()">Annuler</button>
+      <button type="button" (click)="addBonCommande()" [disabled]="inputModif" class="btn btn-success btn-sm mx-1" *ngIf="!modifToggle">Enregistrer</button>
+      <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
     </div>
     <div class="bd-highlight mx-2 my-0">
       <div class="input-group input-group-sm">
@@ -22,7 +22,10 @@
       <button class="btn btn-outline-warning btn-sm me-1" *ngIf="showvalidateBtn" (click)="validateCommande()" title="Valider bon de commande">
         <i class="fas fa-check"></i>
       </button>
-      <button class="btn btn-outline-success btn-sm me-1" [disabled]="!addTogle" (click)="toggleModal(); listArticleFournisseurs()" title="Ajouter bon de commande"><i class="fas fa-t"></i></button>
+      <button class="btn btn-outline-primary btn-sm me-1" *ngIf="!toggle" (click)="cancel()" [disabled]="!modifToggle" title="Liste Facture">
+        <i class="fas fa-list"></i>
+      </button>
+      <button class="btn btn-outline-success btn-sm me-1" [disabled]="!addTogle" (click)="toggleModal();listArticleFournisseurs()" title="Ajouter bon de commande"><i class="fas fa-t"></i></button>
       <button class="btn btn-outline-info btn-sm me-1" [disabled]="!addCommande" (click)="addCommandeModal()" title="Ajout commande"><i class="fas fa-c"></i></button>
       <button class="btn btn-outline-primary btn-sm me-1" [disabled]="!listArts" title="Liste de 10 dernières commandes" (click)="showListCommande(); listArticleDixDernierCommande()"><i class="fas fa-1"></i><i class="fas fa-0"></i></button>
       <button class="btn btn-outline-danger btn-sm me-1" *ngIf="showDeleteBtnCom" (click)="deleteSelectedRowsComm()" title="Supprimer bon de commande">
@@ -97,7 +100,7 @@
       <li class="list-group-item">
         <div class="card d-flex py-1 mb-2" *ngIf="(!toggle )">
           <div class="d-flex flex-row-reverse bd-highlight">
-            <button class="btn btn-outline-success btn-sm me-1" [disabled]="!modifToggle" *ngIf="(!toggle && addBtn)" (click)="openModalArticle(content)" title="Ajouter article">
+            <button class="btn btn-outline-success btn-sm me-1" [disabled]="!addBtn" *ngIf="addBtn" (click)="openModalArticle(content)" title="Ajouter article">
               <i class="fas fa-plus"></i>
             </button>
             <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!showDeleteBtn" (click)="deleteSelectedRows()" title="Supprimer bon de commande">

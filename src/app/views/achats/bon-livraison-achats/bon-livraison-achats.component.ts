@@ -81,7 +81,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
   public addLivraison = true;
   public listLivraison = true;
   public modifToggle = true;
-  public toggleArticle = true;
   public deleteLivraison = false;
   public showDeleteBtn = false;
   public inputModif = false;
@@ -103,7 +102,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     config.backdrop = 'static';
     config.keyboard = false;
-
+    this.num_livraison = "LIV-" + (this.formatDate(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
     this.resetFournisseur();
     this.resetCentre();
     this.resetLivraison();
@@ -116,9 +115,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
 
-  ngOnInit(): void {
-    this.num_livraison = "LIV-" + (this.formatDate(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
-    
+  ngOnInit(): void {   
     this.showExploitationFournisseur();
     this.showAllFournisseur();
     this.showAllAdresse();
@@ -337,6 +334,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
   public resetLivraison(){
+    this.num_livraison = "LIV-" + (this.formatDate(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
     this.bonLivraison = {
       numLivraison:this.num_livraison,
       dateCommande: this.dates.today,
@@ -410,7 +408,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
   public openModalCommande(content: TemplateRef<any>) { 
-    
     this.livraisonDetails = [];
     this.montantTTc = 0;
     this.livraisonService.getCommandeByFournisseurExploitationValidate(this.fournisseur.id? this.fournisseur.id:0,this.exploitation.id ?this.exploitation.id:0).subscribe({
@@ -427,7 +424,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
               if (this.closeResult == 'Closed with: validate click') {
                 this.modifToggle = !this.modifToggle;
                 this.toggle = (this.toggle === false ? true : false);
-                this.toggleArticle = this.toggleArticle;
                 this.resetLivraison();
                 this.addBtn = false;
                 this.inputModif = false;
@@ -466,6 +462,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
                           
                           this.livraisonDetails.push(this.livraisonDetail);
                         }
+                        this.addBtn = false;
                       },
                     })
                   }else{
@@ -477,7 +474,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
                 this.modifToggle = !this.modifToggle;
                 this.toggle = (this.toggle === false ? true : false);
                 this.resetLivraison();
-                this.toggleArticle = this.toggleArticle;
                 this.addBtn = true;
                 this.inputModif = false;
                 this.livraisonDetails = [];
@@ -494,7 +490,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
               this.toggle = this.toggle;
               this.addLivraison = true;
               this.inputModif = false;
-              this.modifToggle = !this.modifToggle;
+              this.modifToggle = true;
               this.livraisonDetails = [];
             },
           ); 
@@ -515,7 +511,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
 
   annuler(){
     this.livraisonDetails = [];
-    // this.toggle = !this.toggle;
     this.toggle = (this.toggle === false ? true : false);
     this.addLivraison = true;
     this.listLivraison = true;
@@ -573,9 +568,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
       this.livraisonService.createNewBonLivraison(this.bonLivraison,this.livraisonDetails,this.bonCommande).subscribe({
         next:(livraison:any) =>{
           alert('Bon de livraison n° '+ this.bonLivraison.numLivraison+ ' crée avec succès!');
-          
+          this.addBtn = false;
           this.inputModif = !this.inputModif;
-          this.toggleArticle = !this.toggleArticle;
           this.modifToggle = !this.modifToggle;
           this.showvalidateBtn = !this.showvalidateBtn;
           this.resetLivraison();
@@ -620,37 +614,34 @@ export class BonLivraisonAchatsComponent implements OnInit{
   validateLivraison(){
     this.idBonLivraison = this.bonLivraison.id ? this.bonLivraison.id :0;
     
-      const selectedBonLivraisons = this.bonLivraisons.filter(line => line.selected);
-      console.log(selectedBonLivraisons);
+    if (this.bonLivraison) {
+      this.livraisonService.validateLivraison(this.bonLivraison).subscribe({
+        next:(value) =>{
+          this.deleteLivraison = false;
+          this.showvalidateBtn = !this.showvalidateBtn;
+          this.inputModif = true;
+          alert('Bon de livraison n° '+this.bonLivraison.numLivraison+' a été validé');
+        },
+      });
       
-      if (selectedBonLivraisons) {
-        // for (const bonLivraison of selectedBonLivraisons) {
-        //   if (this.bonLivraison.validation == 0) {
-        //     this.livraisonService.validateLivraison(bonLivraison).subscribe({
-        //       next:(value) =>{
-        //         this.showAllFournisseur();
-        //         this.toggle = this.toggle;
-        //         this.deleteLivraison = !this.deleteLivraison;
-        //         alert('Bon de livraison n° '+bonLivraison.numLivraison+' a été validé');
-        //       },
-        //     });
-        //   }else{
-        //     alert('Ce bon de livraison est déjà validé!');
-        //     this.deleteLivraison = !this.deleteLivraison;
-        //     this.showvalidateBtn = !this.showvalidateBtn;
-        //   }      
-        // }
-      } else {
-        console.log(this.bonLivraison);
-        
-      //   this.livraisonService.validateLivraison(this.bonLivraison).subscribe({
-      //     next:(value) =>{
-      //       this.deleteLivraison = !this.deleteLivraison;
-      //       this.showvalidateBtn = !this.showvalidateBtn;
-      //       this.inputModif = true;
-      //       alert('Bon de livraison n° '+this.bonLivraison.numLivraison+' a été validé');
-      //     },
-      //   });
+    } else {
+      const selectedBonLivraisons = this.bonLivraisons.filter(line => line.selected);
+      for (const bonLivraison of selectedBonLivraisons) {
+        if (bonLivraison.validation == 0) {
+          this.livraisonService.validateLivraison(bonLivraison).subscribe({
+            next:(value) =>{
+              this.showAllFournisseur();
+              this.toggle = this.toggle;
+              this.deleteLivraison = false;
+              alert('Bon de livraison n° '+bonLivraison.numLivraison+' a été validé');
+            },
+          });
+        }else{
+          alert('Ce bon de livraison est déjà validé!');
+          this.deleteLivraison = false;
+          this.showvalidateBtn = !this.showvalidateBtn;
+        }      
       }
+    }
   }
 }

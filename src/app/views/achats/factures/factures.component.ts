@@ -363,7 +363,7 @@ export class FacturesComponent implements OnInit {
     this.addFacture = true;
     this.listFacture = true;
     this.inputModif = !this.inputModif;
-    this.modifToggle = !this.modifToggle;
+    this.modifToggle = true;
     this.addBtn = false;
     this.montantTTc = 0;
     this.showvalidateBtn =false;
@@ -377,11 +377,11 @@ export class FacturesComponent implements OnInit {
     if (this.detailFactures.length > 0) {
       this.factureService.createFacture(this.facture,this.detailFactures,this.bonLivraison).subscribe({
         next:(value) =>{
-          // this.toggleToast('La facture n° '+this.facture.numFacture+' a été crée avec succès!');
           alert('La facture n° '+this.facture.numFacture+' a été crée avec succès!');
           this.inputModif = !this.inputModif;
           this.toggleArticle = !this.toggleArticle;
           this.modifToggle = !this.modifToggle;
+          this.showvalidateBtn =true;
         },
       })
     } else {
@@ -611,9 +611,7 @@ export class FacturesComponent implements OnInit {
 
   validateFacture(){
     this.idFacture = this.facture.id ? this.facture.id: 0;
-    // console.log(this.idFacture);
-    
-    if (this.idFacture !=0) {
+    if (this.facture) {
       this.factureService.validateFacture(this.facture).subscribe({
         next: (value) => {
           this.showvalidateBtn = ! this.showvalidateBtn;

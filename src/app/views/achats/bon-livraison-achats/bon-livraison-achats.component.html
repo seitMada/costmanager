@@ -125,7 +125,7 @@
     <li class="list-group-item">
       <div class="card d-flex py-1 mb-2" *ngIf="(!toggle )">
         <div class="d-flex flex-row-reverse bd-highlight">
-          <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleArticle" *ngIf="(!toggle && addBtn)" (click)="listArticleFournisseurs();openModalArticle(contentArticle)" title="Ajouter article">
+          <button class="btn btn-outline-success btn-sm me-1" [disabled]="!addBtn" *ngIf="addBtn" (click)="listArticleFournisseurs();openModalArticle(contentArticle)" title="Ajouter article">
             <i class="fas fa-plus"></i>
           </button>
           <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!showDeleteBtn" (click)="deleteSelectedRows()" title="Supprimer bon de livraison"><i class="fas fa-trash"></i></button>
@@ -239,7 +239,7 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of bonCommandes">
-          <td scope="col" class="col-1"><input type="radio" class="form-check-input" name="commande-{{item.id}}" [value]="item.id" [(ngModel)]="item.selected"></td>
+          <td scope="col" class="col-1"><input type="radio" class="form-check-input" name="commande" [value]="item.id" [(ngModel)]="item.selected"></td>
           <td scope="col" class="col-3">{{ item.noPiece }}</td>
           <td scope="col" class="col-1">{{ item.dateCommande | date:'dd/MM/yyyy' }}</td>
           <td scope="col" class="col-1 text-center">{{ item.montantHT - item.remise}} €</td>

@@ -219,7 +219,7 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of bonLivraisons">
-            <td scope="col" class="col-1"><input type="radio" class="form-check-input" name="commande-{{item.id}}" [value]="item.id" [(ngModel)]="item.selected"></td>
+            <td scope="col" class="col-1"><input type="radio" class="form-check-input" name="livraison" [value]="item.id" [(ngModel)]="item.selected"></td>
             <td scope="col" class="col-3">{{ item.numLivraison }}</td>
             <td scope="col" class="col-1">{{ item.dateLivraison| date:'dd/MM/yyyy' }}</td>
             <td scope="col" class="col-1 text-center">{{ item.montantHt - item.remise| number:'1.2-2' }} €</td>

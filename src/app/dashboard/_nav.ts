@@ -155,8 +155,22 @@ export const navItems: INavData[] = [
     iconComponent: { name: 'cil-settings' },
     children: [
       {
-        name: 'Utilisateurs',
-        url: 'settings/users'
+        name: 'Options',
+        url: 'settings/options',
+        children: [
+          {
+            "name": "Exploitation",
+            "url": "settings/options/exploitation",
+          },
+          {
+            "name": "Centre Revenu",
+            "url": "settings/options/centrerevenu",
+          },
+          {
+            "name": "Utilisateurs",
+            "url": "settings/options/user",
+          },
+        ]
       },
       {
         name: 'Prix articles',
