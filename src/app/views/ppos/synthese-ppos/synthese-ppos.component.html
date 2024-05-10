@@ -22,87 +22,377 @@
           name="dateFin"> -->
     </div>
     <div class="bd-highlight">
-      <button class="btn btn-sm btn-outline-info me-1" (click)="open(content)"><i
-          class="fas fa-chart-area"></i></button>
+      <button class="btn btn-sm btn-outline-info me-1" (click)="open()"><i class="fas fa-chart-area"></i></button>
     </div>
   </div>
 </div>
 
-<div class="card d-flex">
+<div class="card d-flex" *ngIf="!toggle">
+  <div class="card-header">
+    <h6 class="card-title text-center">Paramétre des diagrammes synthése Pertes</h6>
+  </div>
+  <div class="modal-body">
+    <div class="card-body py-1">
+      <div class="row m-2">
+        <div class="col-sm-6">
+          <div class="input-group">
+            <span class="input-group-text col-6" id="libelle">Date début</span>
+            <input type="text" class="form-control col-7 bg-white" aria-label="datedebut" autocomplete="off"
+              aria-describedby="datedebut" name="datedebut" [(ngModel)]="dates.debut" bsDatepicker [bsConfig]="bsConfig"
+              [maxDate]="dates.fin">
+          </div>
+        </div>
+        <div class="col-sm-6">
+          <div class="input-group">
+            <span class="input-group-text col-6" id="libelle">Date fin</span>
+            <input type="text" class="form-control col-7 bg-white" aria-label="datefin" autocomplete="off"
+              aria-describedby="datefin" name="datefin" [(ngModel)]="dates.fin" bsDatepicker [bsConfig]="bsConfig"
+              [minDate]="dates.debut">
+          </div>
+        </div>
+      </div>
+      <div class="row m-2">
+        <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
+          <li [ngbNavItem]="1" (click)="initialise()">
+            <a ngbNavLink>EXPLOITATION</a>
+            <ng-template ngbNavContent>
+              <table class="table table-striped table-hover">
+                <tbody>
+                  <tr *ngFor="let line of exploitations">
+                    <td class="col-9">{{line.libelle}}</td>
+                    <td class="col-3">
+                      <input type="checkbox" name="exploitation-{{line.libelle}}" id="exploitation-{{line.id}}"
+                        [(ngModel)]="line.selected">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="2" (click)="initialise()">
+            <a ngbNavLink>CENTRE REVENUS</a>
+            <ng-template ngbNavContent>
+              <table class="table table-striped table-hover">
+                <tbody>
+                  <tr *ngFor="let line of centrerevenus">
+                    <td class="col-9">{{line.libelle}}</td>
+                    <td class="col-3">
+                      <input type="checkbox" name="centre-{{line.libelle}}" id="centre-{{line.id}}"
+                        [(ngModel)]="line.selected">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </ng-template>
+          </li>
+        </ul>
+        <div [ngbNavOutlet]="nav" class="mt-2"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <!-- <button type="button" class="btn btn-sm btn-outline-success m-3" (click)="validated()">Valider</button> -->
+      <button type="button" class="btn btn-sm btn-outline-success m-3" (click)="validate()">Valider</button>
+      <!-- <button type="button" class="btn btn-sm btn-outline-danger" (click)="dismiss('Cancel')">Annuler</button> -->
+    </div>
+  </div>
+</div>
+
+<div class="card d-flex" *ngIf="toggle">
   <ul ngbNav #navperte="ngbNav" [(activeId)]="activeperte" class="nav-tabs">
-    <!-- <li [ngbNavItem]="1">
-      <button ngbNavLink>PERTES ET OFFERTS</button>
+    <li [ngbNavItem]="2">
+      <button ngbNavLink>DETAILS ARTICLES </button>
       <ng-template ngbNavContent>
         <div class="row">
           <div class="col-6">
-            <div class="card-body py-1" style="height: 630px;">
-              <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsQuantitePerte"
-                style="width: 100%; height: 400px; display: block;"></highcharts-chart>
+            <div class="card-body py-1" style="height: 600px;">
+              <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerteArticle"
+                style="width: 100%; height: 500px; display: block;"></highcharts-chart>
             </div>
           </div>
           <div class="col-6">
-            <div class="card-body py-1" style="height: 630px;">
-              <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerte"
-                style="width: 100%; height: 400px; display: block;"></highcharts-chart>
+            <div class="overflow-y-scroll" style="height: 500px;">
+              <table class="table table-sm table-bordered table-hover table-striped"
+                [ngStyle]="{'border-color': bordercolor}">
+                <thead>
+                  <th>Article</th>
+                  <th>Quantité</th>
+                  <th>Valorisation</th>
+                  <th title="% par rapport à la valorisation totale">{{truncateWord('% par rapport à la
+                    valorisation totale')}} </th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of ppodetailsarticlebyfamille">
+                    <td>{{line.libelle}}</td>
+                    <td>{{line.totalQuantity | number : '1.2-2'}} {{line.unite}}</td>
+                    <td>{{line.totalCost | number : '1.2-2'}} €</td>
+                    <td>{{((+line.totalCost) * 100 / calculCout(ppodetailsarticlebyfamille).cout) | number : '1.2-2'}} %</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="row fw-bold">
+                <div class="col-6"></div>
+                <div class="col-2">Total:</div>
+                <div class="col-4">
+                  {{calculCout(ppodetailsarticlebyfamille).cout  | number : '1.2-2'}} €
+                </div>
+              </div>
             </div>
           </div>
-        </div>
-      </ng-template>
-    </li> -->
-    <li [ngbNavItem]="2">
-      <button ngbNavLink>DETAILS FICHETECHNIQUES PERDUES</button>
-      <ng-template ngbNavContent>
-        <div class="card d-flex border-light">
-          <ul ngbNav #navperteft="ngbNav" [(activeId)]="activeperteft" class="nav-tabs">
-            <li [ngbNavItem]="1">
-              <button ngbNavLink>QUANTITES</button>
-              <ng-template ngbNavContent>
-                <div class="row">
-                  <div class="col-6">
-                    <div class="card-body py-1" style="height: 500px;">
-                      <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsQuantitePerteArticle"
-                        style="width: 100%; height: 400px; display: block;"></highcharts-chart>
-                    </div>
-                  </div>
-                  <div class="col-6"></div>
-                </div>
-              </ng-template>
-            </li>
-            <li [ngbNavItem]="2">
-              <button ngbNavLink>VALORISATIONS</button>
-              <ng-template ngbNavContent>
-                <div class="row">
-                  <div class="col-6">
-                    <div class="card-body py-1" style="height: 500px;">
-                      <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsQuantitePerteArticle"
-                        style="width: 100%; height: 400px; display: block;"></highcharts-chart>
-                    </div>
-                  </div>
-                  <div class="col-6"></div>
-                </div>
-              </ng-template>
-            </li>
-          </ul>
-          <div [ngbNavOutlet]="navperteft" class="mt-2"></div>
         </div>
       </ng-template>
     </li>
     <li [ngbNavItem]="3">
-      <button ngbNavLink>DETAILS ARTICLES PERDUES</button>
+      <button ngbNavLink>DETAILS FICHETECHNIQUES </button>
       <ng-template ngbNavContent>
-
+        <div class="row">
+          <div class="col-6">
+            <div class="card-body py-1" style="height: 600px;">
+              <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerteFt"
+                style="width: 100%; height: 500px; display: block;"></highcharts-chart>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="overflow-y-scroll" style="height: 500px;">
+              <table class="table table-sm table-bordered table-hover table-striped"
+                [ngStyle]="{'border-color': bordercolor}">
+                <thead>
+                  <th>Fichetechnique</th>
+                  <th>Quantité</th>
+                  <th>Valorisation</th>
+                  <th title="% par rapport à la valorisation totale">{{truncateWord('% par rapport à la
+                    valorisation totale')}} </th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of ppodetailsftbyfamille">
+                    <td>{{line.libelle}}</td>
+                    <td>{{line.totalQuantity | number : '1.2-2'}} {{line.unite}}</td>
+                    <td>{{line.totalCost | number : '1.2-2'}} €</td>
+                    <td>{{((+line.totalCost) * 100 / calculCout(ppodetailsftbyfamille).cout) | number :
+                      '1.2-2'}} %</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="row fw-bold">
+                <div class="col-6"></div>
+                <div class="col-2">Total:</div>
+                <div class="col-4">
+                  {{calculCout(ppodetailsftbyfamille).cout  | number : '1.2-2'}} €
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </ng-template>
     </li>
     <li [ngbNavItem]="4">
-      <button ngbNavLink>TABLEAU DE SYNTHESE PERTES</button>
+      <button ngbNavLink>DETAILS COMPOSANT FICHETECHNIQUES / ARTICLES </button>
       <ng-template ngbNavContent>
-
+        <div class="row">
+          <div class="col-6">
+            <div class="card-body py-1" style="height: 600px;">
+              <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerteFt"
+                style="width: 100%; height: 500px; display: block;"></highcharts-chart>
+            </div>
+          </div>
+          <div class="col-6">
+            <div class="overflow-y-scroll" style="height: 500px;">
+              <table class="table table-sm table-bordered table-hover table-striped"
+                [ngStyle]="{'border-color': bordercolor}">
+                <thead>
+                  <th>Fichetechnique</th>
+                  <th>Quantité</th>
+                  <th>Valorisation</th>
+                  <th title="% par rapport à la valorisation totale">{{truncateWord('% par rapport à la
+                    valorisation totale')}} </th>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of ppodetailsftbyfamille">
+                    <td>{{line.libelle}}</td>
+                    <td>{{line.totalQuantity | number : '1.2-2'}} {{line.unite}}</td>
+                    <td>{{line.totalCost | number : '1.2-2'}} €</td>
+                    <td>{{((+line.totalCost) * 100 / calculCout(ppodetailsftbyfamille).cout) | number :
+                      '1.2-2'}} %</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="row fw-bold">
+                <div class="col-6"></div>
+                <div class="col-2">Total:</div>
+                <div class="col-4">
+                  {{calculCout(ppodetailsftbyfamille).cout  | number : '1.2-2'}} €
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </ng-template>
     </li>
     <li [ngbNavItem]="5">
-      <button ngbNavLink>HISTORIQUE PERTES</button>
+      <button ngbNavLink>TABLEAU DE SYNTHESE</button>
       <ng-template ngbNavContent>
+        <div class="card-body overflow-y-scroll" style="height: 450px;">
+          <table class="table table-sm">
+            <tbody>
+              <tr>
+                <th colspan="4">Articles</th>
+              </tr>
+              <tr>
+                <td colspan="4">
+                  <table class="table table-striped table-sm table-hover">
+                    <thead>
+                      <th>Libelle</th>
+                      <!-- <th>Valeur unitaire</th> -->
+                      <th>Quantité</th>
+                      <th>Valorisation</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let line of ppodetails">
+                        <td *ngIf="line.article">{{line.article.libelle}}</td>
+                        <!-- <td *ngIf="line.article">{{+line.cout| number: '1.2-2'}} €</td> -->
+                        <td *ngIf="line.article">{{+line.quantite | number: '1.2-2'}} {{line.unite.abreviation}}</td>
+                        <td *ngIf="line.article">{{+line.cout | number: '1.2-2'}} €</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+              <tr>
+                <th colspan="4">Fichetechniques</th>
+              </tr>
+              <tr>
+                <td colspan="4">
+                  <table class="table table-striped table-sm table-hover">
+                    <thead>
+                      <th>Libelle</th>
+                      <!-- <th>Valeur unitaire</th> -->
+                      <th>Quantité</th>
+                      <th>Valorisation</th>
+                    </thead>
+                    <tbody>
+                      <tr *ngFor="let line of ppodetails">
+                        <td *ngIf="line.fichetechnique">{{line.fichetechnique.libelle}}</td>
+                        <!-- <td *ngIf="line.fichetechnique">{{+line.cout | number: '1.2-2'}} €</td> -->
+                        <td *ngIf="line.fichetechnique">{{+line.quantite | number: '1.2-2'}} {{line.unite.abreviation}}
+                        </td>
+                        <td *ngIf="line.fichetechnique">{{+line.cout | number: '1.2-2'}}
+                          €</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="card-body overflow-y-scroll" style="height: 200px;">
+          <div class="row text-center">
+            <div class="col-6">
+              <div class="card col-12 p-1 border-light">
+                <i class=" fw-bold">Nombre articles {{nbarticle}}</i>
+              </div>
+              <div class="card col-12 p-1 border-light">
+                <i class=" fw-bold">Valorisation article: {{valorisationppodetails(ppodetails).article.cout | number:
+                  '1.2-2'}} €</i>
+              </div>
+              <div class="col-12 p-1 border-light">
+                <div class="row text-left">
+                  <div class="card col-4 border-light"
+                    *ngFor="let line of valorisationppodetails(ppodetails).article.famille">
+                    {{line.famille}}<i class=" fw-bold">({{line.cout | number:
+                      '1.2-2'}} €)</i>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-6">
+              <div class="card col-12 p-1 border-light">
+                <i class=" fw-bold">Nombre fichetechniques {{nbft}}</i>
+              </div>
+              <div class="card col-12 p-1 border-light">
+                <i class=" fw-bold">Valorisation fichetechniques: {{valorisationppodetails(ppodetails, false).ft.cout |
+                  number: '1.2-2'}} €</i>
+              </div>
+              <div class="col-12 p-1 border-light">
+                <div class="row text-left">
+                  <div class="card col-4 border-light"
+                    *ngFor="let line of valorisationppodetails(ppodetails, false).ft.famille">
+                    {{line.famille}}<i class=" fw-bold">({{line.cout | number:
+                      '1.2-2'}} €)</i>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
 
+        </div>
+      </ng-template>
+    </li>
+    <li [ngbNavItem]="6" (click)="histogramme(ppodetails, categoriesfamille,  activehistogramme)">
+      <button ngbNavLink>HISTOGRAMME VALORISE</button>
+      <ng-template ngbNavContent>
+        <div class="card-body" style="height: 600px;">
+          <ul ngbNav #navhistogramme="ngbNav" [(activeId)]="activehistogramme" class="nav-tabs">
+            <li [ngbNavItem]="1" (click)="histogramme(ppodetails, categoriesfamille,  activehistogramme)">
+              <button ngbNavLink>PERTES</button>
+              <ng-template ngbNavContent>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="card-body py-1" style="height: 600px;">
+                      <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsHistogramme"
+                        style="width: 100%; height: 500px; display: block;"></highcharts-chart>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+            <li [ngbNavItem]="2" (click)="histogramme(ppodetails, categoriesfamille,  activehistogramme)">
+              <button ngbNavLink>PERTES PAR SEMAINE</button>
+              <ng-template ngbNavContent>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="card-body py-1" style="height: 600px;">
+                      <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsHistogrammeSemaine"
+                        style="width: 100%; height: 500px; display: block;"></highcharts-chart>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+            <li [ngbNavItem]="3" (click)="histogramme(ppodetails, categoriesfamille,  activehistogramme)">
+              <button ngbNavLink>PERTES PAR MOIS</button>
+              <ng-template ngbNavContent>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="card-body py-1" style="height: 600px;">
+                      <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsHistogrammeMois"
+                        style="width: 100%; height: 500px; display: block;"></highcharts-chart>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+            <li [ngbNavItem]="4" (click)="histogramme(ppodetails, categoriesfamille,  activehistogramme)">
+              <button ngbNavLink>PERTES PAR ANNEE</button>
+              <ng-template ngbNavContent>
+                <div class="row">
+                  <div class="col-12">
+                    <div class="card-body py-1" style="height: 600px;">
+                      <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsHistogrammeAnnee"
+                        style="width: 100%; height: 500px; display: block;"></highcharts-chart>
+                    </div>
+                  </div>
+                </div>
+              </ng-template>
+            </li>
+          </ul>
+          <div [ngbNavOutlet]="navhistogramme" class="mt-2"></div>
+        </div>
       </ng-template>
     </li>
   </ul>
@@ -110,7 +400,7 @@
   <div [ngbNavOutlet]="navperte" class="mt-2"></div>
 </div>
 
-<ng-template #content let-modal>
+<!-- <ng-template #content let-modal>
   <div class="modal-header">
     <h6 class="modal-title text-center" id="modal-basic-title">Paramétre des diagrammes synthése Pertes</h6>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
@@ -137,7 +427,7 @@
       </div>
       <div class="row m-2">
         <ul ngbNav #nav="ngbNav" [(activeId)]="active" class="nav-tabs">
-          <li [ngbNavItem]="1">
+          <li [ngbNavItem]="1" (click)="initialise()">
             <a ngbNavLink>EXPLOITATION</a>
             <ng-template ngbNavContent>
               <table class="table table-striped table-hover">
@@ -153,7 +443,7 @@
               </table>
             </ng-template>
           </li>
-          <li [ngbNavItem]="2">
+          <li [ngbNavItem]="2" (click)="initialise()">
             <a ngbNavLink>CENTRE REVENUS</a>
             <ng-template ngbNavContent>
               <table class="table table-striped table-hover">
@@ -178,4 +468,4 @@
     <button type="button" class="btn btn-sm btn-outline-success" (click)="modal.close('Save click')">Valider</button>
     <button type="button" class="btn btn-sm btn-outline-danger" (click)="modal.dismiss('Cancel')">Annuler</button>
   </div>
-</ng-template>
+</ng-template> -->

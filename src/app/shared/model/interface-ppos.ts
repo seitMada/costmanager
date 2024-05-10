@@ -33,4 +33,5 @@ export interface InterfacePpoDetail {
     article: InterfaceArticle;
     unite: InterfaceUnite;
     fichetechnique: InterfaceFichetechnique;
+    // ppo?: InterfacePpos;
 }

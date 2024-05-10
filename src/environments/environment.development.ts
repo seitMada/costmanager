@@ -138,5 +138,10 @@ export const environment = {
     APIGETFACTUREBYFOURNISSEUR : endPoint + 'achat/fournisseur/',
     APIVALIDATEFACTURE: endPoint + 'achat/validate',
     
+    APIPPODETAILEXPLOITATION: endPoint + 'ppo/exploitation/detail',
+    APIPPODETAILCENTREREVENU: endPoint + 'ppo/centrerevenu/detail',
+    APIGETPPODETAIL: endPoint + 'ppo/detail',
+    APIGETPPODETAILDATA: endPoint + 'ppo/data',
+    APIGETPPODETAILDATAFAMILLE: endPoint + 'ppo/data/famille',
 };
    

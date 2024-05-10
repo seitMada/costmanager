@@ -39,8 +39,9 @@ export class FichetechniqueService {
     return this.https.post(this.apiAddFichetechnique, fichetechnique);
   }
 
-  public updateFichetechniqueExploitation(id: number, exploitationid: number[]) {
-    return this.https.post(this.apiUpdateFichetechniqueExploitation + id, exploitationid);
+  public updateFichetechniqueExploitation(id: number, oldid: number, exploitationid: number[]) {
+
+    return this.https.post(this.apiUpdateFichetechniqueExploitation + id, { exploitationid: exploitationid, oldid: oldid });
   }
 
   public getAllExploitationByFichetechnique(id: number) {

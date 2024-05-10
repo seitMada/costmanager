@@ -19,7 +19,7 @@ export class PdfserviceService {
           dataRow.push(cout.toString() + '€');
         } else {
           
-          console.log(row[column])
+          // console.log(row[column])
           dataRow.push((row[column] ? row[column] : '').toString());
         }
       })
