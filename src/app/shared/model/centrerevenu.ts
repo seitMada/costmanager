@@ -30,6 +30,7 @@ export class Centrerevenu implements InterfaceCentreRevenu {
 
     exploitations: Exploitation;
     adresses: Adress;
+    lieuStockage: InterfaceLieustockages[];
 
     constructor(centreInterface: InterfaceCentreRevenu = {
         code: '',
@@ -40,6 +41,7 @@ export class Centrerevenu implements InterfaceCentreRevenu {
         telephone: '',
         exploitations: new Exploitation(),
         adresses: new Adress(),
+        lieuStockage: [],
     }) {
         this.code = centreInterface.code;
         this.libelle = centreInterface.libelle;
@@ -49,5 +51,6 @@ export class Centrerevenu implements InterfaceCentreRevenu {
         this.telephone = centreInterface.telephone;
         this.exploitations = centreInterface.exploitations;
         this.adresses = centreInterface.adresses;
+        this.lieuStockage = this.lieuStockage;
     }
 }

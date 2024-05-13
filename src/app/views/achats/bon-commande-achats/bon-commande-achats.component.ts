@@ -254,6 +254,8 @@ export class BonCommandeAchatsComponent implements OnInit {
       logo: '',
       actif: true,
       adressesId: 0,
+      adresses: new Adress(),
+      centreRevenu:[]
     }
     this.centre = {
       code: '',
@@ -263,7 +265,8 @@ export class BonCommandeAchatsComponent implements OnInit {
       email: '',
       telephone: '',
       exploitations: this.exploitation,
-      adresses: this.adresse
+      adresses: this.adresse,
+      lieuStockage:[]
     }
   }
 
@@ -426,6 +429,7 @@ export class BonCommandeAchatsComponent implements OnInit {
                     this.commandes.push(this.commandeDetail)
                   }
                 }
+                this.addBtn = false;
               }
             },
             (reason) => {
@@ -663,11 +667,16 @@ export class BonCommandeAchatsComponent implements OnInit {
   checkSelectedRows(){
     this.showDeleteBtn = this.commandes.some(line => line.selected);
     this.modifToggle = false;
+    
   }
   deleteSelectedRows() {
     this.commandes = this.commandes.filter(line => !line.selected);
     this.showDeleteBtn = false;
     this.modifToggle = true;
+    this.addBtn = true;
+    for (const _comDetail of this.commandes) {
+      this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id !== _comDetail.articlefournisseurId);
+    }
   }
 
   selectBoncomm(){

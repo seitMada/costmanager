@@ -3,6 +3,7 @@ const endPoint = 'http://localhost:3000/';
 export const environment = {
     production: false,
     APIGETEXPLOITATION: endPoint + 'exploitation',
+    APICREATEEXPLOITATION: endPoint + 'exploitation',
     APIGETEXPLOITATIONBYID: endPoint+'exploitation/',
     APIGETCREXPLOITATION: endPoint + 'centre-revenu/exploitation/',
     APIGETCENTREREVENUS: endPoint + 'centre-revenu',

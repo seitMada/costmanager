@@ -5,6 +5,7 @@ export interface InterfaceLieustockages {
     id?: number;
     lieu: string;
     centreId: number;
+    selected?:boolean;
 
     centre: InterfaceCentreRevenu;
     zonestockage: InterfaceZonestockages[]

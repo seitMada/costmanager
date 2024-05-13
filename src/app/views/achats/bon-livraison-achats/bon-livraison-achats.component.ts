@@ -270,6 +270,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
       logo: '',
       actif: true,
       adressesId: 0,
+      adresses: new Adress(),
+      centreRevenu: []
     }
     this.centre = {
       code: '',
@@ -279,7 +281,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
       email: '',
       telephone: '',
       exploitations: this.exploitation,
-      adresses: this.adresse
+      adresses: this.adresse,
+      lieuStockage:[]
     }
   }
 

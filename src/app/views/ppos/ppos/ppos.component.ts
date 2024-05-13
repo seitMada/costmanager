@@ -152,6 +152,7 @@ export class PposComponent implements OnInit {
       telephone: '',
       exploitations: this.exploitation,
       adresses: new Adress(),
+      lieuStockage:[]
     }
   }
 

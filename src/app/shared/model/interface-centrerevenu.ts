@@ -1,4 +1,5 @@
 import { Adress } from "./adresse";
+import { Centrerevenus } from "./centrerevenu";
 import { Exploitation } from './exploitations';
 import { InterfaceExploitations } from "./interface-exploitations";
 import { InterfaceLieustockages } from "./interface-lieustockages";
@@ -15,6 +16,7 @@ export interface InterfaceCentreRevenu {
 
     exploitations: Exploitation;
     adresses: Adress;
+    lieuStockage: InterfaceLieustockages[];
 }
 
 export interface InterfaceCentreRevenus {

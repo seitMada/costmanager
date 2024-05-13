@@ -9,6 +9,7 @@ import { ExploitationsComponent } from './exploitations/exploitations.component'
 import { CentrerevenusComponent } from './centrerevenus/centrerevenus.component';
 
 import { defineLocale, frLocale } from 'ngx-bootstrap/chronos';
+import { ReactiveFormsModule } from '@angular/forms';
 
 defineLocale('fr', frLocale);
 
@@ -17,6 +18,7 @@ defineLocale('fr', frLocale);
   imports: [
     CommonModule,
     AdministrateursRoutingModule,
+    ReactiveFormsModule,
     GestionUtilisateursComponent,
     CentrerevenusComponent,
     ExploitationsComponent,

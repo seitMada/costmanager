@@ -176,7 +176,8 @@ export class InventairesComponent {
               logo: '',
               actif: false,
               adressesId: 0,
-              // centreRevenu: []
+              adresses: new Adress(),
+              centreRevenu: []
             },
             adresses: {
               rue: '',
@@ -187,6 +188,7 @@ export class InventairesComponent {
               exploitation: [],
               operateur: []
             },
+            lieuStockage:[]
           },
           zonestockage: []
         },
@@ -206,6 +208,7 @@ export class InventairesComponent {
       telephone: '',
       exploitations: this.exploitation,
       adresses: new Adress(),
+      lieuStockage:[]
     }
   }
 

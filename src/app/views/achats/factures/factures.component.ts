@@ -288,6 +288,8 @@ export class FacturesComponent implements OnInit {
       logo: '',
       actif: true,
       adressesId: 0,
+      adresses: new Adress(),
+      centreRevenu:[]
     }
     this.centre = {
       code: '',
@@ -297,7 +299,8 @@ export class FacturesComponent implements OnInit {
       email: '',
       telephone: '',
       exploitations: this.exploitation,
-      adresses: this.adresse
+      adresses: this.adresse,
+      lieuStockage:[]
     }
   }
 

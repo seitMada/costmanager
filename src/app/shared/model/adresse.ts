@@ -37,7 +37,7 @@ export class Adress implements InterfaceAdresse {
         selected: false,
         centreRevenu: [],
         exploitation: [],
-        operateur: []
+        operateur: [],
     }) {
         if (adresseInterface) {
             this.rue = adresseInterface.rue;
