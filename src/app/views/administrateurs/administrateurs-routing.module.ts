@@ -5,6 +5,8 @@ import { GestionUtilisateursComponent } from "./gestion-utilisateurs/gestion-uti
 import { ExploitationsComponent } from "./exploitations/exploitations.component";
 import { PrixArticlesComponent } from "./prix-articles/prix-articles.component";
 import { CentrerevenusComponent } from './centrerevenus/centrerevenus.component';
+import { ZonestockageComponent } from './zonestockage/zonestockage.component';
+import { LieustockageComponent } from './lieustockage/lieustockage.component';
 
 const routes: Routes = [
   {
@@ -30,6 +32,20 @@ const routes: Routes = [
         component: CentrerevenusComponent,
         data: {
           title: 'Centre Revenu',
+        },
+      },
+      {
+        path: 'options/lieustockage',
+        component: LieustockageComponent,
+        data: {
+          title: 'Lieu de stockage',
+        },
+      },
+      {
+        path: 'options/zonestockage',
+        component: ZonestockageComponent,
+        data: {
+          title: 'Zone de stockage',
         },
       },
       {

@@ -167,6 +167,14 @@ export const navItems: INavData[] = [
             "url": "settings/options/centrerevenu",
           },
           {
+            "name": "Lieu Stockage",
+            "url": "settings/options/lieustockage",
+          },
+          {
+            "name": "Zone Stockage",
+            "url": "settings/options/zonestockage",
+          },
+          {
             "name": "Utilisateurs",
             "url": "settings/options/user",
           },

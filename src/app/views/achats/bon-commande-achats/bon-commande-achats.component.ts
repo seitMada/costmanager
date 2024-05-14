@@ -29,17 +29,38 @@ import { InterfaceCommandeDetails } from '../../../shared/model/interface-comman
 
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { AlertModule, ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
 
 @Component({
   selector: 'app-bon-commande-achats',
   standalone: true,
-  imports: [CommonModule, FormsModule, BsDatepickerModule],
+  imports: [CommonModule, FormsModule, BsDatepickerModule,AlertModule,ToasterComponent,ToastComponent,ToastHeaderComponent,ToastBodyComponent],
   templateUrl: './bon-commande-achats.component.html',
   styleUrl: './bon-commande-achats.component.scss',
   providers: [NgbModalConfig, NgbModal]
 })
 export class BonCommandeAchatsComponent implements OnInit {
 
+  position = 'top-end';
+  visible = false;
+  percentage = 0;
+  public message = '';
+  public color = 'success';
+  public textcolor = 'text-light';
+
+  toggleToast(_message: string) {
+    this.message = _message;
+    this.visible = !this.visible;
+  }
+
+  onVisibleChange($event: boolean) {
+    this.visible = $event;
+    this.percentage = !this.visible ? 0 : this.percentage;
+  }
+
+  onTimerChange($event: number) {
+    this.percentage = $event * 25;
+  }
   
   public fournisseur: Fournisseurs;
   public fournisseurs: Fournisseur;
@@ -350,7 +371,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     if (this.boncommande) {
       this.commandeService.validateCommande(this.boncommande).subscribe({
         next:(value) =>{
-          alert('Bon de commande n° '+this.boncommande.noPiece+' a été validé');
+          this.toggleToast('Bon de commande n° '+this.boncommande.noPiece+' a été validé');
           this.inputModif = true;
           this.showvalidateBtn = !this.showvalidateBtn;
           this.addBtn = false;
@@ -363,7 +384,7 @@ export class BonCommandeAchatsComponent implements OnInit {
          this.commandeService.validateCommande(bonCommande).subscribe({
            next:(value) =>{
              this.showAllFournisseur();
-             alert('Bon de commande n° '+bonCommande.noPiece+' a été validé');
+             this.toggleToast('Bon de commande n° '+bonCommande.noPiece+' a été validé');
              this.toggle = this.toggle;
              this.showvalidateBtn = !this.showvalidateBtn;
            },
@@ -627,7 +648,6 @@ export class BonCommandeAchatsComponent implements OnInit {
       
       this.commandeService.createBonCommande(this.boncommande,this.commandes).subscribe({
         next:(commande:any) => {
-          alert('Bon de commande n° '+ this.boncommande.noPiece+ ' crée avec succès!');
           this.inputModif = !this.inputModif;
           this.addCommande = false;
           this.listArts = false;
@@ -635,6 +655,7 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.modifToggle = !this.modifToggle;
           this.showvalidateBtn = !this.showvalidateBtn;
           this.addBtn = false;
+          this.toggleToast('Bon de commande n° '+ this.boncommande.noPiece+ ' crée avec succès!');
         },
         error:(error) =>{
           alert('veuillez réessayer!');
@@ -672,7 +693,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   deleteSelectedRows() {
     this.commandes = this.commandes.filter(line => !line.selected);
     this.showDeleteBtn = false;
-    this.modifToggle = true;
+    // this.modifToggle = true;
     this.addBtn = true;
     for (const _comDetail of this.commandes) {
       this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id !== _comDetail.articlefournisseurId);
@@ -690,9 +711,11 @@ export class BonCommandeAchatsComponent implements OnInit {
      if (bonCommande.validation == 0) {
       this.commandeService.deleteOneCommande(bonCommande).subscribe({
         next:(value) =>{
+          this.toggleToast('Bon de commande n° '+ bonCommande.noPiece+ ' a été supprimé avec succès!');
           this.boncommandes = this.boncommandes.filter(line => line !== bonCommande);
           this.showDeleteBtnCom = this.boncommandes.some(line => line.selected);
           this.showvalidateBtn = this.boncommandes.some(line => line.selected);
+          
         },
       });
      }else{

@@ -5,8 +5,14 @@ export const environment = {
     APIGETEXPLOITATION: endPoint + 'exploitation',
     APICREATEEXPLOITATION: endPoint + 'exploitation',
     APIGETEXPLOITATIONBYID: endPoint+'exploitation/',
+    APIDELETEEXPLOITATION: endPoint + 'exploitation/delete',
+    APIUPDATEEXPLOITATION: endPoint + 'exploitation/update/',
+
     APIGETCREXPLOITATION: endPoint + 'centre-revenu/exploitation/',
     APIGETCENTREREVENUS: endPoint + 'centre-revenu',
+    APICREATECENTREREVENUS: endPoint + 'centre-revenu',
+    APIUPDATECENTREREVENUS: endPoint + 'centre-revenu/update/',
+    APIDELETECENTREREVENU :endPoint + 'centre-revenu/delete',
 
     APIGETEXPLOITATIONBYARTICLE: endPoint + 'articleexploitation/article_exploitation/',
     APIPOSTDELETEARTICLEEXPLOITATIONBYARTICLE: endPoint + 'articleexploitation/delete_articleexploitation/',

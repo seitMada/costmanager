@@ -2,9 +2,11 @@ import { CommonModule } from '@angular/common';
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AlertModule, ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
 import { ModalDismissReasons, NgbDropdownModule, NgbModal, NgbModalConfig, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
+
 import { Adress, Adresse } from 'src/app/shared/model/adresse';
+import { Exploitation } from 'src/app/shared/model/exploitations';
 import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
 import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
 import { InterfaceLieustockages } from 'src/app/shared/model/interface-lieustockages';
@@ -15,7 +17,7 @@ import { FournisseurService } from 'src/app/shared/service/fournisseur.service';
 @Component({
   selector: 'app-centrerevenus',
   standalone: true,
-  imports: [CommonModule, FormsModule, BsDatepickerModule,NgbNavModule,NgbDropdownModule],
+  imports: [CommonModule, FormsModule, NgbNavModule,NgbDropdownModule,AlertModule,ToasterComponent,ToastComponent,ToastHeaderComponent,ToastBodyComponent],
   templateUrl: './centrerevenus.component.html',
   styleUrl: './centrerevenus.component.scss'
 })
@@ -32,14 +34,35 @@ export class CentrerevenusComponent implements OnInit {
 
   public centreForm = FormGroup;
   closeResult = '';
-  public bsConfig: { containerClass: string; locale: string; dateInputFormat: string; };
   private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
+  public centreId = 0;
 
   public toggle = true;
   public modifToggle = true;
   public inputModif = false;
 
   public active_2 = 1;
+
+  position = 'top-end';
+  visible = false;
+  percentage = 0;
+  public message = '';
+  public color = 'success';
+  public textcolor = 'text-light';
+
+  toggleToast(_message: string) {
+    this.message = _message;
+    this.visible = !this.visible;
+  }
+
+  onVisibleChange($event: boolean) {
+    this.visible = $event;
+    this.percentage = !this.visible ? 0 : this.percentage;
+  }
+
+  onTimerChange($event: number) {
+    this.percentage = $event * 25;
+  }
 
   constructor(
     public router: Router,
@@ -50,19 +73,23 @@ export class CentrerevenusComponent implements OnInit {
     private modalService: NgbModal,
     config:NgbModalConfig,
   ) {
-    this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     config.backdrop = 'static';
     config.keyboard = false;
     this.resetCentre();
   }
 
   ngOnInit(): void {
+    this.showAllCentreRevenu();
+  }
+
+  showAllCentreRevenu(){
     this.centreService.getcentrerevenu().subscribe({
       next: async (_centres) => {
         this.centres = _centres;
+        this.centre = _centres[0]
       }
-    })
-  }
+    });
+  } 
 
   public resetCentre() {
     this.adresse = {
@@ -93,17 +120,17 @@ export class CentrerevenusComponent implements OnInit {
       code: '',
       libelle: '',
       exploitationsId: 0,
-      adressesId: 0,
+      adressesId:0,
       email: '',
       telephone: '',
-      exploitations: this.exploitation,
-      adresses: this.adresse,
-      lieuStockage:this.lieuStockages,
+      exploitations: new Exploitation(),
+      adresses: new Adress(),
+      lieuStockage:[],
     }
   }
 
   toggleModal(){
-    // if (this.isAdmin) {
+    this.resetCentre();
       this.toggle = !this.toggle;
       this.modifToggle = !this.modifToggle;
       this.fournisseurService.getAllAdresse().subscribe({
@@ -197,9 +224,33 @@ export class CentrerevenusComponent implements OnInit {
     this.modifToggle = true;
     this.toggle = !this.toggle;
     this.resetCentre();
+    this.showAllCentreRevenu();
+  }
+
+  modifyCentre(){
+    this.inputModif =!this.inputModif;
+    this.modifToggle = !this.modifToggle;
   }
 
   submit(){
-    this.centre = this.centre;
+    this.centreId = this.centre.id ? this.centre.id :0;
+    if (this.centreId ==0) {
+      // if (this.centre.lieuStockage!= undefined && this.centre.lieuStockage.length > 0) {
+      //   this.lieuStockages = this.centre.lieuStockage;
+        for(const _exploitation of this.exploitations){
+          if (_exploitation.selected) {
+            this.centre.exploitationsId = _exploitation.id ? _exploitation.id :0;
+          this.centre.exploitations = _exploitation;
+          
+          console.log(this.centre);
+          }
+          // this.toggleToast('Nouveau exploitation crée avec succès !');
+        }
+      // } else {
+      //   alert('Veuillez sélectionner au moins un lieu de stockage');
+      // }
+    } else {
+      
+    }
   }
 }
