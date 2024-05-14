@@ -562,6 +562,6 @@ export class FicheTechniqueComponent implements OnInit {
     this.cout.alimentaire = coutAlimentaire;
     this.cout.emballage = coutEmballage;
     this.cout.fichetechnique = coutAlimentaire + coutEmballage;
-    this.fichetechnique.cout = this.cout.fichetechnique;
+    this.fichetechnique.cout = +this.cout.fichetechnique.toFixed(2);
   }
 }

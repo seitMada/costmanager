@@ -45,6 +45,7 @@ export class SynthesePposComponent implements OnInit {
 
   public ppodetailsarticlebyfamille: { libelle: '', id: 0, unite: '', familleColor: '', totalCost: '', totalQuantity: '' }[];
   public ppodetailsftbyfamille: { libelle: '', id: 0, unite: '', familleColor: '', totalCost: '', totalQuantity: '' }[];
+  public ppodetailsftarticlebyfamille: { libelle: '', id: 0, unite: '', familleColor: '', totalCost: '', totalQuantity: '' }[];
   Highcharts: typeof Highcharts = Highcharts;
 
   position = 'top-end';
@@ -57,6 +58,7 @@ export class SynthesePposComponent implements OnInit {
   tranchedatesemaine: { debut: Date; fin: Date; }[];
   tranchedatemois: { debut: Date; fin: Date; }[];
   tranchedateannee: { debut: Date; fin: Date; }[];
+  public headerchoice = '';
 
   toggleToast(_message: string) {
     this.message = _message;
@@ -97,6 +99,7 @@ export class SynthesePposComponent implements OnInit {
   public chartOptionsMontantPerteArticle: Highcharts.Options;
   public chartOptionsQuantitePerteFt: Highcharts.Options;
   public chartOptionsMontantPerteFt: Highcharts.Options;
+  public chartOptionsMontantPerteFtArticle: Highcharts.Options;
   public chartOptionsHistogramme: Highcharts.Options;
   public chartOptionsHistogrammeSemaine: Highcharts.Options;
   public chartOptionsHistogrammeMois: Highcharts.Options;
@@ -111,6 +114,7 @@ export class SynthesePposComponent implements OnInit {
     private ppoService: PpoService,
     private datePipe: DatePipe,
   ) {
+    this.headerchoice = '';
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.exploitations = [];
     this.centrerevenus = [];
@@ -120,6 +124,7 @@ export class SynthesePposComponent implements OnInit {
         this.exploitations = _exploitations;
         this.exploitations[0].selected = true;
         this.exploitationsselected = [_exploitations[0].id];
+        this.headerchoice = this.exploitations[0].libelle;
         this.centrerevenuService.getcentrerevenu().subscribe({
           next: async (_centrerevenus) => {
             this.centrerevenus = _centrerevenus;
@@ -138,6 +143,14 @@ export class SynthesePposComponent implements OnInit {
       next: (_familles) => {
         this.famillesarticles = _familles;
         this.ppodetailsarticlebyfamille = [{
+          libelle: "",
+          id: 0,
+          unite: "",
+          familleColor: "",
+          totalCost: "",
+          totalQuantity: "",
+        }];
+        this.ppodetailsftarticlebyfamille = [{
           libelle: "",
           id: 0,
           unite: "",
@@ -166,10 +179,11 @@ export class SynthesePposComponent implements OnInit {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
+    // console.log(`${year}-${month}-${day} 00:00:00`)
     if (fin == true) {
       return `${year}-${month}-${day} 23:59:59`;
     }
-    return `${year}-${month}-${day} 00:00:00`;
+    return `${year}-${month}-${day} 00:01:00`;
   }
 
   screenDate(date: Date | string, format: string = 'dd/MM/yyyy') {
@@ -200,6 +214,51 @@ export class SynthesePposComponent implements OnInit {
   }
 
   private async initialiseChart() {
+    this.chartOptionsMontantPerteFtArticle = {
+      time: {
+        Date: new Date(),
+      },
+      accessibility: {
+        enabled: false,
+      },
+      tooltip: {
+        pointFormat: '{point.name}: <b>{point.options.y:.2f} €</b>'
+      },
+      plotOptions: {
+        pie: {
+          dataLabels: {
+            enabled: true,
+            format: '<b>{point.name}</b><br>{point.options.y:.2f} €',
+            distance: -50,
+            softConnector: true,
+            connectorWidth: 2
+          },
+          showInLegend: true,
+          allowPointSelect: true,
+          size: '98%',
+          events: {
+            click: (event) => {
+              this.getTableauPerteFtArticle(event);
+            }
+          }
+        }
+      },
+      title: {
+        text: "Montant",
+        align: "left",
+        style: {
+          fontSize: "16px",
+          fontWeight: "bold"
+        }
+      },
+      series: [
+        {
+          type: 'pie',
+          data: []
+        },
+      ],
+    };
+
     this.chartOptionsMontantPerteFt = {
       time: {
         Date: new Date(),
@@ -207,11 +266,15 @@ export class SynthesePposComponent implements OnInit {
       accessibility: {
         enabled: false,
       },
+      tooltip: {
+        pointFormat: '{point.name}: <b>{point.options.y:.2f} €</b>'
+      },
       plotOptions: {
         pie: {
           dataLabels: {
             enabled: true,
-            format: '<b>{point.name}</b>: {point.percentage:.2f} %',
+            format: '<b>{point.name}</b><br>{point.options.y:.2f} €',
+            distance: -50,
             softConnector: true,
             connectorWidth: 2
           },
@@ -248,11 +311,15 @@ export class SynthesePposComponent implements OnInit {
       accessibility: {
         enabled: false,
       },
+      tooltip: {
+        pointFormat: '{point.name}: <b>{point.options.y:.2f} €</b>'
+      },
       plotOptions: {
         pie: {
           dataLabels: {
             enabled: true,
-            format: '<b>{point.name}</b>: {point.percentage:.2f} %',
+            format: '<b>{point.name}</b><br>{point.options.y:.2f} €',
+            distance: -50,
             softConnector: true,
             connectorWidth: 2
           },
@@ -330,11 +397,15 @@ export class SynthesePposComponent implements OnInit {
       accessibility: {
         enabled: false,
       },
+      tooltip: {
+        pointFormat: '{point.name}: <b>{point.options.y:.2f}%</b>'
+      },
       plotOptions: {
         pie: {
           dataLabels: {
             enabled: true,
-            format: '<b>{point.name}</b>: {point.percentage:.2f} %',
+            format: '<b>{point.name}</b><br>{point.options.y:.2f} %',
+            distance: -50,
             softConnector: true,
             connectorWidth: 2
           },
@@ -585,6 +656,17 @@ export class SynthesePposComponent implements OnInit {
     }
   }
 
+  private async syntheseMontantPerteFtArticle(_categories: string[], _data: { y: number, name: string, color: string }[]) {
+    Object.assign(this.chartOptionsMontantPerteFtArticle, {
+      series: [
+        {
+          type: 'pie',
+          data: _data
+        },
+      ],
+    });
+  }
+
   private async syntheseMontantPerteFt(_categories: string[], _data: { y: number, name: string, color: string }[]) {
     Object.assign(this.chartOptionsMontantPerteFt, {
       series: [
@@ -636,6 +718,7 @@ export class SynthesePposComponent implements OnInit {
   }
 
   public histogramme(ppodetails: InterfacePpoDetail[], familles: string[], type: number = 1) {
+    console.log(ppodetails)
 
     this.tranchedatesemaine = this.getWeeklySlices(new Date(this.dates.debut), new Date(this.dates.fin));
     this.tranchedatemois = this.getMonthlySlices(new Date(this.dates.debut), new Date(this.dates.fin));
@@ -764,6 +847,7 @@ export class SynthesePposComponent implements OnInit {
   }
 
   private getTableauPerteArticle(event: any) {
+    console.log(event)
     this.bordercolor = event.point.color;
     let _id: number[] = [];
     const data = {
@@ -775,6 +859,23 @@ export class SynthesePposComponent implements OnInit {
     this.ppoService.getPpoDetailDataFamille(data).subscribe({
       next: (_data: any) => {
         this.ppodetailsarticlebyfamille = _data.article;
+      }
+    });
+  }
+
+  private getTableauPerteFtArticle(event: any) {
+    this.bordercolor = event.point.color;
+    let _id: number[] = [];
+    const data = {
+      date: this.dates,
+      id: this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected,
+      isexploitation: this.exploitationsselected.length > 0,
+      idfamille: event.point.id
+    };
+    this.ppoService.getPpoDetailDataFamille(data).subscribe({
+      next: (_data: any) => {
+        // console.log(_data);
+        this.ppodetailsftarticlebyfamille = _data.fichetechniquearticle;
       }
     });
   }
@@ -889,18 +990,22 @@ export class SynthesePposComponent implements OnInit {
     this.exploitationsselected = [];
     this.centrerevenusselected = [];
     this.toggle = true;
+    this.headerchoice = '';
     this.bordercolor = '#FFFFFF';
     this.categoriesfamille = [];
     for (const _exploitation of this.exploitations) {
       if (_exploitation.selected === true) {
         this.exploitationsselected.push(_exploitation.id || 0);
+        this.headerchoice += _exploitation.libelle + ', ';
       }
     }
     for (const _centrerevenu of this.centrerevenus) {
       if (_centrerevenu.selected === true) {
         this.centrerevenusselected.push(_centrerevenu.id || 0);
+        this.headerchoice += _centrerevenu.libelle + ', ';
       }
     }
+    this.headerchoice.substring(0, this.headerchoice.length - 2);
     const data = {
       exploitation: this.exploitationsselected.length > 0,
       id: this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected,
@@ -908,6 +1013,7 @@ export class SynthesePposComponent implements OnInit {
     }
     this.ppoService.getPpoDetailData(data).subscribe({
       next: async (_response: any) => {
+        console.log(_response)
         this.ppoService.getPpoDetails(this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected, this.formatDate(this.dates.debut), this.formatDate(this.dates.fin, true), this.exploitationsselected.length > 0).subscribe({
           next: (_ppo: any) => {
             let _categories: any[] = [];
@@ -935,10 +1041,10 @@ export class SynthesePposComponent implements OnInit {
               _dataquantityarticle.push(dataqtyarticle);
               _datacostarticle.push(datacostarticle);
             }
-
-            this.syntheseQuantitePerteArticle(_categories, _dataquantityarticle).then(() => {
-              this.syntheseMontantPerteArticle(_categories, _dataquantityarticle).then(() => { })
-            })
+            this.syntheseMontantPerteArticle(_categories, _datacostarticle).then();
+            // this.syntheseQuantitePerteArticle(_categories, _dataquantityarticle).then(() => {
+            //   this.syntheseMontantPerteArticle(_categories, _dataquantityarticle).then(() => { })
+            // })
 
             _categories = [];
             const _dataquantityft = [];
@@ -964,10 +1070,38 @@ export class SynthesePposComponent implements OnInit {
               }
               _dataquantityft.push(dataqtyft);
               _datacostft.push(datacostft);
+              this.syntheseMontantPerteFt(_categories, _datacostft).then();
+              // this.syntheseQuantitePerteFt(_categories, _dataquantityft).then(() => {
+              //   this.syntheseMontantPerteFt(_categories, _datacostft).then(() => {
+              //     // this.syntheseMontantPerteFtArticle(_categories, _datacostft).then()
+              //   })
+              // })
+            }
 
-              this.syntheseQuantitePerteFt(_categories, _dataquantityft).then(() => {
-                this.syntheseMontantPerteFt(_categories, _datacostft).then(() => { })
-              })
+            _categories = [];
+            const _dataquantityftarticle = [];
+            const _datacostftarticle: { y: number; name: string; color: string; }[] | { y: number; name: any; color: any; id: any; exploitation: boolean; }[] = [];
+            for (const _ppodetails of _response.fichetechniquearticle) {
+              // this.ppodetailsft.push(_ppodetails);
+              _categories.push(_ppodetails.familleLibelle);
+              // this.categoriesfamille.push(_ppodetails.familleLibelle + '  (FT)');
+              const dataqtyftarticle = {
+                y: +_ppodetails.totalQuantity,
+                name: _ppodetails.familleLibelle,
+                color: _ppodetails.familleColor,
+                id: _ppodetails.familleId,
+                exploitation: data.exploitation
+              }
+              const datacostftarticle = {
+                y: +_ppodetails.totalCost,
+                name: _ppodetails.familleLibelle,
+                color: _ppodetails.familleColor,
+                id: _ppodetails.familleId,
+                exploitation: data.exploitation
+              }
+              _dataquantityftarticle.push(dataqtyftarticle);
+              _datacostftarticle.push(datacostftarticle);
+              this.syntheseMontantPerteFtArticle(_categories, _datacostftarticle).then()
             }
             this.ppodetails = [];
             // this.ppodetails_all = _ppo;
@@ -975,7 +1109,7 @@ export class SynthesePposComponent implements OnInit {
             for (const item of _ppo) {
               if (item.article == null) {
                 if (!this.ppodetails.some(existingValue => JSON.stringify(existingValue.fichetechniqueId) === JSON.stringify(item.fichetechniqueId))) {
-                  item.cout = +item.cout * +item.quantite;
+                  item.cout = (+item.cout * +item.quantite);
                   this.ppodetails.push(item);
                   this.nbft++;
                 } else {
@@ -990,7 +1124,7 @@ export class SynthesePposComponent implements OnInit {
               }
               if (item.fichetechnique == null) {
                 if (!this.ppodetails.some(existingValue => JSON.stringify(existingValue.articleId) === JSON.stringify(item.articleId))) {
-                  item.cout = +item.cout * +item.quantite;
+                  item.cout = (+item.cout * +item.quantite);
                   this.ppodetails.push(item);
                   this.nbarticle++;
                 } else {

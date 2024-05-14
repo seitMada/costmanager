@@ -4,6 +4,7 @@ import { InterfaceExploitations } from "./interface-exploitations";
 import { InterfaceArticle } from "./interface-articles";
 import { InterfaceFichetechnique } from "./interface-fichetechnique";
 import { InterfaceUnite } from "./interface-unite";
+import { IntefaceConditionnement } from "./inteface-conditionnements";
 
 export interface InterfacePpos {
     id?: number;
@@ -33,5 +34,6 @@ export interface InterfacePpoDetail {
     article: InterfaceArticle;
     unite: InterfaceUnite;
     fichetechnique: InterfaceFichetechnique;
+    conditionnement?: IntefaceConditionnement;
     // ppo?: InterfacePpos;
 }

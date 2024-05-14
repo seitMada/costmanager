@@ -18,6 +18,7 @@
       </div>
     </div>
     <div class="flex-grow-1 bd-highlight mx-1 col-5">
+      <div class="badge bg-secondary mt-1 ms-1" *ngFor="let head of headerchoice.split(',')"> <span *ngIf="head && head.length > 0 && head != ' '">{{head}}</span> </div>
       <!-- <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.fin" [minDate]="dates.debut"
           name="dateFin"> -->
     </div>
@@ -194,7 +195,7 @@
         <div class="row">
           <div class="col-6">
             <div class="card-body py-1" style="height: 600px;">
-              <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerteFt"
+              <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerteFtArticle"
                 style="width: 100%; height: 500px; display: block;"></highcharts-chart>
             </div>
           </div>
@@ -203,18 +204,18 @@
               <table class="table table-sm table-bordered table-hover table-striped"
                 [ngStyle]="{'border-color': bordercolor}">
                 <thead>
-                  <th>Fichetechnique</th>
+                  <th>Articles</th>
                   <th>Quantité</th>
                   <th>Valorisation</th>
                   <th title="% par rapport à la valorisation totale">{{truncateWord('% par rapport à la
                     valorisation totale')}} </th>
                 </thead>
                 <tbody>
-                  <tr *ngFor="let line of ppodetailsftbyfamille">
+                  <tr *ngFor="let line of ppodetailsftarticlebyfamille">
                     <td>{{line.libelle}}</td>
                     <td>{{line.totalQuantity | number : '1.2-2'}} {{line.unite}}</td>
                     <td>{{line.totalCost | number : '1.2-2'}} €</td>
-                    <td>{{((+line.totalCost) * 100 / calculCout(ppodetailsftbyfamille).cout) | number :
+                    <td>{{((+line.totalCost) * 100 / calculCout(ppodetailsftarticlebyfamille).cout) | number :
                       '1.2-2'}} %</td>
                   </tr>
                 </tbody>
@@ -225,7 +226,7 @@
                 <div class="col-6"></div>
                 <div class="col-2">Total:</div>
                 <div class="col-4">
-                  {{calculCout(ppodetailsftbyfamille).cout  | number : '1.2-2'}} €
+                  {{calculCout(ppodetailsftarticlebyfamille).cout  | number : '1.2-2'}} €
                 </div>
               </div>
             </div>

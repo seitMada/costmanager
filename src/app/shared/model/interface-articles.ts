@@ -7,6 +7,7 @@ import { InterfaceUnite } from "./interface-unite";
 import { InterfaceGroupeanalytiques } from "./interface-groupeanalytiques";
 import { InterfaceArticlefournisseurs } from "./interface-articlefournisseurs";
 import { InterfaceArticlezonestockages } from "./interface-articlezonestockages";
+import { IntefaceConditionnement } from "./inteface-conditionnements";
 
 export interface InterfaceArticle {
   id?: number;
@@ -32,6 +33,7 @@ export interface InterfaceArticle {
   unite: InterfaceUnite;
   groupeanalytique: InterfaceGroupeanalytiques;
   articlezonestockages: InterfaceArticlezonestockages[];
+  conditionnement?: IntefaceConditionnement;
 }
 
 export interface InterfaceArticles {

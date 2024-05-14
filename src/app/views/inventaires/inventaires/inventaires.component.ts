@@ -676,7 +676,7 @@ export class InventairesComponent {
     this.inventaireService.updateInventaire(this.inventairesDetailsZone, this.numero).subscribe({
       next: () => {
         this.inventaire.etat = true;
-        this.toggleToast('L\'inventaire du ' + this.screenDate(this.inventaire.date_inventaire) + ' pour le centre de revenu ' + this.centrerevenu.libelle + ' a été valider');
+        this.toggleToast('L\'inventaire du ' + this.screenDate(this.inventaire.date_inventaire) + ' pour le centre de revenu ' + this.centrerevenu.libelle + ' a été cloturer');
       }
     })
   }

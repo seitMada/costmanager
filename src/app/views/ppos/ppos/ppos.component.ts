@@ -26,6 +26,8 @@ import { ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderCompon
 import { PdfserviceService } from 'src/app/shared/service/pdfservice.service';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { InterfaceUnite } from 'src/app/shared/model/interface-unite';
+import { IntefaceConditionnement } from 'src/app/shared/model/inteface-conditionnements';
 
 
 @Component({
@@ -223,11 +225,11 @@ export class PposComponent implements OnInit {
   async addToggleModal() {
     // this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
     //   next: async (_centrerevenu) => {
-        // this.centrerevenus = _centrerevenu;
-        // await this.resetPpo(new Date());
-        this.modifToggle = !this.modifToggle;
-        this.toggle = (this.toggle === false ? true : false);
-        this.addToggle = (this.addToggle === false ? true : false);
+    // this.centrerevenus = _centrerevenu;
+    // await this.resetPpo(new Date());
+    this.modifToggle = !this.modifToggle;
+    this.toggle = (this.toggle === false ? true : false);
+    this.addToggle = (this.addToggle === false ? true : false);
     //   }
     // })
   }
@@ -418,15 +420,6 @@ export class PposComponent implements OnInit {
               ),
             },
           },
-          // {
-          //   style: 'tableExample',
-          //   table: {
-          //     widths: [120, '*'],
-          //     body: [
-          //       ['TOTAL', (prix * quantite).toString() + ' €'],
-          //     ]
-          //   }
-          // },
 
         ],
         defaultStyle: {
@@ -539,9 +532,24 @@ export class PposComponent implements OnInit {
   openArticle(content: TemplateRef<any>) {
     this.articleService.getArticlesByExploitation(this.idexploitation).subscribe({
       next: (_articles) => {
-        this.articles = _articles;
+        this.articles = _articles.filter((article: { articlefournisseur: string | any[]; }) => article.articlefournisseur.length > 0);
         this.articles = this.articles.filter(article => {
           return !this.ppodetailsarticles.some(fondArticle => fondArticle.article.id === article.id);
+        });
+        this.articles.forEach(article => {
+          let cout = 0;
+          let conditionnements: any = null;
+          article.articlefournisseur.forEach(articlefournisseurs => {
+            articlefournisseurs.conditionnement.forEach(conditionnement => {
+              const coutactuel = conditionnement.prixAchat / conditionnement.coefficientAchatCommande / conditionnement.coefficientInventaireAchat / conditionnement.coefficientInventaire;
+              if (article.id === articlefournisseurs.articleId && coutactuel > cout) {
+                cout = coutactuel;
+                conditionnements = conditionnement;
+              }
+            })
+          });
+          article.cout = cout;
+          article.conditionnement = conditionnements;
         });
         this.fichetetchniqueService.getFichetechniqueByExploitation(this.idexploitation).subscribe({
           next: (_fichetetchniques) => {
@@ -567,6 +575,7 @@ export class PposComponent implements OnInit {
                       quantite: 0,
                       unite: _article.unite,
                       uniteId: _article.unite.id || 0,
+                      conditionnement: _article.conditionnement
                       // ppo: this.ppo
                     }
                     if (_article.selected === true) {

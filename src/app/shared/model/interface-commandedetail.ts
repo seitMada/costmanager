@@ -8,6 +8,7 @@ export interface InterfaceCommandeDetails{
     commandeId:number;
     articlefournisseurId:number;
     QteCommande: number;
+    QteCommandeFT: number;
     prixarticle:number;
     remise:number;
     validationdetailbc:boolean;
