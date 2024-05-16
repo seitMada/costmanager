@@ -38,6 +38,27 @@ import { ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterCompon
 })
 export class FacturesComponent implements OnInit {
 
+  position = 'top-end';
+  visible = false;
+  percentage = 0;
+  public message = '';
+  public color = 'success';
+  public textcolor = 'text-light';
+
+  toggleToast(_message: string) {
+    this.message = _message;
+    this.visible = !this.visible;
+  }
+
+  onVisibleChange($event: boolean) {
+    this.visible = $event;
+    this.percentage = !this.visible ? 0 : this.percentage;
+  }
+
+  onTimerChange($event: number) {
+    this.percentage = $event * 25;
+  }
+
   public fournisseur: Fournisseurs;
   public fournisseurs: Fournisseur;
   public centre: Centrerevenu;
@@ -83,27 +104,6 @@ export class FacturesComponent implements OnInit {
 
   public bonFactureForm = FormGroup;
   closeResult = '';
-
-  position: 'top-end';
-  visible =false;
-  percentage = 0;
-  public message = '';
-  public color = 'success';
-  public textcolor: 'text-light';
-
-  toggleToast(_message: string) {
-    this.message = _message;
-    this.visible = !this.visible;
-  }
-
-  onVisibleChange($event: boolean) {
-    this.visible = $event;
-    this.percentage = !this.visible ? 0 : this.percentage;
-  }
-
-  onTimerChange($event: number) {
-    this.percentage = $event * 25;
-  }
 
   public bsConfig: { containerClass: string; locale: string; dateInputFormat: string; };
   private today = new Date();
@@ -380,7 +380,7 @@ export class FacturesComponent implements OnInit {
     if (this.detailFactures.length > 0) {
       this.factureService.createFacture(this.facture,this.detailFactures,this.bonLivraison).subscribe({
         next:(value) =>{
-          alert('La facture n° '+this.facture.numFacture+' a été crée avec succès!');
+          this.toggleToast('La facture n° '+this.facture.numFacture+' a été crée avec succès!');
           this.inputModif = !this.inputModif;
           this.toggleArticle = !this.toggleArticle;
           this.modifToggle = !this.modifToggle;
@@ -619,7 +619,7 @@ export class FacturesComponent implements OnInit {
         next: (value) => {
           this.showvalidateBtn = ! this.showvalidateBtn;
           this.inputModif =true;
-          alert('Facture n° '+this.facture.numFacture+' a été validé');
+          this.toggleToast('Facture n° '+this.facture.numFacture+' a été validé');
         },
       });
     }

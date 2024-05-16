@@ -3,9 +3,9 @@ import { InterfaceAchat } from "./interface-achats";
 import { InterfaceCentreRevenu } from "./interface-centrerevenu";
 import { InterfaceExploitations } from "./interface-exploitations";
 import { InterfaceFournisseur } from "./interface-fournisseurs";
-import { InterfaceCommandeDetails } from "./interface-commandedetail";
+import { InterfaceCommandeDetail, InterfaceCommandeDetails } from "./interface-commandedetail";
 
-export interface InterfaceBonCommandes {
+export interface InterfaceBonCommande {
     id?: number | undefined;
     remise: number;
     montantHT: number;
@@ -22,6 +22,10 @@ export interface InterfaceBonCommandes {
     fournisseur: InterfaceFournisseur;
     centre: InterfaceCentreRevenu;
     exploitation: InterfaceExploitations;
-    commandeDetail:InterfaceCommandeDetails[];
+    commandeDetail:InterfaceCommandeDetails;
 
+}
+
+export interface InterfaceBonCommandes {
+    boncommandes: InterfaceBonCommande[];
 }

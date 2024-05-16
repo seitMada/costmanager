@@ -23,24 +23,46 @@ import { Centrerevenu, Centrerevenus } from "../../../shared/model/centrerevenu"
 import { InterfaceArticleExploitation, InterfaceArticleExploitations } from '../../../shared/model/interface-articleexploitations';
 import { InterfaceArticlefournisseurs } from '../../../shared/model/interface-articlefournisseurs';
 
-import { InterfaceBonCommandes } from '../../../shared/model/interface-bonCommande';
-import { InterfaceCommandeDetails } from '../../../shared/model/interface-commandedetail';
+import { InterfaceBonCommande, InterfaceBonCommandes } from '../../../shared/model/interface-bonCommande';
+import { InterfaceCommandeDetail, InterfaceCommandeDetails } from '../../../shared/model/interface-commandedetail';
 
 
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { AlertModule, ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
+import { Conditionnement } from 'src/app/shared/model/conditionnements';
 
 @Component({
   selector: 'app-bon-commande-achats',
   standalone: true,
-  imports: [CommonModule, FormsModule, BsDatepickerModule],
+  imports: [CommonModule, FormsModule, BsDatepickerModule,AlertModule,ToasterComponent,ToastComponent,ToastHeaderComponent,ToastBodyComponent],
   templateUrl: './bon-commande-achats.component.html',
   styleUrl: './bon-commande-achats.component.scss',
   providers: [NgbModalConfig, NgbModal]
 })
 export class BonCommandeAchatsComponent implements OnInit {
 
+  position = 'top-end';
+  visible = false;
+  percentage = 0;
+  public message = '';
+  public color = 'success';
+  public textcolor = 'text-light';
 
+  toggleToast(_message: string) {
+    this.message = _message;
+    this.visible = !this.visible;
+  }
+
+  onVisibleChange($event: boolean) {
+    this.visible = $event;
+    this.percentage = !this.visible ? 0 : this.percentage;
+  }
+
+  onTimerChange($event: number) {
+    this.percentage = $event * 25;
+  }
+  
   public fournisseur: Fournisseurs;
   public fournisseurs: Fournisseur;
   public centres: Centrerevenus;
@@ -54,10 +76,10 @@ export class BonCommandeAchatsComponent implements OnInit {
   public articleExploitations: InterfaceArticleExploitations;
   public adresse: Adress;
 
-  public commandes: InterfaceCommandeDetails[];
-  public boncommande: InterfaceBonCommandes;
-  public boncommandes: InterfaceBonCommandes[];
-  public commandeDetail: InterfaceCommandeDetails;
+  public commandes: InterfaceCommandeDetail[];
+  public boncommande: InterfaceBonCommande;
+  public boncommandes: InterfaceBonCommande[];
+  public commandeDetail: InterfaceCommandeDetail;
   public reason: any;
   public validateArticles: any[] = [];
   public artExploitationArticleId: any[] = [];
@@ -141,12 +163,14 @@ export class BonCommandeAchatsComponent implements OnInit {
                   commandeId: 0,
                   articlefournisseurId: articlefournisseur.id ? articlefournisseur.id :0,
                   QteCommande: 0,
-                  QteCommandeFT: 0,
+                  conditionnementId:articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id :0,
                   prixarticle: articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat: 0,
                   remise: 0,
                   validationdetailbc: false,
                   articlefournisseur: articlefournisseur,
-                  selected:false
+                  selected:false,
+                  conditionnement: artFournisseur.conditionnement,
+                  // commande:new BonCommande()
                 }
                 this.commandes.push(this.commandeDetail);
               }
@@ -170,6 +194,8 @@ export class BonCommandeAchatsComponent implements OnInit {
           next: (boncommande) => {
             this.commandes = [];
             this.boncommandes = boncommande;
+            console.log(this.boncommandes);
+            
           },
           error: (error) => {
             alert('Liste de bon de commande vide');
@@ -205,7 +231,7 @@ export class BonCommandeAchatsComponent implements OnInit {
               selected: false,
               centre: _centre,
               exploitation:exploitation,
-              commandeDetail:[]
+              commandeDetail: this.commandes ? this.commandes: []
             };
           },
         });
@@ -277,7 +303,7 @@ export class BonCommandeAchatsComponent implements OnInit {
       remise: 0,
       montantHT: 0,
       montantTva: 0,
-      noPiece: this.num_commande,
+      noPiece: '',
       validation: 0,
       commentaire: '',
       dateCommande: new Date(),
@@ -288,7 +314,7 @@ export class BonCommandeAchatsComponent implements OnInit {
       fournisseur: this.fournisseur,
       centre: this.centre,
       exploitation: this.exploitation,
-      commandeDetail:this.commandes
+      commandeDetail: [],
     }
   }
 
@@ -347,11 +373,13 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   validateCommande(){
+    console.log(this.boncommande);
+    
     this.idBonCommande = this.boncommande.id ? this.boncommande.id :0;
     if (this.boncommande) {
       this.commandeService.validateCommande(this.boncommande).subscribe({
         next:(value) =>{
-          alert('Bon de commande n° '+this.boncommande.noPiece+' a été validé');
+          this.toggleToast('Bon de commande n° '+this.boncommande.noPiece+' a été validé');
           this.inputModif = true;
           this.showvalidateBtn = !this.showvalidateBtn;
           this.addBtn = false;
@@ -364,7 +392,7 @@ export class BonCommandeAchatsComponent implements OnInit {
          this.commandeService.validateCommande(bonCommande).subscribe({
            next:(value) =>{
              this.showAllFournisseur();
-             alert('Bon de commande n° '+bonCommande.noPiece+' a été validé');
+             this.toggleToast('Bon de commande n° '+bonCommande.noPiece+' a été validé');
              this.toggle = this.toggle;
              this.showvalidateBtn = !this.showvalidateBtn;
            },
@@ -426,7 +454,9 @@ export class BonCommandeAchatsComponent implements OnInit {
                       remise: 0,
                       validationdetailbc: false,
                       articlefournisseur: articlefournisseur,
-                      selected: false
+                      conditionnementId:articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id :0,
+                      selected:false,
+                      conditionnement: articlefournisseur.conditionnement,
                     }
                     this.commandes.push(this.commandeDetail)
                   }
@@ -462,13 +492,15 @@ export class BonCommandeAchatsComponent implements OnInit {
                         this.commandeDetail = {
                           commandeId: 0,
                           articlefournisseurId: articlefournisseur.id ? articlefournisseur.id :0,
+                          conditionnementId:articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id :0,
                           QteCommande: 0,
                           QteCommandeFT: 0,
                           prixarticle: articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat: 0,
                           remise: 0,
                           validationdetailbc: false,
                           articlefournisseur: articlefournisseur,
-                          selected:false
+                          selected:false,
+                          conditionnement: articlefournisseur.conditionnement,
                         }
                         this.commandes.push(this.commandeDetail);
                       }
@@ -491,8 +523,10 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   }
 
-  generatePDF(commande: InterfaceBonCommandes) {
-    const dataCommande: any[] = [];
+  generatePDF(commande: InterfaceBonCommande){
+    console.log(commande);
+    
+    const dataCommande:any[]= [];
     const dateCommande = this.formatDate(commande.dateCommande, 'dd/MM/yyyy');
     let montant = 0;
     for (const com of commande.commandeDetail) {
@@ -582,7 +616,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
 
-  showCommande(bonCommande: InterfaceBonCommandes) {
+  showCommande(bonCommande: InterfaceBonCommande) {
     this.boncommande = bonCommande;
     this.idBonCommande = bonCommande.id ? bonCommande.id : 0;
     if (bonCommande.validation == 0) {
@@ -606,7 +640,9 @@ export class BonCommandeAchatsComponent implements OnInit {
             remise: detailComm.remise,
             validationdetailbc: detailComm.validationdetailbc,
             articlefournisseur: detailComm.articlefournisseur,
-            selected: false
+            selected:false,
+            conditionnementId:detailComm.conditionnement[0].id ? detailComm.conditionnement[0].id :0,
+            conditionnement:detailComm.articleFournisseur.conditionnement
           }
 
           this.montantTTc += (detailComm.QteCommande * detailComm.prixarticle) - detailComm.remise;
@@ -631,7 +667,6 @@ export class BonCommandeAchatsComponent implements OnInit {
       
       this.commandeService.createBonCommande(this.boncommande,this.commandes).subscribe({
         next:(commande:any) => {
-          alert('Bon de commande n° '+ this.boncommande.noPiece+ ' crée avec succès!');
           this.inputModif = !this.inputModif;
           this.addCommande = false;
           this.listArts = false;
@@ -639,6 +674,7 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.modifToggle = !this.modifToggle;
           this.showvalidateBtn = !this.showvalidateBtn;
           this.addBtn = false;
+          this.toggleToast('Bon de commande n° '+ this.boncommande.noPiece+ ' crée avec succès!');
         },
         error: (error) => {
           alert('veuillez réessayer!');
@@ -676,7 +712,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   deleteSelectedRows() {
     this.commandes = this.commandes.filter(line => !line.selected);
     this.showDeleteBtn = false;
-    this.modifToggle = true;
+    // this.modifToggle = true;
     this.addBtn = true;
     for (const _comDetail of this.commandes) {
       this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id !== _comDetail.articlefournisseurId);
@@ -691,17 +727,19 @@ export class BonCommandeAchatsComponent implements OnInit {
   deleteSelectedRowsComm() {
     const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
     for (const bonCommande of selectedBonCommandes) {
-      if (bonCommande.validation == 0) {
-        this.commandeService.deleteOneCommande(bonCommande).subscribe({
-          next: (value) => {
-            this.boncommandes = this.boncommandes.filter(line => line !== bonCommande);
-            this.showDeleteBtnCom = this.boncommandes.some(line => line.selected);
-            this.showvalidateBtn = this.boncommandes.some(line => line.selected);
-          },
-        });
-      } else {
-        alert('Ce bon de commande ne peut pas supprimer!')!
-      }
+     if (bonCommande.validation == 0) {
+      this.commandeService.deleteOneCommande(bonCommande).subscribe({
+        next:(value) =>{
+          this.toggleToast('Bon de commande n° '+ bonCommande.noPiece+ ' a été supprimé avec succès!');
+          this.boncommandes = this.boncommandes.filter(line => line !== bonCommande);
+          this.showDeleteBtnCom = this.boncommandes.some(line => line.selected);
+          this.showvalidateBtn = this.boncommandes.some(line => line.selected);
+          
+        },
+      });
+     }else{
+      alert('Ce bon de commande ne peut pas supprimer!')!
+     }      
     }
   }
 

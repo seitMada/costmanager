@@ -21,19 +21,42 @@ import { InterfaceBonLivraisons } from 'src/app/shared/model/interface-bonLivrai
 import { InterfaceLivraisonDetails } from 'src/app/shared/model/interface-livraisondetail';
 import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-articlefournisseurs';
 import { InterfaceArticleExploitation, InterfaceArticleExploitations } from 'src/app/shared/model/interface-articleexploitations';
-import { InterfaceBonCommandes } from 'src/app/shared/model/interface-bonCommande';
-import { InterfaceCommandeDetails } from 'src/app/shared/model/interface-commandedetail';
+import { InterfaceBonCommande, InterfaceBonCommandes } from 'src/app/shared/model/interface-bonCommande';
+import { InterfaceCommandeDetail, InterfaceCommandeDetails } from 'src/app/shared/model/interface-commandedetail';
 import { CommandeService } from 'src/app/shared/service/commande.service';
+import { AlertModule, ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
 
 @Component({
   selector: 'app-bon-livraison-achats',
   standalone: true,
-  imports: [CommonModule, FormsModule,BsDatepickerModule],
+  imports: [CommonModule, FormsModule,BsDatepickerModule,AlertModule,ToasterComponent,ToastComponent,ToastHeaderComponent,ToastBodyComponent],
   templateUrl: './bon-livraison-achats.component.html',
   styleUrl: './bon-livraison-achats.component.scss',
   providers:[NgbModalConfig,NgbModal]
 })
 export class BonLivraisonAchatsComponent implements OnInit{
+
+  position = 'top-end';
+  visible = false;
+  percentage = 0;
+  public message = '';
+  public color = 'success';
+  public textcolor = 'text-light';
+
+  toggleToast(_message: string) {
+    this.message = _message;
+    this.visible = !this.visible;
+  }
+
+  onVisibleChange($event: boolean) {
+    this.visible = $event;
+    this.percentage = !this.visible ? 0 : this.percentage;
+  }
+
+  onTimerChange($event: number) {
+    this.percentage = $event * 25;
+  }
+
   public fournisseurs: Fournisseur;
   public fournisseur: Fournisseurs;
   public centres: Centrerevenus;
@@ -44,12 +67,12 @@ export class BonLivraisonAchatsComponent implements OnInit{
   public article: InterfaceArticle;
   public articles: InterfaceArticle[];
   public exploitation: InterfaceExploitations;
-  public bonCommande: InterfaceBonCommandes;
-  public bonCommandes: InterfaceBonCommandes[];
+  public bonCommande: InterfaceBonCommande;
+  public bonCommandes: InterfaceBonCommande[];
   public bonLivraison: InterfaceBonLivraisons;
   public bonLivraisons: InterfaceBonLivraisons[];
-  public commandeDetail : InterfaceCommandeDetails;
-  public commadeDetails :InterfaceCommandeDetails[];
+  public commandeDetail : InterfaceCommandeDetail;
+  public commadeDetails :InterfaceCommandeDetail[];
   public livraisonDetail : InterfaceLivraisonDetails;
   public livraisonDetails : InterfaceLivraisonDetails[];
   public articleFournisseur: InterfaceArticlefournisseurs;
@@ -360,19 +383,19 @@ export class BonLivraisonAchatsComponent implements OnInit{
     }
   }
 
-  public selectArticle(contentCommandeArticle:TemplateRef<any>,commande:InterfaceBonCommandes){
-    this.commadeDetails = commande.commandeDetail;
-    this.bonCommande = commande;
-    this.modalService.open(contentCommandeArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
-      (result) => {
-        this.closeResult = `Closed with: ${result}`;
-        console.log(this.closeResult)
-        if (this.closeResult == 'Closed with: Save click') {}},
-        (reason) => {
-          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-          console.log(this.closeResult)
-        },
-      );
+  public selectArticle(contentCommandeArticle:TemplateRef<any>,commande:InterfaceBonCommande){
+    // this.commadeDetails = commande.commandeDetail;
+    // this.bonCommande = commande;
+    // this.modalService.open(contentCommandeArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+    //   (result) => {
+    //     this.closeResult = `Closed with: ${result}`;
+    //     console.log(this.closeResult)
+    //     if (this.closeResult == 'Closed with: Save click') {}},
+    //     (reason) => {
+    //       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+    //       console.log(this.closeResult)
+    //     },
+    //   );
   }
 
   public openModalArticle(contentArticle: TemplateRef<any>){
@@ -565,22 +588,22 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
   addBonLivraison(){
-    this.bonLivraison = this.bonLivraison;
-    this.livraisonDetails = this.livraisonDetails;
-    if (this.livraisonDetails.length>0) {
-      this.livraisonService.createNewBonLivraison(this.bonLivraison,this.livraisonDetails,this.bonCommande).subscribe({
-        next:(livraison:any) =>{
-          alert('Bon de livraison n° '+ this.bonLivraison.numLivraison+ ' crée avec succès!');
-          this.addBtn = false;
-          this.inputModif = !this.inputModif;
-          this.modifToggle = !this.modifToggle;
-          this.showvalidateBtn = !this.showvalidateBtn;
-          this.resetLivraison();
-        },
-      })
-    }else{
-      alert('Veuillez réessayer!');
-    }
+    // this.bonLivraison = this.bonLivraison;
+    // this.livraisonDetails = this.livraisonDetails;
+    // if (this.livraisonDetails.length>0) {
+    //   this.livraisonService.createNewBonLivraison(this.bonLivraison,this.livraisonDetails,this.bonCommande).subscribe({
+    //     next:(livraison:any) =>{
+    //       this.toggleToast('Bon de livraison n° '+ this.bonLivraison.numLivraison+ ' crée avec succès!');
+    //       this.addBtn = false;
+    //       this.inputModif = !this.inputModif;
+    //       this.modifToggle = !this.modifToggle;
+    //       this.showvalidateBtn = !this.showvalidateBtn;
+    //       this.resetLivraison();
+    //     },
+    //   })
+    // }else{
+    //   alert('Veuillez réessayer!');
+    // }
   }
 
   checkSelectedRows(){
@@ -623,7 +646,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
           this.deleteLivraison = false;
           this.showvalidateBtn = !this.showvalidateBtn;
           this.inputModif = true;
-          alert('Bon de livraison n° '+this.bonLivraison.numLivraison+' a été validé');
+          this.toggleToast('Bon de livraison n° '+this.bonLivraison.numLivraison+' a été validé');
         },
       });
       
@@ -636,7 +659,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
               this.showAllFournisseur();
               this.toggle = this.toggle;
               this.deleteLivraison = false;
-              alert('Bon de livraison n° '+bonLivraison.numLivraison+' a été validé');
+              this.toggleToast('Bon de livraison n° '+bonLivraison.numLivraison+' a été validé');
             },
           });
         }else{

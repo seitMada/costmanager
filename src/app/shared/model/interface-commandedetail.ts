@@ -1,12 +1,14 @@
 import { Articlefournisseur } from "./articlefournisseurs";
 import { BonCommande } from "./bonCommande";
+import { Conditionnement } from "./conditionnements";
 import { InterfaceArticlefournisseurs } from "./interface-articlefournisseurs";
 import { InterfaceBonCommandes } from "./interface-bonCommande";
 
-export interface InterfaceCommandeDetails{
+export interface InterfaceCommandeDetail{
     id?:number | undefined;
     commandeId:number;
     articlefournisseurId:number;
+    conditionnementId:number;
     QteCommande: number;
     QteCommandeFT: number;
     prixarticle:number;
@@ -15,5 +17,10 @@ export interface InterfaceCommandeDetails{
     selected?:boolean;
 
     commande?:BonCommande;
-    articlefournisseur : InterfaceArticlefournisseurs
+    articlefournisseur?: InterfaceArticlefournisseurs,
+    conditionnement?: Conditionnement,
+}
+
+export interface InterfaceCommandeDetails {
+    commandeDetails: InterfaceCommandeDetail[];
 }
