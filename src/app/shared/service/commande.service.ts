@@ -1,8 +1,8 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
-import { InterfaceBonCommandes } from '../model/interface-bonCommande';
-import { InterfaceCommandeDetails } from '../model/interface-commandedetail';
+import { InterfaceBonCommande, InterfaceBonCommandes } from '../model/interface-bonCommande';
+import { InterfaceCommandeDetail, InterfaceCommandeDetails } from '../model/interface-commandedetail';
 
 @Injectable({
   providedIn: 'root'
@@ -25,7 +25,7 @@ export class CommandeService {
     return this.https.get<any>(this.apiGetCommandeByFournisseurExploitation+fournisseurId,{params : {exploitationId:exploitationId} });
   }
 
-  public createBonCommande(commande:InterfaceBonCommandes,commandeDetails:InterfaceCommandeDetails[]){
+  public createBonCommande(commande:InterfaceBonCommande,commandeDetails:InterfaceCommandeDetail[]){
     return this.https.post<any>(this.apiCreateCommande,{commande,commandeDetails});
   }
 
@@ -46,7 +46,7 @@ export class CommandeService {
   }
 
 
-  public deleteOneCommande(commande:InterfaceBonCommandes){
+  public deleteOneCommande(commande:InterfaceBonCommande){
     return this.https.post<any>(this.apiDeleteCommande,commande);
   }
 
@@ -54,7 +54,7 @@ export class CommandeService {
     return this.https.get<any>(this.apiGetCommandeDetailByCommandeId+commandeId);
   }
 
-  public validateCommande(commande:InterfaceBonCommandes){
+  public validateCommande(commande:InterfaceBonCommande){
     return this.https.post<any>(this.apiValidateCommande,commande);
   }
 

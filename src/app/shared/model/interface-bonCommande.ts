@@ -22,7 +22,7 @@ export interface InterfaceBonCommande {
     fournisseur: InterfaceFournisseur;
     centre: InterfaceCentreRevenu;
     exploitation: InterfaceExploitations;
-    commandeDetail:InterfaceCommandeDetails;
+    commandeDetail:InterfaceCommandeDetail[];
 
 }
 

@@ -16,7 +16,7 @@ export class BonCommandes implements InterfaceBonCommandes {
   }
 
   *[Symbol.iterator]() {
-    for(let commande of this.boncommandes){
+    for (let commande of this.boncommandes) {
       yield commande;
     }
   }
@@ -37,7 +37,7 @@ export class BonCommande implements InterfaceBonCommande {
   fournisseur: InterfaceFournisseur;
   centre: InterfaceCentreRevenu;
   exploitation: InterfaceExploitations;
-  commandeDetail: InterfaceCommandeDetails;
+  commandeDetail: InterfaceCommandeDetail[];
 
   constructor(bonCommandeInterface: InterfaceBonCommande) {
     this.id = bonCommandeInterface.id;
