@@ -29,8 +29,8 @@
 </div>
 
 <div class="card d-flex" *ngIf="toggle">
-  <div class="card-body overflow-y-scroll py-1" style="height: 650px;">
-    <table class="table table-striped table-hover">
+  <div class="overflow-y-scroll">
+    <table class="table table-hover table-sm table-striped mb-0">
       <thead>
         <tr>
           <th scope="col" class="">#</th>
@@ -40,9 +40,26 @@
           <th scope="col" class="col-2">Groupe analytique</th>
           <th scope="col" class="col-2">Famille</th>
           <th scope="col" class="col-2">Sous-famille</th>
-          <th scope="col" class="col-1 text-overflow">Coéfficient pondération</th>
+          <th scope="col" class="col-1">Coéfficient pondération</th>
+        </tr>
+        <tr>
+          <th scope="col" colspan="2">
+            <input type="text" class="form-control form-control-sm">
+          </th>
+          <th scope="col" class="col-3">
+            <input type="text" class="form-control form-control-sm">
+          </th>
+          <th scope="col" class="col-1"><input type="text" class="form-control form-control-sm"></th>
+          <th scope="col" class="col-2"><input type="text" class="form-control form-control-sm"></th>
+          <th scope="col" class="col-2"><input type="text" class="form-control form-control-sm"></th>
+          <th scope="col" class="col-2"><input type="text" class="form-control form-control-sm"></th>
+          <th scope="col" class="col-1"><input type="text" class="form-control form-control-sm"></th>
         </tr>
       </thead>
+    </table>
+  </div>
+  <div class="overflow-y-scroll" style="height: 550px;">
+    <table class="table table-hover table-sm table-striped mt-0">
       <tbody>
         <tr *ngFor="let line of articles">
           <td class="">
@@ -50,11 +67,13 @@
               [(ngModel)]="line.selected">
           </td>
           <td class="col-1" (click)="showArticle(line); toggleModal()">{{line.codeArticle}}</td>
-          <td class="col-3 text-truncate fw-bold" (click)="showArticle(line); toggleModal()">{{line.libelle}}</td>
-          <td class="col-1 text-truncate" (click)="showArticle(line); toggleModal()">{{line.unite.abreviation}}</td>
-          <td class="col-2 text-truncate" (click)="showArticle(line); toggleModal()">{{truncateWord(line.groupeanalytique.groupe, 25)}}</td>
-          <td class="col-2 text-truncate" (click)="showArticle(line); toggleModal()">{{truncateWord(line.familles.libelle, 25)}}</td>
-          <td class="col-2 text-truncate" (click)="showArticle(line); toggleModal()">{{truncateWord(line.sousfamilles.libelle, 25)}}</td>
+          <td class="col-3  fw-bold" (click)="showArticle(line); toggleModal()">{{line.libelle}}</td>
+          <td class="col-1 " (click)="showArticle(line); toggleModal()">{{line.unite.abreviation}}</td>
+          <td class="col-2 " (click)="showArticle(line); toggleModal()">{{truncateWord(line.groupeanalytique.groupe,
+            20)}}</td>
+          <td class="col-2 " (click)="showArticle(line); toggleModal()">{{truncateWord(line.familles.libelle, 20)}}</td>
+          <td class="col-2 " (click)="showArticle(line); toggleModal()">{{truncateWord(line.sousfamilles.libelle, 20)}}
+          </td>
           <td class="col-1" (click)="showArticle(line); toggleModal()">{{line.coefficientPonderation / 100}} €</td>
         </tr>
       </tbody>
@@ -199,8 +218,8 @@
         <li [ngbNavItem]="2" *ngIf="modifToggle">
           <button ngbNavLink>FOURNISSEURS</button>
           <ng-template ngbNavContent>
-            <div class="card-body overflow-y-scroll py-1" style="height: 340px;">
-              <table class="table table-striped table-hover" *ngIf="modifToggle">
+            <div class="overflow-y-scroll">
+              <table class="table table-hover table-sm table-striped mb-0">
                 <thead>
                   <tr>
                     <th scope="col" class="col-3">Fournisseur</th>
@@ -209,31 +228,48 @@
                     <th scope="col" class="col-2">Unité fiche technique</th>
                     <th scope="col" class="col-2">Prix en unité FT</th>
                   </tr>
+                  <tr>
+                    <th class="col-3">
+                      <input type="text" class="form-control form-control-sm">
+                    </th>
+                    <th scope="col" class="col-2">
+                    </th>
+                    <th scope="col" class="col-3">
+                    </th>
+                    <th scope="col" class="col-2">
+                    </th>
+                    <th scope="col" class="col-2">
+                    </th>
+                  </tr>
                 </thead>
+              </table>
+            </div>
+            <div class="overflow-y-scroll" style="height: 280px;">
+              <table class="table table-hover table-sm table-striped mt-0">
                 <tbody>
                   <tr *ngFor="let line of article.articlefournisseur">
                     <td class="col-3">{{line.fournisseur.raison_social}}</td>
                     <td class="col-2">
-                  <tr *ngFor="let lines of line.conditionnement" (click)="showFournisseur(lines)">
-                    <td>{{lines.uniteCommande.libelle}}</td>
-                  </tr>
-                  </td>
-                  <td class="col-3">
-                    <tr *ngFor="let lines of line.conditionnement">
-                      <td>{{lines.prixAchat / lines.coefficientAchatCommande | number: '1.2-2'}} €</td>
-                    </tr>
-                  </td>
-                  <td class="col-2">
-                    <tr *ngFor="let lines of line.conditionnement">
-                      <td>{{lines.uniteFt.libelle}}</td>
-                    </tr>
-                  </td>
-                  <td class="col-2">
-                    <tr *ngFor="let lines of line.conditionnement">
-                      <td>{{lines.prixAchat / lines.coefficientAchatCommande / lines.coefficientInventaireAchat /
-                        lines.coefficientInventaire | number: '1.2-2'}} €</td>
-                    </tr>
-                  </td>
+                      <tr *ngFor="let lines of line.conditionnement" (click)="showFournisseur(lines)">
+                        <td>{{lines.uniteCommande.libelle}}</td>
+                      </tr>
+                    </td>
+                    <td class="col-3">
+                      <tr *ngFor="let lines of line.conditionnement">
+                        <td>{{lines.prixAchat / lines.coefficientAchatCommande | number: '1.2-2'}} €</td>
+                      </tr>
+                    </td>
+                    <td class="col-2">
+                      <tr *ngFor="let lines of line.conditionnement">
+                        <td>{{lines.uniteFt.libelle}}</td>
+                      </tr>
+                    </td>
+                    <td class="col-2">
+                      <tr *ngFor="let lines of line.conditionnement">
+                        <td>{{lines.prixAchat / lines.coefficientAchatCommande / lines.coefficientInventaireAchat /
+                          lines.coefficientInventaire | number: '1.2-2'}} €</td>
+                      </tr>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -248,7 +284,7 @@
                 <div class="row">
                   <div class="col-3 mb-2" *ngFor="let lieu of lieustockages">
                     <div class="card">
-                      <div class="card-header-sm fw-bold text-truncate">{{lieu.lieu}} - {{lieu.centre.libelle}}</div>
+                      <div class="card-header-sm fw-bold ">{{lieu.lieu}} - {{lieu.centre.libelle}}</div>
                       <div class="card-body overflow-y-scroll" style="height: 130px; padding-top: 2px;">
                         <table class="table table-bordered table-sm">
                           <tr *ngFor="let line of lieu.zonestockage">
@@ -349,22 +385,6 @@
     </li>
   </ul>
 </div>
-
-<!-- <ng-template #content let-modal>
-  <div class="modal-header">
-    <h6 class="modal-title text-center" id="modal-basic-title">Zone de stockage de l'article {{article.libelle}}</h6>
-    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
-  </div>
-  <div class="modal-body">
-    <div class="row">
-      
-    </div>
-  </div>
-  <div class="modal-footer">
-    <button type="button" class="btn btn-sm btn-outline-success"
-      (click)="modal.close('Save click')">Enregistrer</button>
-  </div>
-</ng-template> -->
 
 <c-toaster [placement]="position" class="p-3" position="fixed">
   <c-toast #toast="cToast" (timer)="onTimerChange($event)" (visibleChange)="onVisibleChange($event)" [visible]="visible"

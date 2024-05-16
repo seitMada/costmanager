@@ -121,15 +121,15 @@ export class InventairesComponent {
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
-    this.resetinventaire();
+    this.resetinventaire(new Date());
     this.numero = (this.formatDateUS(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
   }
 
-  private async resetinventaire() {
+  private async resetinventaire(_date: Date) {
     this.numero = (this.formatDateUS(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
     this.inventaire = {
       id: 0,
-      date_inventaire: new Date(),
+      date_inventaire: _date,
       numero: this.numero,
       commentaire: '',
       etat: false,
@@ -373,7 +373,7 @@ export class InventairesComponent {
       this.toggle = true;
       this.modifToggle = true;
       this.addToggle = true;
-      this.resetinventaire();
+      this.resetinventaire(new Date());
     } else {
       this.show(this.inventaire);
       this.modifToggle = !this.modifToggle;
@@ -385,7 +385,7 @@ export class InventairesComponent {
       this.inventaire.operateurId = this.idoperateur;
       const inventairetable = [];
       for (const _lieu of this.inventairesDetailsZone) {
-        await this.resetinventaire();
+        await this.resetinventaire(this.inventaire.date_inventaire);
         this.inventaire.inventairedetail = _lieu.inventairedetail;
         this.inventaire.zonestockageId = +(_lieu.zoneId || 0);
         inventairetable.push(this.inventaire);
@@ -468,7 +468,7 @@ export class InventairesComponent {
     this.inventaireService.deleteInventaire(this.inventaire.numero).subscribe({
       next: () => {
         this.toggleToast('Inventaire du ' + this.screenDate(this.inventaire.date_inventaire) + ' supprimer');
-        this.resetinventaire();
+        this.resetinventaire(new Date());
         this.selectCentreRevenus(this.centrerevenu);
         this.toggle = !this.toggle;
         this.modifToggle = !this.modifToggle ? false : true;
@@ -487,7 +487,7 @@ export class InventairesComponent {
       console.log(selectedNumero)
       this.inventaireService.deleteInventaires(selectedNumero).subscribe(() => {
         this.toggleToast('Les inventaire ont été supprimer');
-        this.resetinventaire();
+        this.resetinventaire(new Date());
         this.selectCentreRevenus(this.centrerevenu);
       })
     }
@@ -683,7 +683,7 @@ export class InventairesComponent {
 
   openInventaire(content: TemplateRef<any>) {
     this.today = new Date();
-    this.resetinventaire()
+    this.resetinventaire(new Date())
     this.selectCentreRevenu(this.centrerevenu);
     const exploitationId: number[] = [];
     exploitationId.push(this.inventaire.centre.exploitations.id || 0);

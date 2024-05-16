@@ -36,6 +36,8 @@ export class ArticleService {
 
   private apiGetArticleByFournisseur = environment.APIGETARTICLEBYFOURNISSEUR;
   private apiGetArticleByIdFournisseur = environment.APIGETARTICLEBYFOURNISSEUR;
+  
+  private apiGetMouvementStock = environment.APIGETMOUVEMENTSTOCK;
 
   constructor(private https: HttpClient) { }
 
@@ -98,6 +100,10 @@ export class ArticleService {
   public getArticlesByZone(zonestockageId: number[]) {
     return this.https.post(this.apiGetArticleByZone, { zonestockageId: zonestockageId });
   }
+
+  public getMouvementStock(dates: any, id: number, isexploitation: boolean = true) {
+    return this.https.post(this.apiGetMouvementStock, { dates: dates, id: id, isexploitation: isexploitation });
+  } 
 
   public resetArticle() {
     const categorie: InterfaceCategories = {

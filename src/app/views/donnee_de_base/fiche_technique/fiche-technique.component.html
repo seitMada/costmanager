@@ -31,7 +31,68 @@
 </div>
 
 <div class="card d-flex" *ngIf="toggle">
-  <div class="card-body overflow-y-scroll py-1" style="height: 650px;">
+  <div class="overflow-y-scroll">
+    <table class="table table-hover table-sm table-striped mb-0">
+      <thead>
+        <tr>
+          <th scope="col" class="">#</th>
+          <th scope="col" class="col-3">Libelle</th>
+          <th scope="col" class="col-2">Famille</th>
+          <th scope="col" class="col-1">Unite</th>
+          <th scope="col" class="col-2">Groupe analytique</th>
+          <th scope="col" class="col-2">Categorie</th>
+          <th scope="col" class="col-1">Prix</th>
+          <th scope="col" class="col-1">Coût</th>
+        </tr>
+        <tr>
+          <th colspan="2">
+            <input type="text" class="form-control form-control-sm">
+          </th>
+          <th class="col-2">
+            <input type="text" class="form-control form-control-sm">
+          </th>
+          <th class="col-1">
+            <input type="text" class="form-control form-control-sm">
+          </th>
+          <th class="col-2">
+            <input type="text" class="form-control form-control-sm">
+          </th>
+          <th class="col-2">
+            <input type="text" class="form-control form-control-sm">
+          </th>
+          <th class="col-1">
+            <input type="text" class="form-control form-control-sm">
+          </th>
+          <th class="col-1">
+            <input type="text" class="form-control form-control-sm">
+          </th>          
+        </tr>
+      </thead>
+    </table>
+  </div>
+  <div class="overflow-y-scroll" style="height: 550px;">
+    <table class="table table-hover table-sm table-striped mt-0">
+      <tbody>
+        <tr *ngFor="let line of fichetechniques">
+          <td class="">
+            <input type="checkbox" name="fichetechnique-{{line.libelle}}" id="fichetechnique-{{line.id}}"
+              [(ngModel)]="line.selected">
+          </td>
+          <td class="col-3 fw-bold" (click)="show(line); toggleModal()">{{line.libelle}}</td>
+          <td class="col-2" (click)="show(line); toggleModal()">{{truncateWord(line.famille.libelle, 15)}}
+          </td>
+          <td class="col-1" (click)="show(line); toggleModal()">{{line.unite.abreviation}}</td>
+          <td class="col-2" (click)="show(line); toggleModal()">
+            {{truncateWord(line.groupeanalytique.groupe, 15)}}</td>
+          <td class="col-2" (click)="show(line); toggleModal()">{{truncateWord(line.categorie.libelle,
+            15)}}</td>
+          <td class="col-1" (click)="show(line); toggleModal()">{{line.prix | number: '1.2-2'}} €</td>
+          <td class="col-1" (click)="show(line); toggleModal()">{{line.cout | number: '1.2-2'}} €</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <!-- <div class="card-body overflow-y-scroll py-1" style="height: 650px;">
     <table class="table table-striped table-hover">
       <thead>
         <tr>
@@ -64,7 +125,7 @@
         </tr>
       </tbody>
     </table>
-  </div>
+  </div> -->
 </div>
 
 <div class="card d-flex" *ngIf="!toggle">

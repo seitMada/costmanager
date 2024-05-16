@@ -635,7 +635,7 @@ export class BonCommandeAchatsComponent implements OnInit {
             commandeId: detailComm.commandeId,
             articlefournisseurId: detailComm.articlefournisseurId,
             QteCommande: detailComm.QteCommande,
-            QteCommandeFT: detailComm.QteCommande,
+            QteCommandeFT: detailComm.QteCommandeFT,
             prixarticle: detailComm.prixarticle,
             remise: detailComm.remise,
             validationdetailbc: detailComm.validationdetailbc,

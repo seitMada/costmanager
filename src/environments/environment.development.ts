@@ -62,6 +62,7 @@ export const environment = {
 
     APIGETARTICLEEXCLUDE : endPoint + 'articles/articleexclude',
     APIGETARTICLEBYIDFOURNISSEUR: endPoint + 'articles/fournisseur/',
+    APIGETMOUVEMENTSTOCK : endPoint + 'articles/mouvement',
     
     APIGETARTICLEBYFOURNISSEUR: endPoint + 'articlefournisseur/',
     APIADDARTICLEFOURNISSEUR: endPoint + 'articlefournisseur',
