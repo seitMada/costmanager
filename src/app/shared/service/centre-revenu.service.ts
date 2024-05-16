@@ -14,6 +14,7 @@ export class CentreRevenuService {
   private apiUpdateCentreRevenu = environment.APIUPDATECENTREREVENUS;
   private apiDeleteCentreRevenu = environment.APIDELETECENTREREVENU;
   private apiCreateCentreRevenu = environment.APICREATECENTREREVENUS;
+  private apiGetAllCentreRevenuWithoutLinks = environment.APIGETCENTREWITHOUTLINKS;
 
   constructor(private https: HttpClient) { }
 
@@ -35,5 +36,9 @@ export class CentreRevenuService {
 
   public deleteCentreRevenu(centre:InterfaceCentreRevenu){
     return this.https.post<any>(this.apiDeleteCentreRevenu, centre);
+  }
+
+  public getAllCentreRevenuWithoutLinks(){
+    return this.https.get<any>(this.apiGetAllCentreRevenuWithoutLinks);
   }
 }

@@ -13,6 +13,7 @@ export const environment = {
     APICREATECENTREREVENUS: endPoint + 'centre-revenu',
     APIUPDATECENTREREVENUS: endPoint + 'centre-revenu/update/',
     APIDELETECENTREREVENU :endPoint + 'centre-revenu/delete',
+    APIGETCENTREWITHOUTLINKS : endPoint + 'centre-revenu/list',
 
     APIGETEXPLOITATIONBYARTICLE: endPoint + 'articleexploitation/article_exploitation/',
     APIPOSTDELETEARTICLEEXPLOITATIONBYARTICLE: endPoint + 'articleexploitation/delete_articleexploitation/',
