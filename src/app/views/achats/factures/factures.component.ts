@@ -22,7 +22,7 @@ import { InterfaceAchat } from 'src/app/shared/model/interface-achats';
 import { InterfaceAchatDetail } from 'src/app/shared/model/interface-achatdetail';
 import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-articlefournisseurs';
 import { InterfaceArticleExploitation, InterfaceArticleExploitations } from 'src/app/shared/model/interface-articleexploitations';
-import { InterfaceLivraisonDetails } from 'src/app/shared/model/interface-livraisondetail';
+import { InterfaceLivraisonDetail } from 'src/app/shared/model/interface-livraisondetail';
 import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { InterfaceBonLivraisons } from 'src/app/shared/model/interface-bonLivraison';
 
@@ -74,8 +74,8 @@ export class FacturesComponent implements OnInit {
   public exploitation: InterfaceExploitations;
   public bonLivraison: InterfaceBonLivraisons;
   public bonLivraisons: InterfaceBonLivraisons[];
-  public livraisonDetail : InterfaceLivraisonDetails;
-  public livraisonDetails : InterfaceLivraisonDetails[];
+  public livraisonDetail : InterfaceLivraisonDetail;
+  public livraisonDetails : InterfaceLivraisonDetail[];
   public articleFournisseur: InterfaceArticlefournisseurs;
   public articleFournisseurs: InterfaceArticlefournisseurs[];
   public articleExploitation: InterfaceArticleExploitation;

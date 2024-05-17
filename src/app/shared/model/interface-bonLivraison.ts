@@ -2,7 +2,7 @@ import { Adress } from "./adresse";
 import { InterfaceCentreRevenu } from "./interface-centrerevenu";
 import { InterfaceExploitations } from "./interface-exploitations";
 import { InterfaceFournisseur } from "./interface-fournisseurs";
-import { InterfaceLivraisonDetails } from "./interface-livraisondetail";
+import { InterfaceLivraisonDetail } from "./interface-livraisondetail";
 
 export interface InterfaceBonLivraisons{
     id?:number | undefined;
@@ -24,5 +24,5 @@ export interface InterfaceBonLivraisons{
     fournisseur:InterfaceFournisseur;
     exploitation:InterfaceExploitations;
     centre:InterfaceCentreRevenu;
-    livraisonDetail:InterfaceLivraisonDetails[];
+    livraisonDetail:InterfaceLivraisonDetail[];
 }

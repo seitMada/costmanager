@@ -3,7 +3,7 @@ import { InterfaceBonLivraisons } from "./interface-bonLivraison";
 import { InterfaceCentreRevenu } from "./interface-centrerevenu";
 import { InterfaceExploitations } from "./interface-exploitations";
 import { InterfaceFournisseur } from "./interface-fournisseurs";
-import { InterfaceLivraisonDetails } from "./interface-livraisondetail";
+import { InterfaceLivraisonDetail } from "./interface-livraisondetail";
 
 export class BonLivraison implements InterfaceBonLivraisons{
     id?:number | undefined;
@@ -25,7 +25,7 @@ export class BonLivraison implements InterfaceBonLivraisons{
     fournisseur:InterfaceFournisseur;
     exploitation:InterfaceExploitations;
     centre:InterfaceCentreRevenu;
-    livraisonDetail:InterfaceLivraisonDetails[]
+    livraisonDetail:InterfaceLivraisonDetail[]
 
     constructor(bonLivraisonInterface:InterfaceBonLivraisons) {
         this.numLivraison= bonLivraisonInterface.numLivraison;

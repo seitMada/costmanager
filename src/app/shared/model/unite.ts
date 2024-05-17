@@ -8,7 +8,13 @@ export class Unite implements InterfaceUnite{
     step: number;
     actif:          boolean;
 
-    constructor(uniteInterface: InterfaceUnite) {
+    constructor(uniteInterface: InterfaceUnite = {
+        libelle:       '...',
+        code:    '...',
+        abreviation:'...',
+        step: 0,
+        actif:true,
+    }) {
         this.libelle = uniteInterface.libelle;
         this.code = uniteInterface.code;
         this.abreviation = uniteInterface.abreviation;

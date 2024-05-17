@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, TemplateRef } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import { FormGroup, FormsModule } from '@angular/forms';
-import { ModalDismissReasons, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
+import { ModalDismissReasons, NgbModal, NgbModalConfig, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
 import { FournisseurService } from "../../../shared/service/fournisseur.service";
@@ -31,11 +31,17 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { AlertModule, ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
 import { Conditionnement } from 'src/app/shared/model/conditionnements';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { Categorie } from 'src/app/shared/model/categories';
+import { Famille } from 'src/app/shared/model/familles';
+import { Unite, Unites } from 'src/app/shared/model/unite';
+import { Groupeanalytique } from 'src/app/shared/model/groupeanalytiques';
+import { SousFamille } from 'src/app/shared/model/sousfamilles';
 
 @Component({
   selector: 'app-bon-commande-achats',
   standalone: true,
-  imports: [CommonModule, FormsModule, BsDatepickerModule, AlertModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
+  imports: [CommonModule, FormsModule, BsDatepickerModule,NgbNavModule, AlertModule,TooltipModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
   templateUrl: './bon-commande-achats.component.html',
   styleUrl: './bon-commande-achats.component.scss',
   providers: [NgbModalConfig, NgbModal]
@@ -155,23 +161,26 @@ export class BonCommandeAchatsComponent implements OnInit {
       next: (artExploitation) => {
         if (artExploitation) {
           this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
+               
           this.commandeService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
             next: (artFournisseur: any) => {
               this.articleFournisseurs = artFournisseur;
               for (const articlefournisseur of artFournisseur) {
+                const conditionnement = articlefournisseur.conditionnement.reduce((min:any, current:any) => {
+                  return current.prixAchat < min.prixAchat ? current : min;
+                });
                 this.commandeDetail = {
                   commandeId: 0,
                   articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
                   QteCommande: 0,
                   QteCommandeFT: 0,
-                  conditionnementId: articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id : 0,
-                  prixarticle: articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat : 0,
+                  conditionnementId: conditionnement.id,
+                  prixarticle: conditionnement.prixAchat,
                   remise: 0,
                   validationdetailbc: false,
                   articlefournisseur: articlefournisseur,
                   selected: false,
-                  conditionnement: artFournisseur.conditionnement,
-                  // commande:new BonCommande()
+                  conditionnement:conditionnement,
                 }
                 this.commandes.push(this.commandeDetail);
               }
@@ -254,7 +263,7 @@ export class BonCommandeAchatsComponent implements OnInit {
       selected: false,
 
       article: this.article,
-      fournisseur: this.fournisseur,
+      fournisseur:this.fournisseur,
       conditionnement: []
     }
   }
@@ -445,22 +454,26 @@ export class BonCommandeAchatsComponent implements OnInit {
               console.log(this.closeResult)
               if (this.closeResult == 'Closed with: Save click') {
                 for (const articlefournisseur of this.articleFournisseurs) {
-                  if (articlefournisseur.selected == true) {
-                    this.commandeDetail = {
-                      commandeId: 0,
-                      articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
-                      QteCommande: 0,
-                      QteCommandeFT: 0,
-                      prixarticle: articlefournisseur.prixReference,
-                      remise: 0,
-                      validationdetailbc: false,
-                      articlefournisseur: articlefournisseur,
-                      conditionnementId: articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id : 0,
-                      selected: false,
-                      conditionnement: articlefournisseur.conditionnement[0],
+                  if (articlefournisseur.selected == true && articlefournisseur.article) {
+                    for(const condition of articlefournisseur.conditionnement){
+                      if (condition.selected !== undefined) {
+                        this.commandeDetail = {
+                          commandeId: 0,
+                          articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
+                          conditionnementId: condition.id ? condition.id : 0,
+                          QteCommande: 0,
+                          QteCommandeFT: 0,
+                          prixarticle: condition.prixAchat ? condition.prixAchat : 0,
+                          remise: 0,
+                          validationdetailbc: false,
+                          articlefournisseur: articlefournisseur,
+                          selected: false,
+                          conditionnement: condition,
+                        }
+                        this.commandes.push(this.commandeDetail);
+                      }
                     }
-                    this.commandes.push(this.commandeDetail)
-                  }
+                  }             
                 }
                 this.addBtn = false;
               }
@@ -490,21 +503,28 @@ export class BonCommandeAchatsComponent implements OnInit {
                     console.log(this.closeResult)
                     if (this.closeResult == 'Closed with: Save click') {
                       for (const articlefournisseur of artFournisseur) {
-                        this.commandeDetail = {
-                          commandeId: 0,
-                          articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
-                          conditionnementId: articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id : 0,
-                          QteCommande: 0,
-                          QteCommandeFT: 0,
-                          prixarticle: articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat : 0,
-                          remise: 0,
-                          validationdetailbc: false,
-                          articlefournisseur: articlefournisseur,
-                          selected: false,
-                          conditionnement: articlefournisseur.conditionnement,
+                        if (articlefournisseur.selected == true && articlefournisseur.article) {
+                          for(const condition of articlefournisseur.conditionnement){
+                            if (condition.selected !== undefined) {
+                              this.commandeDetail = {
+                                commandeId: 0,
+                                articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
+                                conditionnementId: condition.id ? condition.id : 0,
+                                QteCommande: 0,
+                                QteCommandeFT: 0,
+                                prixarticle: condition.prixAchat ? condition.prixAchat : 0,
+                                remise: 0,
+                                validationdetailbc: false,
+                                articlefournisseur: articlefournisseur,
+                                selected: false,
+                                conditionnement: condition,
+                              }
+                              this.commandes.push(this.commandeDetail);
+                            }
+                          }
                         }
-                        this.commandes.push(this.commandeDetail);
                       }
+                      console.log(this.commandes);
                     }
                   },
                   (reason) => {
@@ -644,8 +664,8 @@ export class BonCommandeAchatsComponent implements OnInit {
             validationdetailbc: detailComm.validationdetailbc,
             articlefournisseur: detailComm.articlefournisseur,
             selected: false,
-            conditionnementId: detailComm.conditionnement[0].id ? detailComm.conditionnement[0].id : 0,
-            conditionnement: detailComm.articleFournisseur.conditionnement
+            conditionnementId: detailComm.conditionnement.id ? detailComm.conditionnement.id : 0,
+            conditionnement: detailComm.conditionnement
           }
 
           this.montantTTc += (detailComm.QteCommande * detailComm.prixarticle) - detailComm.remise;

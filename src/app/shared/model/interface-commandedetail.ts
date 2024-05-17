@@ -1,9 +1,6 @@
-import { Articlefournisseur } from "./articlefournisseurs";
 import { BonCommande } from "./bonCommande";
-import { Conditionnement } from "./conditionnements";
 import { IntefaceConditionnement } from "./inteface-conditionnements";
 import { InterfaceArticlefournisseurs } from "./interface-articlefournisseurs";
-import { InterfaceBonCommandes } from "./interface-bonCommande";
 
 export interface InterfaceCommandeDetail{
     id?:number | undefined;

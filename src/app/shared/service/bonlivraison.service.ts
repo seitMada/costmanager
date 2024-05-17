@@ -2,8 +2,8 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from 'src/environments/environment';
 import { InterfaceBonLivraisons } from '../model/interface-bonLivraison';
-import { InterfaceLivraisonDetails } from '../model/interface-livraisondetail';
-import { InterfaceBonCommandes } from '../model/interface-bonCommande';
+import { InterfaceLivraisonDetail } from '../model/interface-livraisondetail';
+import { InterfaceBonCommande } from '../model/interface-bonCommande';
 
 @Injectable({
   providedIn: 'root'
@@ -35,7 +35,7 @@ export class BonlivraisonService {
     return this.https.get<any>(this.apiGetDetailCommandeByCommandeId+commandeId);
   }
 
-  public createNewBonLivraison(livraison:InterfaceBonLivraisons,livraisonDetail:InterfaceLivraisonDetails[],commande:InterfaceBonCommandes){
+  public createNewBonLivraison(livraison:InterfaceBonLivraisons,livraisonDetail:InterfaceLivraisonDetail[],commande:InterfaceBonCommande){
     return this.https.post<any>(this.apiCreateBonLivraison,{livraison,livraisonDetail,commande});
   }
 

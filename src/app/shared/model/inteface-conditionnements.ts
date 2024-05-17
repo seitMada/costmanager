@@ -12,6 +12,7 @@ export interface IntefaceConditionnement {
     idUniteFt: number,
     articlefournisseurId: number,
     prixAchat: number;
+    selected?:boolean;
 
     uniteAchat: InterfaceUnite,
     uniteCommande: InterfaceUnite,

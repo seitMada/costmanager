@@ -18,13 +18,16 @@ import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrereve
 import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
 import { InterfaceFournisseur } from 'src/app/shared/model/interface-fournisseurs';
 import { InterfaceBonLivraisons } from 'src/app/shared/model/interface-bonLivraison';
-import { InterfaceLivraisonDetails } from 'src/app/shared/model/interface-livraisondetail';
+import { InterfaceLivraisonDetail } from 'src/app/shared/model/interface-livraisondetail';
 import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-articlefournisseurs';
 import { InterfaceArticleExploitation, InterfaceArticleExploitations } from 'src/app/shared/model/interface-articleexploitations';
 import { InterfaceBonCommande, InterfaceBonCommandes } from 'src/app/shared/model/interface-bonCommande';
 import { InterfaceCommandeDetail, InterfaceCommandeDetails } from 'src/app/shared/model/interface-commandedetail';
 import { CommandeService } from 'src/app/shared/service/commande.service';
 import { AlertModule, ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
+import { PAYS } from 'src/assets/pays';
+import { Conditionnement } from 'src/app/shared/model/conditionnements';
+import { IntefaceConditionnement } from 'src/app/shared/model/inteface-conditionnements';
 
 @Component({
   selector: 'app-bon-livraison-achats',
@@ -57,6 +60,9 @@ export class BonLivraisonAchatsComponent implements OnInit{
     this.percentage = $event * 25;
   }
 
+  public country = PAYS;
+  public flags: string = '';
+
   public fournisseurs: Fournisseur;
   public fournisseur: Fournisseurs;
   public centres: Centrerevenus;
@@ -73,12 +79,13 @@ export class BonLivraisonAchatsComponent implements OnInit{
   public bonLivraisons: InterfaceBonLivraisons[];
   public commandeDetail : InterfaceCommandeDetail;
   public commadeDetails :InterfaceCommandeDetail[];
-  public livraisonDetail : InterfaceLivraisonDetails;
-  public livraisonDetails : InterfaceLivraisonDetails[];
+  public livraisonDetail : InterfaceLivraisonDetail;
+  public livraisonDetails : InterfaceLivraisonDetail[];
   public articleFournisseur: InterfaceArticlefournisseurs;
   public articleFournisseurs: InterfaceArticlefournisseurs[];
   public articleExploitation: InterfaceArticleExploitation;
   public articleExploitations: InterfaceArticleExploitations;
+  public conditionnement : IntefaceConditionnement;
 
   public artExploitationArticleId: any[] = [];
 
@@ -314,13 +321,16 @@ export class BonLivraisonAchatsComponent implements OnInit{
       articlefournisseurId:0,
       livraisonId: 0,
       quantiteCommandee: 0,
+      conditionnementId:0,
       quantiteLivree: 0,
+      quantiteFT:0,
       prixarticle: 0,
       remise: 0,
       valeurTva: 0,
       selected:false,
       articlefournisseur:this.articleFournisseur,
-      livraison:[]
+      livraison:[],
+      conditionnement: this.conditionnement
     }
   }
 
@@ -384,18 +394,20 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
   public selectArticle(contentCommandeArticle:TemplateRef<any>,commande:InterfaceBonCommande){
-    // this.commadeDetails = commande.commandeDetail;
-    // this.bonCommande = commande;
-    // this.modalService.open(contentCommandeArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
-    //   (result) => {
-    //     this.closeResult = `Closed with: ${result}`;
-    //     console.log(this.closeResult)
-    //     if (this.closeResult == 'Closed with: Save click') {}},
-    //     (reason) => {
-    //       this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-    //       console.log(this.closeResult)
-    //     },
-    //   );
+    this.commadeDetails = commande.commandeDetail;
+    this.bonCommande = commande;
+    console.log(this.bonCommande);
+    
+    this.modalService.open(contentCommandeArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${result}`;
+        console.log(this.closeResult)
+        if (this.closeResult == 'Closed with: Save click') {}},
+        (reason) => {
+          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+          console.log(this.closeResult)
+        },
+      );
   }
 
   public openModalArticle(contentArticle: TemplateRef<any>){
@@ -407,21 +419,25 @@ export class BonLivraisonAchatsComponent implements OnInit{
           this.livraisonDetails = [];
           this.inputModif = this.inputModif;              
           for (const articlefournisseur of this.articleFournisseurs) {
-            if (articlefournisseur.selected == true) {
-              this.livraisonDetail = {
-                articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
-                livraisonId: 0,
-                quantiteCommandee: 0,
-                quantiteLivree: 0,
-                prixarticle: articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat: 0,
-                remise: 0,
-                valeurTva: 0,
-                selected:false,
-                articlefournisseur:articlefournisseur,
-                livraison:[]
-              }
-              this.livraisonDetails.push(this.livraisonDetail);
-            }
+            console.log(this.articleFournisseurs);
+            
+            // if (articlefournisseur.selected == true) {
+            //   this.livraisonDetail = {
+            //     articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+            //     livraisonId: 0,
+            //     quantiteCommandee: 0,
+            //     conditionnementId:articlefournisseur.conditionnement[0].id?articlefournisseur.conditionnement[0]:0,
+            //     quantiteLivree: 0,
+            //     quantiteFT:0,
+            //     prixarticle: articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat: 0,
+            //     remise: 0,
+            //     valeurTva: 0,
+            //     selected:false,
+            //     articlefournisseur:articlefournisseur,
+            //     livraison:[]
+            //   }
+            //   this.livraisonDetails.push(this.livraisonDetail);
+            // }
           }
           console.log(this.livraisonDetails);
         }
@@ -467,26 +483,33 @@ export class BonLivraisonAchatsComponent implements OnInit{
                         this.bonLivraison.numLivraison = 'LIV-'+this.newNumLivraison[1];
                         
                         for(const comm of commandeDetail){
-                          this.livraisonDetail = {
-                            articlefournisseurId:comm.articlefournisseurId,
-                            livraisonId: 0,
-                            quantiteCommandee: comm.QteCommande,
-                            quantiteLivree: comm.QteCommande,
-                            prixarticle: comm.prixarticle,
-                            remise: comm.remise,
-                            valeurTva: 0,
-                            selected:false,
-                            articlefournisseur:comm.articlefournisseur,
-                            livraison:[]
-                          };
-                          if (this.livraisonDetail.valeurTva != 0) {
-                            const taxe = ((this.livraisonDetail.quantiteLivree * this.livraisonDetail.prixarticle -this.livraisonDetail.remise) * this.livraisonDetail.valeurTva)/100;
-                            this.montantTTc += (this.livraisonDetail.quantiteLivree * this.livraisonDetail.prixarticle -this.livraisonDetail.remise) + (+taxe);
-                          } else {
-                            this.montantTTc += (this.livraisonDetail.quantiteLivree * this.livraisonDetail.prixarticle) -this.livraisonDetail.remise;
+                          if(comm.articlefournisseur){
+                            this.livraisonDetail = {
+                              articlefournisseurId:comm.articlefournisseurId,
+                              livraisonId: 0,
+                              quantiteCommandee: comm.QteCommande,
+                              conditionnementId:comm.conditionnementId,
+                              quantiteFT:0,
+                              quantiteLivree: comm.QteCommande,
+                              prixarticle: comm.prixarticle,
+                              remise: comm.remise,
+                              valeurTva: 0,
+                              selected:false,
+                              articlefournisseur:comm.articlefournisseur,
+                              livraison:[],
+                              conditionnement:comm.conditionnement
+                            };
+                            if (this.livraisonDetail.valeurTva != 0) {
+                              const taxe = ((this.livraisonDetail.quantiteLivree * this.livraisonDetail.prixarticle -this.livraisonDetail.remise) * this.livraisonDetail.valeurTva)/100;
+                              this.montantTTc += (this.livraisonDetail.quantiteLivree * this.livraisonDetail.prixarticle -this.livraisonDetail.remise) + (+taxe);
+                            } else {
+                              this.montantTTc += (this.livraisonDetail.quantiteLivree * this.livraisonDetail.prixarticle) -this.livraisonDetail.remise;
+                            }
+                            
+                            this.livraisonDetails.push(this.livraisonDetail);
                           }
                           
-                          this.livraisonDetails.push(this.livraisonDetail);
+                         
                         }
                         this.addBtn = false;
                       },
@@ -588,22 +611,22 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
   addBonLivraison(){
-    // this.bonLivraison = this.bonLivraison;
-    // this.livraisonDetails = this.livraisonDetails;
-    // if (this.livraisonDetails.length>0) {
-    //   this.livraisonService.createNewBonLivraison(this.bonLivraison,this.livraisonDetails,this.bonCommande).subscribe({
-    //     next:(livraison:any) =>{
-    //       this.toggleToast('Bon de livraison n° '+ this.bonLivraison.numLivraison+ ' crée avec succès!');
-    //       this.addBtn = false;
-    //       this.inputModif = !this.inputModif;
-    //       this.modifToggle = !this.modifToggle;
-    //       this.showvalidateBtn = !this.showvalidateBtn;
-    //       this.resetLivraison();
-    //     },
-    //   })
-    // }else{
-    //   alert('Veuillez réessayer!');
-    // }
+    this.bonLivraison = this.bonLivraison;
+    this.livraisonDetails = this.livraisonDetails;
+    if (this.livraisonDetails.length>0) {
+      this.livraisonService.createNewBonLivraison(this.bonLivraison,this.livraisonDetails,this.bonCommande).subscribe({
+        next:(livraison:any) =>{
+          this.toggleToast('Bon de livraison n° '+ this.bonLivraison.numLivraison+ ' crée avec succès!');
+          this.addBtn = false;
+          this.inputModif = !this.inputModif;
+          this.modifToggle = !this.modifToggle;
+          this.showvalidateBtn = !this.showvalidateBtn;
+          this.resetLivraison();
+        },
+      })
+    }else{
+      alert('Veuillez réessayer!');
+    }
   }
 
   checkSelectedRows(){
@@ -613,6 +636,10 @@ export class BonLivraisonAchatsComponent implements OnInit{
   deleteSelectedRows() {
     this.livraisonDetails = this.livraisonDetails.filter(line => !line.selected);
     this.showDeleteBtn = false;
+    this.addBtn = true;
+    for(const _livrDetail of this.livraisonDetails){
+      this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id !== _livrDetail.articlefournisseurId);
+    }
   }
 
   selectBonLivraison(){
