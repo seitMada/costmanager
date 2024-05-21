@@ -13,13 +13,13 @@ export class FactureService {
   constructor(private https:HttpClient) { }
 
   private apiCreateFacture = environment.APICREATEFACTURE;
+  private apiValidateFacture = environment.APIVALIDATEFACTURE;
+  private apiGetFactureByfournisseur = environment.APIGETFACTUREBYFOURNISSEUR;
+  private apiGetArticleFournisseurByArticle = environment.ARTICLEFOURNISSEURBYARTICLE;
   private apiGetFactureByFournisseurExploitation = environment.APIGETFACTUREBYFOURNISSEUREXPLOITATION;
   private apiGetLivraisonByFournisseurExploitationValidate = environment.APIGETLIVRAISONBYFOURNISSEUREXPLOITATIONVALIDATE;
   private apiGetDetailLivraisonByLivraisonId =  environment.APIGETDETAILLIVRAISONBYLIVRAISONID;
-  private apiGetFactureByfournisseur = environment.APIGETFACTUREBYFOURNISSEUR;
-  private apiValidateFacture = environment.APIVALIDATEFACTURE;
-
-
+ 
   public getFactureByFournisseurExploitation(fournisseurId:number,exploitationId:number){
     return this.https.get<any>(this.apiGetFactureByFournisseurExploitation+fournisseurId, { params: { exploitationId: exploitationId } });
   }
@@ -42,5 +42,9 @@ export class FactureService {
 
   public validateFacture(facture:InterfaceAchat){
     return this.https.post<any>(this.apiValidateFacture,facture)
+  }
+
+  public getArticleFournisseurByArticle(articleId:any[],fournisseurId:number,artExploitation:any[]){
+    return this.https.get<any>(this.apiGetArticleFournisseurByArticle,{ params: { articleId: articleId.join(','),fournisseurId:fournisseurId,artExploitation:artExploitation.join(',') } });
   }
 }

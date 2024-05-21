@@ -449,7 +449,6 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.articleFournisseurs = _articlefournisseurs;
           this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
             (result) => {
-              console.log(this.articleFournisseurs);
               this.closeResult = `Closed with: ${result}`;
               console.log(this.closeResult)
               if (this.closeResult == 'Closed with: Save click') {

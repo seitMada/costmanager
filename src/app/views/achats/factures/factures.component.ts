@@ -27,11 +27,14 @@ import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { InterfaceBonLivraisons } from 'src/app/shared/model/interface-bonLivraison';
 
 import { ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
+import { Conditionnement } from 'src/app/shared/model/conditionnements';
+import { IntefaceConditionnement } from 'src/app/shared/model/inteface-conditionnements';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 @Component({
   selector: 'app-factures',
   standalone: true,
-  imports: [CommonModule, FormsModule, BsDatepickerModule,ToasterComponent,ToastComponent,ToastHeaderComponent,ToastBodyComponent],
+  imports: [CommonModule, FormsModule, BsDatepickerModule,TooltipModule,ToasterComponent,ToastComponent,ToastHeaderComponent,ToastBodyComponent],
   templateUrl: './factures.component.html',
   styleUrl: './factures.component.scss',
   providers: [NgbModalConfig, NgbModal]
@@ -80,6 +83,7 @@ export class FacturesComponent implements OnInit {
   public articleFournisseurs: InterfaceArticlefournisseurs[];
   public articleExploitation: InterfaceArticleExploitation;
   public articleExploitations: InterfaceArticleExploitations;
+  public conditionnement: IntefaceConditionnement;
 
   public num_facture:string;
 
@@ -328,9 +332,12 @@ export class FacturesComponent implements OnInit {
       prixArticle	:0,
       remise:0,
       valeurTva:0,
+      conditionnementId:0,
+      qteFTAchat:0,
       selected:false,
       articlefournisseur :this.articleFournisseur,
       achat:this.facture,
+      conditionnement : this.conditionnement
     }
   }
 
@@ -393,7 +400,7 @@ export class FacturesComponent implements OnInit {
   }
 
   public openModalLivraison(content: TemplateRef<any>) { 
-    this.resetFacture();
+    this.detailFactures = [];
     this.montantTTc = 0;
     const fournisseurId = this.fournisseur.id? this.fournisseur.id:0;
     const exploitationId = this.exploitation.id ?this.exploitation.id:0;
@@ -418,10 +425,11 @@ export class FacturesComponent implements OnInit {
               this.toggle = (this.toggle === false ? true : false);
               this.toggleArticle = this.toggleArticle;
               this.inputModif = false;
-
+              this.resetFacture();
               for (const livraison of _livraisons) {
                 this.bonLivraison = livraison;
-                if (livraison.selected) {                
+                if (livraison.selected) {     
+                  this.addBtn = false;           
                   this.dates = {
                     today:new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()),
                     tomorrow: new Date(livraison.dateLivraison)
@@ -440,22 +448,24 @@ export class FacturesComponent implements OnInit {
                       articlefournisseurId:livDetail.articlefournisseurId,
                       quantite: livDetail.quantiteLivree,
                       prixArticle	:livDetail.prixarticle,
+                      conditionnementId:livDetail.conditionnementId ? livDetail.conditionnementId:0,
+                      qteFTAchat:0,
                       remise:livDetail.remise,
                       valeurTva:taxe,
                       selected:false,
                       achat:this.facture,
                       articlefournisseur : livDetail.articlefournisseur,
+                      conditionnement: livDetail.conditionnementId,
                     };
 
                     this.montantTTc += ((( this.detailFacture.quantite * this.detailFacture.prixArticle) -this.detailFacture.remise) + (+taxe));
                                        
                     this.detailFactures.push(this.detailFacture);
                   }
-                  console.log(this.detailFactures);
-                  
+                 
                 }else{
                   this.addBtn = true;
-                  this.detailFactures = [];
+                  this.toggle = false;
                 }                
               }
             }else if(this.closeResult == 'Closed with: Create click'){
@@ -486,55 +496,100 @@ export class FacturesComponent implements OnInit {
   }
 
   public openModalArticle(contentArticle: TemplateRef<any>){ 
-    const exploitationId = Number(this.exploitationId);
-    this.selectFounisseur(this.fournisseur);
-    this.livraisonService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
-      next: (artExploitation) => {         
-        if (artExploitation) {
-          this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
-          this.livraisonService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
-            next: (artFournisseurs: any) => {
-              this.detailFactures=[];
-              this.articleFournisseurs = artFournisseurs;
-             
-              this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
-                (result) => {
-                  this.closeResult = `Closed with: ${result}`;
-                  
-                  console.log(this.closeResult)
-                  if (this.closeResult == 'Closed with: Save click') {
-                    
-                    this.inputModif = this.inputModif; 
-                    this.detailFactures =[];   
-                    for (const articlefournisseur of artFournisseurs) {
-                      if (articlefournisseur.selected == true) {
-                        this.detailFacture = {
-                          achatId:0,
-                          articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
-                          quantite: 0,
-                          prixArticle	:articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat : 0,
-                          remise:0,
-                          valeurTva:0,
-                          selected:false,
-                          achat:this.facture,
-                          articlefournisseur : articlefournisseur,
-                        }
-                        this.detailFactures.push(this.detailFacture);
-                      }
+    if (this.detailFactures.length>0) {
+      const articlesId =  this.detailFactures.map((i:any) => i.articlefournisseur.articleId);
+      this.factureService.getArticleFournisseurByArticle(articlesId, this.fournisseur.id ? this.fournisseur.id : 0,this.artExploitationArticleId).subscribe({
+        next:(_articlefournisseurs) =>{
+          this.articleFournisseurs = _articlefournisseurs;
+          this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+            (result) => {
+              this.closeResult = `Closed with: ${result}`;
+              console.log(this.closeResult)
+              if (this.closeResult == 'Closed with: Save click') {
+                for (const articlefournisseur of this.articleFournisseurs) {         
+                  if (articlefournisseur.selected == true) {
+                    this.detailFacture = {
+                      achatId:0,
+                      articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                      quantite: 0,
+                      prixArticle	:articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat : 0,
+                      remise:0,
+                      valeurTva:0,
+                      conditionnementId:articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id :0,
+                      qteFTAchat:0,
+                      selected:false,
+                      achat:this.facture,
+                      articlefournisseur : articlefournisseur,
+                      conditionnement: articlefournisseur.conditionnement[0],
                     }
-                    console.log(this.detailFactures);
+                    this.detailFactures.push(this.detailFacture);
                   }
-                },
-                (reason) => {
-                  this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-                  console.log(this.closeResult)
-                },
-              );
-            }
-          })
+                }
+                this.addBtn = false;
+              }
+            },
+            (reason) => {
+              this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+              console.log(this.closeResult)
+            },
+          );
+        },
+      })
+    } else {
+      const exploitationId = Number(this.exploitationId);
+      this.selectFounisseur(this.fournisseur);
+      this.livraisonService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
+        next: (artExploitation) => {         
+          if (artExploitation) {
+            this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
+            this.livraisonService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
+              next: (artFournisseurs: any) => {
+                this.detailFactures=[];
+                this.articleFournisseurs = artFournisseurs;
+              
+                this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+                  (result) => {
+                    this.closeResult = `Closed with: ${result}`;
+                    
+                    console.log(this.closeResult)
+                    if (this.closeResult == 'Closed with: Save click') {
+                      
+                      this.inputModif = this.inputModif; 
+                      this.detailFactures =[];   
+                      for (const articlefournisseur of artFournisseurs) {
+                        if (articlefournisseur.selected == true) {
+                          this.detailFacture = {
+                            achatId:0,
+                            articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                            quantite: 0,
+                            prixArticle	:articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat : 0,
+                            remise:0,
+                            valeurTva:0,
+                            conditionnementId:articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id :0,
+                            qteFTAchat:0,
+                            selected:false,
+                            achat:this.facture,
+                            articlefournisseur : articlefournisseur,
+                            conditionnement: articlefournisseur.conditionnement[0],
+                          }
+                          this.detailFactures.push(this.detailFacture);
+                        }
+                      }
+                      console.log(this.detailFactures);
+                    }
+                  },
+                  (reason) => {
+                    this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+                    console.log(this.closeResult)
+                  },
+                );
+              }
+            })
+          }
         }
-      }
-    });
+      });
+    }
+    
    
   }
 
@@ -560,6 +615,10 @@ export class FacturesComponent implements OnInit {
   deleteSelectedRows() {
     this.detailFactures = this.detailFactures.filter(line => !line.selected);
     this.showDeleteBtn = false;
+    this.addBtn = true;
+    for (const achatdetail of this.detailFactures) {
+      this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id !== achatdetail.articlefournisseurId);
+    }
   }
 
   getTotalMontant(_datas : InterfaceAchatDetail[]):number {

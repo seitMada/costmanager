@@ -14,13 +14,15 @@ export class BonlivraisonService {
 
   private apiCreateBonLivraison = environment.APICREATEBONLIVRAISON;
   private apiDeleteBonLivraison = environment.DELETEBONLIVRAISON;
+  private apiValidateLivraison = environment.APIVALIDATELIVRAISON;
   private apiGetLivraisonByfournisseur = environment.APIGETLIVRAISONBYFOURNISSEUR;
+  private apiGetArticleFournisseurByArticle = environment.ARTICLEFOURNISSEURBYARTICLE;
   private apiGetDetailCommandeByCommandeId = environment.APIGETCOMMANDEDETAILBYCOMMANDEID;
   private apiGetDetailLivraisonByLivraisonId = environment.APIGETDETAILLIVRAISONBYLIVRAISONID;
   private apiArticleFournisseurByArticleId = environment.APIGETARTICLEFOURNISSEURBYARTICLEID;
   private apiArticleExploitationByExploitationId = environment.APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID;
   private apiGetCommandeByFournisseurExploitation = environment.APIGETCOMMANDEBYFOURNISSEUREXPLOITATIONVALIDATE;
-  private apiValidateLivraison = environment.APIVALIDATELIVRAISON;
+
   
 
   public getListLivraisonByFournisseurExploitation(fournisseurId:number,exploitationId:number){
@@ -57,6 +59,10 @@ export class BonlivraisonService {
 
   public validateLivraison(livraison:InterfaceBonLivraisons){
     return this.https.post<any>(this.apiValidateLivraison,livraison)
+  }
+
+  public getArticleFournisseurByArticle(articleId:any[],fournisseurId:number,artExploitation:any[]){
+    return this.https.get<any>(this.apiGetArticleFournisseurByArticle,{ params: { articleId: articleId.join(','),fournisseurId:fournisseurId,artExploitation:artExploitation.join(',') } });
   }
 
 }

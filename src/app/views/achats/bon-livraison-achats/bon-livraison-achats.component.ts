@@ -28,11 +28,12 @@ import { AlertModule, ToastBodyComponent, ToastComponent, ToastHeaderComponent, 
 import { PAYS } from 'src/assets/pays';
 import { Conditionnement } from 'src/app/shared/model/conditionnements';
 import { IntefaceConditionnement } from 'src/app/shared/model/inteface-conditionnements';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 @Component({
   selector: 'app-bon-livraison-achats',
   standalone: true,
-  imports: [CommonModule, FormsModule,BsDatepickerModule,AlertModule,ToasterComponent,ToastComponent,ToastHeaderComponent,ToastBodyComponent],
+  imports: [CommonModule, FormsModule,BsDatepickerModule,TooltipModule,AlertModule,ToasterComponent,ToastComponent,ToastHeaderComponent,ToastBodyComponent],
   templateUrl: './bon-livraison-achats.component.html',
   styleUrl: './bon-livraison-achats.component.scss',
   providers:[NgbModalConfig,NgbModal]
@@ -335,22 +336,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
   listArticleFournisseurs(){
-    const exploitationId = Number(this.exploitationId);
-    this.selectFounisseur(this.fournisseur);
-    this.resetDetailLivraison();
-    this.livraisonService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
-      next: (artExploitation) => {         
-        if (artExploitation) {
-          this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
-          this.livraisonService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
-            next: (artFournisseur: any) => {
-              this.articleFournisseurs = artFournisseur;
-              console.log(this.articleFournisseurs);
-            }
-          })
-        }
-      }
-    });
+   
   }
 
   public resetArticleFournisseur(){
@@ -411,42 +397,105 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
   public openModalArticle(contentArticle: TemplateRef<any>){
-    this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
-      (result) => {
-        this.closeResult = `Closed with: ${result}`;
-        console.log(this.closeResult)
-        if (this.closeResult == 'Closed with: Save click') {
-          this.livraisonDetails = [];
-          this.inputModif = this.inputModif;              
-          for (const articlefournisseur of this.articleFournisseurs) {
-            console.log(this.articleFournisseurs);
-            
-            // if (articlefournisseur.selected == true) {
-            //   this.livraisonDetail = {
-            //     articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
-            //     livraisonId: 0,
-            //     quantiteCommandee: 0,
-            //     conditionnementId:articlefournisseur.conditionnement[0].id?articlefournisseur.conditionnement[0]:0,
-            //     quantiteLivree: 0,
-            //     quantiteFT:0,
-            //     prixarticle: articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat: 0,
-            //     remise: 0,
-            //     valeurTva: 0,
-            //     selected:false,
-            //     articlefournisseur:articlefournisseur,
-            //     livraison:[]
-            //   }
-            //   this.livraisonDetails.push(this.livraisonDetail);
-            // }
+    if (this.livraisonDetails.length > 0) {
+      const articlesId =  this.livraisonDetails.map((i:any) => i.articlefournisseur.articleId);
+      this.livraisonService.getArticleFournisseurByArticle(articlesId, this.fournisseur.id ? this.fournisseur.id : 0,this.artExploitationArticleId).subscribe({
+        next:(_articlefournisseurs) =>{
+          this.articleFournisseurs = _articlefournisseurs;
+          this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+            (result) => {
+              this.closeResult = `Closed with: ${result}`;
+              console.log(this.closeResult)
+              if (this.closeResult == 'Closed with: Save click') {
+                for (const articlefournisseur of this.articleFournisseurs) {         
+                  if (articlefournisseur.selected == true) {
+                    for(const condition of articlefournisseur.conditionnement){
+                      if (condition.selected != undefined ) {
+                        this.livraisonDetail = {
+                          articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                          livraisonId: 0,
+                          quantiteCommandee: 0,
+                          conditionnementId:condition.id ? condition.id:0,
+                          quantiteLivree: 0,
+                          quantiteFT:0,
+                          prixarticle:condition.prixAchat ? condition.prixAchat: 0,
+                          remise: 0,
+                          valeurTva: 0,
+                          selected:false,
+                          articlefournisseur:articlefournisseur,
+                          livraison:[],
+                          conditionnement: condition
+                        }
+                        this.livraisonDetails.push(this.livraisonDetail);
+                      }
+                    }
+                  }
+                }
+                this.addBtn = false;
+              }
+            },
+            (reason) => {
+              this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+              console.log(this.closeResult)
+            },
+          );
+        },
+      })
+    } else {
+      const exploitationId = Number(this.exploitationId);
+      this.selectFounisseur(this.fournisseur);
+      this.livraisonService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
+        next: (artExploitation) => {         
+          if (artExploitation) {
+            this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
+            this.livraisonService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
+              next: (artFournisseur: any) => {
+                this.articleFournisseurs = artFournisseur;
+                this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+                  (result) => {
+                    this.closeResult = `Closed with: ${result}`;
+                    console.log(this.closeResult)
+                    if (this.closeResult == 'Closed with: Save click') {
+                      this.livraisonDetails = [];
+                      this.inputModif = this.inputModif;              
+                      for (const articlefournisseur of this.articleFournisseurs) {         
+                        if (articlefournisseur.selected == true) {
+                          for(const condition of articlefournisseur.conditionnement){
+                            if (condition.selected != undefined ) {
+                              this.livraisonDetail = {
+                                articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                                livraisonId: 0,
+                                quantiteCommandee: 0,
+                                conditionnementId:condition.id ? condition.id:0,
+                                quantiteLivree: 0,
+                                quantiteFT:0,
+                                prixarticle:condition.prixAchat ? condition.prixAchat: 0,
+                                remise: 0,
+                                valeurTva: 0,
+                                selected:false,
+                                articlefournisseur:articlefournisseur,
+                                livraison:[],
+                                conditionnement: condition
+                              }
+                              this.livraisonDetails.push(this.livraisonDetail);
+                            }
+                          }
+                        }
+                      }
+                      this.addBtn = false;
+                    }
+                  },
+                  (reason) => {
+                    this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+                    console.log(this.closeResult)
+                  },
+                );
+              }
+            })
           }
-          console.log(this.livraisonDetails);
         }
-      },
-      (reason) => {
-        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        console.log(this.closeResult)
-      },
-    );
+      });
+    }
   }
 
   public openModalCommande(content: TemplateRef<any>) { 
@@ -508,8 +557,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
                             
                             this.livraisonDetails.push(this.livraisonDetail);
                           }
-                          
-                         
                         }
                         this.addBtn = false;
                       },
