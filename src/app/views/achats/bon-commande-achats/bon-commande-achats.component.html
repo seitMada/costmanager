@@ -42,14 +42,14 @@
         <div class="card-body py-1">
           <form #bonCommandeForm="ngForm">
             <div class="row m-2">
-              <div class="col-sm-6">
+              <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Date de commande</span>
                   <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datecommande" [disabled]="inputModif"
                     [(ngModel)]="dates.today" autocomplete="off">
                 </div>
               </div>
-              <div class="col-sm-6">
+              <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Fournisseur</span>
                   <input type="text" class="form-control col-6" [(ngModel)]="boncommande.fournisseur.raison_social" name="fournisseurId" 
@@ -58,14 +58,14 @@
               </div>
             </div>
             <div class="row m-2">
-              <div class="col-sm-6">
+              <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Exploitation</span>
                   <input type="text" class="form-control col-7" [(ngModel)]="exploitation.libelle" name="exploitationId" [disabled]="true"
                     aria-label="exploitation" aria-describedby="basic-addon1">
                 </div>
               </div>
-              <div class="col-sm-6">
+              <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Adresse Fournisseur</span>
                   <input type="text" [value]="fournisseur.adresse.rue +' '+fournisseur.adresse.code_postal+' '+fournisseur.adresse.ville+' '+fournisseur.adresse.pays" class="form-control col-7" name="adresse" aria-label="adresse"
@@ -75,7 +75,7 @@
     
             </div>
             <div class="row m-2">
-              <div class="col-sm-6">
+              <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Centre de revenu</span>
                   <input type="text" class="form-control bg-white col-6" name="centreId" [(ngModel)]="centre.libelle" aria-label="centre" aria-describedby="centre"disabled="true">
@@ -87,7 +87,7 @@
                   </ul>
                 </div>
               </div>
-              <div class="col-sm-6">
+              <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">N° bon de commande</span>
                   <input type="text" class="form-control col-7" [(ngModel)]="boncommande.noPiece"  name="noPiece" [disabled]="inputModif" aria-describedby="basic-addon1">
@@ -124,6 +124,7 @@
             </thead>
             <tbody >
               <tr *ngFor="let line of commandes">
+                
                 <td  class="col-1">
                     <input class="form-check-input" [disabled]="inputModif" type="checkbox" name="dc-{{line.id}}" id="dc-{{line.id}}" [(ngModel)]="line.selected" (change)="checkSelectedRows()">
                 </td>
@@ -144,6 +145,7 @@
                     <span class="input-group-text">€</span>
                   </div>
                 </td>
+              
               </tr>
             </tbody>
           </table>
@@ -207,7 +209,7 @@
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let line of commandes">
+        <!-- <tr *ngFor="let line of commandes">
           <td class="col-1"></td>
           <td class="col-3">{{ line.articlefournisseur?.article?.familles?.libelle || '' }}</td>
           <td class="col-3">{{line.articlefournisseur?.article?.libelle || ''}}</td>
@@ -216,7 +218,7 @@
           <td class="col-1">{{ line.prixarticle | number:'1.2-2' }} €</td>
           <td class="col-1">{{ line.QteCommande * line.prixarticle | number:'1.2-2' }} €</td>
           <td class="col-1">{{ line.remise | number:'1.2-2' }} €</td>
-        </tr>
+        </tr> -->
       </tbody>
     </table>
   </div>

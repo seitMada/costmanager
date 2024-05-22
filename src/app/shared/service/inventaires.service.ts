@@ -14,6 +14,7 @@ export class InventairesService {
   private apiUpdateInventaire = environment.APIUPDATEINVENTAIRE;
   private apiGetInventaireById = environment.APIGETINVENTAIREBYID;
   private apiGetInventaireDetailsByNumero = environment.APIGETINVENTAIREDETAILBYNUMERO;
+  private apiGetPeriode = environment.APIGETPERIODE;
 
   constructor(private https: HttpClient) { }
 
@@ -59,5 +60,9 @@ export class InventairesService {
 
   public getInventaireById(id: number) {
     return this.https.get<any>(this.apiGetInventaireById + id);
+  }
+  
+  public getPeriode(id: number[], isexploitation: boolean = false) {
+    return this.https.post(this.apiGetPeriode, { id: id, isexploitation: isexploitation });
   }
 }

@@ -19,8 +19,6 @@
     </div>
     <div class="flex-grow-1 bd-highlight mx-1 col-5">
       <div class="badge bg-secondary mt-1 ms-1" *ngFor="let head of headerchoice.split(',')"> <span *ngIf="head && head.length > 0 && head != ' '">{{head}}</span> </div>
-      <!-- <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.fin" [minDate]="dates.debut"
-          name="dateFin"> -->
     </div>
     <div class="bd-highlight">
       <button class="btn btn-sm btn-outline-info me-1" (click)="open()"><i class="fas fa-chart-area"></i></button>
@@ -35,7 +33,7 @@
   <div class="modal-body">
     <div class="card-body py-1">
       <div class="row m-2">
-        <div class="col-sm-6">
+        <div class="col-6">
           <div class="input-group">
             <span class="input-group-text col-6" id="libelle">Date début</span>
             <input type="text" class="form-control col-7 bg-white" aria-label="datedebut" autocomplete="off"
@@ -43,7 +41,7 @@
               [maxDate]="dates.fin">
           </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-6">
           <div class="input-group">
             <span class="input-group-text col-6" id="libelle">Date fin</span>
             <input type="text" class="form-control col-7 bg-white" aria-label="datefin" autocomplete="off"
@@ -409,7 +407,7 @@
   <div class="modal-body">
     <div class="card-body py-1">
       <div class="row m-2">
-        <div class="col-sm-6">
+        <div class="col-6">
           <div class="input-group">
             <span class="input-group-text col-6" id="libelle">Date début</span>
             <input type="text" class="form-control col-7 bg-white" aria-label="datedebut" autocomplete="off"
@@ -417,7 +415,7 @@
               [maxDate]="dates.fin">
           </div>
         </div>
-        <div class="col-sm-6">
+        <div class="col-6">
           <div class="input-group">
             <span class="input-group-text col-6" id="libelle">Date fin</span>
             <input type="text" class="form-control col-7 bg-white" aria-label="datefin" autocomplete="off"

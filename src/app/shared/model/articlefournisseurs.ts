@@ -20,13 +20,13 @@ export class Articlefournisseur implements InterfaceArticlefournisseurs {
 
     constructor(articlefournisseurInterface: InterfaceArticlefournisseurs) {
         this.articleId = articlefournisseurInterface.articleId;
-        this.fournisseurId = articlefournisseurInterface.fournisseurId;
+        this.fournisseurId = articlefournisseurInterface.fournisseurId || 0;
         this.marque = articlefournisseurInterface.marque;
         this.prixReference = articlefournisseurInterface.prixReference;
         this.prixReferencePrecedent = articlefournisseurInterface.prixReferencePrecedent;
         this.commentaire = articlefournisseurInterface.commentaire;
         this.article = articlefournisseurInterface.article;
-        this.fournisseur = articlefournisseurInterface.fournisseur;
+        this.fournisseur = articlefournisseurInterface.fournisseur || this.fournisseur;
         this.conditionnement = articlefournisseurInterface.conditionnement;
     }
 }

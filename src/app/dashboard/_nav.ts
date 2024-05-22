@@ -31,18 +31,19 @@ export const navItems: INavData[] = [
           name: 'Mouvements de stocks',
           url: 'donnee_de_base/gestion_stock/mouvement_stock'
         },
-        {
-          name: 'Gestion de stock minimum',
-          url: 'donnee_de_base/gestion_stock/gestion_stock_minimum'
-        },
+        // {
+        //   name: 'Gestion de stock minimum',
+        //   url: 'donnee_de_base/gestion_stock/gestion_stock_minimum'
+        // },
         {
           name: 'Stock minimum',
           url: 'donnee_de_base/gestion_stock/stock_minimum'
         },
-        {
-          name: 'Zones de stockage',
-          url: 'donnee_de_base/gestion_stock/zones_stockages'
-        }]
+        // {
+        //   name: 'Zones de stockage',
+        //   url: 'donnee_de_base/gestion_stock/zones_stockages'
+        // }
+      ]
       },
     ]
   },

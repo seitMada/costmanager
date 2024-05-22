@@ -123,7 +123,7 @@ export class SynthesePposComponent implements OnInit {
       next: async (_exploitations) => {
         this.exploitations = _exploitations;
         this.exploitations[0].selected = true;
-        this.exploitationsselected = [_exploitations[0].id];
+        this.exploitationsselected = [this.exploitations[0].id || 0];
         this.headerchoice = this.exploitations[0].libelle;
         this.centrerevenuService.getcentrerevenu().subscribe({
           next: async (_centrerevenus) => {
@@ -131,6 +131,9 @@ export class SynthesePposComponent implements OnInit {
             if (this.isAdmin === true) {
               this.exploitations = this.exploitations.filter(e => e.id !== this.idexploitation);
               this.centrerevenus = this.centrerevenus.filter(c => c.exploitationsId !== this.idexploitation);
+            } else {
+              this.exploitations = this.exploitations.filter(e => e.id == this.idexploitation);
+              this.centrerevenus = this.centrerevenus.filter(c => c.exploitationsId == this.idexploitation);
             }
           }
         });

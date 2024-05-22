@@ -19,13 +19,13 @@
         <div class="card-body py-1">
           <form #centreForm="ngForm">
             <div class="row m-2">
-                <div class="col-sm-6">
+                <div class="col-6">
                     <div class="input-group">
                       <span class="input-group-text col-5" id="basic-addon1">Code</span>
                       <input type="text" class="form-control col-6" [disabled]="inputModif" [(ngModel)]="centre.code" name="code" aria-describedby="basic-addon1">
                     </div>
                   </div>
-              <div class="col-sm-6">
+              <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Libelle</span>
                   <input type="text" class="form-control col-7" [disabled]="inputModif" name="libelle" [(ngModel)]="centre.libelle" autocomplete="off">
@@ -33,13 +33,13 @@
               </div>
             </div>
             <div class="row m-2">
-              <div class="col-sm-6">
+              <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Email</span>
                   <input type="eamil" class="form-control col-7" [disabled]="inputModif" [(ngModel)]="centre.email" name="email" aria-describedby="basic-addon1">
                 </div>
               </div>
-              <div class="col-sm-6">
+              <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Téléphone</span>
                   <input type="text" class="form-control col-7" [disabled]="inputModif" name="telephone" [(ngModel)]="centre.telephone">

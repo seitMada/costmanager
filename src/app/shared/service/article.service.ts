@@ -13,6 +13,7 @@ import { InterfaceFamilles } from '../model/interface-familles';
 import { InterfaceSousfamilles } from '../model/interface-sousfamilles';
 import { InterfaceUnite } from '../model/interface-unite';
 import { InterfaceGroupeanalytiques } from '../model/interface-groupeanalytiques';
+import { InterfaceArticleExploitation } from '../model/interface-articleexploitations';
 
 @Injectable({
   providedIn: 'root'
@@ -36,8 +37,9 @@ export class ArticleService {
 
   private apiGetArticleByFournisseur = environment.APIGETARTICLEBYFOURNISSEUR;
   private apiGetArticleByIdFournisseur = environment.APIGETARTICLEBYFOURNISSEUR;
-  
+
   private apiGetMouvementStock = environment.APIGETMOUVEMENTSTOCK;
+  private apiUpdateStockminimum = environment.APIUPDATESTOCKMINIMUM;
 
   constructor(private https: HttpClient) { }
 
@@ -101,9 +103,13 @@ export class ArticleService {
     return this.https.post(this.apiGetArticleByZone, { zonestockageId: zonestockageId });
   }
 
-  public getMouvementStock(dates: any, id: number, isexploitation: boolean = true) {
-    return this.https.post(this.apiGetMouvementStock, { dates: dates, id: id, isexploitation: isexploitation });
-  } 
+  public getMouvementStock(dates: any, id: number[], isexploitation: boolean = true) {
+    return this.https.post(this.apiGetMouvementStock, { dates: dates, id: id.toString(), isexploitation: isexploitation });
+  }
+
+  public updateStockminimum(data: { articleexploitationid: number, stockminimum: number }[]) {
+    return this.https.patch(this.apiUpdateStockminimum, data);
+  }
 
   public resetArticle() {
     const categorie: InterfaceCategories = {
