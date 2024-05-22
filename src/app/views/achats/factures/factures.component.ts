@@ -508,24 +508,28 @@ export class FacturesComponent implements OnInit {
               if (this.closeResult == 'Closed with: Save click') {
                 for (const articlefournisseur of this.articleFournisseurs) {         
                   if (articlefournisseur.selected == true) {
+                    const conditionnement = articlefournisseur.conditionnement.reduce((min:any, current:any) => {
+                      return current.prixAchat < min.prixAchat ? current : min;
+                    });
                     this.detailFacture = {
                       achatId:0,
                       articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
                       quantite: 0,
-                      prixArticle	:articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat : 0,
+                      prixArticle	:conditionnement.prixAchat ? conditionnement.prixAchat : 0,
                       remise:0,
                       valeurTva:0,
-                      conditionnementId:articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id :0,
+                      conditionnementId:conditionnement.id ? conditionnement.id :0,
                       qteFTAchat:0,
                       selected:false,
                       achat:this.facture,
                       articlefournisseur : articlefournisseur,
-                      conditionnement: articlefournisseur.conditionnement[0],
+                      conditionnement: conditionnement,
                     }
                     this.detailFactures.push(this.detailFacture);
+                    this.addBtn = false;
                   }
                 }
-                this.addBtn = false;
+                
               }
             },
             (reason) => {
@@ -558,21 +562,26 @@ export class FacturesComponent implements OnInit {
                       this.detailFactures =[];   
                       for (const articlefournisseur of artFournisseurs) {
                         if (articlefournisseur.selected == true) {
-                          this.detailFacture = {
-                            achatId:0,
-                            articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
-                            quantite: 0,
-                            prixArticle	:articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat : 0,
-                            remise:0,
-                            valeurTva:0,
-                            conditionnementId:articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id :0,
-                            qteFTAchat:0,
-                            selected:false,
-                            achat:this.facture,
-                            articlefournisseur : articlefournisseur,
-                            conditionnement: articlefournisseur.conditionnement[0],
+                          for(const condition of articlefournisseur.conditionnement){
+                            if (condition.selected !== undefined) {
+                              this.detailFacture = {
+                                achatId:0,
+                                articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                                quantite: 0,
+                                prixArticle	:articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat : 0,
+                                remise:0,
+                                valeurTva:0,
+                                conditionnementId:articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id :0,
+                                qteFTAchat:0,
+                                selected:false,
+                                achat:this.facture,
+                                articlefournisseur : articlefournisseur,
+                                conditionnement: articlefournisseur.conditionnement[0],
+                              }
+                              this.detailFactures.push(this.detailFacture);
+                              this.addBtn = false;
+                            }
                           }
-                          this.detailFactures.push(this.detailFacture);
                         }
                       }
                       console.log(this.detailFactures);

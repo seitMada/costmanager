@@ -23,9 +23,11 @@ export class LivraisonDetail implements InterfaceLivraisonDetail{
     articlefournisseurId:number;
     livraisonId:number;
     quantiteCommandee:number;
+    quantiteCommandeeFT:number;
     conditionnementId:number;
     quantiteFT:number;
     quantiteLivree:number;
+    quantiteLivreeFT:number;
     prixarticle:number;
     remise:number;
     valeurTva:number;
@@ -39,9 +41,11 @@ export class LivraisonDetail implements InterfaceLivraisonDetail{
         this.articlefournisseurId = livraisonDetail.articlefournisseurId;
         this.livraisonId = livraisonDetail.livraisonId;
         this.quantiteCommandee = livraisonDetail.quantiteCommandee;
+        this.quantiteCommandeeFT = livraisonDetail.quantiteCommandeeFT;
         this.conditionnementId = livraisonDetail.conditionnementId;
         this.quantiteFT = livraisonDetail.quantiteFT;
         this.quantiteLivree = livraisonDetail.quantiteLivree;
+        this.quantiteLivreeFT = livraisonDetail.quantiteLivreeFT;
         this.prixarticle = livraisonDetail.prixarticle;
         this.remise = livraisonDetail.remise;
         this.valeurTva = livraisonDetail.valeurTva;

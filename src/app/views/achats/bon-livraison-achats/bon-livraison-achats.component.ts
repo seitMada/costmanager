@@ -321,9 +321,11 @@ export class BonLivraisonAchatsComponent implements OnInit{
     this.livraisonDetail = {
       articlefournisseurId:0,
       livraisonId: 0,
+      quantiteCommandeeFT:0,
       quantiteCommandee: 0,
       conditionnementId:0,
       quantiteLivree: 0,
+      quantiteLivreeFT:0,
       quantiteFT:0,
       prixarticle: 0,
       remise: 0,
@@ -415,8 +417,10 @@ export class BonLivraisonAchatsComponent implements OnInit{
                           articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
                           livraisonId: 0,
                           quantiteCommandee: 0,
+                          quantiteCommandeeFT:0,
                           conditionnementId:condition.id ? condition.id:0,
                           quantiteLivree: 0,
+                          quantiteLivreeFT:0,
                           quantiteFT:0,
                           prixarticle:condition.prixAchat ? condition.prixAchat: 0,
                           remise: 0,
@@ -466,8 +470,10 @@ export class BonLivraisonAchatsComponent implements OnInit{
                                 articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
                                 livraisonId: 0,
                                 quantiteCommandee: 0,
+                                quantiteCommandeeFT:0,
                                 conditionnementId:condition.id ? condition.id:0,
                                 quantiteLivree: 0,
+                                quantiteLivreeFT:0,
                                 quantiteFT:0,
                                 prixarticle:condition.prixAchat ? condition.prixAchat: 0,
                                 remise: 0,
@@ -478,11 +484,12 @@ export class BonLivraisonAchatsComponent implements OnInit{
                                 conditionnement: condition
                               }
                               this.livraisonDetails.push(this.livraisonDetail);
+                              this.addBtn = false;
                             }
                           }
                         }
                       }
-                      this.addBtn = false;
+                      
                     }
                   },
                   (reason) => {
@@ -507,7 +514,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
         this.addLivraison = !this.addLivraison;
         this.listLivraison = !this.listLivraison;
         this.bonLivraison.fournisseurId = this.fournisseur.id ?this.fournisseur.id:0;
-        
+        this.addBtn = false;
           this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
             (result) => {
               this.closeResult = `Closed with: ${result}`;
@@ -516,7 +523,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
                 this.modifToggle = !this.modifToggle;
                 this.toggle = (this.toggle === false ? true : false);
                 this.resetLivraison();
-                this.addBtn = false;
                 this.inputModif = false;
                 for(const commande of commandes){
                   this.bonCommande = commande;
@@ -537,9 +543,11 @@ export class BonLivraisonAchatsComponent implements OnInit{
                               articlefournisseurId:comm.articlefournisseurId,
                               livraisonId: 0,
                               quantiteCommandee: comm.QteCommande,
+                              quantiteCommandeeFT:comm.quantiteCommandeeFT,
                               conditionnementId:comm.conditionnementId,
                               quantiteFT:0,
                               quantiteLivree: comm.QteCommande,
+                              quantiteLivreeFT:0,
                               prixarticle: comm.prixarticle,
                               remise: comm.remise,
                               valeurTva: 0,
@@ -556,6 +564,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
                             }
                             
                             this.livraisonDetails.push(this.livraisonDetail);
+                            console.log(this.livraisonDetails);
+                            
                           }
                         }
                         this.addBtn = false;
@@ -573,6 +583,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
                 this.addBtn = true;
                 this.inputModif = false;
                 this.livraisonDetails = [];
+                console.log(this.livraisonDetails);
+                
                 this.dates = {
                   today:new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()),
                   tomorrow: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()+1)
@@ -588,6 +600,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
               this.inputModif = false;
               this.modifToggle = true;
               this.livraisonDetails = [];
+              console.log(this.livraisonDetails);
             },
           ); 
       }, 

@@ -313,7 +313,7 @@ export class BonCommandeAchatsComponent implements OnInit {
       remise: 0,
       montantHT: 0,
       montantTva: 0,
-      noPiece: '',
+      noPiece: this.num_commande,
       validation: 0,
       commentaire: '',
       dateCommande: new Date(),
@@ -677,6 +677,7 @@ export class BonCommandeAchatsComponent implements OnInit {
         this.btnTenRecord = false;
         this.inputModif = true;
         this.modifToggle = this.modifToggle;
+        this.addBtn = false;
       },
     })
   }

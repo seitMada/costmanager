@@ -7,9 +7,11 @@ export interface InterfaceLivraisonDetail{
     articlefournisseurId:number;
     livraisonId:number;
     quantiteCommandee:number;
+    quantiteCommandeeFT:number;
     conditionnementId:number;
     quantiteFT:number;
     quantiteLivree:number;
+    quantiteLivreeFT:number;
     prixarticle:number;
     remise:number;
     valeurTva:number;

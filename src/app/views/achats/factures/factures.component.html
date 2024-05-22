@@ -139,7 +139,7 @@
       <li class="list-group-item">
         <div class="card d-flex py-1 mb-2">
           <div class="d-flex flex-row-reverse bd-highlight">
-            <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleArticle" *ngIf="(!toggle && addBtn)" (click)="openModalArticle(contentArticle)" title="Ajouter article">
+            <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleArticle" *ngIf="addBtn" (click)="openModalArticle(contentArticle)" title="Ajouter article">
               <i class="fas fa-plus"></i>
             </button>
             <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!showDeleteBtn" (click)="deleteSelectedRows()" title="Supprimer"><i class="fas fa-trash"></i></button>

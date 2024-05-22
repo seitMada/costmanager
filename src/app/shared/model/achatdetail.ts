@@ -24,6 +24,7 @@ export class AchatDetail implements InterfaceAchatDetail{
         this.achatId = achatDetailInterface.achatId;
         this.articlefournisseurId = achatDetailInterface.articlefournisseurId;
         this.quantite =  achatDetailInterface.quantite;
+        this.qteFTAchat = achatDetailInterface.qteFTAchat;
         this.prixArticle = achatDetailInterface.prixArticle;
         this.remise = achatDetailInterface.remise;
         this.valeurTva = achatDetailInterface.valeurTva;
