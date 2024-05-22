@@ -630,9 +630,9 @@ export class FacturesComponent implements OnInit {
     }
   }
 
-  getTotalMontant(_datas : InterfaceAchatDetail[]):number {
+  getTotalMontant():number {
     let montantTTc=0;    
-    for (const line of _datas) {
+    for (const line of this.detailFactures) {
       if (line.valeurTva != 0 || line.valeurTva !=null) {
         const taxe =  (((line.quantite * line.prixArticle	) -line.remise)* line.valeurTva) /100;
         montantTTc += ((line.quantite * line.prixArticle	) -line.remise) + (+taxe);
