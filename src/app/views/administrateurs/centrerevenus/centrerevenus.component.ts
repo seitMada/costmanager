@@ -33,6 +33,8 @@ export class CentrerevenusComponent implements OnInit {
   public exploitations: InterfaceExploitations[];
 
   public centreForm = FormGroup;
+  public exploitationForm = FormGroup;
+
   closeResult = '';
   private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
   public centreId = 0;
@@ -40,6 +42,7 @@ export class CentrerevenusComponent implements OnInit {
   public toggle = true;
   public modifToggle = true;
   public inputModif = false;
+  public addExploitation = false;
 
   public active_2 = 1;
 
@@ -76,6 +79,7 @@ export class CentrerevenusComponent implements OnInit {
     config.backdrop = 'static';
     config.keyboard = false;
     this.resetCentre();
+    this.resetExploitation();
   }
 
   ngOnInit(): void {
@@ -90,6 +94,43 @@ export class CentrerevenusComponent implements OnInit {
       }
     });
   } 
+
+  public resetExploitation() {
+    this.adresse = {
+      rue: '',
+      ville: '',
+      code_postal: null,
+      pays: '',
+      selected: false,
+      centreRevenu: [],
+      exploitation: [],
+      operateur: [],
+    }
+    this.exploitation = {
+      code_couleur: "...",
+      libelle: "...",
+      nbDecimal: 0,
+      commentaire:"...",
+      siteWeb:"...",
+      codenaf:"...",
+      siret:"...",
+      logo:"...",
+      actif:true,
+      adressesId:0,
+      adresses: new Adress(),
+      selected:false,
+      centreRevenu:[]
+    }
+  }
+
+  addFormExploitation(){
+    this.resetExploitation();
+    this.addExploitation = (this.addExploitation === false ? true:false);
+  }
+
+  getAllExploitation(){
+
+  }
 
   public resetCentre() {
     this.adresse = {
@@ -253,4 +294,10 @@ export class CentrerevenusComponent implements OnInit {
       
     }
   }
+
+  saveExploitation(){
+
+  }
+
+  
 }
