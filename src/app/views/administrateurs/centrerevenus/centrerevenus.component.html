@@ -107,62 +107,63 @@
                     <form #exploitationForm="ngForm"> 
                       <div class="row m-2">
                         <div class="col-sm-6">
-                            <div class="input-group">
-                              <span class="input-group-text col-5" id="basic-addon1">Code</span>
-                              <input type="text" class="form-control col-6" [(ngModel)]="centre.code" name="code" aria-describedby="basic-addon1">
-                            </div>
-                          </div>
-                        <div class="col-sm-6">
                           <div class="input-group">
                             <span class="input-group-text col-5" id="basic-addon1">Libelle</span>
-                            <input type="text" class="form-control col-7" name="libelle" [(ngModel)]="centre.libelle" autocomplete="off">
+                            <input type="text" class="form-control col-7" [disabled]="inputModif" name="libelle" [(ngModel)]="exploitation.libelle" autocomplete="off">
+                          </div>
+                        </div>
+                        <div class="col-sm-6">
+                          <div class="input-group">
+                            <span class="input-group-text col-5" id="basic-addon1">Code Naf</span>
+                            <input type="text" class="form-control col-6" [disabled]="inputModif" [(ngModel)]="exploitation.codenaf" name="codenaf" aria-describedby="basic-addon1">
                           </div>
                         </div>
                       </div>
                       <div class="row m-2">
                         <div class="col-sm-6">
                           <div class="input-group">
-                            <span class="input-group-text col-5" id="basic-addon1">Email</span>
-                            <input type="eamil" class="form-control col-7" [(ngModel)]="centre.email" name="email" aria-describedby="basic-addon1">
+                            <span class="input-group-text col-5" id="basic-addon1">Site web</span>
+                            <input type="text" class="form-control col-7" [disabled]="inputModif" [(ngModel)]="exploitation.siteWeb" name="siteWeb" aria-describedby="basic-addon1">
                           </div>
                         </div>
                         <div class="col-sm-6">
                           <div class="input-group">
-                            <span class="input-group-text col-5" id="basic-addon1">Téléphone</span>
-                            <input type="text" class="form-control col-7" name="telephone" [(ngModel)]="centre.telephone">
+                            <span class="input-group-text col-5" id="basic-addon1">Siret</span>
+                            <input type="text" class="form-control col-7" [disabled]="inputModif" name="siret" [(ngModel)]="exploitation.siret">
                           </div>
                         </div>
+              
                       </div>
                       <div class="row m-2">
                         <div class="col-5">
                           <div class="input-group">
                             <span class="input-group-text col-4" id="adresse">Adresse</span>
                             <span class="input-group-text col-8 bg-white point" id="adress" 
-                              (click)="changeAdress(content)">{{centre.adresses.rue}}</span>
+                              (click)="changeAdress(content)">{{exploitation.adresses.rue}}</span>
                           </div>
                         </div>
-                        <div class="col-3" *ngIf="centre.adresses.ville">
+                        <div class="col-3" *ngIf="exploitation.adresses.ville">
                           <div class="input-group">
                             <span class="input-group-text col-12 bg-white point" id="ville"
-                              (click)="changeAdress(content)">{{centre.adresses.ville}}</span>
+                              (click)="changeAdress(content)">{{exploitation.adresses.ville}}</span>
                           </div>
                         </div>
-                        <div class="col-1" *ngIf="centre.adresses.code_postal">
+                        <div class="col-1" *ngIf="exploitation.adresses.code_postal">
                           <div class="input-group">
                             <span class="input-group-text col-12 bg-white point" id="code_postal"
-                              (click)="changeAdress(content)">{{centre.adresses.code_postal}}</span>
+                              (click)="changeAdress(content)">{{exploitation.adresses.code_postal}}</span>
                           </div>
                         </div>
-                        <div class="col-3" *ngIf="centre.adresses.pays">
+                        <div class="col-3" *ngIf="exploitation.adresses.pays">
                           <div class="input-group">
                             <span class="input-group-text col-3 bg-white point">
                               <img src="../../../../assets/img/flags/" class="img-flag" alt="Drapeau">
                             </span>
                             <span class="input-group-text col-9 bg-white point" id="pays"
-                              (click)="changeAdress(content)">{{centre.adresses.pays}}</span>
+                              (click)="changeAdress(content)">{{exploitation.adresses.pays}}</span>
                           </div>
                         </div>
-                      </div>
+                      </div> 
                     </form>
                   </div>
                   <div class="card-footer text-end">
