@@ -125,8 +125,9 @@ export class PposComponent implements OnInit {
           this.exploitationService.getExploitationById(this.idexploitation).subscribe({
             next: (_exploitation) => {
               this.exploitations.push(_exploitation);
-              this.exploitation = _exploitation[0];
+              this.exploitation = this.exploitations[0];
               this.resetPpo(new Date());
+              console.log(this.exploitation)
             }
           })
         }

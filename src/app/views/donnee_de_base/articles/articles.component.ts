@@ -48,7 +48,7 @@ export class ArticlesComponent implements OnInit {
 
   private modalService = inject(NgbModal);
   closeResult = '';
-  
+
   position = 'top-end';
   visible = false;
   percentage = 0;
@@ -114,7 +114,7 @@ export class ArticlesComponent implements OnInit {
     this.resetArticle();
     this.initArticle();
   }
-  
+
   public truncateWord(word: string, maxLength = 15) {
     if (word.length > maxLength) {
       return word.slice(0, maxLength) + "...";

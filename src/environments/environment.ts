@@ -60,6 +60,10 @@ export const environment = {
     APIPOSTDESACTIVEARTICLES: endPoint + 'articleexploitation/desactive_articleexploitations',
     APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID: endPoint + 'articleexploitation/',
 
+    APIUPDATESTOCKMINIMUM: endPoint + 'articleexploitation/updatestock',
+
+    APIGETPERIODE : endPoint + 'inventaire/periode',
+
     APIGETARTICLEEXCLUDE : endPoint + 'articles/articleexclude',
     APIGETARTICLEBYIDFOURNISSEUR: endPoint + 'articles/fournisseur/',
     APIGETMOUVEMENTSTOCK : endPoint + 'articles/mouvement',

@@ -87,14 +87,14 @@
     <li class="list-group-item">
       <div class="card-body py-1">
         <div class="row m-2">
-          <div class="col-sm-6">
+          <div class="col-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="codearticle">Code article</span>
               <input type="text" class="form-control col-7 bg-white" aria-label="Code" aria-describedby="codearticle"
                 [(ngModel)]="article.codeArticle" [disabled]="modifToggle">
             </div>
           </div>
-          <div class="col-sm-6">
+          <div class="col-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="libelle">Désignation</span>
               <input type="text" class="form-control col-7 bg-white" aria-label="Designation"
@@ -103,7 +103,7 @@
           </div>
         </div>
         <div class="row m-2">
-          <div class="col-sm-6">
+          <div class="col-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="unite">Unite</span>
               <input type="text" class="form-control bg-white" aria-label="unite" aria-describedby="unite"
@@ -117,7 +117,7 @@
               </ul>
             </div>
           </div>
-          <div class="col-sm-6">
+          <div class="col-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="coefficient">Coéfficient de pondération</span>
               <input type="number" class="form-control col-6 bg-white" aria-label="coefficient"
@@ -128,7 +128,7 @@
           </div>
         </div>
         <div class="row m-2">
-          <div class="col-sm-6">
+          <div class="col-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="categorie">Catégorie</span>
               <input type="text" class="form-control bg-white" aria-label="categorie" aria-describedby="categorie"
@@ -142,7 +142,7 @@
               </ul>
             </div>
           </div>
-          <div class="col-sm-6">
+          <div class="col-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="groupeanalytique">Groupe analytique</span>
               <input type="text" class="form-control bg-white" aria-label="groupeanalytique"
@@ -159,7 +159,7 @@
           </div>
         </div>
         <div class="row m-2">
-          <div class="col-sm-6">
+          <div class="col-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="famille">Famille</span>
               <input type="text" class="form-control bg-white" aria-label="famille" aria-describedby="famille"
@@ -173,7 +173,7 @@
               </ul>
             </div>
           </div>
-          <div class="col-sm-6">
+          <div class="col-6">
             <div class="input-group">
               <span class="input-group-text col-5" id="sousfamille">Sous famille</span>
               <input type="text" class="form-control bg-white" aria-label="sousfamille" aria-describedby="sousfamille"
@@ -248,7 +248,7 @@
               <table class="table table-hover table-sm table-striped mt-0">
                 <tbody>
                   <tr *ngFor="let line of article.articlefournisseur">
-                    <td class="col-3">{{line.fournisseur.raison_social}}</td>
+                    <td class="col-3">{{line.fournisseur?.raison_social}}</td>
                     <td class="col-2">
                       <tr *ngFor="let lines of line.conditionnement" (click)="showFournisseur(lines)">
                         <td>{{lines.uniteCommande.libelle}}</td>

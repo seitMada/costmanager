@@ -8,6 +8,7 @@ import { InterfaceGroupeanalytiques } from "./interface-groupeanalytiques";
 import { InterfaceArticlefournisseurs } from "./interface-articlefournisseurs";
 import { InterfaceArticlezonestockages } from "./interface-articlezonestockages";
 import { IntefaceConditionnement } from "./inteface-conditionnements";
+import { InterfaceArticleExploitation } from "./interface-articleexploitations";
 
 export interface InterfaceArticle {
   id?: number;
@@ -22,10 +23,12 @@ export interface InterfaceArticle {
   actif: boolean;
   cout: number;
   selected?: boolean;
+  stockminimum?: number;
+  stock?: number;
 
   // Champs supplémentaires provenant des relations
   allergeneArticle: InterfaceAllergeneArticle[];
-  articleexploitation: InterfaceExploitations[];
+  articleexploitation: InterfaceArticleExploitation[];
   articlefournisseur: InterfaceArticlefournisseurs[];
   categories: InterfaceCategories;
   familles: InterfaceFamilles;

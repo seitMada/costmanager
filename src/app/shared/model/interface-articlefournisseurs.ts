@@ -5,7 +5,7 @@ import { InterfaceArticle } from "./interface-articles";
 export interface InterfaceArticlefournisseurs {
     id?: number,
     articleId: number,
-    fournisseurId: number,
+    fournisseurId?: number,
     marque: string,
     prixReference: number,
     prixReferencePrecedent: number,
@@ -13,6 +13,6 @@ export interface InterfaceArticlefournisseurs {
     selected?: boolean,
 
     article: InterfaceArticle,
-    fournisseur: InterfaceFournisseur,
+    fournisseur?: InterfaceFournisseur,
     conditionnement: IntefaceConditionnement[]
 }
