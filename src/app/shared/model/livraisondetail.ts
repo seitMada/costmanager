@@ -2,6 +2,7 @@ import { InterfaceLivraisonDetail, InterfaceLivraisonDetails } from './interface
 import { IntefaceConditionnement } from "./inteface-conditionnements";
 import { InterfaceArticlefournisseurs } from "./interface-articlefournisseurs";
 import { InterfaceBonLivraisons } from './interface-bonLivraison';
+import { InterfaceArticle } from './interface-articles';
 
 
 export class LivraisonDetails implements InterfaceLivraisonDetails{
@@ -22,6 +23,7 @@ export class LivraisonDetail implements InterfaceLivraisonDetail{
     id?:number | undefined;
     articlefournisseurId:number;
     livraisonId:number;
+    articleId:number;
     quantiteCommandee:number;
     quantiteCommandeeFT:number;
     conditionnementId:number;
@@ -36,10 +38,12 @@ export class LivraisonDetail implements InterfaceLivraisonDetail{
     articlefournisseur:InterfaceArticlefournisseurs;
     livraison: InterfaceBonLivraisons[]
     conditionnement: IntefaceConditionnement;
+    article: InterfaceArticle;
 
     constructor(livraisonDetail:InterfaceLivraisonDetail) {
         this.articlefournisseurId = livraisonDetail.articlefournisseurId;
         this.livraisonId = livraisonDetail.livraisonId;
+        this.articleId = livraisonDetail.articleId;
         this.quantiteCommandee = livraisonDetail.quantiteCommandee;
         this.quantiteCommandeeFT = livraisonDetail.quantiteCommandeeFT;
         this.conditionnementId = livraisonDetail.conditionnementId;
@@ -53,6 +57,7 @@ export class LivraisonDetail implements InterfaceLivraisonDetail{
         this.articlefournisseur= livraisonDetail.articlefournisseur;
         this.livraison= livraisonDetail.livraison;
         this.conditionnement= livraisonDetail.conditionnement;
+        this.article = livraisonDetail.article;
     }
 }
 

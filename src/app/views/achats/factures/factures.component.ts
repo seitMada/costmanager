@@ -30,6 +30,7 @@ import { ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterCompon
 import { Conditionnement } from 'src/app/shared/model/conditionnements';
 import { IntefaceConditionnement } from 'src/app/shared/model/inteface-conditionnements';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { Article } from 'src/app/shared/model/articles';
 
 @Component({
   selector: 'app-factures',
@@ -328,6 +329,7 @@ export class FacturesComponent implements OnInit {
     this.detailFacture = {
       achatId:0,
       articlefournisseurId:0,
+      articleId:0,
       quantite: 0,
       prixArticle	:0,
       remise:0,
@@ -337,7 +339,8 @@ export class FacturesComponent implements OnInit {
       selected:false,
       articlefournisseur :this.articleFournisseur,
       achat:this.facture,
-      conditionnement : this.conditionnement
+      conditionnement : this.conditionnement,
+      article: this.article
     }
   }
 
@@ -429,11 +432,10 @@ export class FacturesComponent implements OnInit {
               for (const livraison of _livraisons) {
                 this.bonLivraison = livraison;
                 if (livraison.selected) {     
-                  this.addBtn = false;           
-                  this.dates = {
-                    today:new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()),
-                    tomorrow: new Date(livraison.dateLivraison)
-                  };
+                  this.addBtn = false;  
+                  this.facture.dateAchat = new Date(livraison.dateFacture);
+                  this.facture.dateFacture = new Date(livraison.dateFacture);
+                  this.facture.dateLivraison = new Date(livraison.dateLivraison);  
                   const numFact = livraison.numLivraison;
                   this.newNumFacture = numFact.split('-');
                   this.facture.numFacture = 'FAC-'+this.newNumFacture[1];
@@ -446,6 +448,7 @@ export class FacturesComponent implements OnInit {
                     this.detailFacture = {
                       achatId:0,
                       articlefournisseurId:livDetail.articlefournisseurId,
+                      articleId: livDetail.articleId,
                       quantite: livDetail.quantiteLivree,
                       prixArticle	:livDetail.prixarticle,
                       conditionnementId:livDetail.conditionnementId ? livDetail.conditionnementId:0,
@@ -456,6 +459,7 @@ export class FacturesComponent implements OnInit {
                       achat:this.facture,
                       articlefournisseur : livDetail.articlefournisseur,
                       conditionnement: livDetail.conditionnementId,
+                      article: livDetail.article
                     };
 
                     this.montantTTc += ((( this.detailFacture.quantite * this.detailFacture.prixArticle) -this.detailFacture.remise) + (+taxe));
@@ -476,10 +480,9 @@ export class FacturesComponent implements OnInit {
               this.addBtn = true;
               this.inputModif = false;
               this.detailFactures = [];
-              this.dates = {
-                today:new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()),
-                tomorrow: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()+1)
-              }
+              this.facture.dateAchat = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate());
+              this.facture.dateFacture = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate());
+              this.facture.dateLivraison = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()+1); 
             }
           },
           (reason) => {
@@ -514,6 +517,7 @@ export class FacturesComponent implements OnInit {
                     this.detailFacture = {
                       achatId:0,
                       articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                      articleId: articlefournisseur.articleId ? articlefournisseur.articleId :0,
                       quantite: 0,
                       prixArticle	:conditionnement.prixAchat ? conditionnement.prixAchat : 0,
                       remise:0,
@@ -524,6 +528,7 @@ export class FacturesComponent implements OnInit {
                       achat:this.facture,
                       articlefournisseur : articlefournisseur,
                       conditionnement: conditionnement,
+                      article: articlefournisseur.article
                     }
                     this.detailFactures.push(this.detailFacture);
                     this.addBtn = false;
@@ -560,27 +565,27 @@ export class FacturesComponent implements OnInit {
                       
                       this.inputModif = this.inputModif; 
                       this.detailFactures =[];   
-                      for (const articlefournisseur of artFournisseurs) {
-                        if (articlefournisseur.selected == true) {
-                          for(const condition of articlefournisseur.conditionnement){
-                            if (condition.selected !== undefined) {
-                              this.detailFacture = {
-                                achatId:0,
-                                articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
-                                quantite: 0,
-                                prixArticle	:articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat : 0,
-                                remise:0,
-                                valeurTva:0,
-                                conditionnementId:articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id :0,
-                                qteFTAchat:0,
-                                selected:false,
-                                achat:this.facture,
-                                articlefournisseur : articlefournisseur,
-                                conditionnement: articlefournisseur.conditionnement[0],
-                              }
-                              this.detailFactures.push(this.detailFacture);
-                              this.addBtn = false;
+                      for (const articlefournisseur of this.articleFournisseurs) {
+                        for(const condition of articlefournisseur.conditionnement){
+                          if (condition.selected !== undefined) {
+                            this.detailFacture = {
+                              achatId:0,
+                              articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                              articleId: articlefournisseur.articleId ? articlefournisseur.articleId : 0,
+                              quantite: 0,
+                              prixArticle	:condition.prixAchat ? condition.prixAchat : 0,
+                              remise:0,
+                              valeurTva:0,
+                              conditionnementId:condition.id ? condition.id :0,
+                              qteFTAchat:0,
+                              selected:false,
+                              achat:this.facture,
+                              articlefournisseur : articlefournisseur,
+                              conditionnement: condition,
+                              article: articlefournisseur.article
                             }
+                            this.detailFactures.push(this.detailFacture);
+                            this.addBtn = false;
                           }
                         }
                       }
@@ -645,10 +650,9 @@ export class FacturesComponent implements OnInit {
 
   showFacture(facture:InterfaceAchat){
     this.facture = facture;
-    this.dates = {
-      today: new Date(this.facture.dateAchat),
-      tomorrow: new Date(this.facture.dateLivraison)
-    };
+    this.facture.dateAchat = new Date(this.facture.dateAchat)
+    this.facture.dateFacture = new Date(this.facture.dateFacture);
+    this.facture.dateLivraison = new Date(this.facture.dateLivraison);
     this.detailFactures = this.facture.achatDetail;
     if (facture.validation == false) {
       this.showvalidateBtn = !this.showvalidateBtn;

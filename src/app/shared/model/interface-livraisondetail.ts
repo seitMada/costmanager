@@ -1,10 +1,12 @@
 import { InterfaceArticlefournisseurs } from "./interface-articlefournisseurs";
 import { InterfaceBonLivraisons }  from './interface-bonLivraison'
 import { IntefaceConditionnement } from "./inteface-conditionnements";
+import { InterfaceArticle } from "./interface-articles";
 
 export interface InterfaceLivraisonDetail{
     id?:number | undefined;
     articlefournisseurId:number;
+    articleId: number;
     livraisonId:number;
     quantiteCommandee:number;
     quantiteCommandeeFT:number;
@@ -20,6 +22,7 @@ export interface InterfaceLivraisonDetail{
     articlefournisseur:InterfaceArticlefournisseurs;
     livraison: InterfaceBonLivraisons[]
     conditionnement: IntefaceConditionnement;
+    article:InterfaceArticle;
 }
 
 export interface InterfaceLivraisonDetails{

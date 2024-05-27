@@ -321,6 +321,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
     this.livraisonDetail = {
       articlefournisseurId:0,
       livraisonId: 0,
+      articleId:0,
       quantiteCommandeeFT:0,
       quantiteCommandee: 0,
       conditionnementId:0,
@@ -333,7 +334,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
       selected:false,
       articlefournisseur:this.articleFournisseur,
       livraison:[],
-      conditionnement: this.conditionnement
+      conditionnement: this.conditionnement,
+      article:this.article
     }
   }
 
@@ -384,7 +386,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
   public selectArticle(contentCommandeArticle:TemplateRef<any>,commande:InterfaceBonCommande){
     this.commadeDetails = commande.commandeDetail;
     this.bonCommande = commande;
-    console.log(this.bonCommande);
     
     this.modalService.open(contentCommandeArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
       (result) => {
@@ -409,29 +410,29 @@ export class BonLivraisonAchatsComponent implements OnInit{
               this.closeResult = `Closed with: ${result}`;
               console.log(this.closeResult)
               if (this.closeResult == 'Closed with: Save click') {
-                for (const articlefournisseur of this.articleFournisseurs) {         
-                  if (articlefournisseur.selected == true) {
-                    for(const condition of articlefournisseur.conditionnement){
-                      if (condition.selected != undefined ) {
-                        this.livraisonDetail = {
-                          articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
-                          livraisonId: 0,
-                          quantiteCommandee: 0,
-                          quantiteCommandeeFT:0,
-                          conditionnementId:condition.id ? condition.id:0,
-                          quantiteLivree: 0,
-                          quantiteLivreeFT:0,
-                          quantiteFT:0,
-                          prixarticle:condition.prixAchat ? condition.prixAchat: 0,
-                          remise: 0,
-                          valeurTva: 0,
-                          selected:false,
-                          articlefournisseur:articlefournisseur,
-                          livraison:[],
-                          conditionnement: condition
-                        }
-                        this.livraisonDetails.push(this.livraisonDetail);
+                for (const articlefournisseur of this.articleFournisseurs) {  
+                  for(const condition of articlefournisseur.conditionnement){
+                    if (condition.selected != undefined ) {
+                      this.livraisonDetail = {
+                        articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                        articleId: articlefournisseur.articleId,
+                        livraisonId: 0,
+                        quantiteCommandee: 0,
+                        quantiteCommandeeFT:0,
+                        conditionnementId:condition.id ? condition.id:0,
+                        quantiteLivree: 0,
+                        quantiteLivreeFT:0,
+                        quantiteFT:0,
+                        prixarticle:condition.prixAchat ? condition.prixAchat: 0,
+                        remise: 0,
+                        valeurTva: 0,
+                        selected:false,
+                        articlefournisseur:articlefournisseur,
+                        livraison:[],
+                        conditionnement: condition,
+                        article:articlefournisseur.article
                       }
+                      this.livraisonDetails.push(this.livraisonDetail);
                     }
                   }
                 }
@@ -462,30 +463,30 @@ export class BonLivraisonAchatsComponent implements OnInit{
                     if (this.closeResult == 'Closed with: Save click') {
                       this.livraisonDetails = [];
                       this.inputModif = this.inputModif;              
-                      for (const articlefournisseur of this.articleFournisseurs) {         
-                        if (articlefournisseur.selected == true) {
-                          for(const condition of articlefournisseur.conditionnement){
-                            if (condition.selected != undefined ) {
-                              this.livraisonDetail = {
-                                articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
-                                livraisonId: 0,
-                                quantiteCommandee: 0,
-                                quantiteCommandeeFT:0,
-                                conditionnementId:condition.id ? condition.id:0,
-                                quantiteLivree: 0,
-                                quantiteLivreeFT:0,
-                                quantiteFT:0,
-                                prixarticle:condition.prixAchat ? condition.prixAchat: 0,
-                                remise: 0,
-                                valeurTva: 0,
-                                selected:false,
-                                articlefournisseur:articlefournisseur,
-                                livraison:[],
-                                conditionnement: condition
-                              }
-                              this.livraisonDetails.push(this.livraisonDetail);
-                              this.addBtn = false;
+                      for (const articlefournisseur of this.articleFournisseurs) {  
+                        for(const condition of articlefournisseur.conditionnement){
+                          if (condition.selected != undefined ) {
+                            this.livraisonDetail = {
+                              articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                              articleId: articlefournisseur.articleId,
+                              livraisonId: 0,
+                              quantiteCommandee: 0,
+                              quantiteCommandeeFT:0,
+                              conditionnementId:condition.id ? condition.id:0,
+                              quantiteLivree: 0,
+                              quantiteLivreeFT:0,
+                              quantiteFT:0,
+                              prixarticle:condition.prixAchat ? condition.prixAchat: 0,
+                              remise: 0,
+                              valeurTva: 0,
+                              selected:false,
+                              articlefournisseur:articlefournisseur,
+                              livraison:[],
+                              conditionnement: condition,
+                              article:articlefournisseur.article
                             }
+                            this.livraisonDetails.push(this.livraisonDetail);
+                            this.addBtn = false;
                           }
                         }
                       }
@@ -529,10 +530,9 @@ export class BonLivraisonAchatsComponent implements OnInit{
                   if (commande.selected) {
                     this.livraisonService.getListDetailCommandeByCommandeId(commande.id ? commande.id:0).subscribe({
                       next :(commandeDetail) => {
-                        this.dates = {
-                          today:new Date(commande.dateCommande),
-                          tomorrow: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()+1)
-                        };
+                        
+                        this.bonLivraison.dateCommande = new Date(commande.dateCommande);
+                        this.bonLivraison.dateLivraison = new Date();
                         const numLiv = commande.noPiece;
                         this.newNumLivraison = numLiv.split('-');
                         this.bonLivraison.numLivraison = 'LIV-'+this.newNumLivraison[1];
@@ -542,6 +542,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
                             this.livraisonDetail = {
                               articlefournisseurId:comm.articlefournisseurId,
                               livraisonId: 0,
+                              articleId: comm.articleId,
                               quantiteCommandee: comm.QteCommande,
                               quantiteCommandeeFT:comm.quantiteCommandeeFT,
                               conditionnementId:comm.conditionnementId,
@@ -554,7 +555,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
                               selected:false,
                               articlefournisseur:comm.articlefournisseur,
                               livraison:[],
-                              conditionnement:comm.conditionnement
+                              conditionnement:comm.conditionnement,
+                              article:comm.article
                             };
                             if (this.livraisonDetail.valeurTva != 0) {
                               const taxe = ((this.livraisonDetail.quantiteLivree * this.livraisonDetail.prixarticle -this.livraisonDetail.remise) * this.livraisonDetail.valeurTva)/100;
@@ -584,12 +586,9 @@ export class BonLivraisonAchatsComponent implements OnInit{
                 this.inputModif = false;
                 this.livraisonDetails = [];
                 console.log(this.livraisonDetails);
+                this.bonLivraison.dateCommande = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate());
+                this.bonLivraison.dateLivraison = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()+1);
                 
-                this.dates = {
-                  today:new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()),
-                  tomorrow: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()+1)
-                }
-
               }
             },
             (reason) => {
@@ -638,10 +637,9 @@ export class BonLivraisonAchatsComponent implements OnInit{
     if (bonLivraison.validation == 0) {
       this.showvalidateBtn = !this.showvalidateBtn;
     }
-    this.dates = {
-      today: new Date(this.bonLivraison.dateCommande),
-      tomorrow: new Date(this.bonLivraison.dateLivraison)
-    };
+    this.toggle = !this.toggle;
+    this.bonLivraison.dateCommande = new Date(this.bonLivraison.dateCommande);
+    this.bonLivraison.dateLivraison = new Date(this.bonLivraison.dateLivraison);
     this.livraisonDetails = this.bonLivraison.livraisonDetail;
     for (const livraison of this.livraisonDetails) {
       if (livraison.valeurTva !=0 || livraison.valeurTva !=null) {
@@ -651,7 +649,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
         this.montantTTc += (livraison.quantiteLivree * livraison.prixarticle -livraison.remise);
       }
     }
-    this.toggle = !this.toggle;
+    
     this.addLivraison = !this.addLivraison;
     this.listLivraison = !this.listLivraison;
     this.inputModif = !this.inputModif;
@@ -672,6 +670,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
 
   addBonLivraison(){
     this.bonLivraison = this.bonLivraison;
+    console.log(this.bonLivraison );
+    
     this.livraisonDetails = this.livraisonDetails;
     if (this.livraisonDetails.length>0) {
       this.livraisonService.createNewBonLivraison(this.bonLivraison,this.livraisonDetails,this.bonCommande).subscribe({
@@ -727,34 +727,38 @@ export class BonLivraisonAchatsComponent implements OnInit{
   validateLivraison(){
     this.idBonLivraison = this.bonLivraison.id ? this.bonLivraison.id :0;
     
-    if (this.bonLivraison) {
-      this.livraisonService.validateLivraison(this.bonLivraison).subscribe({
-        next:(value) =>{
-          this.deleteLivraison = false;
-          this.showvalidateBtn = !this.showvalidateBtn;
-          this.inputModif = true;
-          this.toggleToast('Bon de livraison n° '+this.bonLivraison.numLivraison+' a été validé');
-        },
-      });
+    if (this.idBonLivraison) {
+      // this.livraisonService.validateLivraison(this.bonLivraison).subscribe({
+      //   next:(value) =>{
+      //     this.deleteLivraison = false;
+      //     this.showvalidateBtn = !this.showvalidateBtn;
+      //     this.inputModif = true;
+      //     this.toggleToast('Bon de livraison n° '+this.bonLivraison.numLivraison+' a été validé');
+      //   },
+      // });
+      console.log(this.bonLivraison);
       
+      
+    }else if () {
+      alert('selecte')
     } else {
       const selectedBonLivraisons = this.bonLivraisons.filter(line => line.selected);
-      for (const bonLivraison of selectedBonLivraisons) {
-        if (bonLivraison.validation == 0) {
-          this.livraisonService.validateLivraison(bonLivraison).subscribe({
-            next:(value) =>{
-              this.showAllFournisseur();
-              this.toggle = this.toggle;
-              this.deleteLivraison = false;
-              this.toggleToast('Bon de livraison n° '+bonLivraison.numLivraison+' a été validé');
-            },
-          });
-        }else{
-          alert('Ce bon de livraison est déjà validé!');
-          this.deleteLivraison = false;
-          this.showvalidateBtn = !this.showvalidateBtn;
-        }      
-      }
+      // for (const bonLivraison of selectedBonLivraisons) {
+      //   if (bonLivraison.validation == 0) {
+      //     this.livraisonService.validateLivraison(bonLivraison).subscribe({
+      //       next:(value) =>{
+      //         this.showAllFournisseur();
+      //         this.toggle = this.toggle;
+      //         this.deleteLivraison = false;
+      //         this.toggleToast('Bon de livraison n° '+bonLivraison.numLivraison+' a été validé');
+      //       },
+      //     });
+      //   }else{
+      //     alert('Ce bon de livraison est déjà validé!');
+      //     this.deleteLivraison = false;
+      //     this.showvalidateBtn = !this.showvalidateBtn;
+      //   }      
+      // }
     }
   }
 }
