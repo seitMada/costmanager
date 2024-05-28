@@ -328,9 +328,9 @@
       </thead>
       <tbody>
         <tr *ngFor="let item of commadeDetails">
-          <td class="col-2">{{ item.article?.codeArticle || ''}}</td>
-          <td class="col-3">{{ item.article?.libelle || '' }}</td>
-          <td class="col-2">{{ item.article?.familles?.libelle || '' }}</td>
+          <td class="col-2">{{ item.article.codeArticle || ''}}</td>
+          <td class="col-3">{{ item.article.libelle || '' }}</td>
+          <td class="col-2">{{ item.article.familles.libelle || '' }}</td>
           <td class="col-1">{{ item.conditionnement?.prixAchat | number:'1.2-2'|| 0 }} €</td>
           <td class="col-1">{{ item.conditionnement?.uniteCommande?.abreviation || ''}}</td> 
           

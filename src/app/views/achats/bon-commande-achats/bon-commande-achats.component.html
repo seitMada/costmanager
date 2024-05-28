@@ -127,8 +127,8 @@
                 <td  class="col-1">
                     <input class="form-check-input" [disabled]="inputModif" type="checkbox" name="dc-{{line.id}}" id="dc-{{line.id}}" [(ngModel)]="line.selected" (change)="checkSelectedRows()">
                 </td>
-                <td class="col-2">{{ line.article?.familles?.libelle || '' }}</td>
-                <td class="col-3">{{line.article?.libelle || ''}}</td>
+                <td class="col-2">{{ line.article.familles.libelle || '' }}</td>
+                <td class="col-3">{{line.article.libelle || ''}}</td>
                 <td class="col-1 text-end"><input type="number" class="form-control form-control-sm" [disabled]="inputModif" placeholder="0.00" [step]="line.conditionnement?.uniteCommande?.step" name="qte_commande[]" [(ngModel)]="line.QteCommande"></td>
                 <td class="col-1 text-center">{{ line.conditionnement?.uniteCommande?.abreviation }}</td>
                 <td class="col-2">

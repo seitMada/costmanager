@@ -609,6 +609,8 @@ export class FacturesComponent implements OnInit {
 
   public selectArticle(contentLivraisonArticle:TemplateRef<any>,bonLivraison:InterfaceBonLivraisons){
     this.livraisonDetails = bonLivraison.livraisonDetail;
+    console.log(this.livraisonDetails);
+    
     this.bonLivraison = bonLivraison;
     this.modalService.open(contentLivraisonArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
       (result) => {

@@ -385,20 +385,9 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   validateCommande() {
-    console.log(this.boncommande);
+    const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
 
-    this.idBonCommande = this.boncommande.id ? this.boncommande.id : 0;
-    if (this.boncommande) {
-      this.commandeService.validateCommande(this.boncommande).subscribe({
-        next: (value) => {
-          this.toggleToast('Bon de commande n° ' + this.boncommande.noPiece + ' a été validé');
-          this.inputModif = true;
-          this.showvalidateBtn = !this.showvalidateBtn;
-          this.addBtn = false;
-        },
-      });
-    } else {
-      const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
+    if (selectedBonCommandes.length >0) {
       for (const bonCommande of selectedBonCommandes) {
         if (bonCommande.validation == 0) {
           this.commandeService.validateCommande(bonCommande).subscribe({
@@ -414,6 +403,15 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.showvalidateBtn = !this.showvalidateBtn;
         }
       }
+    } else {
+      this.commandeService.validateCommande(this.boncommande).subscribe({
+        next: (value) => {
+          this.toggleToast('Bon de commande n° ' + this.boncommande.noPiece + ' a été validé');
+          this.inputModif = true;
+          this.showvalidateBtn = !this.showvalidateBtn;
+          this.addBtn = false;
+        },
+      });
     }
   }
 
