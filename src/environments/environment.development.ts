@@ -161,5 +161,6 @@ export const environment = {
     APIGETVENTEBYCRANDDATE: endPoint + 'vente',
     APICREATEVENTE: endPoint + 'vente/create',
     APIUPDATEVENTE: endPoint + 'vente/update',
+    APICOUNTVENTE: endPoint + 'vente/count',
 };
    

@@ -75,6 +75,7 @@ export class VenteComponent implements OnInit {
   public idcentrerevenu: number = 0;
   public idVente: number | undefined = 0;
   public active = 1;
+  public nbvente = 0;
 
   public centrerevenus: InterfaceCentreRevenu[];
   public centrerevenusdefault: InterfaceCentreRevenu[];
@@ -119,33 +120,39 @@ export class VenteComponent implements OnInit {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
     this.resetVente();
-    this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
-      next: async (_centreRevenu) => {
-        this.exploitations = [];
-        this.centrerevenus = _centreRevenu;
-        this.centrerevenusdefault = _centreRevenu;
-        this.centrerevenu = _centreRevenu[0];
-        await this.selectCentreRevenus(this.centrerevenu);
-        if (this.isAdmin === true) {
-          this.exploitationService.getExploitation().subscribe({
-            next: (_exploitation) => {
-              this.exploitations = _exploitation;
-              this.exploitation = _exploitation[0];
-              // this.resetPpo(new Date());
+    this.venteService.getcount().subscribe({
+      next: (count) => {
+        this.nbvente = count == 0 ? count : count + 1;
+        this.numticket = ((this.formatDate(this.today))?.replaceAll('-', '')).split(' ')[0] + this.nbvente.toString().padStart(3, '0');
+        this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+          next: async (_centreRevenu) => {
+            this.exploitations = [];
+            this.centrerevenus = _centreRevenu;
+            this.centrerevenusdefault = _centreRevenu;
+            this.centrerevenu = _centreRevenu[0];
+            await this.selectCentreRevenus(this.centrerevenu);
+            if (this.isAdmin === true) {
+              this.exploitationService.getExploitation().subscribe({
+                next: (_exploitation) => {
+                  this.exploitations = _exploitation;
+                  this.exploitation = _exploitation[0];
+                  // this.resetPpo(new Date());
+                }
+              })
+            } else {
+              this.exploitationService.getExploitationById(this.idexploitation).subscribe({
+                next: (_exploitation) => {
+                  console.log(_exploitation)
+                  this.exploitations.push(_exploitation);
+                  this.exploitation = this.exploitations[0];
+                  // this.resetPpo(new Date());
+                }
+              })
             }
-          })
-        } else {
-          this.exploitationService.getExploitationById(this.idexploitation).subscribe({
-            next: (_exploitation) => {
-              console.log(_exploitation)
-              this.exploitations.push(_exploitation);
-              this.exploitation = this.exploitations[0];
-              // this.resetPpo(new Date());
-            }
-          })
-        }
+          }
+        })
       }
-    })
+    });
   }
 
   ngOnInit(): void {
@@ -162,11 +169,6 @@ export class VenteComponent implements OnInit {
         this.ventes = _ventes;
       }
     })
-    // this.ppoService.getPpoByCrAndDate([this.idcentrerevenu], this.formatDate(this.dates.debut), this.formatDate(this.dates.fin, true), false).subscribe({
-    //   next: (_ppos: any) => {
-    //     this.ppos = _ppos;
-    //   }
-    // })
   }
 
   private resetCentreRevenu() {
@@ -185,7 +187,7 @@ export class VenteComponent implements OnInit {
 
   public resetVente() {
     this.vente = {
-      num_ticket: '',
+      num_ticket: ((this.formatDate(this.today))?.replaceAll('-', '')).split(' ')[0] + (this.nbvente + 1).toString().padStart(3, '0'),
       montantht: 0,
       montantttc: 0,
       date_vente: new Date(),
@@ -221,17 +223,20 @@ export class VenteComponent implements OnInit {
     this.vente.montantttc = this.calculprix(this.vente.ventedetail).montantttc;
     console.log(this.vente)
     this.venteService.addVente(this.vente).subscribe({
-      next: (vente) => {
+      next: async (vente) => {
         // console.log(vente)
         alert('Vente enregistrer');
+        await this.selectCentreRevenus(this.centrerevenu);
         this.modifToggle = !this.modifToggle;
         this.toggle = !this.toggle;
       }
     })
   }
 
-  cancel() {
-
+  async cancel() {
+    await this.selectCentreRevenus(this.centrerevenu);
+    this.modifToggle = !this.modifToggle;
+    this.toggle = !this.toggle;
   }
 
   addvente() {

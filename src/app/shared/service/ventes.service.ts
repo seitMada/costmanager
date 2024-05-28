@@ -9,6 +9,7 @@ export class VentesService {
 
   private apiGetVenteCrDate = environment.APIGETVENTEBYCRANDDATE;
   private apiAddVente = environment.APICREATEVENTE;
+  private apiCountVente = environment.APICOUNTVENTE;
 
   constructor(private https: HttpClient) { }
 
@@ -22,5 +23,9 @@ export class VentesService {
 
   public addVente(vente: any) {
     return this.https.post(this.apiAddVente, { vente: vente });
+  }
+
+  public getcount() {
+    return this.https.get<number>(this.apiCountVente);
   }
 }
