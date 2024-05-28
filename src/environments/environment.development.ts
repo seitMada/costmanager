@@ -110,6 +110,7 @@ export const environment = {
     ARTICLEFOURNISSEURBYARTICLE: endPoint+ 'articlefournisseur/byarticleId',
     
     APIGETADRESS: endPoint + 'adresse',
+    APIADDADRESS: endPoint + 'adresse/addadresse',
 
     APIGETINVENTAIREBYCRANDDATEGROUPENUMERO: endPoint + 'inventaire',
     APICREATEINVENTAIRE: endPoint + 'inventaire/add',
@@ -156,5 +157,9 @@ export const environment = {
     APIGETPPODETAIL: endPoint + 'ppo/detail',
     APIGETPPODETAILDATA: endPoint + 'ppo/data',
     APIGETPPODETAILDATAFAMILLE: endPoint + 'ppo/data/famille',
+    
+    APIGETVENTEBYCRANDDATE: endPoint + 'vente',
+    APICREATEVENTE: endPoint + 'vente/create',
+    APIUPDATEVENTE: endPoint + 'vente/update',
 };
    

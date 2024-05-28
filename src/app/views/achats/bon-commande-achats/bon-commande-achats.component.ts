@@ -41,7 +41,7 @@ import { SousFamille } from 'src/app/shared/model/sousfamilles';
 @Component({
   selector: 'app-bon-commande-achats',
   standalone: true,
-  imports: [CommonModule, FormsModule, BsDatepickerModule,NgbNavModule, AlertModule,TooltipModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
+  imports: [CommonModule, FormsModule, BsDatepickerModule, NgbNavModule, AlertModule, TooltipModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
   templateUrl: './bon-commande-achats.component.html',
   styleUrl: './bon-commande-achats.component.scss',
   providers: [NgbModalConfig, NgbModal]
@@ -161,26 +161,30 @@ export class BonCommandeAchatsComponent implements OnInit {
       next: (artExploitation) => {
         if (artExploitation) {
           this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
-               
+
           this.commandeService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
             next: (artFournisseur: any) => {
               this.articleFournisseurs = artFournisseur;
+              console.log(this.articleFournisseurs)
               for (const articlefournisseur of artFournisseur) {
-                const conditionnement = articlefournisseur.conditionnement.reduce((min:any, current:any) => {
-                  return current.prixAchat < min.prixAchat ? current : min;
-                });
+                let conditionnement;
+                if (articlefournisseur.conditionnement.length > 0) {
+                  conditionnement = articlefournisseur.conditionnement.reduce((min: any, current: any) => {
+                    return current.prixAchat < min.prixAchat ? current : min;
+                  });
+                }
                 this.commandeDetail = {
                   commandeId: 0,
                   articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
                   QteCommande: 0,
                   QteCommandeFT: 0,
-                  conditionnementId: conditionnement.id,
-                  prixarticle: conditionnement.prixAchat,
+                  conditionnementId: conditionnement ? conditionnement.id : null,
+                  prixarticle: conditionnement ? conditionnement.prixAchat : articlefournisseur.article.cout,
                   remise: 0,
                   validationdetailbc: false,
                   articlefournisseur: articlefournisseur,
                   selected: false,
-                  conditionnement:conditionnement,
+                  conditionnement: conditionnement ? conditionnement : null,
                 }
                 this.commandes.push(this.commandeDetail);
               }
@@ -263,7 +267,7 @@ export class BonCommandeAchatsComponent implements OnInit {
       selected: false,
 
       article: this.article,
-      fournisseur:this.fournisseur,
+      fournisseur: this.fournisseur,
       conditionnement: []
     }
   }
@@ -454,7 +458,7 @@ export class BonCommandeAchatsComponent implements OnInit {
               if (this.closeResult == 'Closed with: Save click') {
                 for (const articlefournisseur of this.articleFournisseurs) {
                   if (articlefournisseur.selected == true && articlefournisseur.article) {
-                    for(const condition of articlefournisseur.conditionnement){
+                    for (const condition of articlefournisseur.conditionnement) {
                       if (condition.selected !== undefined) {
                         this.commandeDetail = {
                           commandeId: 0,
@@ -472,7 +476,7 @@ export class BonCommandeAchatsComponent implements OnInit {
                         this.commandes.push(this.commandeDetail);
                       }
                     }
-                  }             
+                  }
                 }
                 this.addBtn = false;
               }
@@ -503,7 +507,7 @@ export class BonCommandeAchatsComponent implements OnInit {
                     if (this.closeResult == 'Closed with: Save click') {
                       for (const articlefournisseur of artFournisseur) {
                         if (articlefournisseur.selected == true && articlefournisseur.article) {
-                          for(const condition of articlefournisseur.conditionnement){
+                          for (const condition of articlefournisseur.conditionnement) {
                             if (condition.selected !== undefined) {
                               this.commandeDetail = {
                                 commandeId: 0,

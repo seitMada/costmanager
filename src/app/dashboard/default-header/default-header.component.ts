@@ -89,7 +89,9 @@ export class DefaultHeaderComponent extends HeaderComponent {
                 this.periodeselected.fin = new Date();
               }
               const _dateFin = new Date(this.periodeselected.fin);
-              _dateFin.setDate(_dateFin.getDate() - 1);
+              if (this.periodeselected.fin == null) {
+                _dateFin.setDate(_dateFin.getDate() - 1);
+              }
               this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, [this.idexploitation], true).subscribe({
                 next: (_articles: any) => {
                   this.mouvemenstock = _articles;
@@ -100,7 +102,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
                         let _value = 0
                         for (const _mouvement of this.mouvemenstock) {
                           if (_mouvement.article_id === _article.id) {
-                            _value += _mouvement.inventaires + _mouvement.achats - _mouvement.ventes - _mouvement.pertes;
+                            _value += +_mouvement.inventaires + +_mouvement.achats - +_mouvement.ventes - +_mouvement.pertes;
                             _article.stock = _value;
                             _article.stockminimum = _article.articleexploitation[0].stockminimum;
                           }

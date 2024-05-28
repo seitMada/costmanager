@@ -34,6 +34,7 @@ export class Fournisseurs implements InterfaceFournisseur {
   adresse: Adress;
   adresseId: number | null;
   operateur: InterfaceOperateur[];
+  flags?: string | undefined;
 
   constructor(fournisseurInterface: InterfaceFournisseur = {
     raison_social: '',
@@ -50,6 +51,7 @@ export class Fournisseurs implements InterfaceFournisseur {
     adresseId: null,
     adresse: new Adress(),
     operateur: [],
+    flags: ''
   }) {
     this.raison_social = fournisseurInterface.raison_social;
     this.actif = fournisseurInterface.actif;
@@ -65,5 +67,6 @@ export class Fournisseurs implements InterfaceFournisseur {
     this.adresseId = fournisseurInterface.adresseId;
     this.adresse = fournisseurInterface.adresse;
     this.operateur = fournisseurInterface.operateur;
+    this.flags = fournisseurInterface.flags;
   }
 }

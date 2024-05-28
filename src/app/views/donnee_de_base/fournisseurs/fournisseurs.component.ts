@@ -55,7 +55,7 @@ export class FournisseursComponent implements OnInit {
   onTimerChange($event: number) {
     this.percentage = $event * 25;
   }
-  
+
   constructor(
     public router: Router,
     public route: ActivatedRoute,
@@ -91,6 +91,7 @@ export class FournisseursComponent implements OnInit {
   public unites: Unites;
   public unite: InterfaceUnite;
   public conditionnement: IntefaceConditionnement;
+  public adresseadd: InterfaceAdresse;
 
   public articleExclude: number[] = [];
   public checkContact: number[] = [];
@@ -164,7 +165,7 @@ export class FournisseursComponent implements OnInit {
     }).subscribe({
       next: (data) => {
         const { fournisseurs, exploitations, unites } = data;
-        // console.log(fournisseurs)
+        console.log(fournisseurs)
         for (const fournisseur of fournisseurs) {
           if (fournisseur.adresseId == null) {
             fournisseur.adresse = {
@@ -199,7 +200,7 @@ export class FournisseursComponent implements OnInit {
   show(fournisseur: InterfaceFournisseur) {
     this.idFournisseur = fournisseur.id ? fournisseur.id : 0;
     this.fournisseur = fournisseur;
-    this.flags = this.getFlag(fournisseur);
+    this.fournisseur.flags = this.getFlag(fournisseur);
     this.exploitationService.getExploitation().subscribe({
       next: (exploitations) => {
         this.exploitations = exploitations;
@@ -380,6 +381,7 @@ export class FournisseursComponent implements OnInit {
         }
       })
     } else {
+      console.log(this.fournisseur)
       this.fournisseurService.updateFournisseur(this.idFournisseur, this.fournisseur).subscribe((response) => {
         const exploitation: number[] = [];
         exploitation.push(this.exploitation);
@@ -446,6 +448,18 @@ export class FournisseursComponent implements OnInit {
     this.checkAdress = line;
   }
 
+  resetaddresse() {
+    this.fournisseurService.getAllAdresse().subscribe({
+      next: (adresses) => {
+        for (const adresse of adresses) {
+          adresse.selected = false;
+          adresse.flags = this.selectFlags(adresse);
+        }
+        this.adresses = adresses;
+      }
+    })
+  }
+
   changeAdress(content: TemplateRef<any>) {
     if (this.modifToggle === false) {
       this.fournisseurService.getAllAdresse().subscribe({
@@ -458,9 +472,20 @@ export class FournisseursComponent implements OnInit {
                 adresse.selected = false;
               }
             }
+            adresse.flags = this.selectFlags(adresse);
           }
           console.log(adresses)
           this.adresses = adresses;
+          this.adresseadd = {
+            rue: '',
+            ville: '',
+            code_postal: '',
+            pays: '',
+            selected: false,
+            centreRevenu: [],
+            exploitation: [],
+            operateur: []
+          };
           this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
             (result) => {
               this.closeResult = `Closed with: ${result}`;
@@ -469,6 +494,18 @@ export class FournisseursComponent implements OnInit {
                 if (this.checkAdress) {
                   this.fournisseur.adresse = this.checkAdress;
                   this.fournisseur.adresseId = this.checkAdress.id ? this.checkAdress.id : null;
+                } else {
+                  console.log(this.fournisseur.adresse)
+                  if (!this.fournisseur.adresse) {
+                    this.fournisseurService.createnewadresse(this.fournisseur.adresse).subscribe({
+                      next: (adresse: any) => {
+                        console.log(adresse)
+                        this.fournisseur.adresse = adresse;
+                        this.fournisseur.adresseId = adresse.id;
+                        this.toggleToast('Nouvelle adresse ajouter')
+                      }
+                    })
+                  }
                 }
               }
             },
@@ -511,14 +548,29 @@ export class FournisseursComponent implements OnInit {
     })
   }
 
-  selectCountry(line: any) {
-    if (this.fournisseur.adresse != undefined) {
-      this.fournisseur.adresse.pays = line.translations.fr;
-      this.flags = line.alpha2Code.toLowerCase() + '.svg';
-    } else {
-      // this.fournisseur.adresse.pays = line.translations.fr;
-      this.flags = 'xx.svg';
+  selectFlags(line: any) {
+    console.log(line)
+    if (line !== undefined) {
+      const pays = line.pays;
+      const comparison = this.country.find((i: any) => i.translations.fr === pays);
+      if (comparison) {
+        return comparison?.alpha2Code.toLowerCase() + '.svg';
+      }
     }
+    return 'xx.svg';
+  }
+
+  selectCountry(line: any) {
+    console.log(line)
+    this.adresseadd.pays = line.translations.fr;
+    this.adresseadd.flags = line.alpha2Code.toLowerCase() + '.svg';
+    // if (this.fournisseur.adresse != undefined) {
+    //   this.fournisseur.adresse.pays = line.translations.fr;
+    //   this.flags = line.alpha2Code.toLowerCase() + '.svg';
+    // } else {
+    //   // this.fournisseur.adresse.pays = line.translations.fr;
+    //   this.flags = 'xx.svg';
+    // }
   }
 
   getFlag(line: InterfaceFournisseur): string {

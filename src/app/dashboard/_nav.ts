@@ -75,6 +75,33 @@ export const navItems: INavData[] = [
     ]
   },
   {
+    name: 'Ventes',
+    url: '/vente',
+    iconComponent: { name: 'cil-cart' },
+    // children: [
+    //   {
+    //     name: 'Simulations',
+    //     url: 'achats/simulations'
+    //   },
+    //   {
+    //     name: 'Mercuriales',
+    //     url: 'achats/mercuriales'
+    //   },
+    //   {
+    //     name: 'Bon de commande',
+    //     url: 'achats/bon_commande'
+    //   },
+    //   {
+    //     name: 'Bon de livraison',
+    //     url: 'achats/bon_livraison'
+    //   },
+    //   {
+    //     name: 'Factures',
+    //     url: 'achats/factures'
+    //   },
+    // ]
+  },
+  {
     name: 'Productions',
     url: '/productions',
     iconComponent: { name: 'cil-fastfood' },

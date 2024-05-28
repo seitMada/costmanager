@@ -6,21 +6,20 @@
       <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
     </div>
     <div class="flex-grow-1 bd-highlight mx-1 col-4">
-      <button class="btn btn-sm btn-outline-danger" >Article avec stock minimum =
-        {{nombrestockminimum(articles)}}</button>
+      <button class="btn btn-sm btn-outline-danger" (click)="commanderstock(nombrestockminimum(articles), articles)">Article avec stock minimum = {{nombrestockminimum(articles)}}</button>
     </div>
     <div class="flex-grow-1 bd-highlight mx-1 col-3">
       <div class="input-group input-group-sm">
-        <span class="input-group-text col-5" id="basic-addon1">Exploitations</span>
-        <input type="text" class="form-control bg-white col-6" aria-label="unite" aria-describedby="fournisseur"
-          [(ngModel)]="exploitation.libelle" disabled="true">
+        <span class="input-group-text col-5" id="basic-addon1">Centre revenus</span>
+        <input type="text" class="form-control bg-white col-6" aria-label="unite" aria-describedby="centrerevenus"
+          [(ngModel)]="centrerevenu.libelle" disabled="true">
         <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="toggle"
           data-bs-toggle="dropdown" aria-expanded="false">
           <span class="visually-hidden">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end">
-          <li *ngFor="let line of exploitationsdefault"><span
-              (click)="selectExploitations(line)">{{line.libelle}}</span>
+          <li *ngFor="let line of centrerevenusdefault"><span
+              (click)="selectCentrerevenu(line)">{{line.libelle}}</span>
           </li>
         </ul>
       </div>

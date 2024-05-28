@@ -151,6 +151,7 @@ export class FicheTechniqueComponent implements OnInit {
       next: (data) => {
         const { fichetechniqueByExploitation, groupeanalytique, categorie, unite, exploitations, articlesByExploitation } = data;
         this.fichetechniques = fichetechniqueByExploitation;
+        console.log(this.fichetechniques)
         this.categories = categorie;
         this.groupeanalytiques = groupeanalytique;
         this.unites = unite;
@@ -179,6 +180,7 @@ export class FicheTechniqueComponent implements OnInit {
     }).subscribe({
       next: (data) => {
         const { familles, exploitations } = data;
+        this.addToggle = false;
         this.familles = familles;
         this.exploitations = exploitations;
         for (const composition of this.compositions) {
@@ -206,7 +208,7 @@ export class FicheTechniqueComponent implements OnInit {
     if (this.idFichetechnique === 0) {
       this.fichetechniqueService.addFichetechnique(this.fichetechnique).subscribe({
         next: (fichetechnique: any) => {
-          this.fichetechnique = fichetechnique;
+          // this.fichetechnique = fichetechnique;
           const exploitation: number[] = [];
           exploitation.push(this.exploitation)
           for (const i of this.exploitations) {
@@ -214,12 +216,14 @@ export class FicheTechniqueComponent implements OnInit {
               exploitation.push(i.id ? i.id : 0)
             }
           }
-          this.idFichetechnique = fichetechnique.id;
-          this.fichetechniqueService.updateFichetechniqueExploitation(fichetechnique.id, fichetechnique.id, exploitation).subscribe({
+          this.idFichetechnique = fichetechnique;
+          this.fichetechniqueService.updateFichetechniqueExploitation(fichetechnique, this.fichetechnique.id || 0, exploitation).subscribe({
             next: () => {
               this.compositions = [];
-              this.fichetechniqueService.getFichetechniqueById(fichetechnique.id).subscribe({
+              this.fichetechniqueService.getFichetechniqueById(fichetechnique).subscribe({
                 next: (fichetechnique) => {
+                  console.log(fichetechnique)
+                  this.fichetechnique = fichetechnique;
                   this.toggleToast('Fichetechnique ajouter')
                   this.modifToggle = !this.modifToggle;
                   this.compositions = fichetechnique.composition;
@@ -329,7 +333,7 @@ export class FicheTechniqueComponent implements OnInit {
 
   toggleModal() {
     this.toggle = !this.toggle;
-    this.addToggle = !this.addToggle;
+    this.addToggle = true;
     this.initFichetechnique();
   }
 
@@ -360,6 +364,7 @@ export class FicheTechniqueComponent implements OnInit {
         this.compositions = [];
         this.fichetechnique = {
           libelle: '',
+          code: '',
           categorieId: 0,
           familleId: 0,
           uniteId: 0,
@@ -428,15 +433,10 @@ export class FicheTechniqueComponent implements OnInit {
     this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
-        // console.log(this.closeResult)
         if (this.closeResult == 'Closed with: Save click') {
-          // const oldidft = this.fichetechnique.id || 0;
-          // this.fichetechnique.id = 0;
           this.fichetechniqueService.addFichetechnique(this.fichetechnique).subscribe({
             next: (idfichetechnique: any) => {
-              // this.compositions = [];
               this.idFichetechnique = idfichetechnique;
-              // this.fichetechnique = fichetechnique;
               const exploitation: number[] = [];
               exploitation.push(this.exploitation)
               for (const i of this.exploitations) {

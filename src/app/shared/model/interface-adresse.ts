@@ -8,6 +8,7 @@ export interface InterfaceAdresse {
     ville: string;
     code_postal: string | null;
     pays: string;
+    flags?: string;
     selected?: boolean;
 
     centreRevenu: InterfaceCentreRevenu[];

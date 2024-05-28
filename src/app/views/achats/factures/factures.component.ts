@@ -34,7 +34,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 @Component({
   selector: 'app-factures',
   standalone: true,
-  imports: [CommonModule, FormsModule, BsDatepickerModule,TooltipModule,ToasterComponent,ToastComponent,ToastHeaderComponent,ToastBodyComponent],
+  imports: [CommonModule, FormsModule, BsDatepickerModule, TooltipModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
   templateUrl: './factures.component.html',
   styleUrl: './factures.component.scss',
   providers: [NgbModalConfig, NgbModal]
@@ -73,19 +73,19 @@ export class FacturesComponent implements OnInit {
   public article: InterfaceArticle;
   public articles: InterfaceArticle[];
   public detailFacture: InterfaceAchatDetail;
-  public detailFactures : InterfaceAchatDetail[];
+  public detailFactures: InterfaceAchatDetail[];
   public exploitation: InterfaceExploitations;
   public bonLivraison: InterfaceBonLivraisons;
   public bonLivraisons: InterfaceBonLivraisons[];
-  public livraisonDetail : InterfaceLivraisonDetail;
-  public livraisonDetails : InterfaceLivraisonDetail[];
+  public livraisonDetail: InterfaceLivraisonDetail;
+  public livraisonDetails: InterfaceLivraisonDetail[];
   public articleFournisseur: InterfaceArticlefournisseurs;
   public articleFournisseurs: InterfaceArticlefournisseurs[];
   public articleExploitation: InterfaceArticleExploitation;
   public articleExploitations: InterfaceArticleExploitations;
   public conditionnement: IntefaceConditionnement;
 
-  public num_facture:string;
+  public num_facture: string;
 
   public exploitationId = +(sessionStorage.getItem('exploitation') || 3);
   public idFournisseur = 0;
@@ -103,7 +103,7 @@ export class FacturesComponent implements OnInit {
   public addBtn = false;
   public showvalidateBtn = false;
 
-  public newNumFacture:string[] = [];
+  public newNumFacture: string[] = [];
   public artExploitationArticleId: any[] = [];
 
   public bonFactureForm = FormGroup;
@@ -113,22 +113,22 @@ export class FacturesComponent implements OnInit {
   private today = new Date();
   public dates = {
     today: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()),
-    tomorrow: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()+1)
+    tomorrow: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate() + 1)
   }
 
   constructor(
     public router: Router,
     public route: ActivatedRoute,
     public fournisseurService: FournisseurService,
-    public exploitationService:ExploitationService,
+    public exploitationService: ExploitationService,
     public centreRevenuService: CentreRevenuService,
-    public livraisonService : BonlivraisonService,
-    public factureService : FactureService,
-    private modalService:NgbModal,
-    config:NgbModalConfig,
+    public livraisonService: BonlivraisonService,
+    public factureService: FactureService,
+    private modalService: NgbModal,
+    config: NgbModalConfig,
     private datePipe: DatePipe
   ) {
-    this.bsConfig = Object.assign({},{ containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
+    this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     config.backdrop = 'static';
     config.keyboard = false;
 
@@ -144,12 +144,12 @@ export class FacturesComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.num_facture = "FAC-"+ (this.formatDate(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
+    this.num_facture = "FAC-" + (this.formatDate(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
 
     this.showExploitationFournisseur();
     this.showAllFournisseur();
     this.showAllAdresse();
-    
+
   }
 
   showAllFournisseur() {
@@ -158,16 +158,16 @@ export class FacturesComponent implements OnInit {
         this.fournisseurs = _fournisseur;
         this.fournisseur = _fournisseur[0];
         this.idFournisseur = this.fournisseur.id ? this.fournisseur.id : 0;
-        this.factureService.getListFactureByFournisseurExploitation(this.idFournisseur,this.exploitation.id? this.exploitation.id:0).subscribe({
-          next :(_factures) =>{
+        this.factureService.getListFactureByFournisseurExploitation(this.idFournisseur, this.exploitation.id ? this.exploitation.id : 0).subscribe({
+          next: (_factures) => {
             this.detailFactures = [];
             this.factures = _factures;
             console.log(this.factures);
-            
-            this.detailFactures  = _factures.map((_facture:any) => _facture.achatDetail);
+
+            this.detailFactures = _factures.map((_facture: any) => _facture.achatDetail);
           },
         })
-        
+
       },
       error: (error) => {
         alert('Liste fournisseur vide')
@@ -175,9 +175,9 @@ export class FacturesComponent implements OnInit {
     });
   }
 
-  showAllAdresse(){
+  showAllAdresse() {
     this.fournisseurService.getAllAdresse().subscribe({
-      next :(adresses) => {
+      next: (adresses) => {
         this.adresses = adresses;
         this.adresse = adresses[0];
       },
@@ -187,13 +187,13 @@ export class FacturesComponent implements OnInit {
   selectAdresse(data: Adress) {
     this.adresse = data;
     this.adresse.id = data.id;
-  } 
+  }
 
   selectCentreRevenu(data: InterfaceCentreRevenu) {
     this.centre = data;
     this.centre.id = data.id;
   }
-  
+
   showExploitationFournisseur() {
     this.exploitationService.getExploitationById(this.exploitationId).subscribe({
       next: (exploitation) => {
@@ -203,21 +203,21 @@ export class FacturesComponent implements OnInit {
             this.centres = _centre;
             this.centre = _centre[0];
             this.facture = {
-              dateAchat:this.dates.today,
-              dateFacture:this.dates.today,
-              dateLivraison:this.dates.tomorrow,
-              numFacture:this.num_facture,
-              montantHt:0,
-              montantTva:0,
-              montantRemise:0,
-              fournisseurId:this.fournisseur.id ? this.fournisseur.id:0,
-              exploitationId:this.exploitation.id ? this.exploitation.id :0,
-              centreId:this.centre.id ? this.centre.id :0,
-              selected:false,
-              validation:false,
-              exploitation:this.exploitation,
-              centre:this.centre,
-              fournisseur:this.fournisseur,
+              dateAchat: this.dates.today,
+              dateFacture: this.dates.today,
+              dateLivraison: this.dates.tomorrow,
+              numFacture: this.num_facture,
+              montantHt: 0,
+              montantTva: 0,
+              montantRemise: 0,
+              fournisseurId: this.fournisseur.id ? this.fournisseur.id : 0,
+              exploitationId: this.exploitation.id ? this.exploitation.id : 0,
+              centreId: this.centre.id ? this.centre.id : 0,
+              selected: false,
+              validation: false,
+              exploitation: this.exploitation,
+              centre: this.centre,
+              fournisseur: this.fournisseur,
               achatDetail: this.detailFactures
             }
           },
@@ -230,12 +230,12 @@ export class FacturesComponent implements OnInit {
   }
 
   async selectFounisseur(data: InterfaceFournisseur) {
-    this.fournisseur =data; 
-    this.fournisseur.id = data.id ? data.id:0 ;   
-    this.factureService.getListFactureByFournisseurExploitation(this.fournisseur.id,this.exploitation.id? this.exploitation.id:0).subscribe({
-      next :(_factures) =>{
+    this.fournisseur = data;
+    this.fournisseur.id = data.id ? data.id : 0;
+    this.factureService.getListFactureByFournisseurExploitation(this.fournisseur.id, this.exploitation.id ? this.exploitation.id : 0).subscribe({
+      next: (_factures) => {
         this.detailFactures = [];
-        this.factures = _factures;        
+        this.factures = _factures;
         // this.detailFactures  = _factures.map((_facture:any) => _facture.achatDetail);
       },
     });
@@ -293,7 +293,7 @@ export class FacturesComponent implements OnInit {
       actif: true,
       adressesId: 0,
       adresses: new Adress(),
-      centreRevenu:[]
+      centreRevenu: []
     }
     this.centre = {
       code: '',
@@ -304,14 +304,14 @@ export class FacturesComponent implements OnInit {
       telephone: '',
       exploitations: this.exploitation,
       adresses: this.adresse,
-      lieuStockage:[]
+      lieuStockage: []
     }
   }
 
-  public resetArticleFournisseur(){
+  public resetArticleFournisseur() {
     this.articleFournisseur = {
       articleId: 0,
-      fournisseurId: this.fournisseur.id ? this.fournisseur.id:0,
+      fournisseurId: this.fournisseur.id ? this.fournisseur.id : 0,
       marque: '',
       prixReference: 0,
       prixReferencePrecedent: 0,
@@ -324,50 +324,50 @@ export class FacturesComponent implements OnInit {
     }
   }
 
-  public resetDetailFacture(){
+  public resetDetailFacture() {
     this.detailFacture = {
-      achatId:0,
-      articlefournisseurId:0,
+      achatId: 0,
+      articlefournisseurId: 0,
       quantite: 0,
-      prixArticle	:0,
-      remise:0,
-      valeurTva:0,
-      conditionnementId:0,
-      qteFTAchat:0,
-      selected:false,
-      articlefournisseur :this.articleFournisseur,
-      achat:this.facture,
-      conditionnement : this.conditionnement
+      prixArticle: 0,
+      remise: 0,
+      valeurTva: 0,
+      conditionnementId: 0,
+      qteFTAchat: 0,
+      selected: false,
+      articlefournisseur: this.articleFournisseur,
+      achat: this.facture,
+      conditionnement: this.conditionnement
     }
   }
 
-  public resetFacture(){
+  public resetFacture() {
     this.facture = {
-      dateAchat:this.dates.today,
-      dateFacture:this.dates.today,
-      dateLivraison:this.dates.tomorrow,
-      numFacture:this.num_facture,
-      montantHt:0,
-      montantTva:0,
-      montantRemise:0,
-      fournisseurId:this.fournisseur.id ? this.fournisseur.id :0,
-      exploitationId:this.exploitation.id ? this.exploitation.id :0,
-      centreId:this.centre.id ? this.centre.id :0,
-      selected:false,
+      dateAchat: this.dates.today,
+      dateFacture: this.dates.today,
+      dateLivraison: this.dates.tomorrow,
+      numFacture: this.num_facture,
+      montantHt: 0,
+      montantTva: 0,
+      montantRemise: 0,
+      fournisseurId: this.fournisseur.id ? this.fournisseur.id : 0,
+      exploitationId: this.exploitation.id ? this.exploitation.id : 0,
+      centreId: this.centre.id ? this.centre.id : 0,
+      selected: false,
       exploitation: this.exploitation,
-      centre:this.centre,
-      fournisseur:this.fournisseur,
+      centre: this.centre,
+      fournisseur: this.fournisseur,
       achatDetail: this.detailFactures,
-      validation:false,
+      validation: false,
     }
   }
 
-  addToggle(){
+  addToggle() {
     this.toggle = !this.toggle;
     this.resetFacture();
   }
 
-  annuler(){
+  annuler() {
     this.detailFactures = [];
     this.toggle = !this.toggle;
     this.addFacture = true;
@@ -376,22 +376,22 @@ export class FacturesComponent implements OnInit {
     this.modifToggle = true;
     this.addBtn = false;
     this.montantTTc = 0;
-    this.showvalidateBtn =false;
+    this.showvalidateBtn = false;
     this.showAllFournisseur();
     this.resetFacture();
   }
 
-  addNewFacture(){
-    this.facture= this.facture;
+  addNewFacture() {
+    this.facture = this.facture;
     this.detailFactures = this.detailFactures;
     if (this.detailFactures.length > 0) {
-      this.factureService.createFacture(this.facture,this.detailFactures,this.bonLivraison).subscribe({
-        next:(value) =>{
-          this.toggleToast('La facture n° '+this.facture.numFacture+' a été crée avec succès!');
+      this.factureService.createFacture(this.facture, this.detailFactures, this.bonLivraison).subscribe({
+        next: (value) => {
+          this.toggleToast('La facture n° ' + this.facture.numFacture + ' a été crée avec succès!');
           this.inputModif = !this.inputModif;
           this.toggleArticle = !this.toggleArticle;
           this.modifToggle = !this.modifToggle;
-          this.showvalidateBtn =true;
+          this.showvalidateBtn = true;
         },
       })
     } else {
@@ -399,23 +399,23 @@ export class FacturesComponent implements OnInit {
     }
   }
 
-  public openModalLivraison(content: TemplateRef<any>) { 
+  public openModalLivraison(content: TemplateRef<any>) {
     this.detailFactures = [];
     this.montantTTc = 0;
-    const fournisseurId = this.fournisseur.id? this.fournisseur.id:0;
-    const exploitationId = this.exploitation.id ?this.exploitation.id:0;
-    this.factureService.getLivraisonByFournisseurExploitationValidate(fournisseurId,exploitationId).subscribe({
-      next:(_livraisons) =>{
+    const fournisseurId = this.fournisseur.id ? this.fournisseur.id : 0;
+    const exploitationId = this.exploitation.id ? this.exploitation.id : 0;
+    this.factureService.getLivraisonByFournisseurExploitationValidate(fournisseurId, exploitationId).subscribe({
+      next: (_livraisons) => {
         this.bonLivraisons = _livraisons;
-        if (_livraisons.length>0) {
+        if (_livraisons.length > 0) {
           this.addBtn = false;
         } else {
           this.addBtn = true;
         }
         this.addFacture = !this.addFacture;
         this.listFacture = !this.listFacture;
-        this.facture.fournisseurId = this.fournisseur.id ?this.fournisseur.id:0
-        
+        this.facture.fournisseurId = this.fournisseur.id ? this.fournisseur.id : 0
+
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
           (result) => {
             this.closeResult = `Closed with: ${result}`;
@@ -426,49 +426,50 @@ export class FacturesComponent implements OnInit {
               this.toggleArticle = this.toggleArticle;
               this.inputModif = false;
               this.resetFacture();
+              console.log(_livraisons)
               for (const livraison of _livraisons) {
                 this.bonLivraison = livraison;
-                if (livraison.selected) {     
-                  this.addBtn = false;           
+                if (livraison.selected) {
+                  this.addBtn = false;
                   this.dates = {
-                    today:new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()),
+                    today: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()),
                     tomorrow: new Date(livraison.dateLivraison)
                   };
                   const numFact = livraison.numLivraison;
                   this.newNumFacture = numFact.split('-');
-                  this.facture.numFacture = 'FAC-'+this.newNumFacture[1];
+                  this.facture.numFacture = 'FAC-' + this.newNumFacture[1];
                   this.detailFactures = [];
                   for (const livDetail of livraison.livraisonDetail) {
-                    const taxe =0;
-                    if (livDetail.valeurTva !=0 || livDetail.valeurTva !=null ) {
-                      const taxe = (((livDetail.quantiteLivree * livDetail.prixarticle) -livDetail.remise)*livDetail.valeurTva)/100;
+                    const taxe = 0;
+                    if (livDetail.valeurTva != 0 || livDetail.valeurTva != null) {
+                      const taxe = (((livDetail.quantiteLivree * livDetail.prixarticle) - livDetail.remise) * livDetail.valeurTva) / 100;
                     }
                     this.detailFacture = {
-                      achatId:0,
-                      articlefournisseurId:livDetail.articlefournisseurId,
+                      achatId: 0,
+                      articlefournisseurId: livDetail.articlefournisseurId,
                       quantite: livDetail.quantiteLivree,
-                      prixArticle	:livDetail.prixarticle,
-                      conditionnementId:livDetail.conditionnementId ? livDetail.conditionnementId:0,
-                      qteFTAchat:0,
-                      remise:livDetail.remise,
-                      valeurTva:taxe,
-                      selected:false,
-                      achat:this.facture,
-                      articlefournisseur : livDetail.articlefournisseur,
-                      conditionnement: livDetail.conditionnementId,
+                      prixArticle: livDetail.prixarticle,
+                      conditionnementId: livDetail.conditionnementId ? livDetail.conditionnementId : 0,
+                      qteFTAchat: 0,
+                      remise: livDetail.remise,
+                      valeurTva: taxe,
+                      selected: false,
+                      achat: this.facture,
+                      articlefournisseur: livDetail.articlefournisseur,
+                      conditionnement: livDetail.conditionnement,
                     };
 
-                    this.montantTTc += ((( this.detailFacture.quantite * this.detailFacture.prixArticle) -this.detailFacture.remise) + (+taxe));
-                                       
+                    this.montantTTc += (((this.detailFacture.quantite * this.detailFacture.prixArticle) - this.detailFacture.remise) + (+taxe));
+
                     this.detailFactures.push(this.detailFacture);
                   }
-                 
-                }else{
+
+                } else {
                   this.addBtn = true;
                   this.toggle = false;
-                }                
+                }
               }
-            }else if(this.closeResult == 'Closed with: Create click'){
+            } else if (this.closeResult == 'Closed with: Create click') {
               this.modifToggle = !this.modifToggle;
               this.toggle = (this.toggle === false ? true : false);
               this.toggleArticle = this.toggleArticle;
@@ -477,8 +478,8 @@ export class FacturesComponent implements OnInit {
               this.inputModif = false;
               this.detailFactures = [];
               this.dates = {
-                today:new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()),
-                tomorrow: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()+1)
+                today: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()),
+                tomorrow: new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate() + 1)
               }
             }
           },
@@ -495,41 +496,41 @@ export class FacturesComponent implements OnInit {
     });
   }
 
-  public openModalArticle(contentArticle: TemplateRef<any>){ 
-    if (this.detailFactures.length>0) {
-      const articlesId =  this.detailFactures.map((i:any) => i.articlefournisseur.articleId);
-      this.factureService.getArticleFournisseurByArticle(articlesId, this.fournisseur.id ? this.fournisseur.id : 0,this.artExploitationArticleId).subscribe({
-        next:(_articlefournisseurs) =>{
+  public openModalArticle(contentArticle: TemplateRef<any>) {
+    if (this.detailFactures.length > 0) {
+      const articlesId = this.detailFactures.map((i: any) => i.articlefournisseur.articleId);
+      this.factureService.getArticleFournisseurByArticle(articlesId, this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
+        next: (_articlefournisseurs) => {
           this.articleFournisseurs = _articlefournisseurs;
           this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
             (result) => {
               this.closeResult = `Closed with: ${result}`;
               console.log(this.closeResult)
               if (this.closeResult == 'Closed with: Save click') {
-                for (const articlefournisseur of this.articleFournisseurs) {         
+                for (const articlefournisseur of this.articleFournisseurs) {
                   if (articlefournisseur.selected == true) {
-                    const conditionnement = articlefournisseur.conditionnement.reduce((min:any, current:any) => {
+                    const conditionnement = articlefournisseur.conditionnement.reduce((min: any, current: any) => {
                       return current.prixAchat < min.prixAchat ? current : min;
                     });
                     this.detailFacture = {
-                      achatId:0,
-                      articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                      achatId: 0,
+                      articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
                       quantite: 0,
-                      prixArticle	:conditionnement.prixAchat ? conditionnement.prixAchat : 0,
-                      remise:0,
-                      valeurTva:0,
-                      conditionnementId:conditionnement.id ? conditionnement.id :0,
-                      qteFTAchat:0,
-                      selected:false,
-                      achat:this.facture,
-                      articlefournisseur : articlefournisseur,
+                      prixArticle: conditionnement.prixAchat ? conditionnement.prixAchat : 0,
+                      remise: 0,
+                      valeurTva: 0,
+                      conditionnementId: conditionnement.id ? conditionnement.id : 0,
+                      qteFTAchat: 0,
+                      selected: false,
+                      achat: this.facture,
+                      articlefournisseur: articlefournisseur,
                       conditionnement: conditionnement,
                     }
                     this.detailFactures.push(this.detailFacture);
                     this.addBtn = false;
                   }
                 }
-                
+
               }
             },
             (reason) => {
@@ -543,39 +544,39 @@ export class FacturesComponent implements OnInit {
       const exploitationId = Number(this.exploitationId);
       this.selectFounisseur(this.fournisseur);
       this.livraisonService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
-        next: (artExploitation) => {         
+        next: (artExploitation) => {
           if (artExploitation) {
             this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
             this.livraisonService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
               next: (artFournisseurs: any) => {
-                this.detailFactures=[];
+                this.detailFactures = [];
                 this.articleFournisseurs = artFournisseurs;
-              
+
                 this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
                   (result) => {
                     this.closeResult = `Closed with: ${result}`;
-                    
+
                     console.log(this.closeResult)
                     if (this.closeResult == 'Closed with: Save click') {
-                      
-                      this.inputModif = this.inputModif; 
-                      this.detailFactures =[];   
+
+                      this.inputModif = this.inputModif;
+                      this.detailFactures = [];
                       for (const articlefournisseur of artFournisseurs) {
                         if (articlefournisseur.selected == true) {
-                          for(const condition of articlefournisseur.conditionnement){
+                          for (const condition of articlefournisseur.conditionnement) {
                             if (condition.selected !== undefined) {
                               this.detailFacture = {
-                                achatId:0,
-                                articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                                achatId: 0,
+                                articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
                                 quantite: 0,
-                                prixArticle	:articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat : 0,
-                                remise:0,
-                                valeurTva:0,
-                                conditionnementId:articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id :0,
-                                qteFTAchat:0,
-                                selected:false,
-                                achat:this.facture,
-                                articlefournisseur : articlefournisseur,
+                                prixArticle: articlefournisseur.conditionnement[0].prixAchat ? articlefournisseur.conditionnement[0].prixAchat : 0,
+                                remise: 0,
+                                valeurTva: 0,
+                                conditionnementId: articlefournisseur.conditionnement[0].id ? articlefournisseur.conditionnement[0].id : 0,
+                                qteFTAchat: 0,
+                                selected: false,
+                                achat: this.facture,
+                                articlefournisseur: articlefournisseur,
                                 conditionnement: articlefournisseur.conditionnement[0],
                               }
                               this.detailFactures.push(this.detailFacture);
@@ -598,26 +599,27 @@ export class FacturesComponent implements OnInit {
         }
       });
     }
-    
-   
+
+
   }
 
-  public selectArticle(contentLivraisonArticle:TemplateRef<any>,bonLivraison:InterfaceBonLivraisons){
+  public selectArticle(contentLivraisonArticle: TemplateRef<any>, bonLivraison: InterfaceBonLivraisons) {
     this.livraisonDetails = bonLivraison.livraisonDetail;
     this.bonLivraison = bonLivraison;
     this.modalService.open(contentLivraisonArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
         console.log(this.closeResult)
-        if (this.closeResult == 'Closed with: Save click') {}},
-        (reason) => {
-          this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-          console.log(this.closeResult)
-        },
-      );
+        if (this.closeResult == 'Closed with: Save click') { }
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        console.log(this.closeResult)
+      },
+    );
   }
 
-  checkSelectedRows(){
+  checkSelectedRows() {
     this.showDeleteBtn = this.detailFactures.some(line => line.selected);
   }
 
@@ -630,20 +632,20 @@ export class FacturesComponent implements OnInit {
     }
   }
 
-  getTotalMontant():number {
-    let montantTTc=0;    
+  getTotalMontant(): number {
+    let montantTTc = 0;
     for (const line of this.detailFactures) {
-      if (line.valeurTva != 0 || line.valeurTva !=null) {
-        const taxe =  (((line.quantite * line.prixArticle	) -line.remise)* line.valeurTva) /100;
-        montantTTc += ((line.quantite * line.prixArticle	) -line.remise) + (+taxe);
+      if (line.valeurTva != 0 || line.valeurTva != null) {
+        const taxe = (((line.quantite * line.prixArticle) - line.remise) * line.valeurTva) / 100;
+        montantTTc += ((line.quantite * line.prixArticle) - line.remise) + (+taxe);
       } else {
-        montantTTc += ((line.quantite * line.prixArticle	) -line.remise);
+        montantTTc += ((line.quantite * line.prixArticle) - line.remise);
       }
-    }    
+    }
     return montantTTc;
   }
 
-  showFacture(facture:InterfaceAchat){
+  showFacture(facture: InterfaceAchat) {
     this.facture = facture;
     this.dates = {
       today: new Date(this.facture.dateAchat),
@@ -655,9 +657,9 @@ export class FacturesComponent implements OnInit {
     }
     for (const livraison of this.detailFactures) {
       console.log(livraison.valeurTva);
-      
-      if (livraison.valeurTva !=0 || livraison.valeurTva != null) {
-        const taxe = (((livraison.quantite * livraison.prixArticle) - livraison.remise) * livraison.valeurTva)/100;
+
+      if (livraison.valeurTva != 0 || livraison.valeurTva != null) {
+        const taxe = (((livraison.quantite * livraison.prixArticle) - livraison.remise) * livraison.valeurTva) / 100;
         this.montantTTc += ((livraison.quantite * livraison.prixArticle) - livraison.remise) + (+taxe);
       } else {
         this.montantTTc += (livraison.quantite * livraison.prixArticle) - livraison.remise;
@@ -669,8 +671,8 @@ export class FacturesComponent implements OnInit {
     this.inputModif = true;
   }
 
-  private getDismissReason(reason:any):string{
-    switch(reason){
+  private getDismissReason(reason: any): string {
+    switch (reason) {
       case ModalDismissReasons.ESC:
         return 'by pressing ESC';
       case ModalDismissReasons.BACKDROP_CLICK:
@@ -680,14 +682,14 @@ export class FacturesComponent implements OnInit {
     }
   }
 
-  validateFacture(){
-    this.idFacture = this.facture.id ? this.facture.id: 0;
+  validateFacture() {
+    this.idFacture = this.facture.id ? this.facture.id : 0;
     if (this.facture) {
       this.factureService.validateFacture(this.facture).subscribe({
         next: (value) => {
-          this.showvalidateBtn = ! this.showvalidateBtn;
-          this.inputModif =true;
-          this.toggleToast('Facture n° '+this.facture.numFacture+' a été validé');
+          this.showvalidateBtn = !this.showvalidateBtn;
+          this.inputModif = true;
+          this.toggleToast('Facture n° ' + this.facture.numFacture + ' a été validé');
         },
       });
     }

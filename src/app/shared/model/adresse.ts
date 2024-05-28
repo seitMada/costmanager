@@ -24,6 +24,7 @@ export class Adress implements InterfaceAdresse {
     code_postal: string | null;
     pays: string;
     selected?: boolean;
+    flags?: string | undefined;
 
     centreRevenu: InterfaceCentreRevenu[];
     exploitation: InterfaceExploitations[];
@@ -38,6 +39,7 @@ export class Adress implements InterfaceAdresse {
         centreRevenu: [],
         exploitation: [],
         operateur: [],
+        flags: ''
     }) {
         if (adresseInterface) {
             this.rue = adresseInterface.rue;
@@ -48,6 +50,7 @@ export class Adress implements InterfaceAdresse {
             this.centreRevenu = adresseInterface.centreRevenu;
             this.exploitation = adresseInterface.exploitation;
             this.operateur = adresseInterface.operateur;
+            this.flags = adresseInterface.flags;
         } else {
             this.rue = '';
             this.ville = '';
@@ -57,6 +60,7 @@ export class Adress implements InterfaceAdresse {
             this.centreRevenu = [];
             this.exploitation = [];
             this.operateur = [];
+            this.flags = '';
         }
     }
 }

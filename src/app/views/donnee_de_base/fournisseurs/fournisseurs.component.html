@@ -70,30 +70,6 @@
       </tbody>
     </table>
   </div>
-  <!-- <div class="card-body overflow-y-scroll py-1" style="height: 650px;">
-    <table class="table table-striped table-hover">
-      <thead>
-        <tr>
-          <th scope="col" class="">#</th>
-          <th scope="col" class="col-4">Raison social</th>
-          <th scope="col" class="col-2">Code</th>
-          <th scope="col" class="col-6">Adresse</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let line of fournisseurs">
-          <td class="">
-            <input type="checkbox" name="fichetechnique-{{line.raison_social}}" id="fichetechnique-{{line.id}}"
-              [(ngModel)]="line.selected">
-          </td>
-          <td class="col-4 fw-bold" (click)="show(line); toggleModal()">{{line.raison_social}}</td>
-          <td class="col-2" (click)="show(line); toggleModal()">{{line.codeFournisseur}}</td>
-          <td class="col-6" (click)="show(line); toggleModal()">{{line.adresse.rue + ' ' +
-            line.adresse.ville + ' ' + line.adresse.code_postal + ' '}} {{' ' + line.adresse.pays}}</td>
-        </tr>
-      </tbody>
-    </table>
-  </div> -->
 </div>
 
 <div class="card d-flex" *ngIf="!toggle">
@@ -305,27 +281,27 @@
         <div class="input-group">
           <span class="input-group-text col-5" id="adresse">Adresse</span>
           <input type="text" class="form-control bg-white" aria-label="rue" aria-describedby="rue" placeholder="Rue"
-            [(ngModel)]="fournisseur.adresse.rue">
+            [(ngModel)]="adresseadd.rue" (ngModelChange)="resetaddresse()">
         </div>
       </div>
       <div class="col-3">
         <div class="input-group">
           <input type="text" class="form-control bg-white" aria-label="ville" aria-describedby="ville"
-            placeholder="Ville" [(ngModel)]="fournisseur.adresse.ville">
+            placeholder="Ville" [(ngModel)]="adresseadd.ville" (ngModelChange)="resetaddresse()">
         </div>
       </div>
       <div class="col-2">
         <div class="input-group">
           <input type="text" class="form-control bg-white" aria-label="codepostal" aria-describedby="codepostal"
-            placeholder="Code postal" [(ngModel)]="fournisseur.adresse.code_postal">
+            placeholder="Code postal" [(ngModel)]="adresseadd.code_postal" (ngModelChange)="resetaddresse()">
         </div>
       </div>
       <div class="col-3">
         <div class="input-group">
           <span class="input-group-text bg-white col-2" id="pays">
-            <img src="../../../../assets/img/flags/{{flags}}" class="img-flag" alt="Drapeau">
+            <img src="../../../../assets/img/flags/{{adresseadd.flags}}" class="img-flag" alt="Drapeau">
           </span>
-          <span class="input-group-text bg-white col-8" id="pays">{{fournisseur.adresse.pays}}</span>
+          <span class="input-group-text bg-white col-8" id="pays">{{adresseadd.pays}}</span>
           <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split bg-white col-2"
             data-bs-toggle="dropdown" aria-expanded="false">
             <span class="visually-hidden">Toggle Dropdown</span>
@@ -349,13 +325,13 @@
           <tbody>
             <tr *ngFor="let line of adresses">
               <td class="col-1">
-                <input type="radio" name="adresseRadio" id="adresseRadio{{line.id}}" [value]="line.selected"
+                <input type="radio" name="adresseRadio" id="adresseRadio{{line.id}}" [checked]="line.selected"
                   (change)="updateSelect(line)">
               </td>
               <td class="col-4">{{line.rue}}</td>
               <td class="col-3">{{line.ville}}</td>
               <td class="col-2">{{line.code_postal}}</td>
-              <td class="col-2"><img src="../../../../assets/img/flags/{{flags}}" class="img-flag" alt="Drapeau">
+              <td class="col-2"><img src="../../../../assets/img/flags/{{line.flags}}" class="img-flag" alt="Drapeau">
                 {{line.pays}}</td>
             </tr>
           </tbody>

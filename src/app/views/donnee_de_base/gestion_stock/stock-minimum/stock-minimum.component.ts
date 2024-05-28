@@ -9,10 +9,12 @@ import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { InterfaceBonCommande } from 'src/app/shared/model/interface-bonCommande';
 
 import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
+import { InterfaceCommandeDetail } from 'src/app/shared/model/interface-commandedetail';
 import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
 import { InterfaceFournisseur } from 'src/app/shared/model/interface-fournisseurs';
 import { ArticleService } from 'src/app/shared/service/article.service';
 import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
+import { CommandeService } from 'src/app/shared/service/commande.service';
 import { ExploitationService } from 'src/app/shared/service/exploitation.service';
 import { FournisseurService } from 'src/app/shared/service/fournisseur.service';
 import { InventairesService } from 'src/app/shared/service/inventaires.service';
@@ -27,7 +29,7 @@ import { InventairesService } from 'src/app/shared/service/inventaires.service';
 export class StockMinimumComponent implements OnInit {
 
   public centrerevenus: InterfaceCentreRevenu[];
-  public exploitationsdefault: InterfaceExploitations[];
+  public centrerevenusdefault: InterfaceCentreRevenu[];
   public centrerevenu: InterfaceCentreRevenu;
   public exploitations: InterfaceExploitations[];
   public exploitation: InterfaceExploitations;
@@ -35,6 +37,7 @@ export class StockMinimumComponent implements OnInit {
   public exploitationsselected: number[];
   public articles: InterfaceArticle[];
   public boncommande: InterfaceBonCommande;
+  public boncommandedetails: InterfaceCommandeDetail[];
 
   position = 'top-end';
   visible = false;
@@ -64,6 +67,7 @@ export class StockMinimumComponent implements OnInit {
   public sorticon = 'fa-sort';
   public unitefilter: any[] = [];
   public headerchoice = '';
+  private num_commande = "COM-" + (this.formatDate(this.today))?.replaceAll('-', '') + this.today.toLocaleTimeString().replaceAll(':', '') + this.today.getMilliseconds();
 
   public articlefournisseurs: InterfaceArticlefournisseurs[];
   public fournisseurs: {
@@ -108,17 +112,20 @@ export class StockMinimumComponent implements OnInit {
     private articleService: ArticleService,
     private inventaireService: InventairesService,
     public fournisseurService: FournisseurService,
+    private commandeService: CommandeService,
     private datePipe: DatePipe
   ) {
     this.headerchoice = '';
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
-    this.resetExploitation();
+    this.resetCentreRevenu();
     this.exploitations = [];
     this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
       next: async (_centreRevenu) => {
         this.headerchoice = '';
         this.centrerevenus = _centreRevenu;
         this.centrerevenu = _centreRevenu[0];
+        this.centrerevenusdefault = _centreRevenu;
+        console.log(this.centrerevenu)
 
         this.exploitationService.getExploitation().subscribe({
           next: async (_exploitation) => {
@@ -130,13 +137,9 @@ export class StockMinimumComponent implements OnInit {
               this.exploitations = this.exploitations.filter(e => e.id == this.idexploitation);
               this.centrerevenus = this.centrerevenus.filter(c => c.exploitationsId == this.idexploitation);
             }
-            this.exploitationsdefault = this.exploitations;
-            this.exploitations[0].selected = true;
-            this.exploitationsselected = [this.exploitations[0].id || 0];
-            this.headerchoice = this.exploitations[0].libelle;
-            this.exploitation = this.exploitations[0];
-            await this.selectExploitations(this.exploitation);
-            this.inventaireService.getPeriode(this.exploitationsselected, true).subscribe({
+            this.centrerevenusselected = [this.centrerevenus[0].id || 0];
+            await this.selectCentrerevenu(this.centrerevenu);
+            this.inventaireService.getPeriode(this.centrerevenusselected, false).subscribe({
               next: (value: any) => {
                 this.periode = value;
                 for (const _date of this.periode) {
@@ -144,7 +147,6 @@ export class StockMinimumComponent implements OnInit {
                     _date.fin = new Date();
                   }
                 }
-                console.log(this.periode)
                 if (this.periode.length > 0) {
                   const _index = this.periode.length - 1;
                   const _periode = this.periode[_index]
@@ -153,9 +155,10 @@ export class StockMinimumComponent implements OnInit {
                     this.periodeselected.fin = new Date();
                   }
                   const _dateFin = new Date(this.periodeselected.fin);
-                  _dateFin.setDate(_dateFin.getDate() - 1);
-                  console.log(this.exploitations[0])
-                  this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, this.exploitationsselected, true).subscribe({
+                  if (this.periodeselected.fin == null) {
+                    _dateFin.setDate(_dateFin.getDate() - 1);
+                  }
+                  this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, this.centrerevenusselected, false).subscribe({
                     next: (_articles: any) => {
                       this.mouvemenstock = _articles;
                       this.unitefilter = [];
@@ -169,7 +172,7 @@ export class StockMinimumComponent implements OnInit {
                             let _value = 0
                             for (const _mouvement of this.mouvemenstock) {
                               if (_mouvement.article_id === _article.id) {
-                                _value += _mouvement.inventaires + _mouvement.achats - _mouvement.ventes - _mouvement.pertes;
+                                _value += +_mouvement.inventaires + +_mouvement.achats - +_mouvement.ventes - +_mouvement.pertes;
                                 _article.stock = _value;
                                 _article.stockminimum = _article.articleexploitation[0].stockminimum;
                               }
@@ -204,26 +207,22 @@ export class StockMinimumComponent implements OnInit {
     return `${year}-${month}-${day}`;
   }
 
-  async selectExploitations(_exploitation: InterfaceExploitations) {
-    this.exploitation = _exploitation;
-    this.idexploitations = _exploitation.id ? _exploitation.id : 0;
+  async selectCentrerevenu(_centreRevenu: InterfaceCentreRevenu) {
+    this.centrerevenu = _centreRevenu;
+    this.idcentrerevenu = _centreRevenu.id ? _centreRevenu.id : 0;
   }
 
-  private resetExploitation() {
-    this.exploitation = {
-      code_couleur: '',
+  private resetCentreRevenu() {
+    this.centrerevenu = {
+      code: '',
       libelle: '',
-      nbDecimal: 0,
-      commentaire: '',
-      siteWeb: '',
-      codenaf: '',
-      siret: '',
-      logo: '',
-      actif: false,
+      exploitationsId: this.idexploitation,
       adressesId: 0,
-      selected: false,
+      email: '',
+      telephone: '',
+      exploitations: this.exploitation,
       adresses: new Adress(),
-      centreRevenu: [],
+      lieuStockage: []
     }
   }
 
@@ -257,6 +256,8 @@ export class StockMinimumComponent implements OnInit {
         this.headerchoice = '';
         this.centrerevenus = _centreRevenu;
         this.centrerevenu = _centreRevenu[0];
+        this.centrerevenusdefault = _centreRevenu;
+        console.log(this.centrerevenu)
 
         this.exploitationService.getExploitation().subscribe({
           next: async (_exploitation) => {
@@ -268,13 +269,9 @@ export class StockMinimumComponent implements OnInit {
               this.exploitations = this.exploitations.filter(e => e.id == this.idexploitation);
               this.centrerevenus = this.centrerevenus.filter(c => c.exploitationsId == this.idexploitation);
             }
-            this.exploitationsdefault = this.exploitations;
-            this.exploitations[0].selected = true;
-            this.exploitationsselected = [this.exploitations[0].id || 0];
-            this.headerchoice = this.exploitations[0].libelle;
-            this.exploitation = this.exploitations[0];
-            await this.selectExploitations(this.exploitation);
-            this.inventaireService.getPeriode(this.exploitationsselected, true).subscribe({
+            this.centrerevenusselected = [this.centrerevenus[0].id || 0];
+            await this.selectCentrerevenu(this.centrerevenu);
+            this.inventaireService.getPeriode(this.centrerevenusselected, false).subscribe({
               next: (value: any) => {
                 this.periode = value;
                 for (const _date of this.periode) {
@@ -291,9 +288,10 @@ export class StockMinimumComponent implements OnInit {
                     this.periodeselected.fin = new Date();
                   }
                   const _dateFin = new Date(this.periodeselected.fin);
-                  _dateFin.setDate(_dateFin.getDate() - 1);
-                  console.log(this.exploitations[0])
-                  this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, this.exploitationsselected, true).subscribe({
+                  if (this.periodeselected.fin == null) {
+                    _dateFin.setDate(_dateFin.getDate() - 1);
+                  }
+                  this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, this.centrerevenusselected, false).subscribe({
                     next: (_articles: any) => {
                       this.mouvemenstock = _articles;
                       this.unitefilter = [];
@@ -306,7 +304,7 @@ export class StockMinimumComponent implements OnInit {
                             let _value = 0
                             for (const _mouvement of this.mouvemenstock) {
                               if (_mouvement.article_id === _article.id) {
-                                _value += _mouvement.inventaires + _mouvement.achats - _mouvement.ventes - _mouvement.pertes;
+                                _value += +_mouvement.inventaires + +_mouvement.achats - +_mouvement.ventes - +_mouvement.pertes;
                                 _article.stock = _value;
                                 _article.stockminimum = _article.articleexploitation[0].stockminimum;
                               }
@@ -347,12 +345,14 @@ export class StockMinimumComponent implements OnInit {
           article.forEach(_article => {
             let cout = 0;
             let conditionnements: any = null;
+            let idarticlefournisseur = 0
             _article.articlefournisseur.forEach(articlefournisseurs => {
               articlefournisseurs.conditionnement.forEach(conditionnement => {
                 const coutactuel = conditionnement.prixAchat / conditionnement.coefficientAchatCommande / conditionnement.coefficientInventaireAchat / conditionnement.coefficientInventaire;
                 if (_article.id === articlefournisseurs.articleId && coutactuel > cout) {
                   cout = coutactuel;
                   conditionnements = conditionnement;
+                  idarticlefournisseur = articlefournisseurs.id || 0;
                 }
               })
             });
@@ -362,6 +362,7 @@ export class StockMinimumComponent implements OnInit {
             this.togglestock = false;
             if (this.fournisseur(_article.articlefournisseur, _article.conditionnement?.articlefournisseurId || 0) != undefined) {
               const _articlefournisseur: InterfaceArticlefournisseurs = {
+                id: idarticlefournisseur,
                 articleId: _article.id || 0,
                 fournisseurId: this.fournisseur(_article.articlefournisseur, _article.conditionnement?.articlefournisseurId || 0).fournisseurId,
                 marque: '',
@@ -375,6 +376,7 @@ export class StockMinimumComponent implements OnInit {
               this.articlefournisseurs.push(_articlefournisseur);
             } else {
               const _articlefournisseur: InterfaceArticlefournisseurs = {
+                id: idarticlefournisseur,
                 articleId: _article.id || 0,
                 fournisseurId: undefined,
                 marque: '',
@@ -432,6 +434,89 @@ export class StockMinimumComponent implements OnInit {
   }
 
   commander(fournisseurs: { fournisseur: InterfaceFournisseur, articlefournisseurs: InterfaceArticlefournisseurs[]; }) {
-    console.log(fournisseurs)
+    this.boncommande = {
+      remise: 0,
+      montantHT: 0,
+      montantTva: 0,
+      noPiece: this.num_commande,
+      validation: 0,
+      commentaire: '',
+      dateCommande: this.today,
+      fournisseurId: fournisseurs.fournisseur.id || 0,
+      exploitationId: this.centrerevenu.exploitations.id || 0,
+      centreId: this.idcentrerevenu,
+      fournisseur: fournisseurs.fournisseur,
+      selected: false,
+      centre: this.centrerevenu,
+      exploitation: this.centrerevenu.exploitations,
+      commandeDetail: []
+    };
+
+    let commandeDetail: InterfaceCommandeDetail = {
+      commandeId: 0,
+      articlefournisseurId: 0,
+      conditionnementId: 0,
+      QteCommande: 0,
+      QteCommandeFT: 0,
+      prixarticle: 0,
+      remise: 0,
+      validationdetailbc: false
+    };
+
+    for (const _detail of fournisseurs.articlefournisseurs) {
+      // console.log(_detail)
+      commandeDetail = {
+        commandeId: 0,
+        articlefournisseurId: _detail.id ? _detail.id : 0,
+        QteCommande: this.calculquantiteacommander(_detail, this.articles).quantite,
+        QteCommandeFT: this.calculquantiteacommander(_detail, this.articles).quantiteFt,
+        conditionnementId: _detail.article.conditionnement?.id || 0,
+        prixarticle: _detail.article.conditionnement?.prixAchat || 0,
+        remise: 0,
+        validationdetailbc: false,
+        articlefournisseur: _detail,
+        selected: false,
+        conditionnement: _detail.article.conditionnement,
+      }
+      this.boncommande.commandeDetail.push(commandeDetail);
+    }
+
+    this.commandeService.createBonCommande(this.boncommande, this.boncommande.commandeDetail).subscribe({
+      next: (commande: any) => {
+        this.toggleToast('Bon de commande n° ' + this.boncommande.noPiece + ' pour le fournisseur ' + this.boncommande.fournisseur.raison_social + ' crée avec succès!');
+      },
+      error: (error) => {
+        this.toggleToast('veuillez réessayer!');
+      }
+    });
+    console.log(this.boncommande)
+  }
+
+  calculquantiteacommander(_articlefournisseur: InterfaceArticlefournisseurs, _article: InterfaceArticle[]) {
+    let quantiteFt = 0;
+    let quantite = 0;
+    for (const article of _article) {
+      if (article.id == _articlefournisseur.articleId) {
+        article.stock = article.stock || 0;
+        article.stockminimum = article.stockminimum || 0;
+        if (article.stock <= article.stockminimum) {
+          quantiteFt = article.stockminimum - article.stock;
+        }
+        if (quantiteFt === article.stockminimum) {
+          quantiteFt += 1;
+        }
+        if (article.conditionnement) {
+          const _conditionnement = article.conditionnement;
+          // const quantitedefaut = 1;
+          quantite = quantiteFt / (_conditionnement.coefficientInventaire * _conditionnement.coefficientInventaireAchat * _conditionnement.coefficientAchatCommande);
+          quantite = Math.ceil(quantite);
+          if (quantite === 0) {
+            quantite = 1;
+          }
+          quantiteFt = quantite * (_conditionnement.coefficientInventaire * _conditionnement.coefficientInventaireAchat * _conditionnement.coefficientAchatCommande);
+        }
+      }
+    }
+    return { quantiteFt: quantiteFt, quantite: quantite };
   }
 }

@@ -12,6 +12,7 @@ export class Fichetechnique implements InterfaceFichetechnique {
 
     id?: number | undefined;
     libelle: string;
+    code: string;
     categorieId: number;
     familleId: number;
     uniteId: number;

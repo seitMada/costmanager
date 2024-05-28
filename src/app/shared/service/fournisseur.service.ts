@@ -4,6 +4,7 @@ import { environment } from 'src/environments/environment';
 import { InterfaceFournisseur } from '../model/interface-fournisseurs';
 import { InterfaceArticlefournisseurs } from '../model/interface-articlefournisseurs';
 import { IntefaceConditionnement } from '../model/inteface-conditionnements';
+import { InterfaceAdresse } from '../model/interface-adresse';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class FournisseurService {
   private apiGetExploitationByFournisseur = environment.APIGETEXPLOITATIONBYFOURNISSEUR;
 
   private apiGetAdresse = environment.APIGETADRESS;
+  private apiAddAdresse = environment.APIADDADRESS;
 
   private apiAddArticleFournisseur = environment.APIADDARTICLEFOURNISSEUR;
   private apiDeleteArticleFournisseur = environment.APIDELETEARTICLEFOURNISSEUR;
@@ -59,6 +61,10 @@ export class FournisseurService {
 
   public getAllAdresse() {
     return this.https.get<any>(this.apiGetAdresse);
+  }
+
+  public createnewadresse(adresse: InterfaceAdresse) {
+    return this.https.post(this.apiAddAdresse, adresse);
   }
 
   public updateFournisseurExploitation(id: number, exploitationid: number[]) {

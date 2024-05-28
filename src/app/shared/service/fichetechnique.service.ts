@@ -108,6 +108,7 @@ export class FichetechniqueService {
     }
     const fichetechnique: InterfaceFichetechnique = {
       libelle: '',
+      code: '',
       categorieId: 0,
       familleId: 0,
       uniteId: 0,

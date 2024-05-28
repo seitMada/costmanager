@@ -14,6 +14,8 @@ import { ExploitationService } from 'src/app/shared/service/exploitation.service
 import { PdfserviceService } from 'src/app/shared/service/pdfservice.service';
 import { ZonestockagesService } from 'src/app/shared/service/zonestockages.service';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { InterfaceBonCommande } from 'src/app/shared/model/interface-bonCommande';
+import { InterfaceCommandeDetail } from 'src/app/shared/model/interface-commandedetail';
 
 @Component({
   selector: 'app-mouvement-stock',
@@ -31,6 +33,10 @@ export class MouvementStockComponent implements OnInit {
   public exploitation: InterfaceExploitations;
   public centrerevenusselected: number[];
   public exploitationsselected: number[];
+  
+  public commandeDetails: InterfaceCommandeDetail[];
+  public commandeDetail: InterfaceCommandeDetail;
+  public boncommande: InterfaceBonCommande;
 
   public mouvemenstock: {
     article_id: number,
@@ -62,12 +68,14 @@ export class MouvementStockComponent implements OnInit {
   }[];
 
   public periode: { debut: Date, fin: Date }[] = []
-  public periodeselected: { debut: Date, fin: Date };
+  public periodeselected: { debut: Date, fin: Date | null };
+  public isperiodeencours: boolean = false;
 
   position = 'top-end';
   visible = false;
   active = 1;
   percentage = 0;
+  public colspan = 3;
   public message = '';
   public color = 'success';
   public textcolor = 'text-light';
@@ -85,7 +93,7 @@ export class MouvementStockComponent implements OnInit {
   public idexploitation = +(sessionStorage.getItem('exploitation') || 3);
   public idoperateur = +(sessionStorage.getItem('id') || 3);
   public idcentrerevenu: number = 0;
-  private today = new Date();
+  public today = new Date();
   public dates = {
     debut: new Date(this.today.getFullYear(), this.today.getMonth() - 1, this.today.getDate()),
     fin: this.today,
@@ -137,11 +145,11 @@ export class MouvementStockComponent implements OnInit {
             this.inventaireService.getPeriode(this.exploitationsselected, true).subscribe({
               next: (value: any) => {
                 this.periode = value;
-                for (const _date of this.periode) {
-                  if (_date.fin == null) {
-                    _date.fin = new Date();
-                  }
-                }
+                // for (const _date of this.periode) {
+                //   if (_date.fin == null) {
+                //     _date.fin = new Date();
+                //   }
+                // }
                 console.log(this.periode)
                 if (this.periode.length > 0) {
                   const _index = this.periode.length - 1;
@@ -149,9 +157,15 @@ export class MouvementStockComponent implements OnInit {
                   this.periodeselected = this.periode[_index];
                   if (this.periodeselected.fin == null) {
                     this.periodeselected.fin = new Date();
+                    this.isfinperiode = false;
+                  } else {
+                    this.isfinperiode = true;
+                    this.colspan = 3;
                   }
                   const _dateFin = new Date(this.periodeselected.fin);
-                  _dateFin.setDate(_dateFin.getDate() - 1);
+                  if (this.periodeselected.fin == null) {
+                    _dateFin.setDate(_dateFin.getDate() - 1);
+                  }
                   console.log(this.exploitations[0])
                   this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, this.exploitationsselected, true).subscribe({
                     next: (_articles: any) => {
@@ -160,6 +174,9 @@ export class MouvementStockComponent implements OnInit {
                       this.unitefilter = [];
                       this.dates.debut = new Date(_periode.debut);
                       this.dates.fin = new Date(_periode.fin ? _periode.fin : new Date());
+                      if (this.isfinperiode == false) {
+                        this.periodeselected.fin = null;
+                      }
                     }
                   })
                 }
@@ -172,13 +189,18 @@ export class MouvementStockComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
+
   }
 
   selectPeriode(_periode: { debut: Date, fin: Date }) {
     this.periodeselected = _periode;
     this.dates.debut = new Date(this.periodeselected.debut);
-    this.dates.fin = new Date(this.periodeselected.fin);
+    this.dates.fin = new Date(this.periodeselected.fin ? this.periodeselected.fin : new Date());
+    // if (!this.periodeselected.fin) {
+    //   this.isfinperiode = false;
+    // } else {
+    //   this.isfinperiode = true;
+    // }
   }
 
   open() {
@@ -204,9 +226,19 @@ export class MouvementStockComponent implements OnInit {
     }
     this.headerchoice.substring(0, this.headerchoice.length - 2);
 
-    const _dateFin = new Date(this.periodeselected.fin);
-    _dateFin.setDate(_dateFin.getDate() - 1);
-    this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected, this.exploitationsselected.length > 0).subscribe({
+    const _dateFin = new Date(this.periodeselected.fin ? this.periodeselected.fin : new Date());
+    if (!this.isfinperiode) {
+      _dateFin.setDate(_dateFin.getDate() - 1);
+    }
+    const _datefinal = new Date(this.periodeselected.fin ? this.periodeselected.fin : new Date());
+    if (this.periodeselected.fin !== null) {
+      this.isfinperiode = true;
+      this.colspan = 3;
+    } else {
+      this.isfinperiode = false;
+      this.colspan = 2;
+    }
+    this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(_datefinal)) }, this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected, this.exploitationsselected.length > 0).subscribe({
       next: (_articles: any) => {
         this.mouvemenstock = _articles;
         this.mouvemenstockback = _articles;
@@ -216,7 +248,7 @@ export class MouvementStockComponent implements OnInit {
         for (const unite of _articles) {
           this.unitefilter.push(unite.unite);
         }
-        this.isfinperiode = true;
+        // this.isfinperiode = true;
         this.unitefilter = this.removeDuplicates(this.unitefilter);
       }
     })
@@ -382,6 +414,48 @@ export class MouvementStockComponent implements OnInit {
 
   showvalorisation() {
     this.isvalorisation = !this.isvalorisation;
+    if (this.isfinperiode == false) {
+      this.colspan = 2;
+    } else {
+      this.colspan = 3;
+    }
+  }
+
+  calcultotal(mouvemenstock: {
+    article_id: number,
+    libelle: string,
+    unite: string,
+    inventaires: number,
+    inventairesfinal: number,
+    cout: number,
+    pertes: number,
+    achats: number,
+    ventes: number,
+    stock_theorique: number,
+    stock_reel: number,
+    stock_initiale: number
+  }[], type: number = 0) {
+    let total = 0;
+    if (mouvemenstock) {
+      for (const _mouvement of mouvemenstock) {
+        switch (type) {
+          case 0:
+            total += +_mouvement.inventaires * +_mouvement.cout;
+            break;
+          case 1:
+            total += +_mouvement.inventairesfinal * +_mouvement.cout;
+            break;
+          case 2:
+            total += (+_mouvement.inventaires - +_mouvement.pertes - +_mouvement.ventes +
+              +_mouvement.achats) * +_mouvement.cout;
+            break;
+  
+          default:
+            break;
+        }
+      }
+    }
+    return total;
   }
 
   delete() {

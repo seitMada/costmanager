@@ -9,6 +9,7 @@ import { InterfaceComposition, InterfaceCompositions } from "./interface-composi
 export interface InterfaceFichetechnique {
     id?: number;
     libelle: string;
+    code: string;
     categorieId: number;
     familleId: number;
     uniteId: number;
