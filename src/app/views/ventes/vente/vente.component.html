@@ -1,46 +1,37 @@
-<div class="card d-flex py-1 mb-2">
-    <div class="d-flex bd-highlight">
-        <div class="flex-grow-1 bd-highlight">
-            <button type="button" class="btn btn-success btn-sm mx-1" *ngIf="!modifToggle"
-                (click)="submit()">Enregistrer</button>
-            <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle"
-                (click)="cancel()">Annuler</button>
-        </div>
-        <div class="flex-grow-1 bd-highlight mx-1 col-4">
-            <div class="input-group input-group-sm" *ngIf="addToggle">
-                <span for="dateDebut" class="input-group-text col-4">
-                    Ventes du :
-                </span>
-                <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.debut"
-                    name="dateDebut" bsDatepicker [bsConfig]="bsConfig" [maxDate]="dates.fin"
-                    (ngModelChange)="selectCentreRevenus(centrerevenu)">
-                <span for="dateFin" class="input-group-text col-1">
-                    au :
-                </span>
-                <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.fin"
-                    [minDate]="dates.debut" name="dateFin" bsDatepicker [bsConfig]="bsConfig"
-                    (ngModelChange)="selectCentreRevenus(centrerevenu)">
-            </div>
-        </div>
-        <div class="flex-grow-1 bd-highlight mx-1 col-3">
-            <div class="input-group input-group-sm">
-                <span class="input-group-text col-5" id="basic-addon1">Centre revenus</span>
-                <input type="text" class="form-control bg-white " [ngClass]="toggle ? 'col-6' : 'col-7'"
-                    aria-label="unite" aria-describedby="fournisseur" [(ngModel)]="centrerevenu.libelle"
-                    disabled="true">
-                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                    *ngIf="toggle" data-bs-toggle="dropdown" aria-expanded="false">
-                    <span class="visually-hidden">Toggle Dropdown</span>
-                </button>
-                <ul class="dropdown-menu dropdown-menu-end">
-                    <li *ngFor="let line of centrerevenusdefault"><span
-                            (click)="selectCentreRevenus(line)">{{line.libelle}}</span>
-                    </li>
-                </ul>
-            </div>
-        </div>
-        <div class="bd-highlight">
-            <!-- <button class="btn btn-outline-primary btn-sm me-1" title="Liste pertes" (click)="toggleModal()" *ngIf="!toggle"
+<div class="card d-flex py-1 mb-2" *ngIf="toggle">
+  <div class="d-flex bd-highlight">
+    <div class="flex-grow-1 bd-highlight mx-1 col-4">
+      <div class="input-group input-group-sm" *ngIf="addToggle">
+        <span for="dateDebut" class="input-group-text col-4">
+          Ventes du :
+        </span>
+        <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.debut" name="dateDebut"
+          bsDatepicker [bsConfig]="bsConfig" [maxDate]="dates.fin" (ngModelChange)="selectCentreRevenus(centrerevenu)">
+        <span for="dateFin" class="input-group-text col-1">
+          au :
+        </span>
+        <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="dates.fin" [minDate]="dates.debut"
+          name="dateFin" bsDatepicker [bsConfig]="bsConfig" (ngModelChange)="selectCentreRevenus(centrerevenu)">
+      </div>
+    </div>
+    <div class="flex-grow-1 bd-highlight mx-1 col-3">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text col-5" id="basic-addon1">Centre revenus</span>
+        <input type="text" class="form-control bg-white " [ngClass]="toggle ? 'col-6' : 'col-7'" aria-label="unite"
+          aria-describedby="fournisseur" [(ngModel)]="centrerevenu.libelle" disabled="true">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="toggle"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="visually-hidden">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li *ngFor="let line of centrerevenusdefault"><span
+              (click)="selectCentreRevenus(line)">{{line.libelle}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="bd-highlight">
+      <!-- <button class="btn btn-outline-primary btn-sm me-1" title="Liste pertes" (click)="toggleModal()" *ngIf="!toggle"
           [disabled]="!modifToggle">
           <i class="fas fa-list"></i>
         </button>
@@ -52,38 +43,172 @@
           [disabled]="!deleteToggle">
           <i class="fas fa-trash"></i>
         </button> -->
-        </div>
+    <div class="bd-highlight">
+      <button class="btn btn-outline-success btn-sm me-1" title="Inserer vente" (click)="toggleModal();resetVente();addvente()" [disabled]="!modifToggle">
+        <i class="fas fa-plus"></i>
+      </button>
     </div>
+    </div>
+  </div>
 </div>
 
-<div class="card d-flex">
-    <div class="card-body overflow-y-scroll py-1" style="height: 650px;">
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th scope="col" class="col-1">#</th>
-                    <th scope="col" class="col-2">Date</th>
-                    <th scope="col" class="col-2">Numero ticket</th>
-                    <th scope="col" class="col-1">Montant HT</th>
-                    <th scope="col" class="col-1">Montant TTC</th>
-                    <th scope="col" class="col-3">Centre revenus</th>
-                    <!-- <th scope="col" class="col-2">Operateurs</th> -->
-                </tr>
-            </thead>
-            <tbody>
-                <tr *ngFor="let line of ventes">
-                    <td class="col-1">
-                        <input type="checkbox" class="form-check-input" name="ppo-{{line.date_vente}}"
-                            id="ppo-{{line.id}}" [(ngModel)]="line.selected">
-                    </td>
-                    <td class="col-2" (click)="toggleModal(); show(line)">{{screenDate(line.date_vente)}}</td>
-                    <td class="col-2" (click)="toggleModal(); show(line)">{{line.num_ticket}}</td>
-                    <td class="col-1" (click)="toggleModal(); show(line)">{{line.montantht}} €</td>
-                    <td class="col-1" (click)="toggleModal(); show(line)">{{line.montantttc}} €</td>
-                    <td class="col-3" (click)="toggleModal(); show(line)">{{line.centre.libelle}}</td>
-                    <!-- <td class="col-2" (click)="toggleModal(); show(line)">{{line.operateur.nom}} {{line.operateur.prenom}}</td> -->
-                </tr>
-            </tbody>
-        </table>
+<div class="card d-flex py-1 mb-2" *ngIf="!toggle">
+  <div class="d-flex bd-highlight">
+    <div class="flex-grow-1 bd-highlight">
+      <button type="button" class="btn btn-success btn-sm mx-1" *ngIf="!modifToggle"
+        (click)="submit()">Enregistrer</button>
+      <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
     </div>
+    <div class="flex-grow-1 bd-highlight mx-1">
+      <div class="input-group input-group-sm" *ngIf="addToggle">
+        <span for="ticket" class="input-group-text col-4">
+          Numero ticket :
+        </span>
+        <input type="text" class="form-control" name="ticket" id="ticket" [(ngModel)]="numticket">
+      </div>
+    </div>
+    <div class="flex-grow-1 bd-highlight mx-1">
+      <div class="input-group input-group-sm" *ngIf="addToggle">
+        <span for="dateDebut" class="input-group-text col-4">
+          Date vente :
+        </span>
+        <input type="text" class="form-control col-4" autocomplete="off" [(ngModel)]="datevente" name="datevente"
+          bsDatepicker [bsConfig]="bsConfig">
+      </div>
+    </div>
+    <div class="flex-grow-1 bd-highlight mx-1">
+      <div class="input-group input-group-sm">
+        <span class="input-group-text col-5" id="basic-addon1">Centre revenus</span>
+        <input type="text" class="form-control bg-white " [ngClass]="toggle ? 'col-6' : 'col-7'" aria-label="unite"
+          aria-describedby="fournisseur" [(ngModel)]="centrerevenu.libelle" disabled="true">
+        <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split" *ngIf="toggle"
+          data-bs-toggle="dropdown" aria-expanded="false">
+          <span class="visually-hidden">Toggle Dropdown</span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li *ngFor="let line of centrerevenusdefault"><span
+              (click)="selectCentreRevenus(line)">{{line.libelle}}</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+    <div class="bd-highlight" *ngIf="!toggle">
+      <button class="btn btn-outline-primary btn-sm me-1" title="Ajouter fichetechniques" (click)="toggleModal()" *ngIf="modifToggle" >
+        <i class="fas fa-list"></i>
+      </button>
+      <button class="btn btn-outline-success btn-sm me-1" title="Ajouter fichetechniques" (click)="openArticle(content)" *ngIf="!modifToggle" >
+        <i class="fas fa-plus"></i>
+      </button>
+    </div>
+  </div>
 </div>
+
+<div class="card d-flex" *ngIf="toggle">
+  <div class="card-body overflow-y-scroll py-1" style="height: 650px;">
+    <table class="table table-striped table-hover">
+      <thead>
+        <tr>
+          <th scope="col" class="col-1">#</th>
+          <th scope="col" class="col-2">Date</th>
+          <th scope="col" class="col-2">Numero ticket</th>
+          <th scope="col" class="col-1">Montant HT</th>
+          <th scope="col" class="col-1">Montant TTC</th>
+          <th scope="col" class="col-3">Centre revenus</th>
+          <!-- <th scope="col" class="col-2">Operateurs</th> -->
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let line of ventes">
+          <td class="col-1">
+            <input type="checkbox" class="form-check-input" name="vente-{{line.date_vente}}" id="vente-{{line.id}}"
+              [(ngModel)]="line.selected">
+          </td>
+          <td class="col-2" (click)="toggleModal(); show(line)">{{screenDate(line.date_vente)}}</td>
+          <td class="col-2" (click)="toggleModal(); show(line)">{{line.num_ticket}}</td>
+          <td class="col-1" (click)="toggleModal(); show(line)">{{line.montantht}} €</td>
+          <td class="col-1" (click)="toggleModal(); show(line)">{{line.montantttc}} €</td>
+          <td class="col-3" (click)="toggleModal(); show(line)">{{line.centre?.libelle}}</td>
+          <!-- <td class="col-2" (click)="toggleModal(); show(line)">{{line.operateur.nom}} {{line.operateur.prenom}}</td> -->
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<div class="card d-flex" *ngIf="!toggle">
+  <div class="card-body overflow-y-scroll py-1" style="height: 650px;" *ngIf="isimport">
+    <table class="table table-striped table-hover table-sm">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th class="col-3">Libelle</th>
+          <th class="col-2">Quantité</th>
+          <th class="col-2">Unité</th>
+          <th class="col-2">Prix HT</th>
+          <th class="col-2">Prix TTC</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let line of vente.ventedetail">
+          <td>
+            <input type="checkbox" class="form-check-input" name="ppo-{{line.fichetechniqueId}}"
+              id="ppo-{{line.fichetechniqueId}}" [(ngModel)]="line.selected">
+          </td>
+          <td class="col-3">{{line.fichetechnique.libelle}}</td>
+          <!-- <td class="col-2">{{line.quantite | number : '1.2-2'}}</td> -->
+          <td class="col-2">
+            <input type="number" class="form-control form-control-sm bg-transparent"
+              [(ngModel)]="line.quantite" [step]="line.fichetechnique.unite.step" placeholder="0.00"
+              [disabled]="modifToggle">
+          </td>
+          <td class="col-2">{{line.fichetechnique.unite.libelle}}
+            <!-- <input type="number" class="form-control form-control-sm bg-transparent"
+              [(ngModel)]="line.quantite" [step]="line.unite.step" placeholder="0.00"
+              [disabled]="modifToggle"> -->
+          </td>
+          <td class="col-2">{{line.prixht * line.quantite | number : '1.2-2'}} €</td>
+          <td class="col-2">{{line.prixttc * line.quantite | number : '1.2-2'}} €</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div *ngIf="!isimport"></div>
+</div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title text-center" id="modal-basic-title">Ajouter des articles </h6>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="card-body overflow-y-scroll py-1" style="height: 400px;">
+      <table class="table table-striped table-hover table-sm">
+        <thead>
+          <tr>
+            <th scope="col" class="col-1">#</th>
+            <th scope="col" class="col-3">Libellé</th>
+            <th scope="col" class="col-2">Unités</th>
+            <th scope="col" class="col-3">Familles</th>
+            <th scope="col" class="col-3">Prix</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let line of fichetechniques">
+            <td class="col-1">
+              <input type="checkbox" class="form-check-input" name="ft-{{line.id}}" id="ft-{{line.id}}"
+                [(ngModel)]="line.selected">
+            </td>
+            <td class="col-3">{{line.libelle}}</td>
+            <td class="col-2">{{line.unite.libelle}}</td>
+            <td class="col-3">{{line.famille.libelle}}</td>
+            <td class="col-3">{{line.prix | number : '1.2-2'}} €</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-outline-success"
+      (click)="modal.close('Save click')">Séléctionner</button>
+  </div>
+</ng-template>

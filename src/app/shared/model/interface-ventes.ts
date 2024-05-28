@@ -11,16 +11,16 @@ export interface InterfaceVentes {
     num_ticket: string;
     montantht: number;
     montantttc: number;
-    date_vente: string;
-    operateurId: number;
+    date_vente: Date;
+    operateurId?: number;
     caisseId?: number;
-    centreId: number;
-    exploitationId: number;
+    centreId?: number;
+    exploitationId?: number;
     selected?: boolean;
 
-    operateur: InterfaceOperateur;
-    centre: InterfaceCentreRevenu;
-    exploitation: InterfaceExploitations;
+    operateur?: InterfaceOperateur;
+    centre?: InterfaceCentreRevenu;
+    exploitation?: InterfaceExploitations;
 
     ventedetail: InterfaceVentesDetails[];
 }

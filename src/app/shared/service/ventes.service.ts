@@ -8,6 +8,7 @@ import { HttpClient } from '@angular/common/http';
 export class VentesService {
 
   private apiGetVenteCrDate = environment.APIGETVENTEBYCRANDDATE;
+  private apiAddVente = environment.APICREATEVENTE;
 
   constructor(private https: HttpClient) { }
 
@@ -17,5 +18,9 @@ export class VentesService {
 
   public getVenteCrDate(id: number[], dateDebut: string, dateFin: string, exploitation: boolean = false) {
     return this.https.post(this.apiGetVenteCrDate, { id: id, dateDebut: dateDebut, dateFin: dateFin, exploitation: exploitation });
+  }
+
+  public addVente(vente: any) {
+    return this.https.post(this.apiAddVente, { vente: vente });
   }
 }
