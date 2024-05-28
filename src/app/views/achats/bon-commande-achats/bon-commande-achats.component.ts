@@ -41,7 +41,7 @@ import { SousFamille } from 'src/app/shared/model/sousfamilles';
 @Component({
   selector: 'app-bon-commande-achats',
   standalone: true,
-  imports: [CommonModule, FormsModule, BsDatepickerModule, NgbNavModule, AlertModule, TooltipModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
+  imports: [CommonModule, FormsModule, BsDatepickerModule,NgbNavModule, AlertModule,TooltipModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
   templateUrl: './bon-commande-achats.component.html',
   styleUrl: './bon-commande-achats.component.scss',
   providers: [NgbModalConfig, NgbModal]
@@ -154,37 +154,35 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   listArticleFournisseurs() {
-    this.dates.today = new Date();
+    // this.dates.today = new Date();
     const exploitationId = Number(this.exploitationId);
     this.selectFounisseur(this.fournisseur);
     this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
       next: (artExploitation) => {
         if (artExploitation) {
           this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
-
+               
           this.commandeService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
             next: (artFournisseur: any) => {
               this.articleFournisseurs = artFournisseur;
-              console.log(this.articleFournisseurs)
               for (const articlefournisseur of artFournisseur) {
-                let conditionnement;
-                if (articlefournisseur.conditionnement.length > 0) {
-                  conditionnement = articlefournisseur.conditionnement.reduce((min: any, current: any) => {
-                    return current.prixAchat < min.prixAchat ? current : min;
-                  });
-                }
+                const conditionnement = articlefournisseur.conditionnement.reduce((min:any, current:any) => {
+                  return current.prixAchat < min.prixAchat ? current : min;
+                });
                 this.commandeDetail = {
                   commandeId: 0,
                   articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
+                  articleId: articlefournisseur.articleId,
                   QteCommande: 0,
                   QteCommandeFT: 0,
-                  conditionnementId: conditionnement ? conditionnement.id : null,
-                  prixarticle: conditionnement ? conditionnement.prixAchat : articlefournisseur.article.cout,
+                  conditionnementId: conditionnement.id,
+                  prixarticle: conditionnement.prixAchat,
                   remise: 0,
                   validationdetailbc: false,
                   articlefournisseur: articlefournisseur,
                   selected: false,
-                  conditionnement: conditionnement ? conditionnement : null,
+                  conditionnement:conditionnement,
+                  article: articlefournisseur.article
                 }
                 this.commandes.push(this.commandeDetail);
               }
@@ -267,7 +265,7 @@ export class BonCommandeAchatsComponent implements OnInit {
       selected: false,
 
       article: this.article,
-      fournisseur: this.fournisseur,
+      fournisseur:this.fournisseur,
       conditionnement: []
     }
   }
@@ -387,20 +385,9 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   validateCommande() {
-    console.log(this.boncommande);
+    const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
 
-    this.idBonCommande = this.boncommande.id ? this.boncommande.id : 0;
-    if (this.boncommande) {
-      this.commandeService.validateCommande(this.boncommande).subscribe({
-        next: (value) => {
-          this.toggleToast('Bon de commande n° ' + this.boncommande.noPiece + ' a été validé');
-          this.inputModif = true;
-          this.showvalidateBtn = !this.showvalidateBtn;
-          this.addBtn = false;
-        },
-      });
-    } else {
-      const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
+    if (selectedBonCommandes.length >0) {
       for (const bonCommande of selectedBonCommandes) {
         if (bonCommande.validation == 0) {
           this.commandeService.validateCommande(bonCommande).subscribe({
@@ -416,6 +403,15 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.showvalidateBtn = !this.showvalidateBtn;
         }
       }
+    } else {
+      this.commandeService.validateCommande(this.boncommande).subscribe({
+        next: (value) => {
+          this.toggleToast('Bon de commande n° ' + this.boncommande.noPiece + ' a été validé');
+          this.inputModif = true;
+          this.showvalidateBtn = !this.showvalidateBtn;
+          this.addBtn = false;
+        },
+      });
     }
   }
 
@@ -457,28 +453,29 @@ export class BonCommandeAchatsComponent implements OnInit {
               console.log(this.closeResult)
               if (this.closeResult == 'Closed with: Save click') {
                 for (const articlefournisseur of this.articleFournisseurs) {
-                  if (articlefournisseur.selected == true && articlefournisseur.article) {
-                    for (const condition of articlefournisseur.conditionnement) {
-                      if (condition.selected !== undefined) {
-                        this.commandeDetail = {
-                          commandeId: 0,
-                          articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
-                          conditionnementId: condition.id ? condition.id : 0,
-                          QteCommande: 0,
-                          QteCommandeFT: 0,
-                          prixarticle: condition.prixAchat ? condition.prixAchat : 0,
-                          remise: 0,
-                          validationdetailbc: false,
-                          articlefournisseur: articlefournisseur,
-                          selected: false,
-                          conditionnement: condition,
-                        }
-                        this.commandes.push(this.commandeDetail);
+                  for(const condition of articlefournisseur.conditionnement){
+                    if (condition.selected !== undefined) {
+                      this.commandeDetail = {
+                        commandeId: 0,
+                        articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
+                        conditionnementId: condition.id ? condition.id : 0,
+                        articleId: articlefournisseur.articleId,
+                        QteCommande: 0,
+                        QteCommandeFT: 0,
+                        prixarticle: condition.prixAchat ? condition.prixAchat : 0,
+                        remise: 0,
+                        validationdetailbc: false,
+                        articlefournisseur: articlefournisseur,
+                        selected: false,
+                        conditionnement: condition,
+                        article: articlefournisseur.article
                       }
+                      this.commandes.push(this.commandeDetail);
+                      this.addBtn = false;
                     }
-                  }
+                  }            
                 }
-                this.addBtn = false;
+                
               }
             },
             (reason) => {
@@ -506,24 +503,25 @@ export class BonCommandeAchatsComponent implements OnInit {
                     console.log(this.closeResult)
                     if (this.closeResult == 'Closed with: Save click') {
                       for (const articlefournisseur of artFournisseur) {
-                        if (articlefournisseur.selected == true && articlefournisseur.article) {
-                          for (const condition of articlefournisseur.conditionnement) {
-                            if (condition.selected !== undefined) {
-                              this.commandeDetail = {
-                                commandeId: 0,
-                                articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
-                                conditionnementId: condition.id ? condition.id : 0,
-                                QteCommande: 0,
-                                QteCommandeFT: 0,
-                                prixarticle: condition.prixAchat ? condition.prixAchat : 0,
-                                remise: 0,
-                                validationdetailbc: false,
-                                articlefournisseur: articlefournisseur,
-                                selected: false,
-                                conditionnement: condition,
-                              }
-                              this.commandes.push(this.commandeDetail);
+                        for(const condition of articlefournisseur.conditionnement){
+                          if (condition.selected !== undefined) {
+                            this.commandeDetail = {
+                              commandeId: 0,
+                              articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
+                              conditionnementId: condition.id ? condition.id : 0,
+                              articleId: articlefournisseur.articleId,
+                              QteCommande: 0,
+                              QteCommandeFT: 0,
+                              prixarticle: condition.prixAchat ? condition.prixAchat : 0,
+                              remise: 0,
+                              validationdetailbc: false,
+                              articlefournisseur: articlefournisseur,
+                              selected: false,
+                              conditionnement: condition,
+                              article: articlefournisseur.article
                             }
+                            this.commandes.push(this.commandeDetail);
+                            this.addBtn = false;
                           }
                         }
                       }
@@ -648,10 +646,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     if (bonCommande.validation == 0) {
       this.showvalidateBtn = !this.showvalidateBtn;
     }
-    console.log(this.boncommande.dateCommande)
-    this.dates = {
-      today: new Date(this.boncommande.dateCommande)
-    };
+    this.boncommande.dateCommande = new Date(this.boncommande.dateCommande);
     this.commandeService.getCommandeDetailByCommandeId(this.idBonCommande).subscribe({
       next: (commandeDetail) => {
         this.commandes = [];
@@ -660,6 +655,7 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.commandeDetail = {
             commandeId: detailComm.commandeId,
             articlefournisseurId: detailComm.articlefournisseurId,
+            articleId: detailComm.articleId,
             QteCommande: detailComm.QteCommande,
             QteCommandeFT: detailComm.QteCommandeFT,
             prixarticle: detailComm.prixarticle,
@@ -668,7 +664,8 @@ export class BonCommandeAchatsComponent implements OnInit {
             articlefournisseur: detailComm.articlefournisseur,
             selected: false,
             conditionnementId: detailComm.conditionnement.id ? detailComm.conditionnement.id : 0,
-            conditionnement: detailComm.conditionnement
+            conditionnement: detailComm.conditionnement,
+            article: detailComm.article
           }
 
           this.montantTTc += (detailComm.QteCommande * detailComm.prixarticle) - detailComm.remise;
@@ -689,9 +686,8 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   addBonCommande() {
     this.boncommande = this.boncommande;
+    
     if (this.commandes.length > 0) {
-      this.resetCommande();
-
       this.commandeService.createBonCommande(this.boncommande, this.commandes).subscribe({
         next: (commande: any) => {
           this.inputModif = !this.inputModif;
@@ -702,6 +698,7 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.showvalidateBtn = !this.showvalidateBtn;
           this.addBtn = false;
           this.toggleToast('Bon de commande n° ' + this.boncommande.noPiece + ' crée avec succès!');
+          this.resetCommande();
         },
         error: (error) => {
           alert('veuillez réessayer!');

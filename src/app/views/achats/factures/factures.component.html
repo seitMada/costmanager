@@ -70,7 +70,7 @@
               <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Date Achat</span>
-                  <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="dateachat" [(ngModel)]="dates.today" autocomplete="off" [disabled]="inputModif">
+                  <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="dateachat" [(ngModel)]="facture.dateAchat" autocomplete="off" [disabled]="inputModif">
                 </div>
               </div>
               <div class="col-6">
@@ -84,7 +84,7 @@
               <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Date de livraison</span>
-                  <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datelivraison" [disabled]="inputModif" [(ngModel)]="dates.tomorrow" autocomplete="off">
+                  <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datelivraison" [disabled]="inputModif" [(ngModel)]="facture.dateLivraison" autocomplete="off">
                 </div>
               </div>
               <div class="col-6">
@@ -98,7 +98,7 @@
                 <div class="col-6">
                   <div class="input-group">
                     <span class="input-group-text col-5" id="basic-addon1">Date de facture</span>
-                    <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datefacture" [disabled]="inputModif" [(ngModel)]="dates.today" autocomplete="off">
+                    <input type="text" class="form-control col-7" bsDatepicker [bsConfig]="bsConfig" name="datefacture" [disabled]="inputModif" [(ngModel)]="facture.dateFacture" autocomplete="off">
                   </div>
                 </div>
                 <div class="col-6">
@@ -162,7 +162,7 @@
             <tbody>
               <tr *ngFor="let itemes of detailFactures">
                 <td class="col-1"><input class="form-check-input" type="checkbox" name="df-{{itemes.id}}" id="df-{{itemes.id}}" [(ngModel)]="itemes.selected" (change)="checkSelectedRows()"></td>
-                <td class="col-4">{{itemes.articlefournisseur.article.libelle }}</td>
+                <td class="col-4">{{itemes.article.libelle }}</td>
                 <td class="col-1"><input type="number" class="form-control form-control-sm" [disabled]="inputModif" placeholder="0.00" [step]="itemes.conditionnement.uniteAchat.step" name="quantite[]" [(ngModel)]="itemes.quantite"></td>
                 <td class="col-1">{{ itemes.conditionnement.uniteAchat.abreviation }}</td>
                 <td class="col-1">
@@ -191,7 +191,7 @@
         <div class="card d-flex">
           <div class="d-flex flex-row-reverse bd-highlight fw-bold p-1">
             <span class="col-1"></span>
-            <span class="col-1 ms-2 text-end">{{ montantTTc? montantTTc:getTotalMontant() | number:'1.2-2'}} €</span>
+            <span class="col-1 ms-2 text-end">{{ montantTTc ? montantTTc : getTotalMontant() | number:'1.2-2'}} €</span>
             <span class="me-1">Montant Total</span>
           </div>
         </div>
@@ -246,78 +246,39 @@
       <table class="table table-striped table-hover table-sm">
         <thead>
           <tr>
-          <th scope="col" class="col-1" rowspan="2"></th>
-          <th scope="col" class="col-3" rowspan="2">Désignation</th>
-          <th scope="col" class="col-2" colspan="2">Commande</th>
-          <th scope="col" class="col-2" colspan="2">Achat</th>
-          <th scope="col" class="col-2" colspan="2">Inventaire</th>
-          <th scope="col" class="col-2" colspan="2">FT</th>
-          <th scope="col" class="col-1" ></th>
-        </tr>
-        <tr>
-          <th scope="col" class="col-1">Unité</th>
-          <th scope="col" class="col-1">Prix</th>
-          <th scope="col" class="col-1">Unité</th>
-          <th scope="col" class="col-1">Prix</th>
-          <th scope="col" class="col-1">Unité</th>
-          <th scope="col" class="col-1">Prix</th>
-          <th scope="col" class="col-1">Unité</th>
-          <th scope="col" class="col-1">Prix</th>
-          <th scope="col" class="col-1"></th>
-        </tr>
+            <th scope="col" class="col-1" rowspan="2"></th>
+            <th scope="col" class="col-3" rowspan="2">Désignation</th>
+            <th scope="col" class="col-2 text-center" colspan="2">Commande</th>
+            <th scope="col" class="col-2 text-center" colspan="2">Achat</th>
+            <th scope="col" class="col-2 text-center" colspan="2">Inventaire</th>
+            <th scope="col" class="col-2 text-center" colspan="2">FT</th>
+          </tr>
+          <tr>
+            <th scope="col" class="col-1">Unité</th>
+            <th scope="col" class="col-1">Prix</th>
+            <th scope="col" class="col-1">Unité</th>
+            <th scope="col" class="col-1">Prix</th>
+            <th scope="col" class="col-1">Unité</th>
+            <th scope="col" class="col-1">Prix</th>
+            <th scope="col" class="col-1">Unité</th>
+            <th scope="col" class="col-1">Prix</th>
+          </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let item of articleFournisseurs">
-          <td scope="col" class="col-1"><input type="checkbox" name="af-{{item.id}}" id="af-{{item.id}}" [(ngModel)]="item.selected"></td>
-          <td scope="col" class="col-3">{{item.article.libelle}}</td>
-          <td scope="col" class="col-1">
-            <tr *ngFor="let lines of item.conditionnement" cTooltipPlacement="bottom">
-              <td>{{lines.uniteCommande.abreviation}}</td>
+          <ng-container *ngFor="let item of articleFournisseurs">
+            <tr *ngFor="let conditionnement of item.conditionnement">
+              <td scope="col" class="col-1"><input type="checkbox" name="af-{{conditionnement.id}}" id="af-{{conditionnement.id}}" [(ngModel)]="conditionnement.selected"></td>
+              <td scope="col" class="col-3">{{ item.article.libelle }}</td>
+              <td scope="col" class="col-1">{{ conditionnement.uniteCommande.abreviation }}</td>
+              <td scope="col" class="col-1">{{ conditionnement.prixAchat | number: '1.2-2' }} €</td>
+              <td scope="col" class="col-1">{{ conditionnement.uniteAchat.abreviation }}</td>
+              <td scope="col" class="col-1">{{ conditionnement.prixAchat / conditionnement.coefficientAchatCommande | number: '1.2-2' }} €</td>
+              <td scope="col" class="col-1">{{ conditionnement.uniteInventaire.abreviation }}</td>
+              <td scope="col" class="col-1">{{ conditionnement.prixAchat / conditionnement.coefficientAchatCommande / conditionnement.coefficientInventaireAchat | number:'1.2-2' }} €</td>
+              <td scope="col" class="col-1">{{ conditionnement.uniteFt.abreviation }}</td>
+              <td scope="col" class="col-1">{{ conditionnement.prixAchat / conditionnement.coefficientAchatCommande / conditionnement.coefficientInventaireAchat / conditionnement.coefficientInventaire | number: '1.2-2' }} €</td>
             </tr>
-          </td>
-          <td scope="col" class="col-1">
-            <tr *ngFor="let lines of item.conditionnement">
-              <td>{{lines.prixAchat | number: '1.2-2'}} €</td>
-            </tr>
-          </td>
-          <td scope="col" class="col-1">
-            <tr *ngFor="let lines of item.conditionnement"cTooltipPlacement="bottom">
-              <td>{{lines.uniteAchat.abreviation}}</td>
-            </tr>
-          </td>
-          <td scope="col" class="col-1">
-            <tr *ngFor="let lines of item.conditionnement">
-              <td>{{lines.prixAchat / lines.coefficientAchatCommande | number: '1.2-2'}} €</td>
-            </tr>
-          </td>
-          <td scope="col" class="col-1">
-            <tr *ngFor="let lines of item.conditionnement"cTooltipPlacement="bottom">
-              <td>{{lines.uniteInventaire.abreviation}}</td>
-            </tr>
-          </td>
-          <td scope="col" class="col-1">
-            <tr *ngFor="let lines of item.conditionnement">
-              <td>{{lines.prixAchat / lines.coefficientAchatCommande / lines.coefficientInventaireAchat | number:
-                '1.2-2'}} €</td>
-            </tr>
-          </td>
-          <td scope="col" class="col-1">
-            <tr *ngFor="let lines of item.conditionnement"cTooltipPlacement="bottom">
-              <td>{{lines.uniteFt.abreviation}}</td>
-            </tr>
-          </td>
-          <td scope="col" class="col-1">
-            <tr *ngFor="let lines of item.conditionnement">
-              <td>{{lines.prixAchat / lines.coefficientAchatCommande / lines.coefficientInventaireAchat /
-                lines.coefficientInventaire | number: '1.2-2'}} €</td>
-            </tr>
-          </td>
-          <td scope="col" class="col-1">
-            <tr *ngFor="let lines of item.conditionnement"cTooltipPlacement="bottom">
-              <td><input type="radio" name="conditionnement{{item.id}}" id="conditionnement-{{lines.id}}" [value]="lines.id" [(ngModel)]="lines.selected"></td>
-            </tr>
-          </td>
-        </tr>
+          </ng-container>
         </tbody>
       </table>
     </div>
@@ -344,11 +305,11 @@
         </thead>
         <tbody>
           <tr *ngFor="let item of livraisonDetails">
-            <td class="col-2">{{ item.articlefournisseur.article.codeArticle}}</td>
-            <td class="col-3">{{ item.articlefournisseur.article.libelle }}</td>
-            <td class="col-2">{{ item.articlefournisseur.article.familles.libelle }}</td>
-            <td class="col-1">{{ item.articlefournisseur.conditionnement[0].prixAchat | number:'1.2-2'}} €</td>
-            <td class="col-1">{{ item.articlefournisseur.conditionnement[0].uniteAchat.abreviation}}</td>
+            <td class="col-2">{{ item.article.codeArticle}}</td>
+            <td class="col-3">{{ item.article.libelle }}</td>
+            <td class="col-2">{{ item.article.familles.libelle }}</td>
+            <td class="col-1">{{ item.conditionnement.prixAchat | number:'1.2-2'}} €</td>
+            <td class="col-1">{{ item.conditionnement.uniteAchat.abreviation}}</td>
             
           </tr>
         </tbody>

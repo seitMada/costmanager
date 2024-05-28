@@ -215,6 +215,13 @@ export class CentrerevenusComponent implements OnInit {
                 adresse.selected = false;
               }
             }
+            if (this.exploitation.adresses) {
+              if (adresse.id == this.exploitation.adresses.id) {
+                adresse.selected = true;
+              } else {
+                adresse.selected = false;
+              }
+            }
           }
           console.log(adresses)
           this.adresses = adresses;
@@ -224,9 +231,13 @@ export class CentrerevenusComponent implements OnInit {
               console.log(this.closeResult)
               if (this.closeResult == 'Closed with: Save click') {
                 if (this.adresse) {
-                  this.centre.adresses = this.adresse;
-                  this.centre.adressesId = this.adresse.id ? this.adresse.id : 0;
-                  
+                  if (this.addExploitation ===false) {
+                    this.centre.adresses = this.adresse;
+                    this.centre.adressesId = this.adresse.id ? this.adresse.id : 0;
+                  } else {
+                    this.exploitation.adresses = this.adresse;
+                    this.exploitation.adressesId = this.adresse.id ? this.adresse.id : 0;
+                  }
                 }
               }
             },

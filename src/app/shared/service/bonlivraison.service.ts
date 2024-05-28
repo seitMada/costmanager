@@ -65,4 +65,5 @@ export class BonlivraisonService {
     return this.https.get<any>(this.apiGetArticleFournisseurByArticle,{ params: { articleId: articleId.join(','),fournisseurId:fournisseurId,artExploitation:artExploitation.join(',') } });
   }
 
+
 }

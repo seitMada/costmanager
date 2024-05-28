@@ -3,6 +3,7 @@ import { BonCommande, BonCommandes } from "./bonCommande";
 import { Conditionnement } from "./conditionnements";
 import { IntefaceConditionnement } from "./inteface-conditionnements";
 import { InterfaceArticlefournisseurs } from "./interface-articlefournisseurs";
+import { InterfaceArticle } from "./interface-articles";
 import { InterfaceCommandeDetail, InterfaceCommandeDetails } from "./interface-commandedetail";
 
 export class CommandeDetail implements InterfaceCommandeDetail {
@@ -10,6 +11,7 @@ export class CommandeDetail implements InterfaceCommandeDetail {
   commandeId: number;
   articlefournisseurId: number;
   conditionnementId: number;
+  articleId:number;
   QteCommande: number;
   QteCommandeFT: number;
   prixarticle: number;
@@ -19,10 +21,12 @@ export class CommandeDetail implements InterfaceCommandeDetail {
   commande?: BonCommande;
   articlefournisseur?: InterfaceArticlefournisseurs;
   conditionnement?: IntefaceConditionnement;
+  article:InterfaceArticle;
 
   constructor(commandeDetailInterface: InterfaceCommandeDetail) {
     this.commandeId = commandeDetailInterface.commandeId;
     this.articlefournisseurId = commandeDetailInterface.articlefournisseurId;
+    this.articleId = commandeDetailInterface.articleId;
     this.conditionnementId = commandeDetailInterface.conditionnementId;
     this.QteCommande = commandeDetailInterface.QteCommande;
     this.QteCommandeFT = commandeDetailInterface.QteCommandeFT;
@@ -32,6 +36,7 @@ export class CommandeDetail implements InterfaceCommandeDetail {
     this.commande = commandeDetailInterface.commande;
     this.articlefournisseur = commandeDetailInterface.articlefournisseur;
     this.conditionnement = commandeDetailInterface.conditionnement;
+    this.article = commandeDetailInterface.article;
   }
 }
 
