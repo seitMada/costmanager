@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertModule, ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderComponent, TooltipModule } from '@coreui/angular';
 import { Adress } from 'src/app/shared/model/adresse';
+import { Article } from 'src/app/shared/model/articles';
 import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-articlefournisseurs';
 import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { InterfaceBonCommande } from 'src/app/shared/model/interface-bonCommande';
@@ -36,6 +37,7 @@ export class StockMinimumComponent implements OnInit {
   public centrerevenusselected: number[];
   public exploitationsselected: number[];
   public articles: InterfaceArticle[];
+  public article:InterfaceArticle;
   public boncommande: InterfaceBonCommande;
   public boncommandedetails: InterfaceCommandeDetail[];
 
@@ -455,12 +457,14 @@ export class StockMinimumComponent implements OnInit {
     let commandeDetail: InterfaceCommandeDetail = {
       commandeId: 0,
       articlefournisseurId: 0,
+      articleId:0,
       conditionnementId: 0,
       QteCommande: 0,
       QteCommandeFT: 0,
       prixarticle: 0,
       remise: 0,
-      validationdetailbc: false
+      validationdetailbc: false,
+      article: this.article
     };
 
     for (const _detail of fournisseurs.articlefournisseurs) {
@@ -468,6 +472,7 @@ export class StockMinimumComponent implements OnInit {
       commandeDetail = {
         commandeId: 0,
         articlefournisseurId: _detail.id ? _detail.id : 0,
+        articleId:_detail.articleId,
         QteCommande: this.calculquantiteacommander(_detail, this.articles).quantite,
         QteCommandeFT: this.calculquantiteacommander(_detail, this.articles).quantiteFt,
         conditionnementId: _detail.article.conditionnement?.id || 0,
@@ -477,6 +482,7 @@ export class StockMinimumComponent implements OnInit {
         articlefournisseur: _detail,
         selected: false,
         conditionnement: _detail.article.conditionnement,
+        article: _detail.article
       }
       this.boncommande.commandeDetail.push(commandeDetail);
     }
