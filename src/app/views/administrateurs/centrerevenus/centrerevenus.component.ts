@@ -129,7 +129,13 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   getAllExploitation(){
-
+    this.exploitationService.getExploitation().subscribe({
+      next:(_exploitations) =>{
+        this.exploitations = _exploitations;
+        console.log(this.exploitations);
+        
+      },
+    })
   }
 
   public resetCentre() {
@@ -197,9 +203,6 @@ export class CentrerevenusComponent implements OnInit {
           });
         },
       })
-    // } else {
-      
-    // }
 
   }
 
@@ -307,6 +310,9 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   saveExploitation(){
+    this.centres = [];
+    console.log(this.centres);
+    
 
   }
 
