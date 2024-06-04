@@ -141,6 +141,7 @@ export const environment = {
 
     APIGETDETAILLIVRAISONBYLIVRAISONID : endPoint + 'livraisondetail/',
     
+    
     APIDELETEPPO: endPoint + 'ppo/delete',
     APIDELETESPPO: endPoint + 'ppo/deletes',
     APIPPOEXPLOITATION: endPoint + 'ppo/exploitation',
@@ -156,5 +157,7 @@ export const environment = {
     APIGETPPODETAIL: endPoint + 'ppo/detail',
     APIGETPPODETAILDATA: endPoint + 'ppo/data',
     APIGETPPODETAILDATAFAMILLE: endPoint + 'ppo/data/famille',
+
+    APICREATELIEUSTOCKAGE: endPoint + 'lieustockage',
 };
    

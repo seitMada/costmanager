@@ -157,5 +157,7 @@ export const environment = {
     APIGETPPODETAIL: endPoint + 'ppo/detail',
     APIGETPPODETAILDATA: endPoint + 'ppo/data',
     APIGETPPODETAILDATAFAMILLE: endPoint + 'ppo/data/famille',
+
+    APICREATELIEUSTOCKAGE: endPoint + 'lieustockage',
 };
    
