@@ -142,6 +142,7 @@ export const environment = {
 
     APIGETDETAILLIVRAISONBYLIVRAISONID : endPoint + 'livraisondetail/',
     
+    
     APIDELETEPPO: endPoint + 'ppo/delete',
     APIDELETESPPO: endPoint + 'ppo/deletes',
     APIPPOEXPLOITATION: endPoint + 'ppo/exploitation',
@@ -162,5 +163,7 @@ export const environment = {
     APICREATEVENTE: endPoint + 'vente/create',
     APIUPDATEVENTE: endPoint + 'vente/update',
     APICOUNTVENTE: endPoint + 'vente/count',
+
+    APICREATELIEUSTOCKAGE: endPoint + 'lieustockage',
 };
    

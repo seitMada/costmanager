@@ -10,9 +10,11 @@ import { Exploitation } from 'src/app/shared/model/exploitations';
 import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
 import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
 import { InterfaceLieustockages } from 'src/app/shared/model/interface-lieustockages';
+
 import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
 import { ExploitationService } from 'src/app/shared/service/exploitation.service';
 import { FournisseurService } from 'src/app/shared/service/fournisseur.service';
+import { LieustockageService } from 'src/app/shared/service/lieustockage.service';
 
 @Component({
   selector: 'app-centrerevenus',
@@ -34,6 +36,7 @@ export class CentrerevenusComponent implements OnInit {
 
   public centreForm = FormGroup;
   public exploitationForm = FormGroup;
+  public lieuStockageForm = FormGroup;
 
   closeResult = '';
   private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
@@ -43,6 +46,7 @@ export class CentrerevenusComponent implements OnInit {
   public modifToggle = true;
   public inputModif = false;
   public addExploitation = false;
+  public addLieuStockage = false;
 
   public active_2 = 1;
 
@@ -73,6 +77,7 @@ export class CentrerevenusComponent implements OnInit {
     private exploitationService: ExploitationService,
     private centreService: CentreRevenuService,
     private fournisseurService: FournisseurService,
+    private lieustockageService : LieustockageService,
     private modalService: NgbModal,
     config:NgbModalConfig,
   ) {
@@ -129,7 +134,12 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   getAllExploitation(){
-
+    this.exploitationService.getExploitation().subscribe({
+      next:(_exploitations) =>{
+        this.exploitations = _exploitations;
+        console.log(this.exploitations);
+      },
+    })
   }
 
   public resetCentre() {
@@ -197,9 +207,6 @@ export class CentrerevenusComponent implements OnInit {
           });
         },
       })
-    // } else {
-      
-    // }
 
   }
 
@@ -305,10 +312,27 @@ export class CentrerevenusComponent implements OnInit {
       
     }
   }
-
-  saveExploitation(){
-
+  addFormLieuStockage(){
+    this.resetCentre();
+    this.addLieuStockage = (this.addLieuStockage === false ? true:false);
   }
 
-  
+  saveExploitation(){
+    this.centres = [];
+    this.exploitationService.createExploitation(this.exploitation,this.centres).subscribe({
+      next:(value) =>{
+        this.getAllExploitation();
+        this.toggleToast('Nouveau centre de revenu crée avec succès!');
+        this.addExploitation = (this.addExploitation === false ? true : false);
+      },
+    })
+  }
+
+  saveLieuDeStockage(){
+    this.lieustockageService.createLieuStockage(this.lieuStockage,this.centre).subscribe({
+      next:() =>{
+        this.toggleToast('Nouveau lieu de stockage crée avec succès !')
+      }
+    })
+  }
 }

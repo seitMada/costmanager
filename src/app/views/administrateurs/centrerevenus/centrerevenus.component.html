@@ -167,7 +167,7 @@
                     </form>
                   </div>
                   <div class="card-footer text-end">
-                    <button class="btn btn-sm btn-success" (click)="saveExploitation();getAllExploitation()">Sauvegarder</button>
+                    <button class="btn btn-sm btn-success" (click)="saveExploitation()">Sauvegarder</button>
                   </div>
                 </div>
               </div>
@@ -176,18 +176,39 @@
           <li [ngbNavItem]="2">
             <button ngbNavLink>LIEU DE STOCKAGE</button>
             <ng-template ngbNavContent>
-              <div class="card col-3">
-                <div class="card-body overflow-y-scroll" style="height: 340px;">
-                  <table class="table table-striped table-hover">
-                    <tbody>
-                      <tr *ngFor="let item of lieuStockages">
-                        <td class="col-9">{{item.lieu}}</td>
-                        <td class="col-3">
-                          <input type="checkbox" class="form-check-input" name="lieu-{{item.lieu}}" id="lieu-{{item.id}}" [(ngModel)]="item.selected" [disabled]="inputModif">
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
+              <div class="d-flex">
+                <div class="card col-3">
+                  <div class="card-body overflow-y-scroll" style="height: 340px;">
+                    <table class="table table-striped table-hover">
+                      <tbody>
+                        <tr *ngFor="let item of lieuStockages">
+                          <td class="col-9">{{item.lieu}}</td>
+                          <td class="col-3">
+                            <input type="checkbox" class="form-check-input" name="lieu-{{item.lieu}}" id="lieu-{{item.id}}" [(ngModel)]="item.selected" [disabled]="inputModif">
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <button class="btn btn-outline-success my-2 mx-2" (click)="addFormLieuStockage()" [disabled]="inputModif"><i class="fas fa-plus"></i> Ajout Lieu stockage</button>
+                  </div>
+                </div>
+                <div class="card col-8 mx-2" *ngIf="addLieuStockage">
+                  <div class=" text-center fs-7 fw-bold mt1">AJOUT LIEU DE STOCKAGE</div>
+                  <div class="card-body overflow-y-scroll">
+                    <form #lieuStockageForm="ngForm">
+                      <div class="row m-2">
+                        <div class="col-sm-6">
+                          <div class="input-group">
+                            <span class="input-group-text col-5" id="basic-addon1">lieu</span>
+                            <input type="text" class="form-control col-7" [disabled]="inputModif" name="lieu" [(ngModel)]="lieuStockage.lieu" autocomplete="off">
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="card-footer text-end">
+                    <button class="btn btn-sm btn-success" (click)="saveLieuDeStockage()">Sauvegarder</button>
+                  </div>
                 </div>
               </div>
             </ng-template>
@@ -301,3 +322,16 @@
       (click)="modal.close('Save click')">Sélèctionner</button>
   </div>
 </ng-template>
+
+<c-toaster [placement]="position" class="p-3" position="fixed">
+  <c-toast #toast="cToast" (timer)="onTimerChange($event)" (visibleChange)="onVisibleChange($event)" [visible]="visible"
+    color="{{color}}">
+    <c-toast-body>
+      <div class="row">
+        <div class="col-10 p-auto"><span [ngClass]="textcolor">{{message}}</span></div>
+        <div class="col-2"><button aria-label="close" class="btn btn-sm btn-outline-light no-border"
+            (click)="toast.visible=false"><i class="fas fa-x"></i></button></div>
+      </div>
+    </c-toast-body>
+  </c-toast>
+</c-toaster>
