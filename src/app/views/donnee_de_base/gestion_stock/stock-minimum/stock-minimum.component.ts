@@ -37,7 +37,7 @@ export class StockMinimumComponent implements OnInit {
   public centrerevenusselected: number[];
   public exploitationsselected: number[];
   public articles: InterfaceArticle[];
-  public article:InterfaceArticle;
+  public article: InterfaceArticle;
   public boncommande: InterfaceBonCommande;
   public boncommandedetails: InterfaceCommandeDetail[];
 
@@ -457,7 +457,7 @@ export class StockMinimumComponent implements OnInit {
     let commandeDetail: InterfaceCommandeDetail = {
       commandeId: 0,
       articlefournisseurId: 0,
-      articleId:0,
+      articleId: 0,
       conditionnementId: 0,
       QteCommande: 0,
       QteCommandeFT: 0,
@@ -472,7 +472,7 @@ export class StockMinimumComponent implements OnInit {
       commandeDetail = {
         commandeId: 0,
         articlefournisseurId: _detail.id ? _detail.id : 0,
-        articleId:_detail.articleId,
+        articleId: _detail.articleId,
         QteCommande: this.calculquantiteacommander(_detail, this.articles).quantite,
         QteCommandeFT: this.calculquantiteacommander(_detail, this.articles).quantiteFt,
         conditionnementId: _detail.article.conditionnement?.id || 0,
