@@ -192,7 +192,7 @@ export class InventairesComponent {
           },
           zonestockage: []
         },
-        centre: []
+        // centre: []
       },
       inventairedetail: []
     }

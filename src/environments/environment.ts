@@ -124,9 +124,12 @@ export const environment = {
     // APIDELETEARTICLEZONESTOCKAGE:  endPoint + 'articlezonestockage/',
     // APIGETARTICLEBYZONE: endPoint + 'articlezonestockage/',
     
+    APIGETALLZONESTOCKAGEWITHOUTLINKS: endPoint + 'zonestockage',
     APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage',
     APIGETARTICLEBYZONE: endPoint + 'zonestockage/article',
-
+    APICREATEZONEDESTOCKAGE: endPoint + 'zonestockage/create',
+    APIGETLISTZONEWITHOUTLINKSBYLIEUID : endPoint + 'zonestockage/listzone/',
+    
     APIDELETEARTICLEZONESTOCKAGE: endPoint + 'articlezonestockage/delete/',
 
     APIGETPPOBYCRANDDATE: endPoint + 'ppo',
@@ -158,6 +161,12 @@ export const environment = {
     APIGETPPODETAILDATA: endPoint + 'ppo/data',
     APIGETPPODETAILDATAFAMILLE: endPoint + 'ppo/data/famille',
 
-    APICREATELIEUSTOCKAGE: endPoint + 'lieustockage',
+    APIGETALLLIEUSTOCKAGE: endPoint + 'lieustockage',
+    APIGETLISTLIEUSTOCKAGE : endPoint + 'lieustockage/list/',
+    APICREATELIEUSTOCKAGE: endPoint + 'lieustockage/create',
+    APIGETLIEUSTOCKAGESANSLIEN : endPoint + 'lieustockage/sansLien',
+    APIUPDATELIEUSTOCKAGE: endPoint + 'lieustockage/update/',
+    APIDELETEONELIEUSTOCKAGE: endPoint + 'lieustockage/delete',
+  
 };
    
