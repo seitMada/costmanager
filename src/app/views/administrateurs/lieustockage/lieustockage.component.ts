@@ -346,7 +346,7 @@ export class LieustockageComponent implements OnInit{
     this.resetLieuStockage();
     this.resetCentre();
     this.lieustockage = lieustockage;
-    this.zonestockages = this.lieustockage.zonestockage;
+    
     this.lieuId = this.lieustockage.id ? this.lieustockage.id :0;
 
     this.centreService.getcentrerevenu().subscribe({
@@ -377,9 +377,10 @@ export class LieustockageComponent implements OnInit{
         }
         this.zonestockageService.getListZoneWithoutLinksByLieuId(this.lieuId).subscribe({
           next:(_zonestockages) =>{
-            this.zonestockages = [];
+            
             for(const zonestock of _zonestockages){
               let selected = false;
+              this.zonestockages = [];
               for(const _lieustock of this.lieustockage.zonestockage){
                 if(zonestock.id === _lieustock.id){
                   selected = true;

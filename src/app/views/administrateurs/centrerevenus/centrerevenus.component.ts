@@ -45,6 +45,7 @@ export class CentrerevenusComponent implements OnInit {
   closeResult = '';
   private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
   public centreId = 0;
+  selectedExploitationId: number | null = null;
 
   public toggle = true;
   public modifToggle = true;
@@ -401,10 +402,9 @@ export class CentrerevenusComponent implements OnInit {
   showCentreRevenu(centreRevenu:InterfaceCentreRevenu){
     this.resetCentre();
     this.resetExploitation();
+    this.resetLieuStockage();
     this.centre = centreRevenu;
-    this.lieuStockages = this.centre.lieuStockage;
     this.centreId  = centreRevenu.id ? centreRevenu.id :0;
-    this.lieuStockages = [];
     
     this.exploitationService.getExploitation().subscribe({
       next:(_exploitations) =>{
@@ -435,6 +435,7 @@ export class CentrerevenusComponent implements OnInit {
         }
         this.lieustockageService.findListLieuStockage(this.centreId).subscribe({
           next:(_lieuStockages)=>{
+            
             for(const lieustock of _lieuStockages){
               let selected = false;
               this.lieuStockages = [];
@@ -450,6 +451,8 @@ export class CentrerevenusComponent implements OnInit {
                   zonestockage:lieustock.zoneStockage
                 }
                 this.lieuStockages.push(this.lieuStockage);
+                console.log(this.lieuStockages);
+                
               }
             }
           }
