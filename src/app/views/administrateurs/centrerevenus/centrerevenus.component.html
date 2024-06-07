@@ -8,7 +8,7 @@
             <button class="btn btn-outline-primary btn-sm me-1" (click)="cancel()" [disabled]="!modifToggle" *ngIf="!toggle" title="Liste centre revenu"><i class="fas fa-list"></i></button>
             <button class="btn btn-outline-info btn-sm me-1" [disabled]="!modifToggle" (click)="modifyCentre()" *ngIf="!toggle" title="Modifier centre revenu"><i class="fas fa-pencil"></i></button>
             <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggle" (click)="toggleModal()" title="Ajouter centre revenu"><i class="fas fa-plus"></i></button>
-            <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!modifToggle" *ngIf="!toggle" title="Supprimer centre revenu"><i class="fas fa-trash"></i></button>
+            <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!modifToggle" (click)="deleteCentreRevenu()" *ngIf="!toggle" title="Supprimer centre revenu"><i class="fas fa-trash"></i></button>
         </div>
     </div>
 </div>
@@ -93,7 +93,7 @@
                         <tr *ngFor="let line of exploitations">
                           <td class="col-9">{{line.libelle}}</td>
                           <td class="col-3">
-                            <input type="radio" class="form-check-input" name="exploitation" [value]="line.id" [(ngModel)]="line.selected" [disabled]="inputModif">
+                            <input type="radio" class="form-check-input" name="exploitation" [value]="line.id" [(ngModel)]="line.selected" [disabled]="inputModif" >
                           </td>
                         </tr>
                       </tbody>
@@ -184,7 +184,7 @@
                         <tr *ngFor="let item of lieuStockages">
                           <td class="col-9">{{item.lieu}}</td>
                           <td class="col-3">
-                            <input type="checkbox" class="form-check-input" name="lieu-{{item.lieu}}" id="lieu-{{item.id}}" [(ngModel)]="item.selected" [disabled]="inputModif">
+                            <input type="checkbox" class="form-check-input" name="lieu-{{item.lieu}}" id="lieu-{{item.id}}" [(ngModel)]="item.selected" [disabled]="inputModif" [checked]="item.selected">
                           </td>
                         </tr>
                       </tbody>
@@ -234,7 +234,7 @@
           </tr>
         </thead>
         <tbody>
-          <tr *ngFor="let line of centres">
+          <tr *ngFor="let line of centres" (click)="showCentreRevenu(line)">
             <td scope="col" class="col-1"></td>
             <td scope="col" class="col-1">{{ line.code }}</td>
             <td scope="col" class="col-2">{{ line.libelle }}</td>

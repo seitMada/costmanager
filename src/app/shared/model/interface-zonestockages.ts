@@ -8,5 +8,5 @@ export interface InterfaceZonestockages {
     selected?: boolean;
 
     lieu: InterfaceLieustockages;
-    centre: InterfaceCentreRevenu[]
+    // centre: InterfaceCentreRevenu[]
 }

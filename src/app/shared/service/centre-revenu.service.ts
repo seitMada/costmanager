@@ -30,8 +30,8 @@ export class CentreRevenuService {
     return this.https.post<any>(this.apiCreateCentreRevenu,{centre,lieuStockages});
   }
 
-  public updateCentreRevenu(centre:InterfaceCentreRevenu){
-    return this.https.patch<any>(this.apiUpdateCentreRevenu + centre.id,centre);
+  public updateCentreRevenu(centre:InterfaceCentreRevenu,lieuStockages:InterfaceLieustockages[]){
+    return this.https.patch<any>(this.apiUpdateCentreRevenu + centre.id,{centre,lieuStockages});
   }
 
   public deleteCentreRevenu(centre:InterfaceCentreRevenu){
