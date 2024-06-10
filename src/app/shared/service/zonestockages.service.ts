@@ -16,8 +16,15 @@ export class ZonestockagesService {
   private apiGetAllZoneStockageWithoutLinks = environment.APIGETALLZONESTOCKAGEWITHOUTLINKS;
   private apiCreateZoneDeStockage = environment.APICREATEZONEDESTOCKAGE;
   private apiGetListZoneWithoutLinks = environment.APIGETLISTZONEWITHOUTLINKSBYLIEUID;
+  private apiGetZoneDeStockage = environment.APIGETALLZONESTOCKAGE;
+  private apiUpdateZoneDeStockage = environment.APIUPDATEZONESTOCKAGE;
+  private apiDeleteZoneStockage = environment.APIDELETEZONESTOCKAGE;
 
   constructor(private https: HttpClient) { }
+
+  getAllZoneDeStockage(){
+    return this.https.get<any>(this.apiGetZoneDeStockage);
+  }
 
   getAllZoneStockageWithoutLinks(){
     return this.https.get<any>(this.apiGetAllZoneStockageWithoutLinks);
@@ -43,7 +50,15 @@ export class ZonestockagesService {
     return this.https.post<any>(this.apiCreateZoneDeStockage,zone);
   }
 
+  updateZoneDeStockage(zone:InterfaceZonestockages){
+    return this.https.post<any>(this.apiUpdateZoneDeStockage,zone);
+  }
+
   getListZoneWithoutLinksByLieuId(lieuId:number){
     return this.https.get<any>(this.apiGetListZoneWithoutLinks+lieuId);
+  }
+
+  deleteZoneStockage(zone:InterfaceZonestockages){
+    return this.https.post<any>(this.apiDeleteZoneStockage,zone);
   }
 }

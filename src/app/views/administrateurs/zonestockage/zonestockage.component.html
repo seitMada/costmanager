@@ -1,1 +1,115 @@
-<p>zonestockage works!</p>
+<div class=" card d-flex py-1 my-2 mb-2">
+    <div class="d-flex bd-highlight">
+        <div class="flex-grow-1 bd-highlight">
+            <button type="button" *ngIf="!modifToggle" (click)="submit()" class="btn btn-success btn-sm mx-1">Enregistrer</button>
+            <button type="button" *ngIf="!modifToggle" (click)="cancel()" class="btn btn-danger btn-sm mx-1">Annuler</button>
+        </div>
+        <div class="bd-highlight">
+            <button class="btn btn-outline-primary btn-sm me-1" [disabled]="!modifToggle" *ngIf="!toggle" (click)="cancel()" title="Liste zone de stockage"><i class="fas fa-list"></i></button>
+            <button class="btn btn-outline-info btn-sm me-1" [disabled]="!modifToggle" *ngIf="!toggle" (click)="modifZoneStockage()" title="Modifier zone de stockage"><i class="fas fa-pencil"></i></button>
+            <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggle" (click)="toggleModal()" title="Ajouter zone de stockage"><i class="fas fa-plus"></i></button>
+            <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!modifToggle" *ngIf="!toggle" (click)="deleteZoneStockage()" title="Supprimer zone de stockage"><i class="fas fa-trash"></i></button>
+        </div>
+    </div>
+</div>
+<div class="card d-flex" *ngIf="!toggle">
+    <div class="card-header text-center fs-5 fw-bold"> Ajout zone de stokage</div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <div class="card-body py-1">
+          <form #zoneStockageForm="ngForm">
+            <div class="row m-2">
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Libelle</span>
+                  <input type="text" class="form-control col-7" name="zonestockage" [(ngModel)]="zonestockage.zone" [disabled]="inputModif" autocomplete="off">
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      </li>
+      <li class="list-group-item" style="height: 420px;">
+        <ul ngbNav #nav2="ngbNav"  class="nav-tabs">
+          <li [ngbNavItem]="1">
+            <button ngbNavLink>LIEU STOCKAGE</button>
+            <ng-template ngbNavContent>
+              <div class="d-flex">
+                <div class="card col-3">
+                  <div class="card-body overflow-y-scroll" style="height: 340px;">
+                    <table class="table table-striped table-hover">
+                      <tbody>
+                        <tr *ngFor="let line of lieustockages">
+                          <td class="col-9">{{line.lieu}}</td>
+                          <td class="col-3">
+                            <input type="radio" class="form-check-input" name="lieu" [value]="line.id" [(ngModel)]="line.selected" [disabled]="inputModif">
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                    <button class="btn btn-outline-success my-2 mx-2" (click)="addFormLieu()" [disabled]="inputModif"><i class="fas fa-plus"></i> Ajout lieu stockage</button>
+                  </div>
+                </div>
+                <div class="card col-8 mx-2" *ngIf="addLieu">
+                  <div class=" text-center fs-7 fw-bold mt1">AJOUT LIEU DE STOCKAGE</div>
+                  <div class="card-body overflow-y-scroll">
+                    <form #lieuForm="ngForm">
+                      <div class="row m-2">
+                        <div class="col-6">
+                          <div class="input-group">
+                            <span class="input-group-text col-5" id="basic-addon1">Lieu</span>
+                            <input type="text" class="form-control col-6" [(ngModel)]="lieustockage.lieu" name="lieustockage" aria-describedby="basic-addon1">
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                  <div class="card-footer text-end">
+                    <button class="btn btn-sm btn-success" (click)="saveLieu()">Sauvegarder</button>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </li>
+          
+        </ul>
+        <div [ngbNavOutlet]="nav2" class="mt-2"></div>
+      </li>
+    </ul>
+</div>
+
+<div class="card d-flex" *ngIf="toggle">
+    <div class="card-header text-center fs-5 fw-bold">Tous les zones de stockages disponibles</div>
+    <div class="card-body overflow-scroll-y py-1" style="height: 600px;" >
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col" class="col-1"></th>
+            <th scope="col" class="col-2">zone</th>
+            <th scope="col" class="col-2">lieu</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let line of zonestockages" (click)="showOnezoneStockage(line)">
+            <th scope="col" class="col-1"></th>
+            <td scope="col" class="col-2">{{ line.zone }}</td>
+            <td scope="col" class="col-2">{{ line.lieu? line.lieu.lieu: '' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+</div>
+
+
+<c-toaster [placement]="position" class="p-3" position="fixed">
+  <c-toast #toast="cToast" (timer)="onTimerChange($event)" (visibleChange)="onVisibleChange($event)" [visible]="visible"
+    color="{{color}}">
+    <c-toast-body>
+      <div class="row">
+        <div class="col-10 p-auto"><span [ngClass]="textcolor">{{message}}</span></div>
+        <div class="col-2"><button aria-label="close" class="btn btn-sm btn-outline-light no-border"
+            (click)="toast.visible=false"><i class="fas fa-x"></i></button></div>
+      </div>
+    </c-toast-body>
+  </c-toast>
+</c-toaster>

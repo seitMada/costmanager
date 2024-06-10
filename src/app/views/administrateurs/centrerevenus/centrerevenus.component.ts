@@ -451,8 +451,6 @@ export class CentrerevenusComponent implements OnInit {
                   zonestockage:lieustock.zoneStockage
                 }
                 this.lieuStockages.push(this.lieuStockage);
-                console.log(this.lieuStockages);
-                
               }
             }
           }
@@ -469,8 +467,7 @@ export class CentrerevenusComponent implements OnInit {
         this.toggle = !this.toggle;
         this.showAllCentreRevenu();
       },
-    })
-    
+    });
   }
   
 }
