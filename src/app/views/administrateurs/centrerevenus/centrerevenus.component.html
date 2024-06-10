@@ -93,7 +93,7 @@
                         <tr *ngFor="let line of exploitations">
                           <td class="col-9">{{line.libelle}}</td>
                           <td class="col-3">
-                            <input type="radio" class="form-check-input" name="exploitation" [value]="line.id" [(ngModel)]="selectedExploitationId" [disabled]="inputModif" [checked]="line.selected">
+                            <input type="radio" class="form-check-input" name="exploitation" [value]="line.id" [(ngModel)]="line.selected" [disabled]="inputModif" [checked]="line.selected">
                           </td>
                         </tr>
                       </tbody>

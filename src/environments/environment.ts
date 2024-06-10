@@ -130,6 +130,9 @@ export const environment = {
     APIGETARTICLEBYZONE: endPoint + 'zonestockage/article',
     APICREATEZONEDESTOCKAGE: endPoint + 'zonestockage/create',
     APIGETLISTZONEWITHOUTLINKSBYLIEUID : endPoint + 'zonestockage/listzone/',
+    APIGETALLZONESTOCKAGE: endPoint + 'zonestockage/list',
+    APIUPDATEZONESTOCKAGE: endPoint + 'zonestockage/update/',
+    APIDELETEZONESTOCKAGE: endPoint + 'zonestockage/delete',
     
     APIDELETEARTICLEZONESTOCKAGE: endPoint + 'articlezonestockage/delete/',
 
