@@ -4,7 +4,6 @@ import { FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertModule, ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
 import { ModalDismissReasons, NgbDropdownModule, NgbModal, NgbModalConfig, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { subscribe } from 'diagnostics_channel';
 
 import { Adress, Adresse } from 'src/app/shared/model/adresse';
 import { Exploitation } from 'src/app/shared/model/exploitations';
@@ -173,8 +172,9 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   toggleModal(){
-    this.resetCentre();
-    this.resetExploitation();
+    if (this.isAdmin) {
+      this.resetCentre();
+      this.resetExploitation();
       this.toggle = !this.toggle;
       this.modifToggle = !this.modifToggle;
       this.inputModif = false;
@@ -208,7 +208,7 @@ export class CentrerevenusComponent implements OnInit {
                 next:(_lieuStockages)=>{
                   this.lieuStockages = _lieuStockages;
                   this.lieuStockage = _lieuStockages[0];
-
+  
                   this.centre = {
                     code: '',
                     libelle: '',
@@ -227,7 +227,7 @@ export class CentrerevenusComponent implements OnInit {
           });
         },
       })
-
+    }
   }
 
   changeAdress(content: TemplateRef<any>) {
@@ -352,122 +352,127 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   submit(){
-    this.centreId = this.centre.id ? this.centre.id :0;
-    if (this.centreId ==0) {
-      const lieuStockagesSelect = this.lieuStockages.filter(line =>line.selected);
-      if (lieuStockagesSelect.length > 0) {
-        this.centre.lieuStockage = lieuStockagesSelect;
-        for(const _exploitation of this.exploitations){
-          if (_exploitation.selected) {
-            this.centre.exploitationsId = _exploitation.id ? _exploitation.id :0;
-            this.centre.exploitations = _exploitation;
-          
-            this.centreService.createCentreRevenu(this.centre,lieuStockagesSelect).subscribe({
-              next:(value) =>{
-                this.toggleToast('Nouveau centre de revenu crée avec succès !');
-                this.inputModif = !this.inputModif;
-                this.modifToggle = true;
-              },
-            });
-          } 
+    if (this.isAdmin) {
+      this.centreId = this.centre.id ? this.centre.id :0;
+      if (this.centreId ==0) {
+        const lieuStockagesSelect = this.lieuStockages.filter(line =>line.selected);
+        if (lieuStockagesSelect.length > 0) {
+          this.centre.lieuStockage = lieuStockagesSelect;
+          for(const _exploitation of this.exploitations){
+            if (_exploitation.selected) {
+              this.centre.exploitationsId = _exploitation.id ? _exploitation.id :0;
+              this.centre.exploitations = _exploitation;
+            
+              this.centreService.createCentreRevenu(this.centre,lieuStockagesSelect).subscribe({
+                next:(value) =>{
+                  this.toggleToast('Nouveau centre de revenu crée avec succès !');
+                  this.inputModif = !this.inputModif;
+                  this.modifToggle = true;
+                },
+              });
+            } 
+          }
+        } else {
+          alert('Veuillez sélectionner au moins un lieu de stockage et exploitation');
         }
       } else {
-        alert('Veuillez sélectionner au moins un lieu de stockage et exploitation');
-      }
-    } else {
-      const lieuStockagesSelect = this.lieuStockages.filter(line =>line.selected);
-      if (lieuStockagesSelect.length > 0) {
-        this.centre.lieuStockage = lieuStockagesSelect;
-        for(const _exploitation of this.exploitations){
-          if (_exploitation.selected) {
-            this.centre.exploitationsId = _exploitation.id ? _exploitation.id :0;
-            this.centre.exploitations = _exploitation;
+        const lieuStockagesSelect = this.lieuStockages.filter(line =>line.selected);
+        if (lieuStockagesSelect.length > 0) {
+          this.centre.lieuStockage = lieuStockagesSelect;
+          for(const _exploitation of this.exploitations){
+            if (_exploitation.selected) {
+              this.centre.exploitationsId = _exploitation.id ? _exploitation.id :0;
+              this.centre.exploitations = _exploitation;
 
-            this.centreService.updateCentreRevenu(this.centre,lieuStockagesSelect).subscribe({
-              next:(value) =>{
-                this.toggleToast('Centre de revenu modifié avec succès !');
-                this.inputModif = !this.inputModif;
-                this.modifToggle = true;
-              },
-            });
-          } 
+              this.centreService.updateCentreRevenu(this.centre,lieuStockagesSelect).subscribe({
+                next:(value) =>{
+                  this.toggleToast('Centre de revenu modifié avec succès !');
+                  this.inputModif = !this.inputModif;
+                  this.modifToggle = true;
+                },
+              });
+            } 
+          }
+        } else {
+          alert('Veuillez sélectionner au moins un lieu de stockage et exploitation');
         }
-      } else {
-        alert('Veuillez sélectionner au moins un lieu de stockage et exploitation');
       }
-      
     }
   }
 
   showCentreRevenu(centreRevenu:InterfaceCentreRevenu){
-    this.resetCentre();
-    this.resetExploitation();
-    this.resetLieuStockage();
-    this.centre = centreRevenu;
-    this.centreId  = centreRevenu.id ? centreRevenu.id :0;
-    
-    this.exploitationService.getExploitation().subscribe({
-      next:(_exploitations) =>{
-        this.exploitations = [];
-        this.inputModif = true;
-        this.toggle = !this.toggle;
-        for(const exploitation of _exploitations){
-          let selected = false;
-          if (exploitation.id == this.centre.exploitationsId) {
-            selected = true;
+    if (this.isAdmin) {
+      this.resetCentre();
+      this.resetExploitation();
+      this.resetLieuStockage();
+      this.centre = centreRevenu;
+      this.centreId  = centreRevenu.id ? centreRevenu.id :0;
+      
+      this.exploitationService.getExploitation().subscribe({
+        next:(_exploitations) =>{
+          this.exploitations = [];
+          this.inputModif = true;
+          this.toggle = !this.toggle;
+          for(const exploitation of _exploitations){
+            let selected = false;
+            if (exploitation.id == this.centre.exploitationsId) {
+              selected = true;
+            }
+            this.exploitation = {
+              code_couleur: exploitation.code_couleur,
+              libelle: exploitation.libelle,
+              nbDecimal: exploitation.nbDecimal,
+              commentaire:exploitation.commentaire,
+              siteWeb:exploitation.siteWeb,
+              codenaf:exploitation.codenaf,
+              siret:exploitation.siret,
+              logo: exploitation.logo,
+              actif:exploitation.actif,
+              adressesId:exploitation.adresseId,
+              adresses: exploitation.adresses,
+              selected:selected,
+              centreRevenu:exploitation.centreRevenu
+            }
+            this.exploitations.push(this.exploitation);
           }
-          this.exploitation = {
-            code_couleur: exploitation.code_couleur,
-            libelle: exploitation.libelle,
-            nbDecimal: exploitation.nbDecimal,
-            commentaire:exploitation.commentaire,
-            siteWeb:exploitation.siteWeb,
-            codenaf:exploitation.codenaf,
-            siret:exploitation.siret,
-            logo: exploitation.logo,
-            actif:exploitation.actif,
-            adressesId:exploitation.adresseId,
-            adresses: exploitation.adresses,
-            selected:selected,
-            centreRevenu:exploitation.centreRevenu
-          }
-          this.exploitations.push(this.exploitation);
-        }
-        this.lieustockageService.findListLieuStockage(this.centreId).subscribe({
-          next:(_lieuStockages)=>{
-            
-            for(const lieustock of _lieuStockages){
-              let selected = false;
-              this.lieuStockages = [];
-              for(const _centrelieu of this.centre.lieuStockage){
-                if(lieustock.id == _centrelieu.id){
-                  selected = true;
+          this.lieustockageService.findListLieuStockage(this.centreId).subscribe({
+            next:(_lieuStockages)=>{
+              
+              for(const lieustock of _lieuStockages){
+                let selected = false;
+                this.lieuStockages = [];
+                for(const _centrelieu of this.centre.lieuStockage){
+                  if(lieustock.id == _centrelieu.id){
+                    selected = true;
+                  }
+                  this.lieuStockage = {
+                    lieu : lieustock.lieu,
+                    centreId: lieustock.centreId,
+                    selected:selected,
+                    centre: lieustock.centre,
+                    zonestockage:lieustock.zoneStockage
+                  }
+                  this.lieuStockages.push(this.lieuStockage);
                 }
-                this.lieuStockage = {
-                  lieu : lieustock.lieu,
-                  centreId: lieustock.centreId,
-                  selected:selected,
-                  centre: lieustock.centre,
-                  zonestockage:lieustock.zoneStockage
-                }
-                this.lieuStockages.push(this.lieuStockage);
               }
             }
-          }
-        })
-      },
-    })
+          })
+        },
+      })
+    }
   }
 
   deleteCentreRevenu(){
-    this.centreService.deleteCentreRevenu(this.centre).subscribe({
-      next:(value) =>{
-        this.resetCentre();
-        this.toggleToast('Ce centre de revenu a été supprimé avec succès!');
-        this.toggle = !this.toggle;
-        this.showAllCentreRevenu();
-      },
-    });
+    if (this.isAdmin) {
+      this.centreService.deleteCentreRevenu(this.centre).subscribe({
+        next:(value) =>{
+          this.resetCentre();
+          this.toggleToast('Ce centre de revenu a été supprimé avec succès!');
+          this.toggle = !this.toggle;
+          this.showAllCentreRevenu();
+        },
+      });
+    }
   }
   
 }

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { environment } from "../../../environments/environment";
 import { HttpClient } from '@angular/common/http';
 import { InterfaceOperateur } from "../model/interface-operateur";
+import { InterfaceOperateurCentreExploitation } from '../model/interface-operateurcentreexploitation';
 
 @Injectable({
   providedIn: 'root'
@@ -13,6 +14,7 @@ export class OperateursService {
   private apiDeleteOperateur = environment.APIDELETEOPERATEUR;
   private apiDeleteOperateurs = environment.APIDELETEOPERATEURS;
   private apiUpdateOperateurs = environment.APIUPDATEOPERATEURS;
+  private apiGetAllOperateur = environment.APIGETALLOPERATEUR;
 
   constructor(private https: HttpClient) { }
 
@@ -20,8 +22,16 @@ export class OperateursService {
     return this.https.post(this.apiAddOperateurFournisseur, operateur);
   }
 
+  createNewOperateur(operateur: InterfaceOperateur,operateurcentreexploitation:InterfaceOperateurCentreExploitation) {
+    return this.https.post(this.apiAddOperateurFournisseur, {operateur, operateurcentreexploitation});
+  }
+
   getOperateur(fournisseurId: number) {
     return this.https.get<any>(this.apiGetOperateur + fournisseurId);
+  }
+
+  getAllOperateur(){
+    return this.https.get<any>(this.apiGetAllOperateur);
   }
 
   deleteOperateur(operateur: InterfaceOperateur) {
