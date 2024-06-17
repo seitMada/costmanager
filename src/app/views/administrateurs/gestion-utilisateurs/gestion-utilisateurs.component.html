@@ -1,0 +1,156 @@
+<div class=" card d-flex py-1 my-2 mb-2">
+    <div class="d-flex bd-highlight">
+        <div class="flex-grow-1 bd-highlight">
+            <button type="button" *ngIf="!modifToggle" (click)="submit()" class="btn btn-success btn-sm mx-1">Enregistrer</button>
+            <button type="button" *ngIf="!modifToggle" (click)="cancel()" class="btn btn-danger btn-sm mx-1">Annuler</button>
+        </div>
+        <div class="bd-highlight">
+            <button class="btn btn-outline-primary btn-sm me-1" (click)="cancel()" [disabled]="!modifToggle" *ngIf="!toggle" title="Liste centre revenu"><i class="fas fa-list"></i></button>
+            <button class="btn btn-outline-info btn-sm me-1" [disabled]="!modifToggle" (click)="modifyOperateur()" *ngIf="!toggle" title="Modifier centre revenu"><i class="fas fa-pencil"></i></button>
+            <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggle" (click)="toggleModal()" title="Ajouter centre revenu"><i class="fas fa-plus"></i></button>
+            <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!modifToggle" (click)="deleteOperateur()" *ngIf="!toggle" title="Supprimer centre revenu"><i class="fas fa-trash"></i></button>
+        </div>
+    </div>
+</div>
+<div class="card d-flex" *ngIf="!toggle">
+    <div class="card-header text-center fs-5 fw-bold"> Ajout utilisateur</div>
+    <ul class="list-group list-group-flush">
+      <li class="list-group-item">
+        <div class="card-body py-1">
+          <form #operateurForm="ngForm">
+            <div class="row m-2">
+                <div class="col-6">
+                    <div class="input-group">
+                      <span class="input-group-text col-5" id="basic-addon1">Nom</span>
+                      <input type="text" class="form-control col-6" [disabled]="inputModif" [(ngModel)]="operateur.nom" name="nom" aria-describedby="basic-addon1">
+                    </div>
+                  </div>
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Prénom(s)</span>
+                  <input type="text" class="form-control col-7" [disabled]="inputModif" name="prenom" [(ngModel)]="operateur.prenom" autocomplete="off">
+                </div>
+              </div>
+            </div>
+            <div class="row m-2">
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Code</span>
+                  <input type="eamil" class="form-control col-7" [disabled]="inputModif" [(ngModel)]="operateur.code" name="code" aria-describedby="basic-addon1">
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Civilité</span>
+                  <input type="text" class="form-control col-7" [disabled]="inputModif" name="civilite" [(ngModel)]="operateur.civilite">
+                </div>
+              </div>
+            </div>
+            <div class="row m-2">
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Email</span>
+                  <input type="eamil" class="form-control col-7" [disabled]="inputModif" [(ngModel)]="operateur.email" name="email" aria-describedby="basic-addon1">
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Téléphone</span>
+                  <input type="text" class="form-control col-7" [disabled]="inputModif" name="telephone" [(ngModel)]="operateur.telephone">
+                </div>
+              </div>
+            </div>
+             
+          </form>
+        </div>
+      </li>
+      <li class="list-group-item" style="height: 420px;">
+        <ul ngbNav #nav2="ngbNav" [(activeId)]="active_2"  class="nav-tabs">
+          <li [ngbNavItem]="1">
+            <button ngbNavLink>EXPLOITATION</button>
+            <ng-template ngbNavContent>
+              <div class="d-flex">
+                <div class="card col-3">
+                  <div class="card-body overflow-y-scroll" style="height: 340px;">
+                    <table class="table table-striped table-hover">
+                      <tbody>
+                        <tr *ngFor="let line of exploitations">
+                          <td class="col-9">{{line.libelle}}</td>
+                          <td class="col-3">
+                            <input type="radio" class="form-check-input" name="exploitation" [value]="line.id" (change)="selectExploitation(line)" [(ngModel)]="line.selected" [disabled]="inputModif" [checked]="line.selected">
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+                
+              </div>
+            </ng-template>
+          </li>
+          <li [ngbNavItem]="2">
+            <button ngbNavLink>CENTRE REVENU</button>
+            <ng-template ngbNavContent>
+              <div class="d-flex">
+                <div class="card col-3">
+                  <div class="card-body overflow-y-scroll" style="height: 340px;">
+                    <table class="table table-striped table-hover">
+                      <tbody>
+                        <tr *ngFor="let item of centres">
+                          <td class="col-9">{{item.libelle}}</td>
+                          <td class="col-3">
+                            <input type="radio" class="form-check-input" name="centre" [value]="item.id" [(ngModel)]="item.selected" [disabled]="inputModif">
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </ng-template>
+          </li>
+        </ul>
+        <div [ngbNavOutlet]="nav2" class="mt-2"></div>
+      </li>
+    </ul>
+</div>
+
+<div class="card d-flex" *ngIf="toggle">
+    <div class="card-header text-center fs-5 fw-bold">Tous les utilisateurs disponibles</div>
+    <div class="card-body overflow-scroll-y py-1" style="height: 600px;" >
+      <table class="table table-hover">
+        <thead>
+          <tr>
+            <th scope="col" class="col-1">Code</th>
+            <th scope="col" class="col-1">Civilité</th>
+            <th scope="col" class="col-3">Nom et Prénom(s)</th>
+            <th scope="col" class="col-2">Email</th>
+            <th scope="col" class="col-1">Téléphone</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let line of operateurs" (click)="showOperateur(line)">
+            <td scope="col" class="col-1">{{ line.code }}</td>
+            <td scope="col" class="col-1">{{ line.civilite }}</td>
+            <td scope="col" class="col-3">{{ line.nom }} {{ line.prenom }}</td>
+            <td scope="col" class="col-2">{{ line.email }} </td>
+            <td scope="col" class="col-1">{{ line.telephone }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+</div>
+
+
+<c-toaster [placement]="position" class="p-3" position="fixed">
+  <c-toast #toast="cToast" (timer)="onTimerChange($event)" (visibleChange)="onVisibleChange($event)" [visible]="visible"
+    color="{{color}}">
+    <c-toast-body>
+      <div class="row">
+        <div class="col-10 p-auto"><span [ngClass]="textcolor">{{message}}</span></div>
+        <div class="col-2"><button aria-label="close" class="btn btn-sm btn-outline-light no-border"
+            (click)="toast.visible=false"><i class="fas fa-x"></i></button></div>
+      </div>
+    </c-toast-body>
+  </c-toast>
+</c-toaster>

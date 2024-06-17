@@ -4,7 +4,6 @@ import { FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertModule, ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
 import { ModalDismissReasons, NgbDropdownModule, NgbModal, NgbModalConfig, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { subscribe } from 'diagnostics_channel';
 
 import { Adress, Adresse } from 'src/app/shared/model/adresse';
 import { Exploitation } from 'src/app/shared/model/exploitations';
@@ -44,6 +43,7 @@ export class CentrerevenusComponent implements OnInit {
 
   closeResult = '';
   private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
+  private exploitationid = sessionStorage.getItem('exploitation') ? Number(sessionStorage.getItem('exploitation')) :0;
   public centreId = 0;
   selectedExploitationId: number | null = null;
 
@@ -98,12 +98,22 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   showAllCentreRevenu(){
-    this.centreService.getcentrerevenu().subscribe({
-      next: async (_centres) => {
-        this.centres = _centres;
-        this.centre = _centres[0]
-      }
-    });
+    if (this.isAdmin) {
+      this.centreService.getcentrerevenu().subscribe({
+        next: async (_centres) => {
+          this.centres = _centres;
+          this.centre = _centres[0]
+        }
+      });
+    } else {
+      this.centreService.getCrExploitation(this.exploitationid).subscribe({
+        next: async (_centres) => {
+          this.centres = _centres;
+          this.centre = _centres[0]
+        }
+      });
+    }
+    
   } 
 
   public resetLieuStockage(){
@@ -145,8 +155,10 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   addFormExploitation(){
-    this.resetExploitation();
-    this.addExploitation = (this.addExploitation === false ? true:false);
+    if(this.isAdmin){
+      this.resetExploitation();
+      this.addExploitation = (this.addExploitation === false ? true:false);
+    }
   }
 
   getAllExploitation(){
@@ -173,8 +185,9 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   toggleModal(){
-    this.resetCentre();
-    this.resetExploitation();
+    if (this.isAdmin) {
+      this.resetCentre();
+      this.resetExploitation();
       this.toggle = !this.toggle;
       this.modifToggle = !this.modifToggle;
       this.inputModif = false;
@@ -208,7 +221,7 @@ export class CentrerevenusComponent implements OnInit {
                 next:(_lieuStockages)=>{
                   this.lieuStockages = _lieuStockages;
                   this.lieuStockage = _lieuStockages[0];
-
+  
                   this.centre = {
                     code: '',
                     libelle: '',
@@ -227,7 +240,7 @@ export class CentrerevenusComponent implements OnInit {
           });
         },
       })
-
+    }
   }
 
   changeAdress(content: TemplateRef<any>) {
@@ -309,8 +322,10 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   addFormLieuStockage(){
-    this.resetLieuStockage();
-    this.addLieuStockage = (this.addLieuStockage === false ? true:false);
+    if (this.isAdmin) {
+      this.resetLieuStockage();
+      this.addLieuStockage = (this.addLieuStockage === false ? true:false); 
+    }
   }
 
   saveExploitation(){
@@ -352,6 +367,7 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   submit(){
+    
     this.centreId = this.centre.id ? this.centre.id :0;
     if (this.centreId ==0) {
       const lieuStockagesSelect = this.lieuStockages.filter(line =>line.selected);
@@ -395,7 +411,6 @@ export class CentrerevenusComponent implements OnInit {
       } else {
         alert('Veuillez sélectionner au moins un lieu de stockage et exploitation');
       }
-      
     }
   }
 
@@ -412,10 +427,6 @@ export class CentrerevenusComponent implements OnInit {
         this.inputModif = true;
         this.toggle = !this.toggle;
         for(const exploitation of _exploitations){
-          let selected = false;
-          if (exploitation.id == this.centre.exploitationsId) {
-            selected = true;
-          }
           this.exploitation = {
             code_couleur: exploitation.code_couleur,
             libelle: exploitation.libelle,
@@ -428,7 +439,7 @@ export class CentrerevenusComponent implements OnInit {
             actif:exploitation.actif,
             adressesId:exploitation.adresseId,
             adresses: exploitation.adresses,
-            selected:selected,
+            selected:false,
             centreRevenu:exploitation.centreRevenu
           }
           this.exploitations.push(this.exploitation);
@@ -469,5 +480,4 @@ export class CentrerevenusComponent implements OnInit {
       },
     });
   }
-  
 }
