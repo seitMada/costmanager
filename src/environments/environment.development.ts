@@ -5,6 +5,7 @@ export const environment = {
     APIGETEXPLOITATION: endPoint + 'exploitation',
     APICREATEEXPLOITATION: endPoint + 'exploitation',
     APIGETEXPLOITATIONBYID: endPoint+'exploitation/',
+    APIGETALLEXPLOITATIONBYID: endPoint+ 'exploitation/list/',
     APIDELETEEXPLOITATION: endPoint + 'exploitation/delete',
     APIUPDATEEXPLOITATION: endPoint + 'exploitation/update/',
 
@@ -28,6 +29,7 @@ export const environment = {
     APIDELETEOPERATEUR: endPoint + 'operateur/delete_operateur',
     APIDELETEOPERATEURS: endPoint + 'operateur/delete_operateurs/',
     APIUPDATEOPERATEURS: endPoint + 'operateur/update_operateur/',
+    APIFINDOPERATEURBYID: endPoint + 'operateur/operateurid/',
     
     APIGETFOURNISSEUR: endPoint + 'fournisseur',
     APIGETFOURNISSEURBYEXPLOITATION: endPoint + 'fournisseur/exploitation/',
@@ -171,6 +173,8 @@ export const environment = {
     APIGETLIEUSTOCKAGESANSLIEN : endPoint + 'lieustockage/sansLien',
     APIUPDATELIEUSTOCKAGE: endPoint + 'lieustockage/update/',
     APIDELETEONELIEUSTOCKAGE: endPoint + 'lieustockage/delete',
+
+    APIGETOPERATEURCENTREEXPLOITATIONBYOPERATEURID: endPoint + 'operateurcentreexploit/',
   
 };
    

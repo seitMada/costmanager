@@ -134,18 +134,16 @@ export class ZonestockageComponent implements OnInit{
       next:(_lieuStockages) =>{
         this.lieustockages = [];
         for (const _lieu of _lieuStockages) {
-          let selected = false;
           if (_lieu.id == zonestockage.lieuId) {
-            selected =true;
+            this.lieustockage = {
+              lieu : _lieu.lieu,
+              centreId: _lieu.centreId,
+              selected:false,
+              centre: _lieu.centre,
+              zonestockage:_lieu.zoneStockage
+            }
+            this.lieustockages.push(this.lieustockage);
           }
-          this.lieustockage = {
-            lieu : _lieu.lieu,
-            centreId: _lieu.centreId,
-            selected:selected,
-            centre: _lieu.centre,
-            zonestockage:_lieu.zoneStockage
-          }
-          this.lieustockages.push(this.lieustockage);
         }
       },
     })
@@ -166,8 +164,10 @@ export class ZonestockageComponent implements OnInit{
   }
 
   addFormLieu(){
-    this.resetLieuStockage();
-    this.addLieu = (this.addLieu === false ? true:false);
+    if(this.isAdmin){
+      this.resetLieuStockage();
+      this.addLieu = (this.addLieu === false ? true:false);
+    }
   }
 
   submit(){
@@ -226,11 +226,13 @@ export class ZonestockageComponent implements OnInit{
 
 
   toggleModal(){
-    this.resetZonestockage();
-    this.modifToggle = !this.modifToggle;
-    this.inputModif = false;
-    this.toggle = !this.toggle;
-    this.findAllLieuStockage();
+    if (this.isAdmin) {
+      this.resetZonestockage();
+      this.modifToggle = !this.modifToggle;
+      this.inputModif = false;
+      this.toggle = !this.toggle;
+      this.findAllLieuStockage();
+    }
   }
 
   deleteZoneStockage(){

@@ -15,15 +15,13 @@ export class OperateursService {
   private apiDeleteOperateurs = environment.APIDELETEOPERATEURS;
   private apiUpdateOperateurs = environment.APIUPDATEOPERATEURS;
   private apiGetAllOperateur = environment.APIGETALLOPERATEUR;
+  private apiFindOperateurById = environment.APIFINDOPERATEURBYID;
+  private apiGetOperateurCentreExploitationByOperateurId = environment.APIGETOPERATEURCENTREEXPLOITATIONBYOPERATEURID;
 
   constructor(private https: HttpClient) { }
 
   createOperateur(operateur: InterfaceOperateur) {
     return this.https.post(this.apiAddOperateurFournisseur, operateur);
-  }
-
-  createNewOperateur(operateur: InterfaceOperateur,operateurcentreexploitation:InterfaceOperateurCentreExploitation) {
-    return this.https.post(this.apiAddOperateurFournisseur, {operateur, operateurcentreexploitation});
   }
 
   getOperateur(fournisseurId: number) {
@@ -44,5 +42,21 @@ export class OperateursService {
 
   public updateOperateur(id: number, operateur: InterfaceOperateur) {
     return this.https.patch(this.apiUpdateOperateurs + id, operateur);
+  }
+
+  createNewOperateur(operateur: InterfaceOperateur,operateurcentreexploitation:InterfaceOperateurCentreExploitation) {
+    return this.https.post(this.apiAddOperateurFournisseur, {operateur, operateurcentreexploitation});
+  }
+
+  public updateOperateurs(operateur: InterfaceOperateur,operateurcentreexploitation:InterfaceOperateurCentreExploitation) {
+    return this.https.patch(this.apiUpdateOperateurs + operateur.id, {operateur,operateurcentreexploitation});
+  }
+
+  public findOperateurCentreExploitationByOperateurId(operateurId:number){
+    return this.https.get<any>(this.apiGetOperateurCentreExploitationByOperateurId + operateurId);
+  }
+
+  public findOperateurById(operateurId:number){
+    return this.https.get<any>(this.apiFindOperateurById+operateurId);
   }
 }

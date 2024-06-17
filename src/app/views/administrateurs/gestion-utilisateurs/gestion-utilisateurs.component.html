@@ -121,23 +121,21 @@
       <table class="table table-hover">
         <thead>
           <tr>
-            <th scope="col" class="col-1">#</th>
             <th scope="col" class="col-1">Code</th>
-            <th scope="col" class="col-2">Libelle</th>
-            <th scope="col" class="col-3">Adresse</th>
-            <th scope="col" class="col-3">Email</th>
-            <th scope="col" class="col-2">Téléphone</th>
+            <th scope="col" class="col-1">Civilité</th>
+            <th scope="col" class="col-3">Nom et Prénom(s)</th>
+            <th scope="col" class="col-2">Email</th>
+            <th scope="col" class="col-1">Téléphone</th>
           </tr>
         </thead>
         <tbody>
-          <!-- <tr *ngFor="let line of centres" (click)="showCentreRevenu(line)">
-            <td scope="col" class="col-1"></td>
+          <tr *ngFor="let line of operateurs" (click)="showOperateur(line)">
             <td scope="col" class="col-1">{{ line.code }}</td>
-            <td scope="col" class="col-2">{{ line.libelle }}</td>
-            <td scope="col" class="col-3">{{ line.adresses.rue }} {{ line.adresses.ville }} {{ line.adresses.code_postal }} {{ line.adresses.pays }}</td>
-            <td scope="col" class="col-3">{{ line.email }}</td>
-            <td scope="col" class="col-2">{{ line.telephone }}</td>
-          </tr> -->
+            <td scope="col" class="col-1">{{ line.civilite }}</td>
+            <td scope="col" class="col-3">{{ line.nom }} {{ line.prenom }}</td>
+            <td scope="col" class="col-2">{{ line.email }} </td>
+            <td scope="col" class="col-1">{{ line.telephone }}</td>
+          </tr>
         </tbody>
       </table>
     </div>
