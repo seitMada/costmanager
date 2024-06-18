@@ -10,6 +10,8 @@ export class VentesService {
   private apiGetVenteCrDate = environment.APIGETVENTEBYCRANDDATE;
   private apiAddVente = environment.APICREATEVENTE;
   private apiCountVente = environment.APICOUNTVENTE;
+  private apiUploadVente = environment.APIUPLOADVENTE;
+  private apiImportedVente = environment.APIIMPORTVENTE;
 
   constructor(private https: HttpClient) { }
 
@@ -27,5 +29,17 @@ export class VentesService {
 
   public getcount() {
     return this.https.get<number>(this.apiCountVente);
+  }
+
+  public uploadFileToBackend(file: any, fileName: string, idexploitation: number = 0) {
+    const formData = new FormData();
+    formData.append('fileName', fileName);
+    formData.append('file', file);
+
+    return this.https.post(this.apiUploadVente, formData);
+  }
+
+  public getimportedvente(id: number[]) {
+    return this.https.post(this.apiImportedVente, { id: id });
   }
 }

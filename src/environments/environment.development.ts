@@ -172,6 +172,10 @@ export const environment = {
     APICREATEVENTE: endPoint + 'vente/create',
     APIUPDATEVENTE: endPoint + 'vente/update',
     APICOUNTVENTE: endPoint + 'vente/count',
+    APIUPLOADVENTE: endPoint + 'vente/upload',
+    APIIMPORTVENTE: endPoint + 'vente/importedfile',
+    
+    APIVARIATIONARTICLE: endPoint + 'articles/articlevariationprix',
 
     APIGETALLLIEUSTOCKAGE: endPoint + 'lieustockage',
     APIGETLISTLIEUSTOCKAGE : endPoint + 'lieustockage/list/',

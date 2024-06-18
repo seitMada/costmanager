@@ -96,7 +96,8 @@ import {
   cilTransfer,
   cilFolder,
   cilJustifyLeft,
-  cilPlus
+  cilPlus,
+  cilEuro
 } from '@coreui/icons';
 
 export const iconSubset = {
@@ -197,7 +198,8 @@ export const iconSubset = {
   cilTransfer,
   cilFolder,
   cilJustifyLeft,
-  cilPlus
+  cilPlus,
+  cilEuro
 };
 
 export enum IconSubset {
@@ -298,5 +300,6 @@ export enum IconSubset {
   cilTransfer = 'cilTransfer',
   cilFolder = 'cilFolder',
   cilJustifyLeft = 'cilJustifyLeft',
-  cilPlus = 'cilPlus'
+  cilPlus = 'cilPlus',
+  cilEuro = 'cilEuro'
 }

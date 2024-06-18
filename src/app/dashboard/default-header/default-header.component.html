@@ -13,7 +13,9 @@
       ></svg>
     </button>
     <c-header-nav class="d-none d-lg-flex me-auto">
-      {{idexploitation}}
+      <!-- {{idexploitation}} -->
+      <span class="fw-bold" *ngIf="!isAdmin">{{exploitation ? exploitation.libelle : ''}}</span>
+      <span class="fw-bold" *ngIf="isAdmin">MODE ADMINISTRATEUR</span>
       <!-- <c-nav-item>
         <a cNavLink routerLink="/dashboard" routerLinkActive="active">
           Dashboard

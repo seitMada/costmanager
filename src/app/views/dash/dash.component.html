@@ -1,1 +1,234 @@
-<p>dash works!</p>
+<div class="row">
+  <div class="col-xl-6 col-md-12 col-sm-12 mb-1">
+    <div class="card shadow">
+      <div class="d-flex bd-highlight">
+        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Variations des prix
+            d'articles</span></div>
+        <div class="p-1 bd-highlight" *ngIf="!articlevariationtoggle"><button class="btn btn-sm btn-outline-danger"
+            style="border: none;" (click)="getchartarticlevariation(null)">
+            <i class="fas fa-chart-area"></i></button>
+        </div>
+      </div>
+      <div class="overflow-y-scroll m-2" style="height: 100%;" style="height: 400px;" *ngIf="articlevariationtoggle">
+        <table class="table table-sm table-striped table-hover">
+          <thead>
+            <th>Articles</th>
+            <th>Dernier prix</th>
+            <th>Prix précédent</th>
+            <th>Ecart</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let line of articlesvariations" (click)="getchartarticlevariation(line)">
+              <td>{{line.libelle}}</td>
+              <td>{{line.prixactuel | number: '1.2-2'}} €</td>
+              <td>{{line.prixprecedent | number: '1.2-2'}} €</td>
+              <td class="fw-bold">
+                <span *ngIf="line.ecart >= 0" class="text-danger">{{line.ecart | number: '1.2-2'}} % </span>
+                <span *ngIf="line.ecart < 0" class="text-success">{{(-1) * line.ecart | number: '1.2-2'}} % </span>
+                <i
+                  [ngClass]="(line.prixactuel - line.prixprecedent) < 0 ? 'fas fa-chevron-down text-success':'fas fa-chevron-up text-danger'"></i>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="overflow-y-scroll" style="height: 100%;" *ngIf="!articlevariationtoggle">
+        <highcharts-chart [Highcharts]="Highcharts" [options]="chartVariationArticle"
+          style="width: 100%; height: 100%; display: block;"></highcharts-chart>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-6 col-md-12 col-sm-12 mb-1">
+    <div class="card shadow">
+      <div class="d-flex bd-highlight">
+        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Analyses ventes / Cout
+            matiéres</span></div>
+      </div>
+      <div class="overflow-y-scroll m-2" style="height: 100%;" style="height: 400px;">
+        <table class="table table-sm table-striped table-hover">
+          <thead>
+            <th>Fiche techniques</th>
+            <th>Cout</th>
+            <th>Prix</th>
+            <th>Ecart</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let fiche of fichetechniques">
+              <td>{{fiche.fichetechnique.libelle}}</td>
+              <td>{{fiche.cout | number: '1.2-2'}} €</td>
+              <td>{{fiche.prix | number: '1.2-2'}} €</td>
+              <td>{{(fiche.prix - fiche.cout) | number: '1.2-2'}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-8 col-md-12 col-sm-12 mb-1">
+    <div class="card bg-white shadow h-100 py-2">
+      <div class="d-flex bd-highlight">
+        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Pertes</span></div>
+        <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-success" style="border: none;"
+            (click)="periodeperte()">
+            <i class="fas fa-chart-area"></i></button>
+        </div>
+      </div>
+      <div class="overflow-y-scroll m-2" style="height: 100%;" style="height: 400px;" *ngIf="isperteperiode">
+        <table class="table table-sm table-striped table-hover">
+          <thead>
+            <th>Articles</th>
+            <th>Pertes précédente</th>
+            <th>Pertes en cours</th>
+            <th>Ecart</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let line of perte">
+              <td>{{line.articlelibelle}}</td>
+              <td>{{+line.perte * +line.cout| number: '1.2-2'}} €</td>
+              <td>{{+line.perteprecedent * +line.cout | number: '1.2-2'}} €</td>
+              <td>{{(((+line.perte * +line.cout) - (+line.perteprecedent * +line.cout)) / (+line.perte * +line.cout)) * 100 | number: '1.2-2'}} %</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="overflow-y-scroll" style="height: 100%;" *ngIf="!isperteperiode">
+        <!-- <highcharts-chart [Highcharts]="Highcharts" [options]="chartVariationArticle"
+          style="width: 100%; height: 100%; display: block;"></highcharts-chart> -->
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-4 col-md-12 col-sm-12 mb-1">
+    <div class="card bg-warning text-white shadow h-100 py-2">
+      <div class="d-flex bd-highlight">
+        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Chiffre d'affaire (Derniére
+            période)</span></div>
+        <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-dark" style="border: none;">
+            <i class="fas fa-ellipsis-vertical"></i></button>
+        </div>
+      </div>
+      <div class="card-body">
+        <span class="h1">{{(chiffreaffaire[0] ? chiffreaffaire[0].ca : 0) | number: '1.2-2'}} €</span>
+        <br>
+        <div class="row mt-5">
+          <div class="col-6"><span class="h6" title="Cout matiére théorique">CMT {{(chiffreaffaire[0] ?
+              chiffreaffaire[0].cmt : 0) | number: '1.2-2'}} €</span></div>
+          <div class="col-6"><span class="h6" title="Cout matiére réél">CMR {{(chiffreaffaire[0] ? chiffreaffaire[0].cmr
+              : 0) | number: '1.2-2'}} €</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4 col-md-12 col-sm-12 mb-1">
+    <div class="card bg-info text-white shadow h-100 py-2">
+      <div class="d-flex bd-highlight">
+        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Chiffre d'affaire (Période en
+            cours)</span></div>
+        <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-dark" style="border: none;">
+            <i class="fas fa-ellipsis-vertical"></i></button>
+        </div>
+      </div>
+      <div class="card-body">
+        <span class="h1">{{(chiffreaffaire[1] ? chiffreaffaire[1].ca : 0) | number: '1.2-2'}} € <i
+            *ngIf="chiffreaffaire[0] && chiffreaffaire[1]"
+            [ngClass]="(chiffreaffaire[0].ca - chiffreaffaire[1].ca) > 0 ? 'fas fa-chevron-down text-danger':'fas fa-chevron-up text-success'"></i></span>
+        <br>
+        <div class="row mt-5">
+          <div class="col-6"><span class="h6" title="Cout matiére théorique">CMT {{(chiffreaffaire[1] ?
+              chiffreaffaire[1].cmt : 0) | number: '1.2-2'}} €</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-4 col-md-12 col-sm-12 mb-1">
+    <div class="card  bg-success text-white shadow h-100">
+      <c-widget-stat-a class="bg-transparent" style="border: none;" color="success" [title]="''">
+        <ng-template cTemplateId="widgetActionTemplate">
+          <div class="flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Nombre ventes hebdomadaire
+              ({{nombrevente}})</span></div>
+
+          <c-dropdown alignment="end" variant="btn-group">
+            <button [caret]="false" cButton cDropdownToggle class="p-0" color="transparent">
+              <i class="fas fa-ellipsis-vertical text-high-emphasis-inverse"></i>
+            </button>
+            <div cDropdownMenu>
+              <div class="overflow-y-scroll p-3" style="height: 400px; width: 50vw;">
+                <table class="table table-hover table-sm table-striped">
+                  <thead>
+                    <th>Date</th>
+                    <th>Numero ticket</th>
+                    <th>Montant</th>
+                    <th>Centre revenus</th>
+                  </thead>
+                  <tbody>
+                    <tr *ngFor="let vente of venteshebdo">
+                      <td>{{screenDate(vente.date_vente)}} {{screenHour(vente.date_vente)}}</td>
+                      <td>{{vente.num_ticket}}</td>
+                      <td>{{vente.montantttc | number: '1.2-2'}} €</td>
+                      <td>{{vente.centre.libelle}}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </c-dropdown>
+        </ng-template>
+      </c-widget-stat-a>
+      <div class="card-body">
+        <span class="col-12 fw-bold">Historique nombre vente</span>
+        <c-widget-stat-a class="bg-transparent" style="border: none;" color="success" [title]="''">
+          <ng-template cTemplateId="widgetChartTemplate">
+            <c-chart [data]="data" [options]="options" class="mt-1 mx-1" height="80" type="line"></c-chart>
+          </ng-template>
+        </c-widget-stat-a>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="col-xl-4 col-md-12 col-sm-12 mb-1">
+    <div class="card  bg-danger text-white shadow h-100 py-2">
+      <div class="d-flex bd-highlight">
+        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Pertes (Période
+            précédente)</span></div>
+        <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-dark" style="border: none;">
+            <i class="fas fa-ellipsis-vertical"></i></button>
+        </div>
+      </div>
+      <div class="card-body">
+        <span class="h3">{{pertes[1] ? pertes[1].perte : 0 | number: '1.2-2'}} € <i *ngIf="pertes[0] && pertes[1]"
+            [ngClass]="(pertes[0].perte - pertes[1].perte) > 0 ? 'fas fa-chevron-down text-light':'fas fa-chevron-up text-light'"></i></span>
+        <br>
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-4 col-md-12 col-sm-12 mb-1">
+    <div class="card  bg-danger text-white shadow h-100 py-2 mb-1">
+      <div class="d-flex bd-highlight">
+        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Pertes (Période en
+            cours)</span></div>
+        <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-dark" style="border: none;">
+            <i class="fas fa-ellipsis-vertical"></i></button>
+        </div>
+      </div>
+      <div class="card-body">
+        <span class="h3">{{pertes[0] ? pertes[0].perte : 0 | number: '1.2-2'}} €</span>
+        <br>
+      </div>
+    </div>
+  </div>
+  <div class="card col-6 mb-1" style="height: 170px;">
+
+  </div>
+  <div class="card col-6 mb-1" style="height: 250px;">
+
+  </div>
+  <div class="card col-6 mb-1" style="height: 250px;">
+
+  </div>
+</div>

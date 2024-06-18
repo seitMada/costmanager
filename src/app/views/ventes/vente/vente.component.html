@@ -43,11 +43,16 @@
           [disabled]="!deleteToggle">
           <i class="fas fa-trash"></i>
         </button> -->
-    <div class="bd-highlight">
-      <button class="btn btn-outline-success btn-sm me-1" title="Inserer vente" (click)="toggleModal();resetVente();addvente()" [disabled]="!modifToggle">
-        <i class="fas fa-plus"></i>
-      </button>
-    </div>
+      <div class="bd-highlight">
+        <button class="btn btn-outline-success btn-sm me-1" title="Inserer vente"
+          (click)="toggleModal();resetVente();addvente()" [disabled]="!modifToggle">
+          <i class="fas fa-plus"></i>
+        </button>
+        <button class="btn btn-outline-secondary btn-sm me-1" title="importer vente" (click)="importModal()"
+          [disabled]="!modifToggle">
+          <i class="fas fa-download"></i>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -93,10 +98,12 @@
       </div>
     </div>
     <div class="bd-highlight" *ngIf="!toggle">
-      <button class="btn btn-outline-primary btn-sm me-1" title="Ajouter fichetechniques" (click)="toggleModal()" *ngIf="modifToggle" >
+      <button class="btn btn-outline-primary btn-sm me-1" title="" (click)="toggleModal()"
+        *ngIf="modifToggle">
         <i class="fas fa-list"></i>
       </button>
-      <button class="btn btn-outline-success btn-sm me-1" title="Ajouter fichetechniques" (click)="openArticle(content)" *ngIf="!modifToggle" >
+      <button class="btn btn-outline-success btn-sm me-1" title="Ajouter fichetechniques" (click)="openArticle(content)"
+        *ngIf="!modifToggle">
         <i class="fas fa-plus"></i>
       </button>
     </div>
@@ -125,13 +132,22 @@
           </td>
           <td class="col-2" (click)="toggleModal(); show(line)">{{screenDate(line.date_vente)}}</td>
           <td class="col-2" (click)="toggleModal(); show(line)">{{line.num_ticket}}</td>
-          <td class="col-1" (click)="toggleModal(); show(line)">{{line.montantht}} €</td>
-          <td class="col-1" (click)="toggleModal(); show(line)">{{line.montantttc}} €</td>
+          <td class="col-1" (click)="toggleModal(); show(line)">{{line.montantht | number: '1.2-2'}} €</td>
+          <td class="col-1" (click)="toggleModal(); show(line)">{{line.montantttc | number: '1.2-2'}} €</td>
           <td class="col-3" (click)="toggleModal(); show(line)">{{line.centre?.libelle}}</td>
           <!-- <td class="col-2" (click)="toggleModal(); show(line)">{{line.operateur.nom}} {{line.operateur.prenom}}</td> -->
         </tr>
       </tbody>
     </table>
+  </div>
+  <div class="card-body py-1 mt-2">
+    <div class="row">
+      <div class="fw-bold col-4 d-flex justify-content-end"></div>
+      <div class="fw-bold col-2 d-flex justify-content-end"> TOTAL HT</div>
+      <div class="fw-bold col-2"> {{calculmontant(ventes).montantht | number: '1.2-2'}} €</div>
+      <div class="fw-bold col-2 d-flex justify-content-end"> TOTAL TTC</div>
+      <div class="fw-bold col-2"> {{calculmontant(ventes).montantttc | number: '1.2-2'}} €</div>
+    </div>
   </div>
 </div>
 
@@ -157,9 +173,8 @@
           <td class="col-3">{{line.fichetechnique.libelle}}</td>
           <!-- <td class="col-2">{{line.quantite | number : '1.2-2'}}</td> -->
           <td class="col-2">
-            <input type="number" class="form-control form-control-sm bg-transparent"
-              [(ngModel)]="line.quantite" [step]="line.fichetechnique.unite.step" placeholder="0.00"
-              [disabled]="modifToggle">
+            <input type="number" class="form-control form-control-sm bg-transparent" [(ngModel)]="line.quantite"
+              [step]="line.fichetechnique.unite.step" placeholder="0.00" [disabled]="modifToggle">
           </td>
           <td class="col-2">{{line.fichetechnique.unite.libelle}}
             <!-- <input type="number" class="form-control form-control-sm bg-transparent"
@@ -172,12 +187,77 @@
       </tbody>
     </table>
   </div>
-  <div *ngIf="!isimport"></div>
+  <div class="card-body py-1 mt-2"  *ngIf="isimport">
+    <div class="row">
+      <div class="fw-bold col-4 d-flex justify-content-end"></div>
+      <div class="fw-bold col-2 d-flex justify-content-end"> TOTAL HT</div>
+      <div class="fw-bold col-2"> {{calculmontant([vente]).montantht | number: '1.2-2'}} €</div>
+      <div class="fw-bold col-2 d-flex justify-content-end"> TOTAL TTC</div>
+      <div class="fw-bold col-2"> {{calculmontant([vente]).montantttc | number: '1.2-2'}} €</div>
+    </div>
+  </div>
+  <div class="card-body py-1" style="height: 650px;" *ngIf="!isimport">
+    <div class="card-body d-flex justify-content-center py-3">
+      <input type="file" id="btnfile" class="visually-hidden" multiple (change)="fileChangeEvent($event)" accept=".csv">
+      <label class="btn btn-secondary " for="btnfile"><i class="fas fa-file-download"></i><br />Télécharger un ou
+        plusieurs fichier de vente</label>
+    </div>
+    <ul class="list-group list-group-horizontal-sm" style="max-height: 150px;">
+      <li class="list-group-item" *ngFor="let file of files; let i = index">{{file.name}} <i
+          class="fas fa-file-csv"></i> <i class="fas fa-close ms-3" (click)="deletefile(i)"></i></li>
+    </ul>
+    <div class="d-flex justify-content-end" *ngIf="countfiles(files)"><button class="btn btn-sm btn-outline-success" (click)="importfile()">Importer les ventes selectionnés</button></div>
+
+    <div class="row">
+      <!-- <div class="col-6 overflow-y-scroll" style="height: 350px;">
+        <table class="table table-sm table-hover">
+          <thead>
+            <th>Nom fichier</th>
+            <th>Date vente</th>
+            <th>Exploitation</th>
+            <th>Centre de revenu</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let file of fichierventes">
+              <td>{{file.fichier}}</td>
+              <td>{{screenDate(file.date_vente)}}</td>
+              <td>{{file.exploitation.libelle}}</td>
+              <td>{{file.centre.libelle}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div> -->
+      <!-- <div class="d-flex justify-content-end">
+        <button class="btn btn-sm btn-danger" (click)="filtreventefichier(false)">Vente non importer</button>
+        <button class="btn btn-sm btn-light ms-1" (click)="filtreventefichier(false)">Vente importer</button>
+      </div> -->
+      <div class="overflow-y-scroll" style="height: 350px;">
+        <table class="table table-sm table-hover table-striped">
+          <thead>
+            <th>Nom fichier</th>
+            <th>Date vente</th>
+            <th>Exploitation</th>
+            <th>Centre de revenu</th>
+            <th>Date importation</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let file of fichierventes" [ngClass]="file.isimport !== 1 ? 'table-danger' : 'table-transparent'">
+              <td>{{file.fichier}}</td>
+              <td>{{screenDate(file.datevente)}}</td>
+              <td>{{file.exploitation.libelle}}</td>
+              <td>{{file.centre.libelle}}</td>
+              <td>{{screenDate(file.date_vente)}}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 </div>
 
 <ng-template #content let-modal>
   <div class="modal-header">
-    <h6 class="modal-title text-center" id="modal-basic-title">Ajouter des articles </h6>
+    <h6 class="modal-title text-center" id="modal-basic-title">Ajouter des fichetechniques</h6>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
@@ -212,3 +292,16 @@
       (click)="modal.close('Save click')">Séléctionner</button>
   </div>
 </ng-template>
+
+<c-toaster [placement]="position" class="p-3" position="fixed">
+  <c-toast #toast="cToast" (timer)="onTimerChange($event)" (visibleChange)="onVisibleChange($event)" [visible]="visible"
+    color="{{color}}">
+    <c-toast-body>
+      <div class="row">
+        <div class="col-10 p-auto"><span [ngClass]="textcolor">{{message}}</span></div>
+        <div class="col-2"><button aria-label="close" class="btn btn-sm btn-outline-light no-border"
+            (click)="toast.visible=false"><i class="fas fa-x"></i></button></div>
+      </div>
+    </c-toast-body>
+  </c-toast>
+</c-toaster>

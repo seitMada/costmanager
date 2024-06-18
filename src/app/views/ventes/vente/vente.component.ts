@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef, inject } from '@angular/core';
+import { Component, ElementRef, OnInit, TemplateRef, ViewChild, inject } from '@angular/core';
 import { CommonModule, DatePipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
@@ -27,6 +27,9 @@ import { InterfaceComposition } from 'src/app/shared/model/interface-composition
   styleUrl: './vente.component.scss'
 })
 export class VenteComponent implements OnInit {
+
+  @ViewChild("btnfile", { static: false })
+  InputVar: ElementRef;
 
   position = 'top-end';
   visible = false;
@@ -68,6 +71,7 @@ export class VenteComponent implements OnInit {
   public addToggle = true;
   public deleteToggle = true;
   public modifToggle = true;
+  public importToggle = false;
 
   private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
   public idexploitation = +(sessionStorage.getItem('exploitation') || 3);
@@ -87,6 +91,9 @@ export class VenteComponent implements OnInit {
   public ventedetails: InterfaceVentesDetails[];
   public ventedetail: InterfaceVentesDetails;
   public fichetechniques: InterfaceFichetechnique[];
+  public files: any[] = [];
+  public fichierventes: any[] = [];
+  public fichierventesdefaut: any[] = [];
 
   private today = new Date();
   public datevente = this.today;
@@ -245,6 +252,51 @@ export class VenteComponent implements OnInit {
 
   toggleModal() {
     this.toggle = !this.toggle;
+    this.isimport = true;
+  }
+
+  importModal() {
+    this.toggle = !this.toggle;
+    this.isimport = false;
+    let idexploitations: number[] = [];
+    for (const item of this.exploitations) {
+      idexploitations.push(item.id || 0)
+    }
+    this.venteService.getimportedvente(idexploitations).subscribe({
+      next: (_venteimporter: any) => {
+        for (const item of _venteimporter) {
+          Object.assign(item, {
+            datevente: this.screenDateFile(item.fichier)
+          })
+        }
+        console.log(_venteimporter)
+        this.fichierventesdefaut = _venteimporter;
+        this.fichierventes = _venteimporter;
+      }
+    })
+  }
+
+  filtreventefichier(isimport: boolean = true) {
+    if (isimport == true) {
+      this.fichierventes = this.fichierventesdefaut.filter(file => file.isimport == 1)
+      console.log(this.fichierventes, this.fichierventesdefaut)
+    } else {
+      this.fichierventes = this.fichierventesdefaut.filter(file => file.isimport == 0)
+      console.log(this.fichierventes, this.fichierventesdefaut)
+    }
+  }
+
+  screenDateFile(_file: string = '') {
+    const date = this.getdate(_file.split('-')[0]);
+    return date;
+  }
+
+  getdate(stringDate: string) {
+    const year = parseInt(stringDate.substring(0, 4));
+    const month = parseInt(stringDate.substring(4, 6)) - 1;
+    const day = parseInt(stringDate.substring(6, 8));
+
+    return new Date(year, month, day);
   }
 
   show(_vente: InterfaceVentes) {
@@ -255,6 +307,81 @@ export class VenteComponent implements OnInit {
 
   calculeCoutComposition(_composition: InterfaceComposition[]) {
     return 0;
+  }
+
+  fileChangeEvent(event: any) {
+    if (event.target) {
+      this.files = event.target.files;
+    }
+  }
+
+  importfile() {
+    for (let index = 0; index < this.files.length; index++) {
+      const file = this.files[index];
+      const fileName = file.name;
+      this.venteService.uploadFileToBackend(file, fileName, this.idexploitation).subscribe({
+        next: (value) => {
+          if (index == (this.files.length - 1)) {
+            this.files = [];
+            alert('Les fichiers ont été importé');
+            let idexploitations: number[] = [];
+            for (const item of this.exploitations) {
+              idexploitations.push(item.id || 0)
+            }
+            this.venteService.getimportedvente(idexploitations).subscribe({
+              next: (_venteimporter: any) => {
+                for (const item of _venteimporter) {
+                  Object.assign(item, {
+                    datevente: this.screenDateFile(item.fichier)
+                  })
+                }
+                console.log(_venteimporter)
+                this.fichierventesdefaut = _venteimporter;
+                this.fichierventes = _venteimporter;
+              }
+            })
+          }
+          // alert(index);
+        }
+      })
+    }
+  }
+
+  calculmontant(_ventes: InterfaceVentes[]) {
+    let montantht = 0;
+    let montantttc = 0;
+    if (_ventes && _ventes.length > 0) {
+      for (const vente of _ventes) {
+        montantht += +vente.montantht;
+        montantttc += +vente.montantttc;
+      }
+    }
+    return { montantht: montantht, montantttc: montantttc }
+  }
+
+  deletefile(index: number = 0) {
+    this.files = this.removeFileFromList(this.files, index);
+  }
+
+  private removeFileFromList(fileList: any, indexToRemove: number) {
+    const filesArray = Array.from(fileList);
+    if (indexToRemove < 0 || indexToRemove >= filesArray.length) {
+      return fileList;
+    }
+    filesArray.splice(indexToRemove, 1);
+
+    const dataTransfer = new DataTransfer();
+    filesArray.forEach((file: any) => dataTransfer.items.add(file));
+
+    return dataTransfer.files;
+  }
+
+  countfiles(fileList: any[]) {
+    if (fileList.length > 0) {
+      return true;
+    } else {
+      return false;
+    }
   }
 
   openArticle(content: TemplateRef<any>) {

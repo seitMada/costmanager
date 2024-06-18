@@ -50,7 +50,8 @@ export class MouvementStockComponent implements OnInit {
     ventes: number,
     stock_theorique: number,
     stock_reel: number,
-    stock_initiale: number
+    stock_initiale: number,
+    prix: number
   }[];
   public mouvemenstockback: {
     article_id: number,
@@ -64,7 +65,8 @@ export class MouvementStockComponent implements OnInit {
     ventes: number,
     stock_theorique: number,
     stock_reel: number,
-    stock_initiale: number
+    stock_initiale: number,
+    prix: number
   }[];
 
   public periode: { debut: Date, fin: Date }[] = []
@@ -136,21 +138,14 @@ export class MouvementStockComponent implements OnInit {
               this.exploitations = this.exploitations.filter(e => e.id == this.idexploitation);
               this.centrerevenus = this.centrerevenus.filter(c => c.exploitationsId == this.idexploitation);
             }
-            // this.exploitationsdefault = _exploitation;
             this.exploitations[0].selected = true;
             this.exploitationsselected = [this.exploitations[0].id || 0];
             this.headerchoice = this.exploitations[0].libelle;
             this.exploitation = this.exploitations[0];
-            // await this.selectExploitations(this.exploitation);
             this.inventaireService.getPeriode(this.exploitationsselected, true).subscribe({
               next: (value: any) => {
                 this.periode = value;
-                // for (const _date of this.periode) {
-                //   if (_date.fin == null) {
-                //     _date.fin = new Date();
-                //   }
-                // }
-                console.log(this.periode)
+                console.log(value)
                 if (this.periode.length > 0) {
                   const _index = this.periode.length - 1;
                   const _periode = this.periode[_index]
@@ -172,8 +167,8 @@ export class MouvementStockComponent implements OnInit {
                       this.mouvemenstock = _articles;
                       this.mouvemenstockback = _articles;
                       this.unitefilter = [];
-                      this.dates.debut = new Date(_periode.debut);
-                      this.dates.fin = new Date(_periode.fin ? _periode.fin : new Date());
+                      this.dates.debut = new Date(this.getrealdate(_periode.debut));
+                      this.dates.fin = new Date(this.getrealdate(_periode.fin ? _periode.fin : new Date()));
                       if (this.isfinperiode == false) {
                         this.periodeselected.fin = null;
                       }
@@ -192,15 +187,21 @@ export class MouvementStockComponent implements OnInit {
 
   }
 
+  private getrealdate(dateString: any) {
+    const date = new Date(dateString);
+    
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1)  < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+    const day = date.getDate();
+    
+    return (`${year}-${month}-${day}`);
+  }
+
   selectPeriode(_periode: { debut: Date, fin: Date }) {
     this.periodeselected = _periode;
-    this.dates.debut = new Date(this.periodeselected.debut);
-    this.dates.fin = new Date(this.periodeselected.fin ? this.periodeselected.fin : new Date());
-    // if (!this.periodeselected.fin) {
-    //   this.isfinperiode = false;
-    // } else {
-    //   this.isfinperiode = true;
-    // }
+    console.log(_periode)
+    this.dates.debut = new Date(this.getrealdate(this.periodeselected.debut));
+    this.dates.fin = new Date(this.getrealdate(this.periodeselected.fin ? this.periodeselected.fin : new Date()));
   }
 
   open() {
@@ -240,6 +241,7 @@ export class MouvementStockComponent implements OnInit {
     }
     this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(_datefinal)) }, this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected, this.exploitationsselected.length > 0).subscribe({
       next: (_articles: any) => {
+        console.log(this.formatDate(new Date(this.periodeselected.debut)), this.formatDate(new Date(_dateFin)), this.formatDate(new Date(_datefinal)))
         this.mouvemenstock = _articles;
         this.mouvemenstockback = _articles;
         this.unitefilter = [];
@@ -254,8 +256,29 @@ export class MouvementStockComponent implements OnInit {
     })
   }
 
-  screenDate(date: Date | string, format: string = 'dd/MM/yyyy') {
-    return this.datePipe.transform(date, format);
+  // private getrealdate(dateString: any) {
+  //   const date = new Date(dateString);
+    
+  //   const year = date.getFullYear();
+  //   const month = (date.getMonth() + 1)  < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+  //   const day = date.getDate();
+    
+  //   return (`${year}-${month}-${day}`);
+  // }
+
+  screenDate(date: Date, format: string = 'dd/MM/yyyy') {
+    // return this.datePipe.transform(date, format);
+    if (date !== null) {
+      date = new Date(date);
+    } else {
+      date = new Date();
+    }
+    const year = date.getFullYear();
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const day = date.getDate().toString().padStart(2, '0');
+    // console.log(`${year}-${month}-${day} 00:00:00`)
+    // return `${year}-${month}-${day}`;
+    return `${day}/${month}/${year}`;
   }
 
   private formatDate(date: Date, fin: boolean = false) {
@@ -456,25 +479,6 @@ export class MouvementStockComponent implements OnInit {
       }
     }
     return total;
-  }
-
-  delete() {
-    throw new Error('Method not implemented.');
-  }
-  deletes() {
-    throw new Error('Method not implemented.');
-  }
-  openInventaire(arg0: any) {
-    throw new Error('Method not implemented.');
-  }
-  modifToggleModal() {
-    throw new Error('Method not implemented.');
-  }
-  toggleModal() {
-    throw new Error('Method not implemented.');
-  }
-  validInventaire() {
-    throw new Error('Method not implemented.');
   }
 
 }

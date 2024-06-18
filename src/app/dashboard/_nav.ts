@@ -77,7 +77,7 @@ export const navItems: INavData[] = [
   {
     name: 'Ventes',
     url: '/vente',
-    iconComponent: { name: 'cil-cart' },
+    iconComponent: { name: 'cil-euro' },
     // children: [
     //   {
     //     name: 'Simulations',
@@ -101,52 +101,52 @@ export const navItems: INavData[] = [
     //   },
     // ]
   },
-  {
-    name: 'Productions',
-    url: '/productions',
-    iconComponent: { name: 'cil-fastfood' },
-    children: [
-      {
-        name: 'Commandes',
-        url: 'productions/commandes'
-      },
-      {
-        name: 'Livraisons',
-        url: 'productions/livraisons'
-      },
-      {
-        name: 'Preparations',
-        url: 'productions/preparations'
-      }
-    ]
-  },
-  {
-    name: 'Transferts',
-    url: '/transferts',
-    iconComponent: { name: 'cil-transfer' },
-    children: [
-      {
-        name: 'Commandes',
-        url: 'transferts/commande_transferts'
-      },
-      {
-        name: 'Bons de Commandes',
-        url: 'transferts/bon_commandes'
-      },
-      {
-        name: 'Bon de Livraisons',
-        url: 'transferts/bon_livraisons'
-      },
-      {
-        name: 'Bon de retours',
-        url: 'transferts/bon_retours'
-      },
-      {
-        name: 'Suivi des transferts',
-        url: 'transferts/suivi_transferts'
-      }
-    ]
-  },
+  // {
+  //   name: 'Productions',
+  //   url: '/productions',
+  //   iconComponent: { name: 'cil-fastfood' },
+  //   children: [
+  //     {
+  //       name: 'Commandes',
+  //       url: 'productions/commandes'
+  //     },
+  //     {
+  //       name: 'Livraisons',
+  //       url: 'productions/livraisons'
+  //     },
+  //     {
+  //       name: 'Preparations',
+  //       url: 'productions/preparations'
+  //     }
+  //   ]
+  // },
+  // {
+  //   name: 'Transferts',
+  //   url: '/transferts',
+  //   iconComponent: { name: 'cil-transfer' },
+  //   children: [
+  //     {
+  //       name: 'Commandes',
+  //       url: 'transferts/commande_transferts'
+  //     },
+  //     {
+  //       name: 'Bons de Commandes',
+  //       url: 'transferts/bon_commandes'
+  //     },
+  //     {
+  //       name: 'Bon de Livraisons',
+  //       url: 'transferts/bon_livraisons'
+  //     },
+  //     {
+  //       name: 'Bon de retours',
+  //       url: 'transferts/bon_retours'
+  //     },
+  //     {
+  //       name: 'Suivi des transferts',
+  //       url: 'transferts/suivi_transferts'
+  //     }
+  //   ]
+  // },
   {
     name: 'Inventaires',
     url: '/inventaires',

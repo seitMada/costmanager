@@ -8,6 +8,7 @@ import { InventairesService } from 'src/app/shared/service/inventaires.service';
 import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { ExploitationService } from 'src/app/shared/service/exploitation.service';
 import { CommonModule } from '@angular/common';
+import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
 
 @Component({
   selector: 'app-default-header',
@@ -23,10 +24,11 @@ export class DefaultHeaderComponent extends HeaderComponent {
   public newNotifications = new Array(5)
 
   public idexploitation = +(sessionStorage.getItem('exploitation') || 3);
-  private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
+  public isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
   public periode: { debut: Date, fin: Date }[] = []
   public periodeselected: { debut: Date, fin: Date };
   public toggle: boolean = true;
+  public exploitation: InterfaceExploitations;
 
   public idexploitations: number = 0;
   public idoperateur = +(sessionStorage.getItem('id') || 3);
@@ -57,8 +59,13 @@ export class DefaultHeaderComponent extends HeaderComponent {
     private inventaireService: InventairesService) {
 
     super();
-    this.getstockminimum();
-    this.refreshdata(150000);
+    this.exploitationService.getExploitationById(this.idexploitation).subscribe({
+      next: (_exploitation) => {
+        this.exploitation = _exploitation;
+        this.getstockminimum();
+        this.refreshdata(150000);
+      }
+    })
   }
 
   getstockminimum(): void {
