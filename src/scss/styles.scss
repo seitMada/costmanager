@@ -26,3 +26,8 @@ $enable-rtl: true;
 
 /* Importing Bootstrap SCSS file. */
 @import 'bootstrap/scss/bootstrap';
+
+.sort-style{
+    float: right;
+    padding-right: 5px;
+}

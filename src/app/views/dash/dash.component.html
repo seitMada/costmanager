@@ -12,10 +12,18 @@
       <div class="overflow-y-scroll m-2" style="height: 100%;" style="height: 400px;" *ngIf="articlevariationtoggle">
         <table class="table table-sm table-striped table-hover">
           <thead>
-            <th>Articles</th>
-            <th>Dernier prix</th>
-            <th>Prix précédent</th>
-            <th>Ecart</th>
+            <tr>
+              <th>Articles <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortArticleVariation($event, 'libelle')"></i></th>
+              <th>Dernier prix <i class="fas fa-sort sort-style" id="fa-sort"  (click)="onSortArticleVariation($event, 'prixactuel','numeric')"></i></th>
+              <th>Prix précédent <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortArticleVariation($event, 'prixprecedent','numeric')"></i></th>
+              <th>Ecart <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortArticleVariation($event, 'ecart','numeric')"></i></th>
+            </tr>
+            <tr>
+              <th> <input type="search" class="form-control" name="libelle" (input)="onSearchArticleVariation($event,'libelle')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control" name="prixactuel" (input)="onSearchArticleVariation($event,'prixactuel')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control" name="prixprecedent" (input)="onSearchArticleVariation($event,'prixprecedent')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control" name="ecart" (input)="onSearchArticleVariation($event,'ecart')" placeholder="Rechercher..."></th>
+            </tr>
           </thead>
           <tbody>
             <tr *ngFor="let line of articlesvariations" (click)="getchartarticlevariation(line)">
@@ -25,8 +33,7 @@
               <td class="fw-bold">
                 <span *ngIf="line.ecart >= 0" class="text-danger">{{line.ecart | number: '1.2-2'}} % </span>
                 <span *ngIf="line.ecart < 0" class="text-success">{{(-1) * line.ecart | number: '1.2-2'}} % </span>
-                <i
-                  [ngClass]="(line.prixactuel - line.prixprecedent) < 0 ? 'fas fa-chevron-down text-success':'fas fa-chevron-up text-danger'"></i>
+                <i [ngClass]="(line.prixactuel - line.prixprecedent) < 0 ? 'fas fa-chevron-down text-success sort-style':'fas fa-chevron-up text-danger sort-style'"></i>
               </td>
             </tr>
           </tbody>
@@ -47,10 +54,19 @@
       <div class="overflow-y-scroll m-2" style="height: 100%;" style="height: 400px;">
         <table class="table table-sm table-striped table-hover">
           <thead>
-            <th>Fiche techniques</th>
-            <th>Cout</th>
-            <th>Prix</th>
-            <th>Ecart</th>
+            <tr>
+              <th>Fiche techniques <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'fichetechnique.libelle')"></i></th>
+              <th>Cout <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'cout','numeric')"></i></th>
+              <th>Prix <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'prix','numeric')"></i></th>
+              <th>Ecart </th>
+            </tr>
+            <tr>
+              <th> <input type="search" class="form-control" name="libelle" (input)="onSearchAnalyseVentes($event,'fichetechnique.libelle')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control" name="cout" (input)="onSearchAnalyseVentes($event,'cout')"  placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control" name="libelle" (input)="onSearchAnalyseVentes($event,'prix')"  placeholder="Rechercher..."></th>
+              <!-- <th> <input type="search" class="form-control" name="libelle" (input)="onSearchAnalyseVentes($event,'prix')"  placeholder="Rechercher..."></th> -->
+              <!-- <th></th> -->
+            </tr>
           </thead>
           <tbody>
             <tr *ngFor="let fiche of fichetechniques">

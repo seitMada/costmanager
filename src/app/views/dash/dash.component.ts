@@ -33,6 +33,7 @@ import {
 import { IconDirective } from '@coreui/icons-angular';
 import { InterfaceFichetechnique } from 'src/app/shared/model/interface-fichetechnique';
 import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
+import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-dash',
@@ -63,6 +64,16 @@ export class DashComponent implements OnInit {
     ecart: number,
     article: any
   }[] = [];
+
+  public articlesvariationsBack: {
+    id: number,
+    libelle: string,
+    prixactuel: number,
+    prixprecedent: number,
+    ecart: number,
+    article: any
+  }[] = [];
+
   public centrerevenus: InterfaceCentreRevenu[];
   public centrerevenusdefault: InterfaceCentreRevenu[];
   public centrerevenu: InterfaceCentreRevenu;
@@ -158,11 +169,18 @@ export class DashComponent implements OnInit {
     borderColor: string,
     data: number[]
   }[] = [];
-  public fichetechniques: {
+  public fichetechniques  : {
     fichetechnique: InterfaceFichetechnique,
     cout: 0,
     prix: 0
   }[] = [];
+  
+  public fichetechniquesBack  : {
+    fichetechnique: InterfaceFichetechnique,
+    cout: 0,
+    prix: 0
+  }[] = [];
+
 
   public optionsDefault = {
     plugins: {
@@ -240,6 +258,7 @@ export class DashComponent implements OnInit {
     private venteService: VentesService,
     private dashService: DashboardService,
     private datePipe: DatePipe,
+    private sortFilterSearchService:SortFilterSearchService
   ) {
     this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
       next: async (_centreRevenu) => {
@@ -412,6 +431,7 @@ export class DashComponent implements OnInit {
                             }
                           }
                           this.fichetechniques = this.getUniqueFt(this.fichetechniques)
+                          this.fichetechniquesBack = this.fichetechniques;
                           this.labels = nbventedate.labels;
                           const resultArray = [];
                           for (const property in nbventedate.ventes) {
@@ -578,6 +598,7 @@ export class DashComponent implements OnInit {
           }
           // console.log(this.articlesvariations)
         }
+        this.articlesvariationsBack = this.articlesvariations;
       }
     })
   }
@@ -688,5 +709,21 @@ export class DashComponent implements OnInit {
     const date = new Date(_date);
     return date.getHours() + ':' + date.getMinutes()
     // console.log(new Date(date));
+  }
+
+  onSortArticleVariation(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.articlesvariations, colonne, type, this.articlesvariationsBack);
+  }
+
+  onSearchArticleVariation(event: any, colonne: any) {
+    this.articlesvariations =  this.sortFilterSearchService.handleSearch(event, this.articlesvariations, colonne, this.articlesvariationsBack);
+  }
+
+  onSortAnalyseVentes(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.fichetechniques, colonne, type, this.fichetechniquesBack);
+  }
+
+  onSearchAnalyseVentes(event: any, colonne: any) {
+    this.fichetechniques =  this.sortFilterSearchService.handleSearch(event, this.fichetechniques, colonne, this.fichetechniquesBack);
   }
 }

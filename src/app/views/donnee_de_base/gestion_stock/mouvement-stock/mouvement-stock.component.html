@@ -32,7 +32,7 @@
   <div class="card-header">
     <h6 class="card-title text-center">Paramétre des mouvements de stock</h6>
   </div>
-  <div class="modal-body">
+  <div class="modal-body">& 
     <div class="card-body py-1">
       <div class="row m-2">
         <div class="input-group">
@@ -119,19 +119,31 @@
           <th class="col-2">
             <div class="row">
               <div class="col-9">Articles</div><i class="fas fa-sort col-1 m-auto" id="fa-sort"
-                (click)="tri($event, 'libelle')"></i>
+                (click)="onSortMouvemenstock($event, 'libelle')"></i>
             </div>
           </th>
           <th class="col-2">
             <div class="row">
               <div class="col-9">Unités</div><i class="fas fa-sort col-1 m-auto" id="fa-sort"
-                (click)="tri($event, 'unite')"></i>
+                (click)="onSortMouvemenstock($event, 'unite')"></i>
             </div>
           </th>
-          <th class="col-1" *ngIf="!isvalorisation">Achats</th>
-          <th class="col-1" *ngIf="!isvalorisation">Ventes</th>
-          <th class="col-1" *ngIf="!isvalorisation">Pertes</th>
-          <th class="col-1">Initiale</th>
+          <th class="col-1" *ngIf="!isvalorisation">
+            Achats 
+            <i class="fas fa-sort col-1 m-auto" id="fa-sort"(click)="onSortMouvemenstock($event, 'achats','numeric')"></i>
+          </th>
+          <th class="col-1" *ngIf="!isvalorisation">
+            Ventes
+            <i class="fas fa-sort col-1 m-auto" id="fa-sort"(click)="onSortMouvemenstock($event, 'ventes','numeric')"></i>
+          </th>
+          <th class="col-1" *ngIf="!isvalorisation">
+            Pertes
+            <i class="fas fa-sort col-1 m-auto" id="fa-sort"(click)="onSortMouvemenstock($event, 'pertes','numeric')"></i>
+          </th>
+          <th class="col-1">
+            Initiale
+            <!-- <i class="fas fa-sort col-1 m-auto" id="fa-sort"(click)="onSortMouvemenstock($event, 'inventaires','numeric')"></i> -->
+          </th>
           <th class="col-1" *ngIf="isfinperiode">Réél</th>
           <th class="col-1">Théorique</th>
           <th class="col-1 table-info" *ngIf="isvalorisation">Initiale</th>
@@ -142,10 +154,10 @@
         <tr>
           <th></th>
           <th class="col-2">
-            <input type="search" class="form-control" name="libelle" (input)="search($event)">
+            <input type="search" class="form-control" name="libelle" (input)="onSearchMouvemenstock($event,'libelle')">
           </th>
           <th class="col-2">
-            <select class="form-select" aria-label="Default select example" (change)="search($event, 'unite')">
+            <select class="form-select" aria-label="Default select example" (change)="onSearchMouvemenstock($event, 'unite')">
               <option></option>
               <option *ngFor="let line of unitefilter" [value]="line">{{line}}</option>
             </select>

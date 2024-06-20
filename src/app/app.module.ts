@@ -17,6 +17,7 @@ import { AppRoutingModule } from './app-routing.module';
 // Import app component
 import { AppComponent } from './app.component';
 import { ExploitationService } from '../app/shared/service/exploitation.service';
+import { SortFilterSearchService } from '../app/shared/service/sort-filter-search.service';
 
 // Import containers
 import { DefaultFooterComponent, DefaultHeaderComponent, DashboardComponent } from './dashboard';
@@ -95,7 +96,8 @@ const APP_CONTAINERS = [
     IconSetService,
     Title,
     ExploitationService,
-    DatePipe
+    DatePipe,
+    SortFilterSearchService
   ],
   bootstrap: [AppComponent]
 })

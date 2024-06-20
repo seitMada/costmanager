@@ -16,6 +16,7 @@ import { ZonestockagesService } from 'src/app/shared/service/zonestockages.servi
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { InterfaceBonCommande } from 'src/app/shared/model/interface-bonCommande';
 import { InterfaceCommandeDetail } from 'src/app/shared/model/interface-commandedetail';
+import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-mouvement-stock',
@@ -113,7 +114,8 @@ export class MouvementStockComponent implements OnInit {
     private articleService: ArticleService,
     private inventaireService: InventairesService,
     private datePipe: DatePipe,
-    private pdfService: PdfserviceService
+    private pdfService: PdfserviceService,
+    private sortFilterSearchService:SortFilterSearchService
   ) {
     this.headerchoice = '';
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
@@ -435,6 +437,8 @@ export class MouvementStockComponent implements OnInit {
     }
   }
 
+
+
   showvalorisation() {
     this.isvalorisation = !this.isvalorisation;
     if (this.isfinperiode == false) {
@@ -479,6 +483,14 @@ export class MouvementStockComponent implements OnInit {
       }
     }
     return total;
+  }
+
+  onSortMouvemenstock(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.mouvemenstock, colonne, type, this.mouvemenstockback);
+  }
+
+  onSearchMouvemenstock(event: any, colonne: any) {
+    this.mouvemenstock =  this.sortFilterSearchService.handleSearch(event, this.mouvemenstock, colonne, this.mouvemenstockback);
   }
 
 }
