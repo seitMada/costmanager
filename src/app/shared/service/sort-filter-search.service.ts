@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 export class SortFilterSearchService {
 
   constructor() { }
-  onSort(data: any[], colonne: any, type: string = 'string', sortDirection: string = 'asc'): any[] { 
+  onSort(data: any[], colonne: any, type: string = 'string', sortDirection: string = 'asc'): any[] {  
     return data.sort((a: any, b: any): any => {
       let aValue = this.getNestedProperty(a, colonne) || '';
       let bValue = this.getNestedProperty(b, colonne) || '';

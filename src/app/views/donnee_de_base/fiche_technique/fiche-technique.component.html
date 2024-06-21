@@ -36,39 +36,39 @@
       <thead>
         <tr>
           <th scope="col" class="">#</th>
-          <th scope="col" class="col-1">Code</th>
-          <th scope="col" class="col-2">Libelle</th>
-          <th scope="col" class="col-2">Famille</th>
-          <th scope="col" class="col-1">Unite</th>
-          <th scope="col" class="col-2">Groupe analytique</th>
-          <th scope="col" class="col-2">Categorie</th>
-          <th scope="col" class="col-1">Prix</th>
-          <th scope="col" class="col-1">Coût</th>
+          <th scope="col" class="col-1">Code <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'code','numeric')"></i></th>
+          <th scope="col" class="col-2">Libelle <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'libelle')"></i></th>
+          <th scope="col" class="col-2">Famille <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'famille.libelle')"></i></th>
+          <th scope="col" class="col-1">Unite <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'unite.abreviation')"></i></th>
+          <th scope="col" class="col-2">Groupe analytique <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'groupeanalytique.groupe')"></i></th>
+          <th scope="col" class="col-2">Categorie <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'categorie.libelle')"></i></th>
+          <th scope="col" class="col-1">Prix <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'prix','numeric')"></i></th>
+          <th scope="col" class="col-1">Coût <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'cout','numeric')"></i></th>
         </tr>
         <tr>
           <th colspan="2">
-            <input type="text" class="form-control form-control-sm">
+            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'code')" placeholder="Rechercher...">
           </th>
           <th class="col-2">
-            <input type="text" class="form-control form-control-sm">
+            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'libelle')" placeholder="Rechercher...">
           </th>
           <th class="col-2">
-            <input type="text" class="form-control form-control-sm">
+            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'famille.libelle')" placeholder="Rechercher...">
           </th>
           <th class="col-1">
-            <input type="text" class="form-control form-control-sm">
+            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'unite.abreviation')" placeholder="Rechercher...">
           </th>
           <th class="col-2">
-            <input type="text" class="form-control form-control-sm">
+            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'groupeanalytique.groupe')" placeholder="Rechercher...">
           </th>
           <th class="col-2">
-            <input type="text" class="form-control form-control-sm">
+            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'categorie.libelle')" placeholder="Rechercher...">
           </th>
           <th class="col-1">
-            <input type="text" class="form-control form-control-sm">
+            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'prix')" placeholder="Rechercher...">
           </th>
           <th class="col-1">
-            <input type="text" class="form-control form-control-sm">
+            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'cout')" placeholder="Rechercher...">
           </th>          
         </tr>
       </thead>
@@ -84,13 +84,11 @@
           </td>
           <td class="col-1" (click)="show(line); toggleModal()">{{line.code}}</td>
           <td class="col-2 fw-bold" (click)="show(line); toggleModal()">{{line.libelle}}</td>
-          <td class="col-2" (click)="show(line); toggleModal()">{{truncateWord(line.famille.libelle, 15)}}
-          </td>
+          <td class="col-2" (click)="show(line); toggleModal()">{{truncateWord(line.famille.libelle, 15)}}</td>
           <td class="col-1" (click)="show(line); toggleModal()">{{line.unite.abreviation}}</td>
           <td class="col-2" (click)="show(line); toggleModal()">
             {{truncateWord(line.groupeanalytique.groupe, 15)}}</td>
-          <td class="col-2" (click)="show(line); toggleModal()">{{truncateWord(line.categorie.libelle,
-            15)}}</td>
+          <td class="col-2" (click)="show(line); toggleModal()">{{truncateWord(line.categorie.libelle, 15)}}</td>
           <td class="col-1" (click)="show(line); toggleModal()">{{line.prix | number: '1.2-2'}} €</td>
           <td class="col-1" (click)="show(line); toggleModal()">{{line.cout | number: '1.2-2'}} €</td>
         </tr>

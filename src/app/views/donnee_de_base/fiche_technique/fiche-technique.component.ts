@@ -30,6 +30,7 @@ import { InterfaceComposition } from '../../../shared/model/interface-compositio
 import { InterfaceArticle } from '../../../shared/model/interface-articles';
 import { TooltipModule } from '@coreui/angular';
 import { ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderComponent } from '@coreui/angular';
+import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-fiche-technique',
@@ -72,6 +73,7 @@ export class FicheTechniqueComponent implements OnInit {
     private articleService: ArticleService,
     private exploitationService: ExploitationService,
     // private allergeneService: AllergenesService
+    private sortFilterSearchService:SortFilterSearchService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
   }
@@ -87,6 +89,7 @@ export class FicheTechniqueComponent implements OnInit {
 
   public articles: InterfaceArticle[];
   public fichetechniques: InterfaceFichetechnique[];
+  public fichetechniquesBack: InterfaceFichetechnique[];
   public fichetechnique: InterfaceFichetechnique;
   public familles: Familles;
   public categories: Categories;
@@ -151,6 +154,7 @@ export class FicheTechniqueComponent implements OnInit {
       next: (data) => {
         const { fichetechniqueByExploitation, groupeanalytique, categorie, unite, exploitations, articlesByExploitation } = data;
         this.fichetechniques = fichetechniqueByExploitation;
+        this.fichetechniquesBack = fichetechniqueByExploitation;
         console.log(this.fichetechniques)
         this.categories = categorie;
         this.groupeanalytiques = groupeanalytique;
@@ -186,6 +190,7 @@ export class FicheTechniqueComponent implements OnInit {
         for (const composition of this.compositions) {
           this.articles = this.articles.filter(row => row.id !== composition.articleId);
           this.fichetechniques = this.fichetechniques.filter(row => row.id !== composition.ftId);
+          this.fichetechniquesBack = this.fichetechniques.filter(row => row.id !== composition.ftId);
         }
         this.calculCout(this.compositions);
         this.fichetechniqueService.getAllExploitationByFichetechnique(this.idFichetechnique).subscribe({
@@ -329,6 +334,7 @@ export class FicheTechniqueComponent implements OnInit {
         this.initFichetechnique();
       })
     }
+    this.fichetechniquesBack = this.fichetechniques
   }
 
   toggleModal() {
@@ -563,5 +569,13 @@ export class FicheTechniqueComponent implements OnInit {
     this.cout.emballage = coutEmballage;
     this.cout.fichetechnique = coutAlimentaire + coutEmballage;
     this.fichetechnique.cout = +this.cout.fichetechnique.toFixed(2);
+  }
+
+  onSortFicheTechniques(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.fichetechniques, colonne, type, this.fichetechniquesBack ) ;
+  }
+
+  onSearchFicheTechniques(event: any, colonne: any) {
+     this.fichetechniques   =  (this.sortFilterSearchService.handleSearch(event, this.fichetechniques , colonne, this.fichetechniquesBack )) ;
   }
 }

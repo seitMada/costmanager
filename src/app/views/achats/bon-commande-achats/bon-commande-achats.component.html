@@ -168,10 +168,17 @@
       <thead>
         <tr>
           <th scope="col" class="col-1">#</th>
-          <th scope="col" class="col-3">N° Commande</th>
-          <th scope="col" class="col-2">Date Commande</th>
-          <th scope="col" class="col-3">Montant HT</th>
+          <th scope="col" class="col-3">N° Commande  <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortBonDeCommandes($event, 'noPiece')"></i></th>
+          <th scope="col" class="col-2">Date Commande  <i class="fas fa-sort sort-style" id="fa-sort"  (click)="onSortBonDeCommandes($event, 'dateCommande','date')"></i></th>
+          <th scope="col" class="col-3">Montant HT  <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortBonDeCommandes($event, 'montantHT','numeric')"></i></th>
           <th scope="col" class="col-2"></th>
+        </tr>
+        <tr>
+          <th></th>
+          <th><input type="search" name="noPiece" class="form-control form-control-sm"  (input)="onSearchBonDeCommandes($event,'noPiece')" placeholder="Rechercher..."></th>
+          <th><input type="date" name="dateCommande" class="form-control form-control-sm"  (input)="onSearchBonDeCommandes($event,'dateCommande')" placeholder="Rechercher..."></th>
+          <th><input type="search" name="montantHT" class="form-control form-control-sm"  (input)="onSearchBonDeCommandes($event,'montantHT')" placeholder="Rechercher..."></th>
+          <th></th>
         </tr>
       </thead>
       <tbody>

@@ -29,6 +29,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 // pdfMake.vfs = pdfFonts.pdfMake.vfs;
 // import { PdfView } from '../../../shared/model/pdfView';
 import { ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderComponent } from '@coreui/angular';
+import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-inventaires',
@@ -96,6 +97,7 @@ export class InventairesComponent {
   public exploitation: InterfaceExploitations;
   public inventaire: InterfaceInventaires;
   public inventaires: InterfaceInventaires[];
+  public inventairesBack: InterfaceInventaires[];
   public inventaireDetail: InterfaceInventairesDetails;
   public inventaireDetails: InterfaceInventairesDetails[];
   public lieustockages: InterfaceLieustockages[];
@@ -117,7 +119,8 @@ export class InventairesComponent {
     private zonelieuService: ZonestockagesService,
     private articleService: ArticleService,
     private datePipe: DatePipe,
-    private pdfService: PdfserviceService
+    private pdfService: PdfserviceService,
+    private sortFilterSearchService:SortFilterSearchService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
@@ -255,6 +258,7 @@ export class InventairesComponent {
     this.inventaireService.getInventaireByCrAndDate(this.idcentrerevenu, this.formatDate(this.dates.debut), this.formatDate(this.dates.fin, true)).subscribe({
       next: (_inventaires: any) => {
         this.inventaires = _inventaires;
+        this.inventairesBack = _inventaires;
       }
     })
   }
@@ -777,6 +781,14 @@ export class InventairesComponent {
       }
     }
     return prix;
+  }
+
+  onSortInventaires(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.inventaires, colonne, type, this.inventairesBack ) ;
+  }
+
+  onSearchInventaires(event: any, colonne: any) {
+     this.inventaires   =  (this.sortFilterSearchService.handleSearch(event, this.inventaires , colonne, this.inventairesBack )) ;
   }
 
 }

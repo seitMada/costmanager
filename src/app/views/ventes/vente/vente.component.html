@@ -116,12 +116,20 @@
       <thead>
         <tr>
           <th scope="col" class="col-1">#</th>
-          <th scope="col" class="col-2">Date</th>
-          <th scope="col" class="col-2">Numero ticket</th>
-          <th scope="col" class="col-1">Montant HT</th>
-          <th scope="col" class="col-1">Montant TTC</th>
-          <th scope="col" class="col-3">Centre revenus</th>
+          <th scope="col" class="col-2">Date  <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortVentes($event, 'date_vente','date')"></i></th>
+          <th scope="col" class="col-2">Numero ticket <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortVentes($event, 'num_ticket')"></i></th>
+          <th scope="col" class="col-2">Montant HT <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortVentes($event, 'montantht','numeric')"></i></th>
+          <th scope="col" class="col-2">Montant TTC <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortVentes($event, 'montantttc','numeric')"></i></th>
+          <th scope="col" class="col-3">Centre revenus <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortVentes($event, 'centre.libelle')"></i></th>
           <!-- <th scope="col" class="col-2">Operateurs</th> -->
+        </tr>
+        <tr>
+          <th> </th>
+          <th><input type="date" name="date_vente" class="form-control form-control-sm"  (input)="onSearchVentes($event,'date_vente')" placeholder="Rechercher..."></th>
+          <th><input type="search" name="num_ticket" class="form-control form-control-sm"  (input)="onSearchVentes($event,'num_ticket')" placeholder="Rechercher..."></th>
+          <th><input type="search" name="montantht" class="form-control form-control-sm"  (input)="onSearchVentes($event,'montantht')" placeholder="Rechercher..."></th>
+          <th><input type="search" name="montantttc" class="form-control form-control-sm"  (input)="onSearchVentes($event,'montantttc')" placeholder="Rechercher..."></th>
+          <th><input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchVentes($event,'centre.libelle')" placeholder="Rechercher..."></th>
         </tr>
       </thead>
       <tbody>
@@ -132,8 +140,8 @@
           </td>
           <td class="col-2" (click)="toggleModal(); show(line)">{{screenDate(line.date_vente)}}</td>
           <td class="col-2" (click)="toggleModal(); show(line)">{{line.num_ticket}}</td>
-          <td class="col-1" (click)="toggleModal(); show(line)">{{line.montantht | number: '1.2-2'}} €</td>
-          <td class="col-1" (click)="toggleModal(); show(line)">{{line.montantttc | number: '1.2-2'}} €</td>
+          <td class="col-2" (click)="toggleModal(); show(line)">{{line.montantht | number: '1.2-2'}} €</td>
+          <td class="col-2" (click)="toggleModal(); show(line)">{{line.montantttc | number: '1.2-2'}} €</td>
           <td class="col-3" (click)="toggleModal(); show(line)">{{line.centre?.libelle}}</td>
           <!-- <td class="col-2" (click)="toggleModal(); show(line)">{{line.operateur.nom}} {{line.operateur.prenom}}</td> -->
         </tr>

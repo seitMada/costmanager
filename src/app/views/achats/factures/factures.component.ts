@@ -31,6 +31,7 @@ import { Conditionnement } from 'src/app/shared/model/conditionnements';
 import { IntefaceConditionnement } from 'src/app/shared/model/inteface-conditionnements';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { Article } from 'src/app/shared/model/articles';
+import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-factures',
@@ -71,6 +72,7 @@ export class FacturesComponent implements OnInit {
   public adresses: Adresse;
   public facture: InterfaceAchat;
   public factures: InterfaceAchat[];
+  public facturesBack: InterfaceAchat[];
   public article: InterfaceArticle;
   public articles: InterfaceArticle[];
   public detailFacture: InterfaceAchatDetail;
@@ -127,7 +129,8 @@ export class FacturesComponent implements OnInit {
     public factureService: FactureService,
     private modalService: NgbModal,
     config: NgbModalConfig,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private sortFilterSearchService:SortFilterSearchService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     config.backdrop = 'static';
@@ -163,7 +166,8 @@ export class FacturesComponent implements OnInit {
           next: (_factures) => {
             this.detailFactures = [];
             this.factures = _factures;
-            console.log(this.factures);
+            this.facturesBack =  this.factures
+            // console.log(this.factures);
 
             this.detailFactures = _factures.map((_facture: any) => _facture.achatDetail);
           },
@@ -237,6 +241,7 @@ export class FacturesComponent implements OnInit {
       next: (_factures) => {
         this.detailFactures = [];
         this.factures = _factures;
+        this.facturesBack = this.factures;
         // this.detailFactures  = _factures.map((_facture:any) => _facture.achatDetail);
       },
     });
@@ -700,6 +705,14 @@ export class FacturesComponent implements OnInit {
         },
       });
     }
+  }
+
+  onSortFactures(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.factures, colonne, type, this.facturesBack ) ;
+  }
+
+  onSearchFactures(event: any, colonne: any) {
+     this.factures   =  (this.sortFilterSearchService.handleSearch(event, this.factures , colonne, this.facturesBack )) ;
   }
 
 }

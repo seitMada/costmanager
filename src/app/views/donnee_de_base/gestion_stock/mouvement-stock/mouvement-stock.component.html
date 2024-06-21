@@ -116,33 +116,29 @@
         </tr>
         <tr>
           <th class="col-1">#</th>
-          <th class="col-2">
-            <div class="row">
-              <div class="col-9">Articles</div><i class="fas fa-sort col-1 m-auto" id="fa-sort"
-                (click)="onSortMouvemenstock($event, 'libelle')"></i>
-            </div>
+          <th class="col-2"> 
+            Articles 
+            <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortMouvemenstock($event, 'libelle')"></i>
           </th>
           <th class="col-2">
-            <div class="row">
-              <div class="col-9">Unités</div><i class="fas fa-sort col-1 m-auto" id="fa-sort"
-                (click)="onSortMouvemenstock($event, 'unite')"></i>
-            </div>
+            Unités
+            <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortMouvemenstock($event, 'unite')"></i>
           </th>
           <th class="col-1" *ngIf="!isvalorisation">
             Achats 
-            <i class="fas fa-sort col-1 m-auto" id="fa-sort"(click)="onSortMouvemenstock($event, 'achats','numeric')"></i>
+            <i class="fas fa-sort sort-style" id="fa-sort"(click)="onSortMouvemenstock($event, 'achats','numeric')"></i>
           </th>
           <th class="col-1" *ngIf="!isvalorisation">
             Ventes
-            <i class="fas fa-sort col-1 m-auto" id="fa-sort"(click)="onSortMouvemenstock($event, 'ventes','numeric')"></i>
+            <i class="fas fa-sort sort-style" id="fa-sort"(click)="onSortMouvemenstock($event, 'ventes','numeric')"></i>
           </th>
           <th class="col-1" *ngIf="!isvalorisation">
             Pertes
-            <i class="fas fa-sort col-1 m-auto" id="fa-sort"(click)="onSortMouvemenstock($event, 'pertes','numeric')"></i>
+            <i class="fas fa-sort sort-style" id="fa-sort"(click)="onSortMouvemenstock($event, 'pertes','numeric')"></i>
           </th>
           <th class="col-1">
             Initiale
-            <!-- <i class="fas fa-sort col-1 m-auto" id="fa-sort"(click)="onSortMouvemenstock($event, 'inventaires','numeric')"></i> -->
+            <!-- <i class="fas fa-sort sort-style" id="fa-sort"(click)="onSortMouvemenstock($event, 'inventaires','numeric')"></i> -->
           </th>
           <th class="col-1" *ngIf="isfinperiode">Réél</th>
           <th class="col-1">Théorique</th>
@@ -157,11 +153,14 @@
             <input type="search" class="form-control" name="libelle" (input)="onSearchMouvemenstock($event,'libelle')">
           </th>
           <th class="col-2">
+            <input type="search" class="form-control" name="unite" (input)="onSearchMouvemenstock($event,'unite')">
+          </th>
+          <!-- <th class="col-2">
             <select class="form-select" aria-label="Default select example" (change)="onSearchMouvemenstock($event, 'unite')">
               <option></option>
               <option *ngFor="let line of unitefilter" [value]="line">{{line}}</option>
             </select>
-          </th>
+          </th> -->
           <th colspan="3" *ngIf="!isvalorisation"></th>
           <th [attr.colspan]="colspan" *ngIf="!isvalorisation"></th>
           <th [attr.colspan]="colspan" *ngIf="isvalorisation"></th>

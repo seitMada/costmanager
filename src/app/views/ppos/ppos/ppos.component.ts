@@ -28,6 +28,7 @@ import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { InterfaceUnite } from 'src/app/shared/model/interface-unite';
 import { IntefaceConditionnement } from 'src/app/shared/model/inteface-conditionnements';
+import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
 
 
 @Component({
@@ -83,6 +84,7 @@ export class PposComponent implements OnInit {
   public exploitations: InterfaceExploitations[];
   public exploitation: InterfaceExploitations;
   public ppos: InterfacePpos[];
+  public pposBack: InterfacePpos[];
   public ppo: InterfacePpos;
   public ppodetails: InterfacePpoDetail[];
   public articles: InterfaceArticle[];
@@ -102,7 +104,8 @@ export class PposComponent implements OnInit {
     private articleService: ArticleService,
     private fichetetchniqueService: FichetechniqueService,
     private datePipe: DatePipe,
-    private pdfService: PdfserviceService
+    private pdfService: PdfserviceService,
+    private sortFilterSearchService:SortFilterSearchService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
@@ -141,6 +144,7 @@ export class PposComponent implements OnInit {
     this.ppoService.getPpoByCrAndDate([this.idcentrerevenu], this.formatDate(this.dates.debut), this.formatDate(this.dates.fin, true), false).subscribe({
       next: (_ppos: any) => {
         this.ppos = _ppos;
+        this.pposBack = _ppos;
       }
     })
   }
@@ -618,5 +622,13 @@ export class PposComponent implements OnInit {
 
   selectFichetechnique(_fichetechnique: InterfaceFichetechnique) {
     this.fichetechnique = _fichetechnique;
+  }
+
+  onSortPpo(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.ppos, colonne, type, this.pposBack ) ;
+  }
+
+  onSearchPpo(event: any, colonne: any) {
+     this.ppos   =  (this.sortFilterSearchService.handleSearch(event, this.ppos , colonne, this.pposBack )) ;
   }
 }

@@ -19,6 +19,7 @@ import { CommandeService } from 'src/app/shared/service/commande.service';
 import { ExploitationService } from 'src/app/shared/service/exploitation.service';
 import { FournisseurService } from 'src/app/shared/service/fournisseur.service';
 import { InventairesService } from 'src/app/shared/service/inventaires.service';
+import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-stock-minimum',
@@ -37,6 +38,7 @@ export class StockMinimumComponent implements OnInit {
   public centrerevenusselected: number[];
   public exploitationsselected: number[];
   public articles: InterfaceArticle[];
+  public articlesBack: InterfaceArticle[];
   public article: InterfaceArticle;
   public boncommande: InterfaceBonCommande;
   public boncommandedetails: InterfaceCommandeDetail[];
@@ -115,7 +117,8 @@ export class StockMinimumComponent implements OnInit {
     private inventaireService: InventairesService,
     public fournisseurService: FournisseurService,
     private commandeService: CommandeService,
-    private datePipe: DatePipe
+    private datePipe: DatePipe,
+    private sortFilterSearchService:SortFilterSearchService
   ) {
     this.headerchoice = '';
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
@@ -169,6 +172,7 @@ export class StockMinimumComponent implements OnInit {
                       this.articleService.getArticlesByExploitation(this.exploitations[0].id || 0).subscribe({
                         next: (_values) => {
                           this.articles = _values;
+                          this.articlesBack = _values;
                           console.log(this.articles)
                           for (const _article of this.articles) {
                             let _value = 0
@@ -302,6 +306,7 @@ export class StockMinimumComponent implements OnInit {
                       this.articleService.getArticlesByExploitation(this.exploitations[0].id || 0).subscribe({
                         next: (_values) => {
                           this.articles = _values;
+                          this.articlesBack = _values;
                           for (const _article of this.articles) {
                             let _value = 0
                             for (const _mouvement of this.mouvemenstock) {
@@ -524,5 +529,14 @@ export class StockMinimumComponent implements OnInit {
       }
     }
     return { quantiteFt: quantiteFt, quantite: quantite };
+  }
+
+    
+  onSortStockMinimum(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.articles, colonne, type, this.articlesBack ) ;
+  }
+
+  onSearchStockMinimum(event: any, colonne: any) {
+     this.articles   =  (this.sortFilterSearchService.handleSearch(event, this.articles , colonne, this.articlesBack )) ;
   }
 }

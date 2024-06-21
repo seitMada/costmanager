@@ -37,6 +37,7 @@ import { Famille } from 'src/app/shared/model/familles';
 import { Unite, Unites } from 'src/app/shared/model/unite';
 import { Groupeanalytique } from 'src/app/shared/model/groupeanalytiques';
 import { SousFamille } from 'src/app/shared/model/sousfamilles';
+import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-bon-commande-achats',
@@ -85,6 +86,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   public commandes: InterfaceCommandeDetail[];
   public boncommande: InterfaceBonCommande;
   public boncommandes: InterfaceBonCommande[];
+  public boncommandesBack: InterfaceBonCommande[];
   public commandeDetail: InterfaceCommandeDetail;
   public reason: any;
   public validateArticles: any[] = [];
@@ -112,6 +114,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   public btnTenRecord = false;
   public inputModif = false;
 
+
   public bonCommandeForm = FormGroup;
   closeResult = '';
 
@@ -133,6 +136,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     private modalService: NgbModal,
     config: NgbModalConfig,
     private datePipe: DatePipe,
+    private sortFilterSearchService:SortFilterSearchService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     config.backdrop = 'static';
@@ -206,7 +210,8 @@ export class BonCommandeAchatsComponent implements OnInit {
           next: (boncommande) => {
             this.commandes = [];
             this.boncommandes = boncommande;
-            console.log(this.boncommandes);
+            this.boncommandesBack = boncommande;
+            // console.log(this.boncommandes);
 
           },
           error: (error) => {
@@ -776,6 +781,7 @@ export class BonCommandeAchatsComponent implements OnInit {
       next: (boncommande) => {
         this.commandes = [];
         this.boncommandes = boncommande;
+        this.boncommandesBack = boncommande;
       },
       error: (error) => {
         alert('Liste de bon de commande vide');
@@ -794,6 +800,14 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.commandes = [];
     this.resetCommande();
     this.inputModif = false;
+  }
+
+  onSortBonDeCommandes(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.boncommandes, colonne, type, this.boncommandesBack ) ;
+  }
+
+  onSearchBonDeCommandes(event: any, colonne: any) {
+     this.boncommandes   =  (this.sortFilterSearchService.handleSearch(event, this.boncommandes , colonne, this.boncommandesBack )) ;
   }
 
 }

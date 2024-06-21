@@ -158,6 +158,14 @@ export class DashComponent implements OnInit {
     cout: number
   }[] = [];
 
+  public perteBack: {
+    articlelibelle: string,
+    articleId: number,
+    perte: number,
+    perteprecedent: number,
+    cout: number
+  }[] = [];
+
   public nombrevente: number = 0;
   public venteshebdo: any = [];
 
@@ -415,6 +423,8 @@ export class DashComponent implements OnInit {
                             //   periode: 1
                             // });
                           }
+
+
                           this.nombrevente = _ventes.filter((vente: any) => this.getrealdate(new Date(vente.date_vente)) == this.getrealdate(new Date())).length;
                           this.venteshebdo = _ventes.filter((vente: any) => this.getrealdate(new Date(vente.date_vente)) == this.getrealdate(new Date()));
                           const nbventedate = await this.countSalesByDate(_ventes);
@@ -431,6 +441,7 @@ export class DashComponent implements OnInit {
                             }
                           }
                           this.fichetechniques = this.getUniqueFt(this.fichetechniques)
+
                           this.fichetechniquesBack = this.fichetechniques;
                           this.labels = nbventedate.labels;
                           const resultArray = [];
@@ -726,4 +737,23 @@ export class DashComponent implements OnInit {
   onSearchAnalyseVentes(event: any, colonne: any) {
     this.fichetechniques =  this.sortFilterSearchService.handleSearch(event, this.fichetechniques, colonne, this.fichetechniquesBack);
   }
+
+  filterData(data: any[], colonne1: string, colonne2: string): any[] {
+    return data.filter(item => {
+      const perte = +item[colonne1];
+      const cout = +item[colonne2];
+      const pertePrecedente = +item['perteprecedent'];
+  
+      const pertesActuelles = perte * cout;
+      const pertesPrecedentes = pertePrecedente * cout;
+  
+      const ecart = ((pertesActuelles - pertesPrecedentes) / pertesActuelles) * 100;
+  
+      // Vérifiez ici les conditions pour filtrer les éléments du tableau
+      // Par exemple, retournez true si vous voulez inclure l'élément dans le tableau filtré
+      // et false si vous voulez exclure l'élément
+      return ecart > 10; // Exemple de condition, ajustez selon vos besoins
+    });
+  }
+
 }

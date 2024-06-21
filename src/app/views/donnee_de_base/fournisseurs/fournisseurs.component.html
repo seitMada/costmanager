@@ -36,19 +36,19 @@
       <thead>
         <tr>
           <th scope="col" class="">#</th>
-          <th scope="col" class="col-3">Raison social</th>
-          <th scope="col" class="col-2">Code</th>
-          <th scope="col" class="col-7">Adresse</th>
+          <th scope="col" class="col-3">Raison social   <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFournisseurs($event, 'raison_social')"></i></th>
+          <th scope="col" class="col-2">Code <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFournisseurs($event, 'codeFournisseur')"></i></th>
+          <th scope="col" class="col-7">Adresse <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFournisseurs($event, 'adresse.rue')"></i></th>
         </tr>
         <tr>
           <th colspan="2">
-            <input type="text" class="form-control form-control-sm">
+               <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFournisseurs($event,'raison_social')" placeholder="Rechercher...">
           </th>
           <th class="col-2">
-            <input type="text" class="form-control form-control-sm">
+               <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFournisseurs($event,'codeFournisseur')" placeholder="Rechercher...">
           </th>
           <th class="col-7">
-            <input type="text" class="form-control form-control-sm">
+               <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFournisseurs($event,'adresse.rue')" placeholder="Rechercher...">
           </th>
         </tr>
       </thead>

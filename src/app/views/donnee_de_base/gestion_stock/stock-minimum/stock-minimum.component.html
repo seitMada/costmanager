@@ -39,18 +39,18 @@
       <thead>
         <tr>
           <th scope="col" class="">#</th>
-          <th scope="col" class="col-1">Code</th>
-          <th scope="col" class="col-5">Désignation</th>
-          <th scope="col" class="col-2">Unite</th>
-          <th scope="col" class="col-2">Stock minimum</th>
-          <th scope="col" class="col-2">Stock en cours</th>
+          <th scope="col" class="col-1">Code  <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortStockMinimum($event, 'codeArticle')"></i></th>
+          <th scope="col" class="col-5">Désignation <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortStockMinimum($event, 'libelle')"></i></th>
+          <th scope="col" class="col-2">Unite <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortStockMinimum($event, 'unite.libelle')"></i></th>
+          <th scope="col" class="col-2">Stock minimum <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortStockMinimum($event, 'stockminimum','numeric')"></i></th>
+          <th scope="col" class="col-2">Stock en cours <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortStockMinimum($event, 'stock','numeric')"></i></th>
         </tr>
         <tr>
-          <th scope="col" colspan="2"><input type="text" class="form-control form-control-sm"></th>
-          <th scope="col" class="col-5"><input type="text" class="form-control form-control-sm"></th>
-          <th scope="col" class="col-2"><input type="text" class="form-control form-control-sm"></th>
-          <th scope="col" class="col-2"></th>
-          <th scope="col" class="col-2"></th>
+          <th scope="col" colspan="2"><input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchStockMinimum($event,'codeArticle')" placeholder="Rechercher..."></th>
+          <th scope="col" class="col-5"><input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchStockMinimum($event,'libelle')" placeholder="Rechercher..."></th>
+          <th scope="col" class="col-2"><input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchStockMinimum($event,'unite.libelle')" placeholder="Rechercher..."></th>
+          <th scope="col" class="col-2"><input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchStockMinimum($event,'stockminimum')" placeholder="Rechercher..."></th>
+          <th scope="col" class="col-2"><input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchStockMinimum($event,'stock')" placeholder="Rechercher..."></th>
         </tr>
       </thead>
     </table>

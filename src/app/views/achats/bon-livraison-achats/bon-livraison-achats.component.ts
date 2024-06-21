@@ -29,6 +29,7 @@ import { PAYS } from 'src/assets/pays';
 import { Conditionnement } from 'src/app/shared/model/conditionnements';
 import { IntefaceConditionnement } from 'src/app/shared/model/inteface-conditionnements';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-bon-livraison-achats',
@@ -78,6 +79,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
   public bonCommandes: InterfaceBonCommande[];
   public bonLivraison: InterfaceBonLivraisons;
   public bonLivraisons: InterfaceBonLivraisons[];
+  public bonLivraisonsBack: InterfaceBonLivraisons[];
   public commandeDetail : InterfaceCommandeDetail;
   public commadeDetails :InterfaceCommandeDetail[];
   public livraisonDetail : InterfaceLivraisonDetail;
@@ -129,6 +131,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
   private modalService: NgbModal,
   private datePipe: DatePipe,
   config:NgbModalConfig,
+  private sortFilterSearchService:SortFilterSearchService
  ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     config.backdrop = 'static';
@@ -170,7 +173,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
         this.livraisonService.getListLivraisonByFournisseurExploitation(this.idFournisseur, this.exploitation.id ? this.exploitation.id :0).subscribe({
           next: (_livraisons) => {
             this.bonLivraisons = _livraisons;
-            console.log(this.bonLivraisons);
+            this.bonLivraisonsBack = _livraisons;
+            // console.log(this.bonLivraisons);
             
           },
         });
@@ -231,7 +235,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
       next: (livraisons) =>{
         this.livraisonDetails = [];
         this.bonLivraisons = livraisons;
-        console.log(this.bonLivraisons);
+        this.bonLivraisonsBack = livraisons;
+        // console.log(this.bonLivraisons);
         
         // this.livraisonDetails = livraisons.map((livraison: any) => livraison.livraisonDetail);
       },
@@ -721,6 +726,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
       this.livraisonService.deleteBonLivraison(bonLivraison).subscribe({
         next:(value) =>{
           this.bonLivraisons = this.bonLivraisons.filter(line => line !== bonLivraison);
+          this.bonLivraisons = this.bonLivraisonsBack
           this.deleteLivraison = this.bonLivraisons.some(line => line.selected);
           this.showvalidateBtn = this.bonLivraisons.some(line => line.selected);
         },
@@ -762,5 +768,13 @@ export class BonLivraisonAchatsComponent implements OnInit{
         },
       });
     }
+  }
+
+  onSortBonDeLivraison(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.bonLivraisons, colonne, type, this.bonLivraisonsBack ) ;
+  }
+
+  onSearchBonDeLivraison(event: any, colonne: any) {
+     this.bonLivraisons   =  (this.sortFilterSearchService.handleSearch(event, this.bonLivraisons , colonne, this.bonLivraisonsBack )) ;
   }
 }

@@ -25,6 +25,7 @@ import { UnitesService } from '../../../shared/service/unites.service';
 import { IntefaceConditionnement } from '../../../shared/model/inteface-conditionnements';
 import { TooltipModule } from '@coreui/angular';
 import { ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderComponent } from '@coreui/angular';
+import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-fournisseurs',
@@ -63,7 +64,8 @@ export class FournisseursComponent implements OnInit {
     public exploitationService: ExploitationService,
     public operateurService: OperateursService,
     public articleService: ArticleService,
-    public uniteService: UnitesService
+    public uniteService: UnitesService,
+    private sortFilterSearchService:SortFilterSearchService
   ) { }
 
   public toggle = true;
@@ -78,6 +80,7 @@ export class FournisseursComponent implements OnInit {
   public flags: string = '';
 
   public fournisseurs: InterfaceFournisseur[];
+  public fournisseursBack: InterfaceFournisseur[];
   public fournisseur: Fournisseurs;
   public exploitations: Exploitations;
   public adresse: Adress;
@@ -181,6 +184,7 @@ export class FournisseursComponent implements OnInit {
           }
         }
         this.fournisseurs = fournisseurs;
+        this.fournisseursBack = fournisseurs;
         if (this.isAdmin === true) {
           this.exploitations = exploitations.filter((item: any) => item.id !== this.exploitation);
         } else {
@@ -304,6 +308,8 @@ export class FournisseursComponent implements OnInit {
         this.initFournisseur();
       })
     }
+    this.fournisseursBack = this.fournisseurs;
+   
   }
 
   delete() {
@@ -850,5 +856,13 @@ export class FournisseursComponent implements OnInit {
         this.toggleToast('Conditionnement supprimer');
       },
     })
+  }
+
+  onSortFournisseurs(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.fournisseurs, colonne, type, this.fournisseursBack ) ;
+  }
+
+  onSearchFournisseurs(event: any, colonne: any) {
+     this.fournisseurs   =  (this.sortFilterSearchService.handleSearch(event, this.fournisseurs , colonne, this.fournisseursBack )) ;
   }
 }

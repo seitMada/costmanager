@@ -23,6 +23,7 @@ import { ZonestockagesService } from '../../../shared/service/zonestockages.serv
 import { InterfaceLieustockages } from '../../../shared/model/interface-lieustockages';
 import { InterfaceZonestockages } from '../../../shared/model/interface-zonestockages';
 import { ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderComponent } from '@coreui/angular';
+import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-articles',
@@ -43,7 +44,8 @@ export class ArticlesComponent implements OnInit {
     private sousFamilleService: SousfamillesService,
     private exploitationService: ExploitationService,
     private allergeneService: AllergenesService,
-    private zonestockageService: ZonestockagesService
+    private zonestockageService: ZonestockagesService,
+    private sortFilterSearchService:SortFilterSearchService
   ) { }
 
   private modalService = inject(NgbModal);
@@ -94,6 +96,7 @@ export class ArticlesComponent implements OnInit {
   public article: InterfaceArticle;
   public articleOrigin: any;
   public articles: Article;
+  public articlesBack: Article;
   public unites: any;
   public categories: any;
   public groupeAnalytique: any;
@@ -133,6 +136,7 @@ export class ArticlesComponent implements OnInit {
       next: (data) => {
         const { unite, categorie, articleByExploitation, exploitation, allergene } = data;
         this.articles = new Article(articleByExploitation);
+        this.articlesBack = new Article(articleByExploitation);
         this.unites = unite;
         this.categories = categorie;
         this.allergenes = allergene;
@@ -542,6 +546,7 @@ export class ArticlesComponent implements OnInit {
         selectedIds.push(article.id !== undefined ? article.id : 0);
       }
     }
+    this.articlesBack = this.articles;
     if (this.isAdmin === true) {
       for (const e of this.exploitations) {
         exploitation.push(e.id)
@@ -560,5 +565,13 @@ export class ArticlesComponent implements OnInit {
         this.initArticle();
       })
     }
+  }
+
+  onSortArticles(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.articles.articles as any, colonne, type, this.articlesBack.articles as any) ;
+  }
+
+  onSearchArticles(event: any, colonne: any) {
+     this.articles.articles   =  (this.sortFilterSearchService.handleSearch(event, this.articles.articles as any, colonne, this.articlesBack.articles as any )) ;
   }
 }

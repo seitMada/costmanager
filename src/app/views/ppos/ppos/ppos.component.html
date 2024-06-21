@@ -65,9 +65,15 @@
       <thead>
         <tr>
           <th scope="col" class="col-1">#</th>
-          <th scope="col" class="col-4">Date</th>
-          <th scope="col" class="col-3">Valorisation</th>
-          <th scope="col" class="col-4">Operateurs</th>
+          <th scope="col" class="col-4">Date <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortPpo($event, 'date_ppo','date')"></i></th>
+          <th scope="col" class="col-3">Valorisation <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortPpo($event, 'ppodetail','numeric')"></i></th>
+          <th scope="col" class="col-4">Operateurs <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortPpo($event, 'operateur.nom','date')"></i></th>
+        </tr>
+        <tr>
+          <th></th>
+          <th> <input type="date" name="date_ppo" class="form-control form-control-sm"  (input)="onSearchPpo($event,'date_ppo')" placeholder="Rechercher..."></th>
+          <th><input type="search" name="ppodetail" class="form-control form-control-sm"  (input)="onSearchPpo($event,'ppodetail')" placeholder="Rechercher..."></th>
+          <th><input type="search" name="nom" class="form-control form-control-sm"  (input)="onSearchPpo($event,'operateur.nom')" placeholder="Rechercher..."></th>
         </tr>
       </thead>
       <tbody>

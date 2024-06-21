@@ -37,13 +37,22 @@
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th scope="col" class="col-2">N° Facture</th>
-                    <th scope="col" class="col-2">Exploitation</th>
-                    <th scope="col" class="col-2">Centre revenu</th>
-                    <th scope="col" class="col-2">Date Achat</th>
-                    <th scope="col" class="col-2">Date livraison</th>
+                    <th scope="col" class="col-2">N° Facture  <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFactures($event, 'numFacture')"></i></th>
+                    <th scope="col" class="col-2">Exploitation <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFactures($event, 'exploitation.libelle')"></i></th>
+                    <th scope="col" class="col-2">Centre revenu <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFactures($event, 'centre.libelle')"></i></th>
+                    <th scope="col" class="col-2">Date Achat <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFactures($event, 'dateAchat','date')"></i></th>
+                    <th scope="col" class="col-2">Date livraison <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFactures($event, 'dateLivraison','date')"></i></th>
                     <th scope="col" class="col-1">MontantHt</th>
-                    <th scope="col" class="col-1">MontantTva</th>
+                    <th scope="col" class="col-1">MontantTva <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFactures($event, 'montantTva','numeric')"></i></th>
+                </tr>
+                <tr>
+                  <th><input type="search" name="numFacture" class="form-control form-control-sm"  (input)="onSearchFactures($event,'numFacture')" placeholder="Rechercher..."></th>
+                  <th><input type="search" name="exploitation" class="form-control form-control-sm"  (input)="onSearchFactures($event,'exploitation.libelle')" placeholder="Rechercher..."></th>
+                  <th><input type="search" name="centre" class="form-control form-control-sm"  (input)="onSearchFactures($event,'centre.libelle')" placeholder="Rechercher..."></th>
+                  <th><input type="date" name="dateAchat" class="form-control form-control-sm"  (input)="onSearchFactures($event,'dateAchat')" placeholder="Rechercher..."></th>
+                  <th><input type="date" name="dateLivraison" class="form-control form-control-sm"  (input)="onSearchFactures($event,'dateLivraison')" placeholder="Rechercher..."></th>
+                  <th></th>
+                  <th><input type="search" name="montantTva" class="form-control form-control-sm"  (input)="onSearchFactures($event,'montantTva')" placeholder="Rechercher..."></th>
                 </tr>
             </thead>
             <tbody>

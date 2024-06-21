@@ -18,6 +18,7 @@ import { PdfserviceService } from 'src/app/shared/service/pdfservice.service';
 import { Adress } from 'src/app/shared/model/adresse';
 import { InterfaceFichetechnique } from 'src/app/shared/model/interface-fichetechnique';
 import { InterfaceComposition } from 'src/app/shared/model/interface-compositions';
+import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-vente',
@@ -87,6 +88,7 @@ export class VenteComponent implements OnInit {
   public exploitations: InterfaceExploitations[];
   public exploitation: InterfaceExploitations;
   public ventes: InterfaceVentes[];
+  public ventesBack: InterfaceVentes[];
   public vente: InterfaceVentes;
   public ventedetails: InterfaceVentesDetails[];
   public ventedetail: InterfaceVentesDetails;
@@ -122,7 +124,8 @@ export class VenteComponent implements OnInit {
     private venteService: VentesService,
     private fichetetchniqueService: FichetechniqueService,
     private datePipe: DatePipe,
-    private pdfService: PdfserviceService
+    private pdfService: PdfserviceService,
+    private sortFilterSearchService:SortFilterSearchService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
@@ -174,6 +177,7 @@ export class VenteComponent implements OnInit {
       next: (_ventes: any) => {
         console.log(_ventes)
         this.ventes = _ventes;
+        this.ventesBack = _ventes;
       }
     })
   }
@@ -420,4 +424,13 @@ export class VenteComponent implements OnInit {
       }
     });
   }
+
+  onSortVentes(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.ventes, colonne, type, this.ventesBack ) ;
+  }
+
+  onSearchVentes(event: any, colonne: any) {
+     this.ventes   =  (this.sortFilterSearchService.handleSearch(event, this.ventes , colonne, this.ventesBack )) ;
+  }
+
 }

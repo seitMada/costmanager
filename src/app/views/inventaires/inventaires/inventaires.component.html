@@ -71,12 +71,19 @@
       <thead>
         <tr>
           <th scope="col" class="col-1">#</th>
-          <th scope="col" class="col-3">N°</th>
-          <th scope="col" class="col-2">Date</th>
-          <th scope="col" class="col-3">Centre revenu</th>
+          <th scope="col" class="col-3">N°   <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortInventaires($event, 'numero')"></i></th>
+          <th scope="col" class="col-2">Date   <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortInventaires($event, 'date_inventaire','date')"></i></th>
+          <th scope="col" class="col-3">Centre revenu   <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortInventaires($event, 'centre.libelle')"></i></th>
           <!-- <th scope="col" class="col-2">Lieu et Zones de stockage</th> -->
           <!-- <th scope="col" class="col-1">Zone de stockage</th> -->
-          <th scope="col" class="col-3">Operateurs</th>
+          <th scope="col" class="col-3">Operateurs <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortInventaires($event, 'operateur.nom')"></i></th>
+        </tr>
+        <tr>
+          <th></th>
+          <th> <input type="search" name="numero" class="form-control form-control-sm"  (input)="onSearchInventaires($event,'numero')" placeholder="Rechercher..."></th>
+          <th><input type="date" name="date_inventaire" class="form-control form-control-sm"  (input)="onSearchInventaires($event,'date_inventaire')" placeholder="Rechercher..."></th>
+          <th><input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchInventaires($event,'centre.libelle')" placeholder="Rechercher..."></th>
+          <th><input type="search" name="operateur" class="form-control form-control-sm"  (input)="onSearchInventaires($event,'operateur.nom')" placeholder="Rechercher..."></th>
         </tr>
       </thead>
       <tbody>
