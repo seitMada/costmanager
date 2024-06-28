@@ -89,6 +89,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
   public conditionnement : IntefaceConditionnement;
 
   public artExploitationArticleId: any[] = [];
+  public artFournisseurArticleId : any[] = [];
 
   public idFournisseur =0;
   public idBonLivraison = 0;
@@ -231,9 +232,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
       next: (livraisons) =>{
         this.livraisonDetails = [];
         this.bonLivraisons = livraisons;
-        console.log(this.bonLivraisons);
-        
-        // this.livraisonDetails = livraisons.map((livraison: any) => livraison.livraisonDetail);
       },
     }) 
   }
@@ -401,58 +399,143 @@ export class BonLivraisonAchatsComponent implements OnInit{
 
   public openModalArticle(contentArticle: TemplateRef<any>){
     if (this.livraisonDetails.length > 0) {
-      const articlesId =  this.livraisonDetails.map((i:any) => i.articlefournisseur.articleId);
-      this.livraisonService.getArticleFournisseurByArticle(articlesId, this.fournisseur.id ? this.fournisseur.id : 0,this.artExploitationArticleId).subscribe({
-        next:(_articlefournisseurs) =>{
-          this.articleFournisseurs = _articlefournisseurs;
-          this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
-            (result) => {
-              this.closeResult = `Closed with: ${result}`;
-              console.log(this.closeResult)
-              if (this.closeResult == 'Closed with: Save click') {
-                for (const articlefournisseur of this.articleFournisseurs) {  
-                  for(const condition of articlefournisseur.conditionnement){
-                    if (condition.selected != undefined ) {
-                      this.livraisonDetail = {
-                        articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
-                        articleId: articlefournisseur.articleId,
-                        livraisonId: 0,
-                        quantiteCommandee: 0,
-                        quantiteCommandeeFT:0,
-                        conditionnementId:condition.id ? condition.id:0,
-                        quantiteLivree: 0,
-                        quantiteLivreeFT:0,
-                        quantiteFT:0,
-                        prixarticle:condition.prixAchat ? condition.prixAchat: 0,
-                        remise: 0,
-                        valeurTva: 0,
-                        selected:false,
-                        articlefournisseur:articlefournisseur,
-                        livraison:[],
-                        conditionnement: condition,
-                        article:articlefournisseur.article
+      if (this.bonCommande) {
+        this.artFournisseurArticleId =[];
+        for (const commDetail of this.bonCommande.commandeDetail) {
+          const nonMatchingArticles = this.livraisonDetails.every((livrDetail: any) => livrDetail.articlefournisseurId !== commDetail.articlefournisseurId);
+    
+          if (nonMatchingArticles) {
+              this.artFournisseurArticleId.push(commDetail.articlefournisseurId);
+          }
+        }
+        this.livraisonService.getArticleFournisseurById(this.artFournisseurArticleId).subscribe({
+          next:(_articlefournisseurs) =>{
+            this.articleFournisseurs = _articlefournisseurs;
+            console.log(_articlefournisseurs);
+            
+            this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+              (result) => {
+                this.closeResult = `Closed with: ${result}`;
+                console.log(this.closeResult)
+                if (this.closeResult == 'Closed with: Save click') {
+                  for (const articlefournisseur of this.articleFournisseurs) {  
+                    for(const condition of articlefournisseur.conditionnement){
+                      if (condition.selected != undefined ) {
+                        this.livraisonDetail = {
+                          articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                          articleId: articlefournisseur.articleId,
+                          livraisonId: 0,
+                          quantiteCommandee: 0,
+                          quantiteCommandeeFT:0,
+                          conditionnementId:condition.id ? condition.id:0,
+                          quantiteLivree: 0,
+                          quantiteLivreeFT:0,
+                          quantiteFT:0,
+                          prixarticle:condition.prixAchat ? condition.prixAchat: 0,
+                          remise: 0,
+                          valeurTva: 0,
+                          selected:false,
+                          articlefournisseur:articlefournisseur,
+                          livraison:[],
+                          conditionnement: condition,
+                          article:articlefournisseur.article
+                        }
+                        this.livraisonDetails.push(this.livraisonDetail);
                       }
-                      this.livraisonDetails.push(this.livraisonDetail);
                     }
                   }
+                  this.addBtn = false;
                 }
-                this.addBtn = false;
-              }
-            },
-            (reason) => {
-              this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-              console.log(this.closeResult)
-            },
-          );
-        },
-      })
+              },
+              (reason) => {
+                this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+                console.log(this.closeResult)
+              },
+            );
+          },
+        })
+      } else {
+        const exploitationId = Number(this.exploitationId);
+        this.selectFounisseur(this.fournisseur);
+        this.livraisonDetails = this.livraisonDetails;
+        this.livraisonService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
+          next: (artExploitation) => {   
+            if (artExploitation) {
+              this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
+              
+              this.livraisonService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
+                next: (artFournisseur: any) => {
+                  this.articleFournisseurs = [];
+                  console.log(this.livraisonDetails);
+                  
+                  for (const _artFournisseur of artFournisseur) {
+                    const nonMatchingArticles = this.livraisonDetails.every((livrDetail: any) => livrDetail.articlefournisseurId !== _artFournisseur.id);
+              
+                    if (nonMatchingArticles) {
+                      this.articleFournisseurs.push(_artFournisseur);
+                    }else{
+                      this.articleFournisseurs.push(_artFournisseur);
+                    }
+                  }
+                  console.log(this.articleFournisseurs);
+                  
+                  // this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
+                  //   (result) => {
+                  //     this.closeResult = `Closed with: ${result}`;
+                  //     console.log(this.closeResult)
+                  //     if (this.closeResult == 'Closed with: Save click') {
+                  //       // this.livraisonDetails = [];
+                  //       this.inputModif = this.inputModif;              
+                  //       for (const articlefournisseur of this.articleFournisseurs) {  
+                  //         for(const condition of articlefournisseur.conditionnement){
+                  //           if (condition.selected != undefined ) {
+                  //             this.livraisonDetail = {
+                  //               articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
+                  //               articleId: articlefournisseur.articleId,
+                  //               livraisonId: 0,
+                  //               quantiteCommandee: 0,
+                  //               quantiteCommandeeFT:0,
+                  //               conditionnementId:condition.id ? condition.id:0,
+                  //               quantiteLivree: 0,
+                  //               quantiteLivreeFT:0,
+                  //               quantiteFT:0,
+                  //               prixarticle:condition.prixAchat ? condition.prixAchat: 0,
+                  //               remise: 0,
+                  //               valeurTva: 0,
+                  //               selected:false,
+                  //               articlefournisseur:articlefournisseur,
+                  //               livraison:[],
+                  //               conditionnement: condition,
+                  //               article:articlefournisseur.article
+                  //             }
+                  //             this.livraisonDetails.push(this.livraisonDetail);
+                  //             this.addBtn = false;
+                  //           }
+                  //         }
+                  //       }
+                  //     }
+                  //   },
+                  //   (reason) => {
+                  //     this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+                  //     console.log(this.closeResult)
+                  //   },
+                  // );
+                }
+              })
+            }
+          }
+        });
+      }
+      
     } else {
       const exploitationId = Number(this.exploitationId);
       this.selectFounisseur(this.fournisseur);
+      
       this.livraisonService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
         next: (artExploitation) => {         
           if (artExploitation) {
             this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
+            
             this.livraisonService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
               next: (artFournisseur: any) => {
                 this.articleFournisseurs = artFournisseur;
@@ -490,7 +573,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
                           }
                         }
                       }
-                      
                     }
                   },
                   (reason) => {
@@ -527,8 +609,8 @@ export class BonLivraisonAchatsComponent implements OnInit{
                 this.inputModif = false;
                 if (commandes.length) {
                   for(const commande of commandes){
-                    this.bonCommande = commande;
                     if (commande.selected) {
+                      this.bonCommande = commande;
                       this.livraisonService.getListDetailCommandeByCommandeId(commande.id ? commande.id:0).subscribe({
                         next :(commandeDetail) => {
                           this.bonLivraison.dateCommande = new Date(commande.dateCommande);
@@ -566,7 +648,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
                               }
                               
                               this.livraisonDetails.push(this.livraisonDetail);
-                              console.log(this.livraisonDetails);
+                              // console.log(this.livraisonDetails);
                               
                             }
                           }
@@ -606,7 +688,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
               this.inputModif = false;
               this.modifToggle = true;
               this.livraisonDetails = [];
-              console.log(this.livraisonDetails);
+              // console.log(this.livraisonDetails);
             },
           ); 
       }, 
@@ -701,11 +783,15 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
   deleteSelectedRows() {
-    this.livraisonDetails = this.livraisonDetails.filter(line => !line.selected);
+    if (this.livraisonDetails) {
+      this.livraisonDetails = this.livraisonDetails.filter(line => !line.selected);
+    }
     this.showDeleteBtn = false;
     this.addBtn = true;
-    for(const _livrDetail of this.livraisonDetails){
-      this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id !== _livrDetail.articlefournisseurId);
+    if (this.articleFournisseurs && this.livraisonDetails) {
+      for (const _livrDetail of this.livraisonDetails) {
+        this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id != _livrDetail.articlefournisseurId);
+      }
     }
   }
 

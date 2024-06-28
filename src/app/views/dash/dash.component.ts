@@ -292,13 +292,21 @@ export class DashComponent implements OnInit {
   }
 
   private getrealdate(dateString: any) {
-    const date = new Date(dateString);
+    if (dateString != null) {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+      const day = (date.getDate()) < 10 ? '0' + (date.getDate()) : (date.getDate());
 
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
-    const day = (date.getDate()) < 10 ? '0' + (date.getDate()) : (date.getDate());
+      return (`${year}-${month}-${day}`);
+    } else {
+      const date = new Date(this.today);
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+      const day = (date.getDate()) < 10 ? '0' + (date.getDate()-1) : (date.getDate()+1);
 
-    return (`${year}-${month}-${day}`);
+      return (`${year}-${month}-${day}`);
+    }
   }
 
   public periodeperte() {

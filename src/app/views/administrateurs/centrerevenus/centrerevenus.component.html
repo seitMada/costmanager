@@ -238,7 +238,7 @@
             <td scope="col" class="col-1"></td>
             <td scope="col" class="col-1">{{ line.code }}</td>
             <td scope="col" class="col-2">{{ line.libelle }}</td>
-            <td scope="col" class="col-3">{{ line.adresses.rue }} {{ line.adresses.ville }} {{ line.adresses.code_postal }} {{ line.adresses.pays }}</td>
+            <td scope="col" class="col-3">{{ line.adresses ? line.adresses.rue : '' }} {{ line.adresses ? line.adresses.ville : '' }} {{ line.adresses ? line.adresses.code_postal : '' }} {{ line.adresses ? line.adresses.pays : '' }}</td>
             <td scope="col" class="col-3">{{ line.email }}</td>
             <td scope="col" class="col-2">{{ line.telephone }}</td>
           </tr>

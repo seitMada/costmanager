@@ -72,6 +72,7 @@ export const environment = {
     APIGETMOUVEMENTSTOCK : endPoint + 'articles/mouvement',
     
     APIGETARTICLEBYFOURNISSEUR: endPoint + 'articlefournisseur/',
+    APIGETARTICLEFOURNISSEURBYID:endPoint +'articlefournisseur/list/',
     APIADDARTICLEFOURNISSEUR: endPoint + 'articlefournisseur',
     APIDELETEARTICLEFOURNISSEUR: endPoint + 'articlefournisseur/delete',
     APIUPDATEARTICLEFOURNISSEUR: endPoint + 'articlefournisseur/update',
@@ -167,16 +168,16 @@ export const environment = {
     APIGETPPODETAIL: endPoint + 'ppo/detail',
     APIGETPPODETAILDATA: endPoint + 'ppo/data',
     APIGETPPODETAILDATAFAMILLE: endPoint + 'ppo/data/famille',
-    
+
     APIGETVENTEBYCRANDDATE: endPoint + 'vente',
     APICREATEVENTE: endPoint + 'vente/create',
     APIUPDATEVENTE: endPoint + 'vente/update',
     APICOUNTVENTE: endPoint + 'vente/count',
     APIUPLOADVENTE: endPoint + 'vente/upload',
     APIIMPORTVENTE: endPoint + 'vente/importedfile',
-    
-    APIVARIATIONARTICLE: endPoint + 'articles/articlevariationprix',
 
+    APIVARIATIONARTICLE: endPoint + 'articles/articlevariationprix',
+    
     APIGETALLLIEUSTOCKAGE: endPoint + 'lieustockage',
     APIGETLISTLIEUSTOCKAGE : endPoint + 'lieustockage/list/',
     APICREATELIEUSTOCKAGE: endPoint + 'lieustockage/create',
