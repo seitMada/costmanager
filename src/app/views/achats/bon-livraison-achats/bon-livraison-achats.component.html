@@ -198,7 +198,7 @@
           <th scope="col"  class="col-2">Centre revenu <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortBonDeLivraison($event, 'centre.libelle')"></i></th>
           <th scope="col"  class="col-2">Date commande <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortBonDeLivraison($event, 'dateCommande','date')"></i></th>
           <th scope="col"  class="col-2">Date livraison <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortBonDeLivraison($event, 'dateLivraison','date')"></i></th>
-          <th scope="col"  class="col-1">Montant </th>
+          <th scope="col"  class="col-2">Montant <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortBonDeLivraison($event, 'montant','numeric')"></i></th>
         </tr>
         <tr>
           <th></th>
@@ -207,7 +207,7 @@
           <th><input type="search" name="centr" class="form-control form-control-sm"  (input)="onSearchBonDeLivraison($event,'centre.libelle')" placeholder="Rechercher..."></th>
           <th><input type="date" name="dateCommande" class="form-control form-control-sm"  (input)="onSearchBonDeLivraison($event,'dateCommande')" placeholder="Rechercher..."></th>
           <th><input type="date" name="dateLivraison" class="form-control form-control-sm"  (input)="onSearchBonDeLivraison($event,'dateLivraison')" placeholder="Rechercher..."></th>
-          <th></th>
+          <th><input type="search" name="motant" class="form-control form-control-sm"  (input)="onSearchBonDeLivraison($event,'montant')" placeholder="Rechercher..."></th>
         </tr>
       </thead>
       <tbody>
@@ -222,7 +222,7 @@
         <td class="col-2" (click)="showLivraison(item)">{{ item.centre.libelle }}</td>
         <td class="col-2" (click)="showLivraison(item)">{{ item.dateCommande | date: 'dd/MM/yyyy' }}</td>
         <td class="col-2" (click)="showLivraison(item)">{{ item.dateLivraison | date: 'dd/MM/yyyy' }}</td>
-        <td class="col-1" (click)="showLivraison(item)">{{ (item.montantHt - item.remise) + (+item.montantTva) | number:'1.2-2' }} €</td>
+        <td class="col-1" (click)="showLivraison(item)">{{ item.montant | number:'1.2-2' }} €</td>
       </tr>
       </tbody>
     </table>

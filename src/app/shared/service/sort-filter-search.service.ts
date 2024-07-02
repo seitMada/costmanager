@@ -40,9 +40,15 @@ export class SortFilterSearchService {
       return data;
     } else {
       return data.filter(item => {
-        const value = this.getNestedProperty(item, colonne) || '';
-        const normalizedValue = value.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-        return normalizedValue.includes(searchTerm);
+        const propertyValue = this.getNestedProperty(item, colonne) || '';
+        let normalizedValue: string;
+        if (Date.parse(propertyValue)) {
+          const dateValue = new Date(propertyValue);
+          normalizedValue = dateValue.toISOString().toLowerCase();
+        } else {
+          normalizedValue = propertyValue.toString().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+        }
+        return normalizedValue.includes(value);
       });
     }
   }

@@ -74,6 +74,8 @@ export class DashComponent implements OnInit {
     article: any
   }[] = [];
 
+  public pertesData : any;
+
   public centrerevenus: InterfaceCentreRevenu[];
   public centrerevenusdefault: InterfaceCentreRevenu[];
   public centrerevenu: InterfaceCentreRevenu;
@@ -155,7 +157,10 @@ export class DashComponent implements OnInit {
     articleId: number,
     perte: number,
     perteprecedent: number,
-    cout: number
+    cout: number,
+    totalPertePrecedent: number,
+    totalPerteEnCours: number,
+    ecart:number
   }[] = [];
 
   public perteBack: {
@@ -163,7 +168,10 @@ export class DashComponent implements OnInit {
     articleId: number,
     perte: number,
     perteprecedent: number,
-    cout: number
+    cout: number,
+    totalPertePrecedent?: number,
+    totalPerteEnCours?: number,
+    ecart?:number
   }[] = [];
 
   public nombrevente: number = 0;
@@ -180,13 +188,15 @@ export class DashComponent implements OnInit {
   public fichetechniques  : {
     fichetechnique: InterfaceFichetechnique,
     cout: 0,
-    prix: 0
+    prix: 0,
+    ecart:0,
   }[] = [];
   
   public fichetechniquesBack  : {
     fichetechnique: InterfaceFichetechnique,
     cout: 0,
-    prix: 0
+    prix: 0,
+    ecart:0,
   }[] = [];
 
 
@@ -377,10 +387,13 @@ export class DashComponent implements OnInit {
                       articleId: _pertes.article_id,
                       perte: _pertes.pertes,
                       perteprecedent: 0,
-                      cout: _pertes.cout
+                      cout: _pertes.cout,
+                      totalPerteEnCours:+_pertes.pertes * +_pertes.cout,
+                      totalPertePrecedent:0,
+                      ecart:0
                     });
                   }
-                  // console.log(this.perte)
+                  this.perteBack = this.perte
                   this.venteService.getVenteCrDate(this.exploitationsselected, this.getrealdate(this.periode[1].debut), this.getrealdate(new Date()), true).subscribe({
                     next: (_ventes: any) => {
                       // console.log(_ventes)
@@ -410,8 +423,16 @@ export class DashComponent implements OnInit {
                           for (const _pertes of _articles) {
                             for (const _perte of this.perte) {
                               if (_perte.articleId === _pertes.article_id) {
+                                const pertePrecedent = +_pertes.pertes;
+                                const totalPertePrecedent =  pertePrecedent * +_perte.cout
+                                const totalPerteEnCours = +_perte.totalPerteEnCours
+                                // const ecart = ((_perte.totalPerteEnCours - +totalPertePrecedent) / _perte.totalPerteEnCours) * 100;
+                                const ecartPourcentage = Math.abs(totalPertePrecedent - totalPerteEnCours) / totalPerteEnCours  * 100;
+
                                 Object.assign(_perte, {
-                                  perteprecedent: +_pertes.pertes
+                                  perteprecedent: pertePrecedent,
+                                  totalPertePrecedent : totalPertePrecedent,
+                                  ecart : ecartPourcentage
                                 })
                               }
                             }
@@ -424,7 +445,7 @@ export class DashComponent implements OnInit {
                             // });
                           }
 
-
+                          this.perteBack = this.perte
                           this.nombrevente = _ventes.filter((vente: any) => this.getrealdate(new Date(vente.date_vente)) == this.getrealdate(new Date())).length;
                           this.venteshebdo = _ventes.filter((vente: any) => this.getrealdate(new Date(vente.date_vente)) == this.getrealdate(new Date()));
                           const nbventedate = await this.countSalesByDate(_ventes);
@@ -435,7 +456,8 @@ export class DashComponent implements OnInit {
                                 this.fichetechniques.push({
                                   fichetechnique: ft.fichetechnique,
                                   cout: 0,
-                                  prix: ft.prixttc
+                                  prix: ft.prixttc,
+                                  ecart: ft.prixttc,
                                 })
                               }
                             }
@@ -501,14 +523,16 @@ export class DashComponent implements OnInit {
   private getUniqueFt(_fichetechniques: {
     fichetechnique: InterfaceFichetechnique,
     cout: 0,
-    prix: 0
+    prix: 0,
+    ecart:0
   }[]) {
     // Objet pour garder la trace du coût le plus bas pour chaque id
     const coutMinParId: {
       [key: number]: {
         fichetechnique: InterfaceFichetechnique,
         cout: 0,
-        prix: 0
+        prix: 0,
+        ecart:0
       }
     } = {};
 
@@ -738,22 +762,12 @@ export class DashComponent implements OnInit {
     this.fichetechniques =  this.sortFilterSearchService.handleSearch(event, this.fichetechniques, colonne, this.fichetechniquesBack);
   }
 
-  filterData(data: any[], colonne1: string, colonne2: string): any[] {
-    return data.filter(item => {
-      const perte = +item[colonne1];
-      const cout = +item[colonne2];
-      const pertePrecedente = +item['perteprecedent'];
-  
-      const pertesActuelles = perte * cout;
-      const pertesPrecedentes = pertePrecedente * cout;
-  
-      const ecart = ((pertesActuelles - pertesPrecedentes) / pertesActuelles) * 100;
-  
-      // Vérifiez ici les conditions pour filtrer les éléments du tableau
-      // Par exemple, retournez true si vous voulez inclure l'élément dans le tableau filtré
-      // et false si vous voulez exclure l'élément
-      return ecart > 10; // Exemple de condition, ajustez selon vos besoins
-    });
+  onSortPertes(event: any, colonne: any, type: string = 'string') {
+    return this.sortFilterSearchService.handleSort(event, this.perte, colonne, type, this.perteBack ) ;
+  }
+
+  onSearchPertes(event: any, colonne: any) {
+     this.perte   =  (this.sortFilterSearchService.handleSearch(event, this.perte , colonne, this.perteBack )) ;
   }
 
 }

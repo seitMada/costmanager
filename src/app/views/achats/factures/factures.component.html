@@ -42,8 +42,8 @@
                     <th scope="col" class="col-2">Centre revenu <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFactures($event, 'centre.libelle')"></i></th>
                     <th scope="col" class="col-2">Date Achat <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFactures($event, 'dateAchat','date')"></i></th>
                     <th scope="col" class="col-2">Date livraison <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFactures($event, 'dateLivraison','date')"></i></th>
-                    <th scope="col" class="col-1">MontantHt</th>
-                    <th scope="col" class="col-1">MontantTva <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFactures($event, 'montantTva','numeric')"></i></th>
+                    <th scope="col" class="col-2">MontantHt <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFactures($event, 'montantHt','numeric')"></i></th>
+                    <th scope="col" class="col-2">MontantTva <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFactures($event, 'montantTva','numeric')"></i></th>
                 </tr>
                 <tr>
                   <th><input type="search" name="numFacture" class="form-control form-control-sm"  (input)="onSearchFactures($event,'numFacture')" placeholder="Rechercher..."></th>
@@ -51,7 +51,7 @@
                   <th><input type="search" name="centre" class="form-control form-control-sm"  (input)="onSearchFactures($event,'centre.libelle')" placeholder="Rechercher..."></th>
                   <th><input type="date" name="dateAchat" class="form-control form-control-sm"  (input)="onSearchFactures($event,'dateAchat')" placeholder="Rechercher..."></th>
                   <th><input type="date" name="dateLivraison" class="form-control form-control-sm"  (input)="onSearchFactures($event,'dateLivraison')" placeholder="Rechercher..."></th>
-                  <th></th>
+                  <th><input type="search" name="montantHt" class="form-control form-control-sm"  (input)="onSearchFactures($event,'montantHt')" placeholder="Rechercher..."></th>
                   <th><input type="search" name="montantTva" class="form-control form-control-sm"  (input)="onSearchFactures($event,'montantTva')" placeholder="Rechercher..."></th>
                 </tr>
             </thead>
@@ -62,8 +62,8 @@
                 <td class="col-2">{{ line.centre.libelle }}</td>
                 <td class="col-2">{{ line.dateAchat | date:'dd/MM/yyyy' }}</td>
                 <td class="col-2">{{ line.dateLivraison | date:'dd/MM/yyyy' }}</td>
-                <td class="col-1">{{ line.montantHt -line.montantRemise | number:'1.2-2' }} €</td>
-                <td class="col-1">{{ line.montantTva | number:'1.2-2' }} €</td>
+                <td class="col-2">{{ line.montantHt -line.montantRemise | number:'1.2-2' }} €</td>
+                <td class="col-2">{{ line.montantTva | number:'1.2-2' }} €</td>
             </tr>
             </tbody>
         </table>

@@ -171,11 +171,14 @@ export class BonLivraisonAchatsComponent implements OnInit{
         this.fournisseur = _fournisseur[0];
         this.idFournisseur = this.fournisseur.id ? this.fournisseur.id : 0;
         this.livraisonService.getListLivraisonByFournisseurExploitation(this.idFournisseur, this.exploitation.id ? this.exploitation.id :0).subscribe({
-          next: (_livraisons) => {
-            this.bonLivraisons = _livraisons;
-            this.bonLivraisonsBack = _livraisons;
-            // console.log(this.bonLivraisons);
-            
+          next: (_livraisons:any[]) => {
+            // this.bonLivraisons = _livraisons;
+            // this.bonLivraisonsBack = _livraisons;
+            this.bonLivraisons = _livraisons.map(item => ({
+              ...item,
+              montant: (item.montantHt - item.remise) + (+item.montantTva)
+            }));
+            this.bonLivraisonsBack = this.bonLivraisons;
           },
         });
       },
@@ -201,6 +204,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
               montantHt:0,
               montantTva:0,
               validation:0,
+              montant: 0,
               commentaire:'',
               adresseId: this.adresse.id ? this.adresse.id :0,
               fournisseurId:this.fournisseur.id ? this.fournisseur.id :0,
@@ -232,13 +236,15 @@ export class BonLivraisonAchatsComponent implements OnInit{
     this.fournisseur =data; 
     this.fournisseur.id = data.id ? data.id:0 ;   
     this.livraisonService.getListLivraisonByFournisseurExploitation(this.fournisseur.id,this.exploitation.id ? this.exploitation.id:0).subscribe({
-      next: (livraisons) =>{
+      next: (livraisons:any[]) =>{
         this.livraisonDetails = [];
-        this.bonLivraisons = livraisons;
-        this.bonLivraisonsBack = livraisons;
-        // console.log(this.bonLivraisons);
-        
-        // this.livraisonDetails = livraisons.map((livraison: any) => livraison.livraisonDetail);
+        // this.bonLivraisons = livraisons;
+        // this.bonLivraisonsBack = livraisons;
+        this.bonLivraisons = livraisons.map(item => ({
+          ...item,
+          montant: (item.montantHt - item.remise) + (+item.montantTva)
+        }));
+        this.bonLivraisonsBack = this.bonLivraisons;
       },
     }) 
   }
@@ -374,6 +380,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
       montantHt:0,
       montantTva:0,
       validation:0,
+      montant:0,
       commentaire:'',
       adresseId: this.adresse.id ? this.adresse.id :0,
       fournisseurId:this.fournisseur.id ? this.fournisseur.id :0,

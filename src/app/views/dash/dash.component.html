@@ -58,13 +58,13 @@
               <th>Fiche techniques <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'fichetechnique.libelle')"></i></th>
               <th>Cout <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'cout','numeric')"></i></th>
               <th>Prix <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'prix','numeric')"></i></th>
-              <th>Ecart </th>
+              <th>Ecart <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'ecart','numeric')"></i></th>
             </tr>
             <tr>
               <th> <input type="search" class="form-control" name="libelle" (input)="onSearchAnalyseVentes($event,'fichetechnique.libelle')" placeholder="Rechercher..."></th>
               <th> <input type="search" class="form-control" name="cout" (input)="onSearchAnalyseVentes($event,'cout')"  placeholder="Rechercher..."></th>
               <th> <input type="search" class="form-control" name="libelle" (input)="onSearchAnalyseVentes($event,'prix')"  placeholder="Rechercher..."></th>
-              <!-- <th> <input type="search" class="form-control" name="libelle" (input)="onSearchAnalyseVentes($event,'prix')"  placeholder="Rechercher..."></th> -->
+              <th> <input type="search" class="form-control" name="libelle" (input)="onSearchAnalyseVentes($event,'ecart')"  placeholder="Rechercher..."></th>
               <!-- <th></th> -->
             </tr>
           </thead>
@@ -73,7 +73,7 @@
               <td>{{fiche.fichetechnique.libelle}}</td>
               <td>{{fiche.cout | number: '1.2-2'}} €</td>
               <td>{{fiche.prix | number: '1.2-2'}} €</td>
-              <td>{{(fiche.prix - fiche.cout) | number: '1.2-2'}}</td>
+              <td>{{fiche.ecart| number: '1.2-2'}}</td>
             </tr>
           </tbody>
         </table>
@@ -94,17 +94,33 @@
       <div class="overflow-y-scroll m-2" style="height: 100%;" style="height: 400px;" *ngIf="isperteperiode">
         <table class="table table-sm table-striped table-hover">
           <thead>
-            <th>Articles</th>
-            <th>Pertes précédente</th>
-            <th>Pertes en cours</th>
-            <th>Ecart</th>
+            <tr>
+              <th>Articles <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortPertes($event, 'articlelibelle')"></i></th>
+              <th>Pertes précédente <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortPertes($event, 'totalPertePrecedent','numeric')"></i></th>
+              <th>Pertes en cours <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortPertes($event, 'totalPerteEnCours','numeric')"></i></th>
+              <th>Ecart</th>
+            </tr>
+            <tr>
+              <th> <input type="search" class="form-control" name="libelle" (input)="onSearchPertes($event,'articlelibelle')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control" name="totalPertePrecedent" (input)="onSearchPertes($event,'totalPertePrecedent')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control" name="totalPerteEnCours" (input)="onSearchPertes($event,'totalPerteEnCours')" placeholder="Rechercher..."></th>
+              <th></th>
+            </tr>
+           
           </thead>
           <tbody>
+            <!-- <tr *ngFor="let line of perte">
+              <td>{{line.articlelibelle}}</td>
+              <td>{{+line.perteprecedent * +line.cout | number: '1.2-2'}} € </td>
+              <td>{{+line.perte * +line.cout| number: '1.2-2'}} € </td>
+              <td>{{(((+line.perte * +line.cout) - (+line.perteprecedent * +line.cout)) / (+line.perte * +line.cout)) * 100 | number: '1.2-2'}} %</td>
+            </tr> -->
             <tr *ngFor="let line of perte">
               <td>{{line.articlelibelle}}</td>
-              <td>{{+line.perte * +line.cout| number: '1.2-2'}} €</td>
-              <td>{{+line.perteprecedent * +line.cout | number: '1.2-2'}} €</td>
-              <td>{{(((+line.perte * +line.cout) - (+line.perteprecedent * +line.cout)) / (+line.perte * +line.cout)) * 100 | number: '1.2-2'}} %</td>
+              <td>{{+line.totalPertePrecedent| number: '1.2-2'}} €</td>
+              <td>{{+line.totalPerteEnCours | number: '1.2-2'}} €</td>
+              <td>{{+line.ecart| number: '1.2-2'}} %</td>
+              
             </tr>
           </tbody>
         </table>

@@ -19,7 +19,7 @@ export interface InterfaceBonLivraisons{
     exploitationId:number;
     centreId:number;
     selected:boolean;
-
+    montant:number;
     adresse:Adress;
     fournisseur:InterfaceFournisseur;
     exploitation:InterfaceExploitations;
