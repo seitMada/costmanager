@@ -5,6 +5,8 @@ export const environment = {
     APIGETEXPLOITATION: endPoint + 'exploitation',
     APICREATEEXPLOITATION: endPoint + 'exploitation',
     APIGETEXPLOITATIONBYID: endPoint+'exploitation/',
+    APIGETEXPLOITATIONBYCENTREID : endPoint + 'exploitation/centre/',
+    APIGETLISTEXPLOITATION: endPoint + 'exploitation/list',
     APIGETALLEXPLOITATIONBYID: endPoint+ 'exploitation/list/',
     APIDELETEEXPLOITATION: endPoint + 'exploitation/delete',
     APIUPDATEEXPLOITATION: endPoint + 'exploitation/update/',
@@ -49,6 +51,7 @@ export const environment = {
     APIGETDIXDERNIERCOMMANDE: endPoint + 'commande_detail/derniersCommandes/',
     APIGETCOMMANDEDETAILBYCOMMANDEID: endPoint + 'commande_detail/',
     APICREATECOMMANDE: endPoint + 'commande',
+    APIGETCOMMANDE : endPoint +'commande/',
     APIDELETECOMMANDE: endPoint +'commande/delete_commande',
     APIVALIDATECOMMANDE: endPoint + 'commande/validate',
 
@@ -146,6 +149,7 @@ export const environment = {
 
     APIGETLIVRAISONBYFOURNISSEUR : endPoint + 'livraison/fournisseur/',
     APICREATEBONLIVRAISON: endPoint + 'livraison',
+    APIGETLIVRAISON : endPoint + 'livraison/',
     DELETEBONLIVRAISON: endPoint + 'livraison/delete',
     APIVALIDATELIVRAISON: endPoint + 'livraison/validate',
     APIGETLIVRAISONBYFOURNISSEUREXPLOITATIONVALIDATE: endPoint + 'livraison/fournisseurValidate/',
@@ -160,6 +164,7 @@ export const environment = {
 
     APIGETFACTUREBYFOURNISSEUREXPLOITATION: endPoint + 'achat/facture/',
     APICREATEFACTURE: endPoint + 'achat',
+    APIGETALLFACTURE: endPoint + 'achat/',
     APIGETFACTUREBYFOURNISSEUR : endPoint + 'achat/fournisseur/',
     APIVALIDATEFACTURE: endPoint + 'achat/validate',
     

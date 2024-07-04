@@ -89,6 +89,8 @@ export class FacturesComponent implements OnInit {
   public num_facture: string;
 
   public exploitationId = +(sessionStorage.getItem('exploitation') || 3);
+  private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
+
   public idFournisseur = 0;
   public idFacture = 0;
   public montantTTc = 0;
@@ -159,16 +161,27 @@ export class FacturesComponent implements OnInit {
         this.fournisseurs = _fournisseur;
         this.fournisseur = _fournisseur[0];
         this.idFournisseur = this.fournisseur.id ? this.fournisseur.id : 0;
-        this.factureService.getListFactureByFournisseurExploitation(this.idFournisseur, this.exploitation.id ? this.exploitation.id : 0).subscribe({
-          next: (_factures) => {
-            this.detailFactures = [];
-            this.factures = _factures;
-            console.log(this.factures);
-
-            this.detailFactures = _factures.map((_facture: any) => _facture.achatDetail);
-          },
-        })
-
+        if (this.isAdmin) {
+          this.factureService.getAllFacture(this.idFournisseur).subscribe({
+            next: (_factures) => {
+              this.detailFactures = [];
+              this.factures = _factures;
+              console.log(this.factures);
+  
+              this.detailFactures = _factures.map((_facture: any) => _facture.achatDetail);
+            },
+          })
+        } else {
+          this.factureService.getListFactureByFournisseurExploitation(this.idFournisseur, this.exploitation.id ? this.exploitation.id : 0).subscribe({
+            next: (_factures) => {
+              this.detailFactures = [];
+              this.factures = _factures;
+              console.log(this.factures);
+  
+              this.detailFactures = _factures.map((_facture: any) => _facture.achatDetail);
+            },
+          })
+        }
       },
       error: (error) => {
         alert('Liste fournisseur vide')
@@ -233,13 +246,21 @@ export class FacturesComponent implements OnInit {
   async selectFounisseur(data: InterfaceFournisseur) {
     this.fournisseur = data;
     this.fournisseur.id = data.id ? data.id : 0;
-    this.factureService.getListFactureByFournisseurExploitation(this.fournisseur.id, this.exploitation.id ? this.exploitation.id : 0).subscribe({
-      next: (_factures) => {
-        this.detailFactures = [];
-        this.factures = _factures;
-        // this.detailFactures  = _factures.map((_facture:any) => _facture.achatDetail);
-      },
-    });
+    if (this.isAdmin) {
+      this.factureService.getAllFacture(this.fournisseur.id).subscribe({
+        next: (_factures) => {
+          this.detailFactures = [];
+          this.factures = _factures;
+        },
+      })
+    } else {
+      this.factureService.getListFactureByFournisseurExploitation(this.fournisseur.id, this.exploitation.id ? this.exploitation.id : 0).subscribe({
+        next: (_factures) => {
+          this.detailFactures = [];
+          this.factures = _factures;
+        },
+      });
+    }
   }
 
   public resetFournisseur() {
@@ -385,20 +406,24 @@ export class FacturesComponent implements OnInit {
   }
 
   addNewFacture() {
-    this.facture = this.facture;
-    this.detailFactures = this.detailFactures;
-    if (this.detailFactures.length > 0) {
-      this.factureService.createFacture(this.facture, this.detailFactures, this.bonLivraison).subscribe({
-        next: (value) => {
-          this.toggleToast('La facture n° ' + this.facture.numFacture + ' a été crée avec succès!');
-          this.inputModif = !this.inputModif;
-          this.toggleArticle = !this.toggleArticle;
-          this.modifToggle = !this.modifToggle;
-          this.showvalidateBtn = !this.showvalidateBtn;
-        },
-      })
-    } else {
-      alert('Veuillez réessayer!');
+    if (!this.isAdmin) {
+      this.facture = this.facture;
+      this.detailFactures = this.detailFactures;
+      if (this.detailFactures.length > 0) {
+        this.factureService.createFacture(this.facture, this.detailFactures, this.bonLivraison).subscribe({
+          next: (value) => {
+            this.toggleToast('La facture n° ' + this.facture.numFacture + ' a été crée avec succès!');
+            this.inputModif = !this.inputModif;
+            this.toggleArticle = !this.toggleArticle;
+            this.modifToggle = !this.modifToggle;
+            this.showvalidateBtn = !this.showvalidateBtn;
+          },
+        })
+      } else {
+        alert('Veuillez réessayer!');
+      }
+    }else {
+      alert('Il est impossible de créer une facture.!');
     }
   }
 
@@ -632,12 +657,17 @@ export class FacturesComponent implements OnInit {
   }
 
   deleteSelectedRows() {
-    this.detailFactures = this.detailFactures.filter(line => !line.selected);
-    this.showDeleteBtn = false;
-    this.addBtn = true;
-    for (const achatdetail of this.detailFactures) {
-      this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id !== achatdetail.articlefournisseurId);
+    if (!this.isAdmin) {
+      this.detailFactures = this.detailFactures.filter(line => !line.selected);
+      this.showDeleteBtn = false;
+      this.addBtn = true;
+      for (const achatdetail of this.detailFactures) {
+        this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id !== achatdetail.articlefournisseurId);
+      }
+    } else {
+      alert('Il est impossible de supprimer ces articles.!');
     }
+    
   }
 
   getTotalMontant(): number {
@@ -690,15 +720,19 @@ export class FacturesComponent implements OnInit {
   }
 
   validateFacture() {
-    this.idFacture = this.facture.id ? this.facture.id : 0;
-    if (this.facture) {
-      this.factureService.validateFacture(this.facture).subscribe({
-        next: (value) => {
-          this.showvalidateBtn = !this.showvalidateBtn;
-          this.inputModif = true;
-          this.toggleToast('Facture n° ' + this.facture.numFacture + ' a été validé');
-        },
-      });
+    if (!this.isAdmin) {
+      this.idFacture = this.facture.id ? this.facture.id : 0;
+      if (this.facture) {
+        this.factureService.validateFacture(this.facture).subscribe({
+          next: (value) => {
+            this.showvalidateBtn = !this.showvalidateBtn;
+            this.inputModif = true;
+            this.toggleToast('Facture n° ' + this.facture.numFacture + ' a été validé');
+          },
+        });
+      }
+    } else {
+      alert('Il est impossible de valider cette facture.!');
     }
   }
 

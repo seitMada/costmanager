@@ -23,10 +23,15 @@ export class BonlivraisonService {
   private apiArticleExploitationByExploitationId = environment.APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID;
   private apiGetCommandeByFournisseurExploitation = environment.APIGETCOMMANDEBYFOURNISSEUREXPLOITATIONVALIDATE;
   private apiGetArticleFournisseurById = environment.APIGETARTICLEFOURNISSEURBYID;
+  private apiGetLivraison = environment.APIGETLIVRAISON;
   
 
   public getListLivraisonByFournisseurExploitation(fournisseurId:number,exploitationId:number){
     return this.https.get<any>(this.apiGetLivraisonByfournisseur+fournisseurId, {params : {exploitationId:exploitationId}});
+  }
+
+  public getListLivraisons(fournisseurId:number){
+    return this.https.get<any>(this.apiGetLivraison+fournisseurId);
   }
   
   public getCommandeByFournisseurExploitationValidate(fournisseurId:number,exploitationId:number){

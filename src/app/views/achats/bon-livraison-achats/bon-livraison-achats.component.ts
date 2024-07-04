@@ -95,6 +95,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
   public idBonLivraison = 0;
   public montantTTc=0;
   public exploitationId = +(sessionStorage.getItem('exploitation') || 3);
+  private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
 
   public num_livraison:string;
   public newNumLivraison: string[];
@@ -168,13 +169,21 @@ export class BonLivraisonAchatsComponent implements OnInit{
         this.fournisseurs = _fournisseur;
         this.fournisseur = _fournisseur[0];
         this.idFournisseur = this.fournisseur.id ? this.fournisseur.id : 0;
-        this.livraisonService.getListLivraisonByFournisseurExploitation(this.idFournisseur, this.exploitation.id ? this.exploitation.id :0).subscribe({
-          next: (_livraisons) => {
-            this.bonLivraisons = _livraisons;
-            console.log(this.bonLivraisons);
-            
-          },
-        });
+        if (this.isAdmin == true) {
+          this.livraisonService.getListLivraisons(this.idFournisseur).subscribe({
+            next: (_livraisons) => {
+              this.bonLivraisons = _livraisons;
+              console.log(this.bonLivraisons);
+              
+            },
+          })
+        } else {
+          this.livraisonService.getListLivraisonByFournisseurExploitation(this.idFournisseur, this.exploitation.id ? this.exploitation.id :0).subscribe({
+            next: (_livraisons) => {
+              this.bonLivraisons = _livraisons;
+            },
+          });
+        }
       },
       error: (error) => {
         alert('Liste fournisseur vide')
@@ -227,13 +236,24 @@ export class BonLivraisonAchatsComponent implements OnInit{
 
   async selectFounisseur(data: InterfaceFournisseur) {
     this.fournisseur =data; 
-    this.fournisseur.id = data.id ? data.id:0 ;   
-    this.livraisonService.getListLivraisonByFournisseurExploitation(this.fournisseur.id,this.exploitation.id ? this.exploitation.id:0).subscribe({
-      next: (livraisons) =>{
-        this.livraisonDetails = [];
-        this.bonLivraisons = livraisons;
-      },
-    }) 
+    this.fournisseur.id = data.id ? data.id:0 ;  
+    if (this.isAdmin == true) {
+      this.livraisonService.getListLivraisons(this.fournisseur.id).subscribe({
+        next: (_livraisons) => {
+          this.bonLivraisons = _livraisons;
+          console.log(this.bonLivraisons);
+          
+        },
+      })
+    } else {
+      this.livraisonService.getListLivraisonByFournisseurExploitation(this.fournisseur.id,this.exploitation.id ? this.exploitation.id:0).subscribe({
+        next: (livraisons) =>{
+          this.livraisonDetails = [];
+          this.bonLivraisons = livraisons;
+        },
+      }) 
+    } 
+    
   }
 
   selectCentreRevenu(data: InterfaceCentreRevenu) {
@@ -245,8 +265,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
     this.adresse = data;
     this.adresse.id = data.id;
   } 
-
- 
 
   public resetFournisseur() {
     this.adresse = {
@@ -337,10 +355,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
     }
   }
 
-  listArticleFournisseurs(){
-   
-  }
-
   public resetArticleFournisseur(){
     this.articleFournisseur = {
       articleId: 0,
@@ -399,19 +413,11 @@ export class BonLivraisonAchatsComponent implements OnInit{
 
   public openModalArticle(contentArticle: TemplateRef<any>){
     if (this.livraisonDetails.length > 0) {
-      if (this.bonCommande) {
-        this.artFournisseurArticleId =[];
-        for (const commDetail of this.bonCommande.commandeDetail) {
-          const nonMatchingArticles = this.livraisonDetails.every((livrDetail: any) => livrDetail.articlefournisseurId !== commDetail.articlefournisseurId);
-    
-          if (nonMatchingArticles) {
-              this.artFournisseurArticleId.push(commDetail.articlefournisseurId);
-          }
-        }
-        this.livraisonService.getArticleFournisseurById(this.artFournisseurArticleId).subscribe({
+      const articlesId = this.livraisonDetails.map((i:any) => i.articleId);
+
+        this.livraisonService.getArticleFournisseurByArticle(articlesId,this.fournisseur.id ? this.fournisseur.id: 0,this.artExploitationArticleId).subscribe({
           next:(_articlefournisseurs) =>{
             this.articleFournisseurs = _articlefournisseurs;
-            console.log(_articlefournisseurs);
             
             this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
               (result) => {
@@ -454,82 +460,11 @@ export class BonLivraisonAchatsComponent implements OnInit{
             );
           },
         })
-      } else {
-        const exploitationId = Number(this.exploitationId);
-        this.selectFounisseur(this.fournisseur);
-        this.livraisonDetails = this.livraisonDetails;
-        this.livraisonService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
-          next: (artExploitation) => {   
-            if (artExploitation) {
-              this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
-              
-              this.livraisonService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
-                next: (artFournisseur: any) => {
-                  this.articleFournisseurs = [];
-                  console.log(this.livraisonDetails);
-                  
-                  for (const _artFournisseur of artFournisseur) {
-                    const nonMatchingArticles = this.livraisonDetails.every((livrDetail: any) => livrDetail.articlefournisseurId !== _artFournisseur.id);
-              
-                    if (nonMatchingArticles) {
-                      this.articleFournisseurs.push(_artFournisseur);
-                    }else{
-                      this.articleFournisseurs.push(_artFournisseur);
-                    }
-                  }
-                  console.log(this.articleFournisseurs);
-                  
-                  // this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
-                  //   (result) => {
-                  //     this.closeResult = `Closed with: ${result}`;
-                  //     console.log(this.closeResult)
-                  //     if (this.closeResult == 'Closed with: Save click') {
-                  //       // this.livraisonDetails = [];
-                  //       this.inputModif = this.inputModif;              
-                  //       for (const articlefournisseur of this.articleFournisseurs) {  
-                  //         for(const condition of articlefournisseur.conditionnement){
-                  //           if (condition.selected != undefined ) {
-                  //             this.livraisonDetail = {
-                  //               articlefournisseurId:articlefournisseur.id ? articlefournisseur.id :0,
-                  //               articleId: articlefournisseur.articleId,
-                  //               livraisonId: 0,
-                  //               quantiteCommandee: 0,
-                  //               quantiteCommandeeFT:0,
-                  //               conditionnementId:condition.id ? condition.id:0,
-                  //               quantiteLivree: 0,
-                  //               quantiteLivreeFT:0,
-                  //               quantiteFT:0,
-                  //               prixarticle:condition.prixAchat ? condition.prixAchat: 0,
-                  //               remise: 0,
-                  //               valeurTva: 0,
-                  //               selected:false,
-                  //               articlefournisseur:articlefournisseur,
-                  //               livraison:[],
-                  //               conditionnement: condition,
-                  //               article:articlefournisseur.article
-                  //             }
-                  //             this.livraisonDetails.push(this.livraisonDetail);
-                  //             this.addBtn = false;
-                  //           }
-                  //         }
-                  //       }
-                  //     }
-                  //   },
-                  //   (reason) => {
-                  //     this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-                  //     console.log(this.closeResult)
-                  //   },
-                  // );
-                }
-              })
-            }
-          }
-        });
-      }
       
     } else {
       const exploitationId = Number(this.exploitationId);
       this.selectFounisseur(this.fournisseur);
+      console.log(exploitationId );
       
       this.livraisonService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
         next: (artExploitation) => {         
@@ -664,7 +599,6 @@ export class BonLivraisonAchatsComponent implements OnInit{
                   }
                 } else {
                   this.addBtn = true;
-                  this.livraisonDetails = [];
                   this.bonLivraison.dateCommande = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate());
                   this.bonLivraison.dateLivraison = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate()+1);
                 }
@@ -672,7 +606,7 @@ export class BonLivraisonAchatsComponent implements OnInit{
               }else if(this.closeResult == 'Closed with: Create click'){
                 this.modifToggle = !this.modifToggle;
                 this.toggle = (this.toggle === false ? true : false);
-                this.resetLivraison();
+                // this.resetLivraison();
                 this.addBtn = true;
                 this.inputModif = false;
                 this.livraisonDetails = [];
@@ -758,23 +692,27 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
   addBonLivraison(){
-    this.bonLivraison = this.bonLivraison;
-    console.log(this.bonLivraison );
-    
-    this.livraisonDetails = this.livraisonDetails;
-    if (this.livraisonDetails.length>0) {
-      this.livraisonService.createNewBonLivraison(this.bonLivraison,this.livraisonDetails,this.bonCommande).subscribe({
-        next:(livraison:any) =>{
-          this.toggleToast('Bon de livraison n° '+ this.bonLivraison.numLivraison+ ' crée avec succès!');
-          this.addBtn = false;
-          this.inputModif = !this.inputModif;
-          this.modifToggle = !this.modifToggle;
-          this.showvalidateBtn = !this.showvalidateBtn;
-          this.resetLivraison();
-        },
-      })
+    if (!this.isAdmin) {
+      this.bonLivraison = this.bonLivraison;
+      console.log(this.bonLivraison );
+      
+      this.livraisonDetails = this.livraisonDetails;
+      if (this.livraisonDetails.length>0) {
+        this.livraisonService.createNewBonLivraison(this.bonLivraison,this.livraisonDetails,this.bonCommande).subscribe({
+          next:(livraison:any) =>{
+            this.toggleToast('Bon de livraison n° '+ this.bonLivraison.numLivraison+ ' crée avec succès!');
+            this.addBtn = false;
+            this.inputModif = !this.inputModif;
+            this.modifToggle = !this.modifToggle;
+            this.showvalidateBtn = !this.showvalidateBtn;
+            this.resetLivraison();
+          },
+        })
+      }else{
+        alert('Veuillez réessayer!');
+      }
     }else{
-      alert('Veuillez réessayer!');
+      alert('Il est impossible de créer une bon de livraison.!');
     }
   }
 
@@ -783,15 +721,19 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
   deleteSelectedRows() {
-    if (this.livraisonDetails) {
-      this.livraisonDetails = this.livraisonDetails.filter(line => !line.selected);
-    }
-    this.showDeleteBtn = false;
-    this.addBtn = true;
-    if (this.articleFournisseurs && this.livraisonDetails) {
-      for (const _livrDetail of this.livraisonDetails) {
-        this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id != _livrDetail.articlefournisseurId);
+    if (!this.isAdmin) {
+      if (this.livraisonDetails) {
+        this.livraisonDetails = this.livraisonDetails.filter(line => !line.selected);
       }
+      this.showDeleteBtn = false;
+      this.addBtn = true;
+      if (this.articleFournisseurs && this.livraisonDetails) {
+        for (const _livrDetail of this.livraisonDetails) {
+          this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id != _livrDetail.articlefournisseurId);
+        }
+      }
+    }else{
+      alert('Il est impossible de supprimer ces articles.!');
     }
   }
 
@@ -801,52 +743,61 @@ export class BonLivraisonAchatsComponent implements OnInit{
   }
 
   deleteSelectedRowsLivraison() {
-    const selectedBonLivraisons = this.bonLivraisons.filter(line => line.selected);
-    for (const bonLivraison of selectedBonLivraisons) {
-     if (!bonLivraison.validation) {
-      this.livraisonService.deleteBonLivraison(bonLivraison).subscribe({
-        next:(value) =>{
-          this.bonLivraisons = this.bonLivraisons.filter(line => line !== bonLivraison);
-          this.deleteLivraison = this.bonLivraisons.some(line => line.selected);
-          this.showvalidateBtn = this.bonLivraisons.some(line => line.selected);
-        },
-      });
-     }else{
-      alert(`Ce bon de livraison n° ${bonLivraison.numLivraison} ne peut pas supprimer!`)
-     }      
+    if (!this.isAdmin) {
+      const selectedBonLivraisons = this.bonLivraisons.filter(line => line.selected);
+      for (const bonLivraison of selectedBonLivraisons) {
+        if (!bonLivraison.validation) {
+          this.livraisonService.deleteBonLivraison(bonLivraison).subscribe({
+            next:(value) =>{
+              this.bonLivraisons = this.bonLivraisons.filter(line => line !== bonLivraison);
+              this.deleteLivraison = this.bonLivraisons.some(line => line.selected);
+              this.showvalidateBtn = this.bonLivraisons.some(line => line.selected);
+            },
+          });
+        }else{
+          alert(`Ce bon de livraison n° ${bonLivraison.numLivraison} ne peut pas supprimer!`)
+        }      
+      }
+    }else{
+      alert('Il est impossible de supprimer cette bon de livraison.!');
     }
   }
 
   validateLivraison(){
-    this.idBonLivraison = this.bonLivraison.id ? this.bonLivraison.id :0;
-    const selectedBonLivraisons = this.bonLivraisons.filter(line => line.selected);
-    if (selectedBonLivraisons.length > 0) {
-      for (const bonLivraison of selectedBonLivraisons) {
-        if (bonLivraison.validation == 0) {
-          this.livraisonService.validateLivraison(bonLivraison).subscribe({
-            next:(value) =>{
-              this.toggle = this.toggle;
-              this.deleteLivraison = false;
-              this.showvalidateBtn = !this.showvalidateBtn;
-              this.toggleToast('Bon de livraison n° '+bonLivraison.numLivraison+' a été validé');
-              this.showAllFournisseur();              
-            },
-          });
-        }else{
-          alert('Ce bon de livraison est déjà validé!');
-          this.deleteLivraison = false;
-          this.showvalidateBtn = !this.showvalidateBtn;
-        }      
+    if (!this.isAdmin) {
+      this.idBonLivraison = this.bonLivraison.id ? this.bonLivraison.id :0;
+      const selectedBonLivraisons = this.bonLivraisons.filter(line => line.selected) || [];
+      if (selectedBonLivraisons.length > 0) {
+        for (const bonLivraison of selectedBonLivraisons) {
+          if (bonLivraison.validation == 0) {
+            this.livraisonService.validateLivraison(bonLivraison).subscribe({
+              next:(value) =>{
+                this.toggle = this.toggle;
+                this.deleteLivraison = false;
+                this.showvalidateBtn = !this.showvalidateBtn;
+                this.toggleToast('Bon de livraison n° '+bonLivraison.numLivraison+' a été validé');
+                this.showAllFournisseur();              
+              },
+            });
+          }else{
+            alert('Ce bon de livraison est déjà validé!');
+            this.deleteLivraison = false;
+            this.showvalidateBtn = !this.showvalidateBtn;
+          }      
+        }
+      } else {
+        this.livraisonService.validateLivraison(this.bonLivraison).subscribe({
+          next:(value) =>{
+            this.toggleToast('Bon de livraison n° '+this.bonLivraison.numLivraison+' a été validé');
+            this.deleteLivraison = false;
+            this.showvalidateBtn = !this.showvalidateBtn;
+            this.inputModif = true;
+          },
+        });
       }
-    } else {
-      this.livraisonService.validateLivraison(this.bonLivraison).subscribe({
-        next:(value) =>{
-          this.toggleToast('Bon de livraison n° '+this.bonLivraison.numLivraison+' a été validé');
-          this.deleteLivraison = false;
-          this.showvalidateBtn = !this.showvalidateBtn;
-          this.inputModif = true;
-        },
-      });
+    }else{
+      alert('Il est impossible de valider cette bon de livraison.!');
     }
+    
   }
 }

@@ -47,7 +47,7 @@
                         </tr>
                       </tbody>
                     </table>
-                    <button class="btn btn-outline-success my-2 mx-2" (click)="addFormLieu()" [disabled]="inputModif"><i class="fas fa-plus"></i> Ajout lieu stockage</button>
+                    <button class="btn btn-outline-success my-2 mx-2" *ngIf="lieustockages.length==0" (click)="addFormLieu()" [disabled]="inputModif"><i class="fas fa-plus"></i> Ajout lieu stockage</button>
                   </div>
                 </div>
                 <div class="card col-8 mx-2" *ngIf="addLieu">

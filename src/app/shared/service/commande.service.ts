@@ -20,9 +20,14 @@ export class CommandeService {
   private apiGetArticleFournisseurByArticle = environment.ARTICLEFOURNISSEURBYARTICLE;
   private apiDeleteCommande = environment.APIDELETECOMMANDE;
   private apiValidateCommande = environment.APIVALIDATECOMMANDE;
+  private apiGetListCommande = environment.APIGETCOMMANDE;
 
   public getCommandeByFournisseurExploitation(fournisseurId:number,exploitationId:number){
     return this.https.get<any>(this.apiGetCommandeByFournisseurExploitation+fournisseurId,{params : {exploitationId:exploitationId} });
+  }
+
+  public getAllCommande(fournisseurId:number){
+    return this.https.get<any>(this.apiGetListCommande+fournisseurId);
   }
 
   public createBonCommande(commande:InterfaceBonCommande,commandeDetails:InterfaceCommandeDetail[]){
