@@ -165,6 +165,7 @@ export class MouvementStockComponent implements OnInit {
                   this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, this.exploitationsselected, true).subscribe({
                     next: (_articles: any) => {
                       this.mouvemenstock = _articles;
+                      console.log(this.mouvemenstock);
                       this.mouvemenstockback = _articles;
                       this.unitefilter = [];
                       this.dates.debut = new Date(this.getrealdate(_periode.debut));
@@ -244,6 +245,8 @@ export class MouvementStockComponent implements OnInit {
         console.log(this.formatDate(new Date(this.periodeselected.debut)), this.formatDate(new Date(_dateFin)), this.formatDate(new Date(_datefinal)))
         this.mouvemenstock = _articles;
         this.mouvemenstockback = _articles;
+        
+        
         this.unitefilter = [];
         this.dates.debut = new Date(this.periodeselected.debut);
         this.dates.fin = new Date(this.periodeselected.fin ? this.periodeselected.fin : new Date());
@@ -466,7 +469,7 @@ export class MouvementStockComponent implements OnInit {
             total += +_mouvement.inventaires * +_mouvement.cout;
             break;
           case 1:
-            total += +_mouvement.inventairesfinal * +_mouvement.cout;
+            total += +_mouvement.inventairesfinal * +_mouvement.cout;            
             break;
           case 2:
             total += (+_mouvement.inventaires - +_mouvement.pertes - +_mouvement.ventes +

@@ -849,6 +849,8 @@ export class SynthesePposComponent implements OnInit {
     })
   }
 
+ 
+
   private getTableauPerteArticle(event: any) {
     console.log(event)
     this.bordercolor = event.point.color;
@@ -862,6 +864,8 @@ export class SynthesePposComponent implements OnInit {
     this.ppoService.getPpoDetailDataFamille(data).subscribe({
       next: (_data: any) => {
         this.ppodetailsarticlebyfamille = _data.article;
+        console.log(this.ppodetailsarticlebyfamille);
+        
       }
     });
   }

@@ -107,6 +107,7 @@ export const environment = {
 
     APIUPDATECOMPOSITION: endPoint + 'composition/update_composition/',
     APIGETCOMPOSITIONBYFICHETECHNIQUE: endPoint + 'composition/',
+    APIGETCOMPOSITIONFICHETECHNIQUE:endPoint + 'composition',
 
     APIPOSTDESACTIVEFICHETECHNIQUE: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitation/',
     APIPOSTDESACTIVEFICHETECHNIQUES: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitations',
@@ -191,6 +192,8 @@ export const environment = {
     APIDELETEONELIEUSTOCKAGE: endPoint + 'lieustockage/delete',
 
     APIGETOPERATEURCENTREEXPLOITATIONBYOPERATEURID: endPoint + 'operateurcentreexploit/',
+    APIGETPERTEARTICLE: endPoint + 'ppo/byarticle/',
+    APIGETPPOSTATISTIQUE: endPoint + 'ppo/statistics/',
   
 };
    
