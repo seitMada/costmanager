@@ -162,7 +162,7 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   getAllExploitation(){
-    this.exploitationService.getExploitation().subscribe({
+    this.exploitationService.findAllExploitation().subscribe({
       next:(_exploitations) =>{
         this.exploitations = _exploitations;
       },
@@ -195,28 +195,9 @@ export class CentrerevenusComponent implements OnInit {
         next :(adresses) => {
           this.adresses = adresses;
           this.adresse = adresses[0];
-          this.exploitationService.getExploitation().subscribe({
+          this.exploitationService.findAllExploitation().subscribe({
             next:(_exploitations) =>{
-              this.exploitations = [];
-              for(const _exploitation of _exploitations){
-                this.exploitation = {
-                  code_couleur: _exploitation.code_couleur,
-                  libelle: _exploitation.libelle,
-                  nbDecimal: _exploitation.nbDecimal,
-                  commentaire:_exploitation.commentaire,
-                  siteWeb:_exploitation.siteWeb,
-                  codenaf:_exploitation.codenaf,
-                  siret:_exploitation.siret,
-                  logo:_exploitation.logo,
-                  actif:_exploitation.actif,
-                  adressesId:adresses[0].id ? adresses[0].id :0,
-                  adresses: adresses[0],
-                  selected:_exploitation.selected,
-                  centreRevenu:[]
-                }
-                this.exploitations.push(this.exploitation);
-              }
-              // this.exploitations = _exploitations;
+              this.exploitations = _exploitations;
               this.lieustockageService.findAllLieuStockageWithoutLinks().subscribe({
                 next:(_lieuStockages)=>{
                   this.lieuStockages = _lieuStockages;
@@ -317,6 +298,7 @@ export class CentrerevenusComponent implements OnInit {
     this.toggle = !this.toggle;
     this.addExploitation = false;
     this.addLieuStockage = false;
+    this.lieuStockages = [];
     this.resetCentre();
     this.showAllCentreRevenu();
   }
@@ -329,28 +311,35 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   saveExploitation(){
-    this.centres = [];
-    this.exploitationService.createExploitation(this.exploitation,this.centres).subscribe({
-      next:(value) =>{
-        this.getAllExploitation();
-        this.toggleToast('Nouveau centre de revenu crée avec succès!');
-        this.addExploitation = (this.addExploitation === false ? true : false);
-      },
-    })
+    if (this.isAdmin) {
+      this.centres = [];
+      this.exploitationService.createExploitation(this.exploitation,this.centres).subscribe({
+        next:(value) =>{
+          this.getAllExploitation();
+          this.toggleToast('Nouveau centre de revenu crée avec succès!');
+          this.addExploitation = (this.addExploitation === false ? true : false);
+        },
+      })
+    } else {
+      alert('Il est impossible de créer un centre de revenu');
+    }
+    
   }
 
   saveLieuDeStockage(){
-   this.centreId = this.centre.id ? this.centre.id : 0;
-   this.zoneStockages = [];
-   if (this.centreId == 0) {
-    this.lieustockageService.createLieuStockage(this.lieuStockage,this.zoneStockages).subscribe({
-      next:() =>{
-        this.findAllLieuStockageWithoutLinks();
-        this.toggleToast('Nouveau lieu de stockage crée avec succès !');
-        this.addLieuStockage = (this.addLieuStockage === false ? true:false);
-      }
-    })
-   } 
+    if (this.isAdmin) {
+      this.centreId = this.centre.id ? this.centre.id : 0;
+      this.zoneStockages = [];
+      this.lieustockageService.createLieuStockage(this.lieuStockage,this.zoneStockages).subscribe({
+        next:() =>{
+          this.findAllLieuStockageWithoutLinks();
+          this.toggleToast('Nouveau lieu de stockage crée avec succès !');
+          this.addLieuStockage = (this.addLieuStockage === false ? true:false);
+        }
+      })
+    } else {
+      alert('Il est impossible de créer un lieu de stockage');
+    }
   }
 
   findAllLieuStockageWithoutLinks(){
@@ -367,8 +356,8 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   submit(){
-    
-    this.centreId = this.centre.id ? this.centre.id :0;
+    if (this.isAdmin) {
+      this.centreId = this.centre.id ? this.centre.id :0;
     if (this.centreId ==0) {
       const lieuStockagesSelect = this.lieuStockages.filter(line =>line.selected);
       if (lieuStockagesSelect.length > 0) {
@@ -412,6 +401,10 @@ export class CentrerevenusComponent implements OnInit {
         alert('Veuillez sélectionner au moins un lieu de stockage et exploitation');
       }
     }
+    } else {
+      alert('Il es impossible de créer un centre de revenu');
+    }
+    
   }
 
   showCentreRevenu(centreRevenu:InterfaceCentreRevenu){
@@ -420,8 +413,8 @@ export class CentrerevenusComponent implements OnInit {
     this.resetLieuStockage();
     this.centre = centreRevenu;
     this.centreId  = centreRevenu.id ? centreRevenu.id :0;
-    
-    this.exploitationService.getExploitation().subscribe({
+
+    this.exploitationService.getExploitationByCentreId(this.centreId).subscribe({
       next:(_exploitations) =>{
         this.exploitations = [];
         this.inputModif = true;
@@ -446,24 +439,7 @@ export class CentrerevenusComponent implements OnInit {
         }
         this.lieustockageService.findListLieuStockage(this.centreId).subscribe({
           next:(_lieuStockages)=>{
-            
-            for(const lieustock of _lieuStockages){
-              let selected = false;
-              this.lieuStockages = [];
-              for(const _centrelieu of this.centre.lieuStockage){
-                if(lieustock.id == _centrelieu.id){
-                  selected = true;
-                }
-                this.lieuStockage = {
-                  lieu : lieustock.lieu,
-                  centreId: lieustock.centreId,
-                  selected:selected,
-                  centre: lieustock.centre,
-                  zonestockage:lieustock.zoneStockage
-                }
-                this.lieuStockages.push(this.lieuStockage);
-              }
-            }
+            this.lieuStockages = _lieuStockages;
           }
         })
       },
@@ -471,13 +447,15 @@ export class CentrerevenusComponent implements OnInit {
   }
 
   deleteCentreRevenu(){
-    this.centreService.deleteCentreRevenu(this.centre).subscribe({
-      next:(value) =>{
-        this.resetCentre();
-        this.toggleToast('Ce centre de revenu a été supprimé avec succès!');
-        this.toggle = !this.toggle;
-        this.showAllCentreRevenu();
-      },
-    });
+    if (this.isAdmin) {
+      this.centreService.deleteCentreRevenu(this.centre).subscribe({
+        next:(value) =>{
+          this.resetCentre();
+          this.toggleToast('Ce centre de revenu a été supprimé avec succès!');
+          this.toggle = !this.toggle;
+          this.showAllCentreRevenu();
+        },
+      });
+    }
   }
 }

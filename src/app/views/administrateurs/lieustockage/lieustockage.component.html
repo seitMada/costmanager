@@ -47,7 +47,7 @@
                         </tr>
                       </tbody>
                     </table>
-                    <button class="btn btn-outline-success my-2 mx-2" (click)="addFormCentre()" [disabled]="inputModif"><i class="fas fa-plus"></i> Ajout centre revenu</button>
+                    <button class="btn btn-outline-success my-2 mx-2"  *ngIf="centres.length==0" (click)="addFormCentre()" [disabled]="inputModif"><i class="fas fa-plus"></i> Ajout centre revenu</button>
                   </div>
                 </div>
                 <div class="card col-8 mx-2" *ngIf="addCentre">
@@ -137,7 +137,7 @@
                         </tr>
                       </tbody>
                     </table>
-                    <button class="btn btn-outline-success my-2 mx-2" (click)="addFormZoneStockage()" [disabled]="inputModif"><i class="fas fa-plus"></i> Ajout zone stockage</button>
+                    <button class="btn btn-outline-success my-2 mx-2"  *ngIf="zonestockages.length==0" (click)="addFormZoneStockage()" [disabled]="inputModif"><i class="fas fa-plus"></i> Ajout zone stockage</button>
                   </div>
                 </div>
                 <div class="card col-8 mx-2" *ngIf="addZone">

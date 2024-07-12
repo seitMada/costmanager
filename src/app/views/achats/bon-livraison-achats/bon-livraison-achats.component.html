@@ -330,7 +330,7 @@
         <tr>
           <th class="col-2">Code</th>
           <th class="col-3">Désignation</th>
-          <th class="col-2">Famille</th>
+          <th class="col-4">Famille</th>
           <th class="col-1">Prix</th>
           <th class="col-1">Unite</th>
         </tr>
@@ -339,7 +339,7 @@
         <tr *ngFor="let item of commadeDetails">
           <td class="col-2">{{ item.article.codeArticle || ''}}</td>
           <td class="col-3">{{ item.article.libelle || '' }}</td>
-          <td class="col-2">{{ item.article.familles.libelle || '' }}</td>
+          <td class="col-4">{{ item.article.familles.libelle || '' }}</td>
           <td class="col-1">{{ item.conditionnement?.prixAchat | number:'1.2-2'|| 0 }} €</td>
           <td class="col-1">{{ item.conditionnement?.uniteCommande?.abreviation || ''}}</td> 
           

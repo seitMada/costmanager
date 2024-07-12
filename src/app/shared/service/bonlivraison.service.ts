@@ -22,11 +22,16 @@ export class BonlivraisonService {
   private apiArticleFournisseurByArticleId = environment.APIGETARTICLEFOURNISSEURBYARTICLEID;
   private apiArticleExploitationByExploitationId = environment.APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID;
   private apiGetCommandeByFournisseurExploitation = environment.APIGETCOMMANDEBYFOURNISSEUREXPLOITATIONVALIDATE;
-
+  private apiGetArticleFournisseurById = environment.APIGETARTICLEFOURNISSEURBYID;
+  private apiGetLivraison = environment.APIGETLIVRAISON;
   
 
   public getListLivraisonByFournisseurExploitation(fournisseurId:number,exploitationId:number){
     return this.https.get<any>(this.apiGetLivraisonByfournisseur+fournisseurId, {params : {exploitationId:exploitationId}});
+  }
+
+  public getListLivraisons(fournisseurId:number){
+    return this.https.get<any>(this.apiGetLivraison+fournisseurId);
   }
   
   public getCommandeByFournisseurExploitationValidate(fournisseurId:number,exploitationId:number){
@@ -65,5 +70,7 @@ export class BonlivraisonService {
     return this.https.get<any>(this.apiGetArticleFournisseurByArticle,{ params: { articleId: articleId.join(','),fournisseurId:fournisseurId,artExploitation:artExploitation.join(',') } });
   }
 
-
+  public getArticleFournisseurById(artFournisseurArticleId:any[]){
+    return this.https.get<any>(this.apiGetArticleFournisseurById,{ params: {artFournisseurArticleId: artFournisseurArticleId.join(',') }});
+  }
 }

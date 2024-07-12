@@ -19,9 +19,14 @@ export class FactureService {
   private apiGetFactureByFournisseurExploitation = environment.APIGETFACTUREBYFOURNISSEUREXPLOITATION;
   private apiGetLivraisonByFournisseurExploitationValidate = environment.APIGETLIVRAISONBYFOURNISSEUREXPLOITATIONVALIDATE;
   private apiGetDetailLivraisonByLivraisonId = environment.APIGETDETAILLIVRAISONBYLIVRAISONID;
+  private apiGetAllFacture = environment.APIGETALLFACTURE;
 
   public getFactureByFournisseurExploitation(fournisseurId: number, exploitationId: number) {
     return this.https.get<any>(this.apiGetFactureByFournisseurExploitation + fournisseurId, { params: { exploitationId: exploitationId } });
+  }
+
+  public getAllFacture(fournisseurId:number){
+    return this.https.get<any>(this.apiGetAllFacture+fournisseurId);
   }
 
   public createFacture(facture: InterfaceAchat, detailFactures: InterfaceAchatDetail[], livraison: InterfaceBonLivraisons) {

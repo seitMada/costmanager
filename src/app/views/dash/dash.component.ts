@@ -2,6 +2,9 @@ import { CommonModule, DatePipe } from '@angular/common';
 import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, ActivatedRoute } from '@angular/router';
+
+import { map } from 'rxjs/operators';
+
 import { ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent } from '@coreui/angular';
 import { NgbNavModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { ArticleService } from 'src/app/shared/service/article.service';
@@ -34,6 +37,9 @@ import { IconDirective } from '@coreui/icons-angular';
 import { InterfaceFichetechnique } from 'src/app/shared/model/interface-fichetechnique';
 import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
+import { Observable } from 'rxjs';
+import { PpoService } from 'src/app/shared/service/ppo.service';
+import { FichetechniqueService } from 'src/app/shared/service/fichetechnique.service';
 
 @Component({
   selector: 'app-dash',
@@ -75,6 +81,12 @@ export class DashComponent implements OnInit {
   }[] = [];
 
   public pertesData : any;
+  public valorisationarticlesFT:{
+    id:number,
+    libelle:string,
+    count:number,
+    valorisation:number
+  }[] =[];
 
   public centrerevenus: InterfaceCentreRevenu[];
   public centrerevenusdefault: InterfaceCentreRevenu[];
@@ -83,15 +95,26 @@ export class DashComponent implements OnInit {
   public exploitation: InterfaceExploitations;
 
   public exploitationsselected: number[];
+  public centrerevenusselected: number[];
+  public article : InterfaceArticle;
 
   public chartVariationArticle: Highcharts.Options;
+  public chartPerteArticle: Highcharts.Options;
+  public chartOptionsMontantPerteArticle: Highcharts.Options;
 
   private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
+  public operateurId = sessionStorage.getItem('id') ? Number(sessionStorage.getItem('id')) :0;
   public idexploitation = +(sessionStorage.getItem('exploitation') || 3);
   public idoperateur = +(sessionStorage.getItem('id') || 3);
   public idcentrerevenu: number = 0;
+  public montantPerteEnCours:number = 0;
+  public montantPertePrecedent:number = 0;
 
   public articlevariationtoggle = true;
+
+  public bordercolor = '#FFFFFF';
+
+  public ppodetailsarticlebyfamille: { libelle: '', id: 0, unite: '', familleColor: '', totalCost: '', totalQuantity: '' }[];
 
   public periode: { debut: Date, fin: Date }[] = []
   public periodeselected: { debut: Date, fin: Date | null };
@@ -104,7 +127,7 @@ export class DashComponent implements OnInit {
   }
   public pertes: {
     perte: number,
-    periode: number
+    periode: number,
   }[] = [];
   public perteperiode: string = 'Période en cours';
   public isperteperiode: boolean = true;
@@ -273,8 +296,10 @@ export class DashComponent implements OnInit {
     private exploitationService: ExploitationService,
     private centrerevenuService: CentreRevenuService,
     private inventaireService: InventairesService,
+    private fichetechniqueService: FichetechniqueService,
     private venteService: VentesService,
     private dashService: DashboardService,
+    private ppoService : PpoService,
     private datePipe: DatePipe,
     private sortFilterSearchService:SortFilterSearchService
   ) {
@@ -312,6 +337,10 @@ export class DashComponent implements OnInit {
         });
       }
     });
+
+    this.getchartperte();
+    this.getMontantPerteEnCours();
+    this.getMontantPertePrecedent();
   }
 
   private formatDate(date: Date, fin: boolean = false) {
@@ -329,13 +358,21 @@ export class DashComponent implements OnInit {
   }
 
   private getrealdate(dateString: any) {
-    const date = new Date(dateString);
+    if (dateString != null) {
+      const date = new Date(dateString);
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+      const day = (date.getDate()) < 10 ? '0' + (date.getDate()) : (date.getDate());
 
-    const year = date.getFullYear();
-    const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
-    const day = (date.getDate()) < 10 ? '0' + (date.getDate()) : (date.getDate());
+      return (`${year}-${month}-${day}`);
+    } else {
+      const date = new Date(this.today);
+      const year = date.getFullYear();
+      const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+      const day = (date.getDate()) < 10 ? '0' + (date.getDate()-1) : (date.getDate()+1);
 
-    return (`${year}-${month}-${day}`);
+      return (`${year}-${month}-${day}`);
+    }
   }
 
   public periodeperte() {
@@ -366,6 +403,8 @@ export class DashComponent implements OnInit {
               // this.periodeselected = this.periode[0];
               this.articleService.getMouvementStock({ debut: this.getrealdate(this.periode[0].debut), fin: this.getrealdate(_dateFin), final: this.getrealdate(this.periode[0].fin) }, this.exploitationsselected, true).subscribe({
                 next: (_articles: any) => {
+                  console.log(_articles);
+                  
                   this.chiffreaffaire.push({
                     ca: _chiffreaffaire,
                     cmr: this.getcout(_articles, 1),
@@ -381,6 +420,7 @@ export class DashComponent implements OnInit {
                     perte: pertevalue,
                     periode: 0
                   });
+                  
                   for (const _pertes of _articles) {
                     this.perte.push({
                       articlelibelle: _pertes.libelle,
@@ -450,21 +490,30 @@ export class DashComponent implements OnInit {
                           this.venteshebdo = _ventes.filter((vente: any) => this.getrealdate(new Date(vente.date_vente)) == this.getrealdate(new Date()));
                           const nbventedate = await this.countSalesByDate(_ventes);
 
-                          for (const vente of _ventes) {
-                            if (this.getrealdate(new Date(vente.date_vente)) == this.getrealdate(new Date('2024-06-06'))) {
-                              for (const ft of vente.ventedetail) {
-                                this.fichetechniques.push({
-                                  fichetechnique: ft.fichetechnique,
-                                  cout: 0,
-                                  prix: ft.prixttc,
-                                  ecart: ft.prixttc,
-                                })
+                          
+                          this.fichetechniqueService.getFichetechniqueByExploitation(this.idexploitation).subscribe({
+                            next:(_fichetechniquesExploitations) =>{
+                              for (const vente of _ventes) {
+                                if (this.getrealdate(new Date(vente.date_vente)) == this.getrealdate(new Date('2024-06-06'))) {
+                                  for (const ft of vente.ventedetail) {
+                                    for(const fte of _fichetechniquesExploitations){
+                                      if (fte.id == ft.fichetechniqueId) {
+                                        this.fichetechniques.push({
+                                          fichetechnique: ft.fichetechnique,
+                                          cout: fte.cout,
+                                          prix: ft.prixttc,
+                                          ecart:ft.prixttc
+                                        })
+                                      }
+                                    }
+                                  }
+                                }
                               }
-                            }
-                          }
-                          this.fichetechniques = this.getUniqueFt(this.fichetechniques)
-
-                          this.fichetechniquesBack = this.fichetechniques;
+                              this.fichetechniques = this.getUniqueFt(this.fichetechniques);
+                              this.fichetechniquesBack = this.fichetechniques;
+                            },
+                          });
+                          
                           this.labels = nbventedate.labels;
                           const resultArray = [];
                           for (const property in nbventedate.ventes) {
@@ -554,6 +603,95 @@ export class DashComponent implements OnInit {
   getcoutvente(id: number,) {
 
   }
+
+  private getDataPerte(articleid: number): Observable<{ data: number[], categories: string[] }> {
+    return this.dashService.getPpoByArticle(articleid,this.operateurId).pipe(
+      map(_articles => {
+        const data: number[] = [];
+        const categories: string[] = [];
+        for (const item of _articles) {
+          for(const line of item.ppodetailarticle){
+            data.push(line.cout);
+          }
+          
+          const date = (item.date_ppo.split('-')[2].substring(0, 2)) + '/' + item.date_ppo.split('-')[1] + '/' + item.date_ppo.split('-')[0];
+          categories.push(date);
+        }
+        console.log(categories);
+        return { data, categories };
+      })
+    );
+  }
+
+  getchartarticleperte(results: {
+    articlelibelle: string,
+    articleId: number,
+    perte: number,
+    perteprecedent: number,
+    cout: number
+  } | null) {
+    this.isperteperiode = !this.isperteperiode;
+  
+    this.chartPerteArticle = {
+      xAxis: {
+        categories: []
+      },
+      plotOptions: {
+        series: {
+          allowPointSelect: true
+        }
+      },
+      series: [{
+        type: 'line',
+        data: []
+      }]
+    };
+  
+    if (results != null) {
+      this.getDataPerte(results.articleId).subscribe({
+        next: (result) => {
+          this.chartPerteArticle = {
+            xAxis: {
+              categories: result.categories
+            },
+            yAxis: {
+              title: {
+                text: 'Prix (€)'
+              }
+            },
+            title: {
+              text: results.articlelibelle.toUpperCase()
+            },
+            legend: {
+              enabled: false
+            },
+            plotOptions: {
+              spline: {
+                lineWidth: 4,
+                states: {
+                  hover: {
+                    lineWidth: 5
+                  }
+                },
+                marker: {
+                  enabled: false
+                }
+              }
+            },
+            series: [{
+              type: 'spline',
+              name: results.articlelibelle,
+              data: result.data
+            }]
+          };
+        },
+        error: (error) => {
+          console.error('Error fetching data', error);
+        }
+      });
+    }
+  }
+  
 
   private getcout(_mouvements: {
     article_id: number,
@@ -648,7 +786,129 @@ export class DashComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.getValorisationArticleFt();
+  }
 
+  showchartperte(){
+    const articlesId = this.perte.map((i:any) => i.articleId);
+    this.ppoService.getPpoStatistique(articlesId).subscribe({
+      next:(values) =>{
+        
+      }
+    })
+    
+  }
+
+  getchartperte(){
+       
+    this.chartOptionsMontantPerteArticle = {
+      time: {
+        Date: new Date(),
+      },
+      accessibility: {
+        enabled: false,
+      },
+      tooltip: {
+        pointFormat: '{point.name}: <b>{point.options.y:.2f} €</b>'
+      },
+      plotOptions: {
+        pie: {
+          dataLabels: {
+            enabled: true,
+            format: '<b>{point.name}</b><br>{point.options.y:.2f} €',
+            distance: -50,
+            softConnector: true,
+            connectorWidth: this.perte.length
+          },
+          showInLegend: true,
+          allowPointSelect: true,
+          size: '98%',
+          events: {
+            // click: (event) => {
+            //   this.getTableauPerteArticle(event,this.perte);
+            // }
+          }
+        }
+      },
+      title: {
+        text: "Montant ",
+        align: "left",
+        style: {
+          fontSize: "16px",
+          fontWeight: "bold"
+        }
+      },
+      series: [
+        {
+          type: 'pie',
+          data: [],
+        },
+      ],
+    };
+  }
+
+  private async syntheseMontantPerteFtArticle(_categories: string[], _data: { y: number, name: string, color: string }[]) {
+    Object.assign(this.chartOptionsMontantPerteArticle, {
+      series: [
+        {
+          type: 'pie',
+          data: _data
+        },
+      ],
+    });
+  }
+  // private getTableauPerteArticle(event: any,perte:any) {
+  //   console.log(event,perte)
+  //   const article = 
+  //   this.bordercolor = event.point.color;
+  //   let _id: number[] = [];
+  //   // const data = {
+  //   //   date: this.dates,
+  //   //   id: this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected,
+  //   //   isexploitation: this.exploitationsselected.length > 0,
+  //   //   idfamille: event.point.id
+  //   // };
+  //   // this.ppoService.getPpoDetailDataFamille(data).subscribe({
+  //   //   next: (_data: any) => {
+  //   //     this.ppodetailsarticlebyfamille = _data.article;
+  //   //     console.log(this.ppodetailsarticlebyfamille);
+        
+  //   //   }
+  //   // });
+  // }
+
+  getValorisationArticleFt(){
+    this.dashService.getvalorisationArticleFT().subscribe({
+      next:(_compositions) =>{
+        for(const _ft of _compositions){
+          const valorisationarticles  = {
+            id:_ft.articleId,
+            libelle:_ft.libelle,
+            count:_ft.nbreFt,
+            valorisation:_ft.valorisation
+          }
+          this.valorisationarticlesFT.push(valorisationarticles);
+        }
+        console.log(this.valorisationarticlesFT);
+        
+      },
+    });
+  }
+
+  getMontantPerteEnCours():number{
+    let montant = 0;
+    for(const _perte of this.perte){
+      montant += +_perte.perteprecedent * _perte.cout;
+    }
+    return montant;
+  }
+
+  getMontantPertePrecedent():number{
+    let montant = 0;
+    for(const _perte of this.perte){
+      montant += +_perte.perte * _perte.cout;
+    }
+    return montant;
   }
 
   getchartarticlevariation(article: {
@@ -675,6 +935,8 @@ export class DashComponent implements OnInit {
         type: 'line',
         data: []
       }]
+    
+
     };
 
     if (article != null) {

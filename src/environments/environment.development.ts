@@ -5,6 +5,8 @@ export const environment = {
     APIGETEXPLOITATION: endPoint + 'exploitation',
     APICREATEEXPLOITATION: endPoint + 'exploitation',
     APIGETEXPLOITATIONBYID: endPoint+'exploitation/',
+    APIGETEXPLOITATIONBYCENTREID : endPoint + 'exploitation/centre/',
+    APIGETLISTEXPLOITATION: endPoint + 'exploitation/list',
     APIGETALLEXPLOITATIONBYID: endPoint+ 'exploitation/list/',
     APIDELETEEXPLOITATION: endPoint + 'exploitation/delete',
     APIUPDATEEXPLOITATION: endPoint + 'exploitation/update/',
@@ -49,6 +51,7 @@ export const environment = {
     APIGETDIXDERNIERCOMMANDE: endPoint + 'commande_detail/derniersCommandes/',
     APIGETCOMMANDEDETAILBYCOMMANDEID: endPoint + 'commande_detail/',
     APICREATECOMMANDE: endPoint + 'commande',
+    APIGETCOMMANDE : endPoint +'commande/',
     APIDELETECOMMANDE: endPoint +'commande/delete_commande',
     APIVALIDATECOMMANDE: endPoint + 'commande/validate',
 
@@ -72,6 +75,7 @@ export const environment = {
     APIGETMOUVEMENTSTOCK : endPoint + 'articles/mouvement',
     
     APIGETARTICLEBYFOURNISSEUR: endPoint + 'articlefournisseur/',
+    APIGETARTICLEFOURNISSEURBYID:endPoint +'articlefournisseur/list/',
     APIADDARTICLEFOURNISSEUR: endPoint + 'articlefournisseur',
     APIDELETEARTICLEFOURNISSEUR: endPoint + 'articlefournisseur/delete',
     APIUPDATEARTICLEFOURNISSEUR: endPoint + 'articlefournisseur/update',
@@ -103,6 +107,7 @@ export const environment = {
 
     APIUPDATECOMPOSITION: endPoint + 'composition/update_composition/',
     APIGETCOMPOSITIONBYFICHETECHNIQUE: endPoint + 'composition/',
+    APIGETCOMPOSITIONFICHETECHNIQUE:endPoint + 'composition',
 
     APIPOSTDESACTIVEFICHETECHNIQUE: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitation/',
     APIPOSTDESACTIVEFICHETECHNIQUES: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitations',
@@ -145,6 +150,7 @@ export const environment = {
 
     APIGETLIVRAISONBYFOURNISSEUR : endPoint + 'livraison/fournisseur/',
     APICREATEBONLIVRAISON: endPoint + 'livraison',
+    APIGETLIVRAISON : endPoint + 'livraison/',
     DELETEBONLIVRAISON: endPoint + 'livraison/delete',
     APIVALIDATELIVRAISON: endPoint + 'livraison/validate',
     APIGETLIVRAISONBYFOURNISSEUREXPLOITATIONVALIDATE: endPoint + 'livraison/fournisseurValidate/',
@@ -159,6 +165,7 @@ export const environment = {
 
     APIGETFACTUREBYFOURNISSEUREXPLOITATION: endPoint + 'achat/facture/',
     APICREATEFACTURE: endPoint + 'achat',
+    APIGETALLFACTURE: endPoint + 'achat/',
     APIGETFACTUREBYFOURNISSEUR : endPoint + 'achat/fournisseur/',
     APIVALIDATEFACTURE: endPoint + 'achat/validate',
     
@@ -167,16 +174,16 @@ export const environment = {
     APIGETPPODETAIL: endPoint + 'ppo/detail',
     APIGETPPODETAILDATA: endPoint + 'ppo/data',
     APIGETPPODETAILDATAFAMILLE: endPoint + 'ppo/data/famille',
-    
+
     APIGETVENTEBYCRANDDATE: endPoint + 'vente',
     APICREATEVENTE: endPoint + 'vente/create',
     APIUPDATEVENTE: endPoint + 'vente/update',
     APICOUNTVENTE: endPoint + 'vente/count',
     APIUPLOADVENTE: endPoint + 'vente/upload',
     APIIMPORTVENTE: endPoint + 'vente/importedfile',
-    
-    APIVARIATIONARTICLE: endPoint + 'articles/articlevariationprix',
 
+    APIVARIATIONARTICLE: endPoint + 'articles/articlevariationprix',
+    
     APIGETALLLIEUSTOCKAGE: endPoint + 'lieustockage',
     APIGETLISTLIEUSTOCKAGE : endPoint + 'lieustockage/list/',
     APICREATELIEUSTOCKAGE: endPoint + 'lieustockage/create',
@@ -185,6 +192,8 @@ export const environment = {
     APIDELETEONELIEUSTOCKAGE: endPoint + 'lieustockage/delete',
 
     APIGETOPERATEURCENTREEXPLOITATIONBYOPERATEURID: endPoint + 'operateurcentreexploit/',
+    APIGETPERTEARTICLE: endPoint + 'ppo/byarticle/',
+    APIGETPPOSTATISTIQUE: endPoint + 'ppo/statistics/',
   
 };
    

@@ -52,22 +52,22 @@
                 <div class="input-group">
                   <span class="input-group-text col-4" id="adresse">Adresse</span>
                   <span class="input-group-text col-8 bg-white point" id="adress" 
-                    (click)="changeAdress(content)">{{centre.adresses.rue}}</span>
+                    (click)="changeAdress(content)">{{centre.adresses? centre.adresses.rue: ''}}</span>
                 </div>
               </div>
-              <div class="col-3">
+              <div class="col-3" *ngIf="centre.adresses">
                 <div class="input-group">
                   <span class="input-group-text col-12 bg-white point" id="ville"
                     (click)="changeAdress(content)">{{centre.adresses.ville}}</span>
                 </div>
               </div>
-              <div class="col-1">
+              <div class="col-1" *ngIf="centre.adresses">
                 <div class="input-group">
                   <span class="input-group-text col-12 bg-white point" id="code_postal"
                     (click)="changeAdress(content)">{{centre.adresses.code_postal}}</span>
                 </div>
               </div>
-              <div class="col-3">
+              <div class="col-3" *ngIf="centre.adresses">
                 <div class="input-group">
                   <span class="input-group-text col-3 bg-white point">
                     <img src="../../../../assets/img/flags/" class="img-flag" alt="Drapeau">
@@ -98,7 +98,7 @@
                         </tr>
                       </tbody>
                     </table>
-                    <button class="btn btn-outline-success my-2 mx-2" (click)="addFormExploitation()" [disabled]="inputModif"><i class="fas fa-plus"></i> Ajout Exploitation</button>
+                    <button class="btn btn-outline-success my-2 mx-2" *ngIf="exploitations.length==0" (click)="addFormExploitation()" [disabled]="inputModif"><i class="fas fa-plus"></i> Ajout Exploitation</button>
                   </div>
                 </div>
                 <div class="card col-8 mx-2" *ngIf="addExploitation">
@@ -166,7 +166,7 @@
                       </div> 
                     </form>
                   </div>
-                  <div class="card-footer text-end">
+                  <div class="card-footer text-end" >
                     <button class="btn btn-sm btn-success" (click)="saveExploitation()">Sauvegarder</button>
                   </div>
                 </div>
@@ -189,7 +189,7 @@
                         </tr>
                       </tbody>
                     </table>
-                    <button class="btn btn-outline-success my-2 mx-2" (click)="addFormLieuStockage()" [disabled]="inputModif"><i class="fas fa-plus"></i> Ajout Lieu stockage</button>
+                    <button class="btn btn-outline-success my-2 mx-2" *ngIf="lieuStockages.length==0" (click)="addFormLieuStockage()" [disabled]="inputModif"><i class="fas fa-plus"></i> Ajout Lieu stockage</button>
                   </div>
                 </div>
                 <div class="card col-8 mx-2" *ngIf="addLieuStockage">
@@ -238,7 +238,7 @@
             <td scope="col" class="col-1"></td>
             <td scope="col" class="col-1">{{ line.code }}</td>
             <td scope="col" class="col-2">{{ line.libelle }}</td>
-            <td scope="col" class="col-3">{{ line.adresses.rue }} {{ line.adresses.ville }} {{ line.adresses.code_postal }} {{ line.adresses.pays }}</td>
+            <td scope="col" class="col-3">{{ line.adresses ? line.adresses.rue : '' }} {{ line.adresses ? line.adresses.ville : '' }} {{ line.adresses ? line.adresses.code_postal : '' }} {{ line.adresses ? line.adresses.pays : '' }}</td>
             <td scope="col" class="col-3">{{ line.email }}</td>
             <td scope="col" class="col-2">{{ line.telephone }}</td>
           </tr>
@@ -262,19 +262,19 @@
             [(ngModel)]="adresse.rue">
         </div>
       </div>
-      <div class="col-3">
+      <div class="col-3" *ngIf="exploitation.adresses.ville">
         <div class="input-group">
           <input type="text" class="form-control bg-white" aria-label="ville" aria-describedby="ville"
             placeholder="Ville" [(ngModel)]="adresse.ville">
         </div>
       </div>
-      <div class="col-2">
+      <div class="col-2" *ngIf="exploitation.adresses.code_postal">
         <div class="input-group">
           <input type="text" class="form-control bg-white" aria-label="codepostal" aria-describedby="codepostal"
             placeholder="Code postal" [(ngModel)]="adresse.code_postal">
         </div>
       </div>
-      <div class="col-3">
+      <div class="col-3" *ngIf="exploitation.adresses.pays">
         <div class="input-group">
           <span class="input-group-text bg-white col-2" id="pays">
             <img src="../../../../assets/img/flags/" class="img-flag" alt="Drapeau">

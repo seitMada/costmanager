@@ -20,6 +20,8 @@ export class PpoService {
   private apiGetPpoDetail = environment.APIGETPPODETAIL;
   private apiGetPpoDetailData = environment.APIGETPPODETAILDATA;
   private apiGetPpoDetailDataFamille = environment.APIGETPPODETAILDATAFAMILLE;
+  private apiGetPpoStatistique = environment.APIGETPPOSTATISTIQUE;
+  
 
   constructor(private https: HttpClient) { }
 
@@ -31,6 +33,7 @@ export class PpoService {
     return this.https.post(this.apiGetPpoDetail, { id: id, dateDebut: dateDebut, dateFin: dateFin, exploitation: exploitation });
   }
 
+  
   createPpo(ppo: InterfacePpos) {
     return this.https.post(this.apiCreatePpo, { ppo: ppo });
   }
@@ -69,5 +72,9 @@ export class PpoService {
   
   getPpoDetailDataFamille(data: any) {
     return this.https.post(this.apiGetPpoDetailDataFamille, data);
+  }
+
+  getPpoStatistique(articlesId:number[]){
+    return this.https.get(this.apiGetPpoStatistique,{})
   }
 }

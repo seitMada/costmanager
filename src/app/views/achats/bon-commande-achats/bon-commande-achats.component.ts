@@ -93,6 +93,8 @@ export class BonCommandeAchatsComponent implements OnInit {
   public artExploitationArticleId: any[] = [];
 
   public exploitationId = +(sessionStorage.getItem('exploitation') || 3);
+  private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
+
   public idFournisseur = 0;
   public idBonCommande = 0;
   public articleFournisseurId = 0;
@@ -206,18 +208,27 @@ export class BonCommandeAchatsComponent implements OnInit {
         this.fournisseurs = _fournisseur;
         this.fournisseur = _fournisseur[0];
         this.idFournisseur = this.fournisseur.id ? this.fournisseur.id : 0;
-        this.commandeService.getCommandeByFournisseurExploitation(this.idFournisseur, this.exploitation.id ? this.exploitation.id : 0).subscribe({
-          next: (boncommande) => {
-            this.commandes = [];
-            this.boncommandes = boncommande;
-            this.boncommandesBack = boncommande;
-            // console.log(this.boncommandes);
-
-          },
-          error: (error) => {
-            alert('Liste de bon de commande vide');
-          }
-        })
+        if (this.isAdmin) {
+          this.commandeService.getAllCommande(this.idFournisseur).subscribe({
+            next: (boncommande) => {
+              this.commandes = [];
+              this.boncommandes = boncommande;  
+            },
+            error: (error) => {
+              alert('Liste de bon de commande vide');
+            }
+          })
+        } else {
+          this.commandeService.getCommandeByFournisseurExploitation(this.idFournisseur, this.exploitation.id ? this.exploitation.id : 0).subscribe({
+            next: (boncommande) => {
+              this.commandes = [];
+              this.boncommandes = boncommande;  
+            },
+            error: (error) => {
+              alert('Liste de bon de commande vide');
+            }
+          })
+        }
       },
       error: (error) => {
         alert('Liste fournisseur vide')
@@ -390,33 +401,37 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   validateCommande() {
-    const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
+    if (!this.isAdmin) {
+      const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
 
-    if (selectedBonCommandes.length >0) {
-      for (const bonCommande of selectedBonCommandes) {
-        if (bonCommande.validation == 0) {
-          this.commandeService.validateCommande(bonCommande).subscribe({
-            next: (value) => {
-              this.showAllFournisseur();
-              this.toggleToast('Bon de commande n° ' + bonCommande.noPiece + ' a été validé');
-              this.toggle = this.toggle;
-              this.showvalidateBtn = !this.showvalidateBtn;
-            },
-          });
-        } else {
-          alert('Ce bon de commande est déjà validé!');
-          this.showvalidateBtn = !this.showvalidateBtn;
+      if (selectedBonCommandes.length >0) {
+        for (const bonCommande of selectedBonCommandes) {
+          if (bonCommande.validation == 0) {
+            this.commandeService.validateCommande(bonCommande).subscribe({
+              next: (value) => {
+                this.showAllFournisseur();
+                this.toggleToast('Bon de commande n° ' + bonCommande.noPiece + ' a été validé');
+                this.toggle = this.toggle;
+                this.showvalidateBtn = !this.showvalidateBtn;
+              },
+            });
+          } else {
+            alert('Ce bon de commande est déjà validé!');
+            this.showvalidateBtn = !this.showvalidateBtn;
+          }
         }
+      } else {
+        this.commandeService.validateCommande(this.boncommande).subscribe({
+          next: (value) => {
+            this.toggleToast('Bon de commande n° ' + this.boncommande.noPiece + ' a été validé');
+            this.inputModif = true;
+            this.showvalidateBtn = !this.showvalidateBtn;
+            this.addBtn = false;
+          },
+        });
       }
-    } else {
-      this.commandeService.validateCommande(this.boncommande).subscribe({
-        next: (value) => {
-          this.toggleToast('Bon de commande n° ' + this.boncommande.noPiece + ' a été validé');
-          this.inputModif = true;
-          this.showvalidateBtn = !this.showvalidateBtn;
-          this.addBtn = false;
-        },
-      });
+    }else{
+        alert('Il est impossible de valider cette commande.!');
     }
   }
 
@@ -690,27 +705,31 @@ export class BonCommandeAchatsComponent implements OnInit {
 
 
   addBonCommande() {
-    this.boncommande = this.boncommande;
+    if (!this.isAdmin) {
+      this.boncommande = this.boncommande;
     
-    if (this.commandes.length > 0) {
-      this.commandeService.createBonCommande(this.boncommande, this.commandes).subscribe({
-        next: (commande: any) => {
-          this.inputModif = !this.inputModif;
-          this.addCommande = false;
-          this.listArts = false;
-          this.addTogle = false;
-          this.modifToggle = !this.modifToggle;
-          this.showvalidateBtn = !this.showvalidateBtn;
-          this.addBtn = false;
-          this.toggleToast('Bon de commande n° ' + this.boncommande.noPiece + ' crée avec succès!');
-          this.resetCommande();
-        },
-        error: (error) => {
-          alert('veuillez réessayer!');
-        }
-      });
-    } else {
-      alert('veuillez sélectionné un article!');
+      if (this.commandes.length > 0) {
+        this.commandeService.createBonCommande(this.boncommande, this.commandes).subscribe({
+          next: (commande: any) => {
+            this.inputModif = !this.inputModif;
+            this.addCommande = false;
+            this.listArts = false;
+            this.addTogle = false;
+            this.modifToggle = !this.modifToggle;
+            this.showvalidateBtn = !this.showvalidateBtn;
+            this.addBtn = false;
+            this.toggleToast('Bon de commande n° ' + this.boncommande.noPiece + ' crée avec succès!');
+            this.resetCommande();
+          },
+          error: (error) => {
+            alert('veuillez réessayer!');
+          }
+        });
+      } else {
+        alert('veuillez sélectionné un article!');
+      }
+    }else{
+      alert('Il est impossible de créer une commande.!');
     }
   }
 
@@ -739,12 +758,15 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   }
   deleteSelectedRows() {
-    this.commandes = this.commandes.filter(line => !line.selected);
-    this.showDeleteBtn = false;
-    // this.modifToggle = true;
-    this.addBtn = true;
-    for (const _comDetail of this.commandes) {
-      this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id !== _comDetail.articlefournisseurId);
+    if(!this.isAdmin){
+      this.commandes = this.commandes.filter(line => !line.selected);
+      this.showDeleteBtn = false;
+      this.addBtn = true;
+      for (const _comDetail of this.commandes) {
+        this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id !== _comDetail.articlefournisseurId);
+      }
+    }else{
+      alert('Il est impossible de supprimer ces articles.!');
     }
   }
 
@@ -754,21 +776,25 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   deleteSelectedRowsComm() {
-    const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
-    for (const bonCommande of selectedBonCommandes) {
-      if (bonCommande.validation == 0) {
-        this.commandeService.deleteOneCommande(bonCommande).subscribe({
-          next: (value) => {
-            this.toggleToast('Bon de commande n° ' + bonCommande.noPiece + ' a été supprimé avec succès!');
-            this.boncommandes = this.boncommandes.filter(line => line !== bonCommande);
-            this.showDeleteBtnCom = this.boncommandes.some(line => line.selected);
-            this.showvalidateBtn = this.boncommandes.some(line => line.selected);
+    if (!this.isAdmin) {
+      const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
+      for (const bonCommande of selectedBonCommandes) {
+        if (bonCommande.validation == 0) {
+          this.commandeService.deleteOneCommande(bonCommande).subscribe({
+            next: (value) => {
+              this.toggleToast('Bon de commande n° ' + bonCommande.noPiece + ' a été supprimé avec succès!');
+              this.boncommandes = this.boncommandes.filter(line => line !== bonCommande);
+              this.showDeleteBtnCom = this.boncommandes.some(line => line.selected);
+              this.showvalidateBtn = this.boncommandes.some(line => line.selected);
 
-          },
-        });
-      } else {
-        alert('Ce bon de commande ne peut pas supprimer!')!
+            },
+          });
+        } else {
+          alert('Ce bon de commande ne peut pas supprimer!')!
+        }
       }
+    }else{
+      alert('Il est impossible de supprimer cette commande.!');
     }
   }
 
@@ -777,17 +803,27 @@ export class BonCommandeAchatsComponent implements OnInit {
   async selectFounisseur(data: InterfaceFournisseur) {
     this.fournisseur = data;
     this.fournisseur.id = data.id ? data.id : 0;
-    this.commandeService.getCommandeByFournisseurExploitation(this.fournisseur.id, this.exploitation.id ? this.exploitation.id : 0).subscribe({
-      next: (boncommande) => {
-        this.commandes = [];
-        this.boncommandes = boncommande;
-        this.boncommandesBack = boncommande;
-      },
-      error: (error) => {
-        alert('Liste de bon de commande vide');
-      }
-    });
-
+    if (this.isAdmin) {
+      this.commandeService.getAllCommande(this.fournisseur.id).subscribe({
+        next: (boncommande) => {
+          this.commandes = [];
+          this.boncommandes = boncommande;
+        },
+        error: (error) => {
+          alert('Liste de bon de commande vide');
+        }
+      })
+    } else {
+      this.commandeService.getCommandeByFournisseurExploitation(this.fournisseur.id, this.exploitation.id ? this.exploitation.id : 0).subscribe({
+        next: (boncommande) => {
+          this.commandes = [];
+          this.boncommandes = boncommande;
+        },
+        error: (error) => {
+          alert('Liste de bon de commande vide');
+        }
+      });
+    }
   }
 
   showListCommande() {

@@ -78,18 +78,84 @@
           </tbody>
         </table>
       </div>
+      
     </div>
   </div>
 </div>
+
 <div class="row">
-  <div class="col-xl-8 col-md-12 col-sm-12 mb-1">
+  <div class="col-xl-6 col-md-12 col-sm-12 mb-1">
+    <div class="card shadow">
+      <div class="d-flex bd-highlight">
+        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Valorisation de stock</span></div>
+        <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-danger"
+            style="border: none;">
+            <i class="fas fa-chart-area"></i></button>
+        </div>
+      </div>
+      <div class="overflow-y-scroll m-2" style="height: 100%;" style="height: 400px;" >
+        <table class="table table-sm table-striped table-hover">
+          <thead>
+            <th>Articles</th>
+            <th>Date dernier Inventaire</th>
+            <th>Stock réel</th>
+            <th>Valorisation</th>
+          </thead>
+          <tbody>
+            <tr >
+              
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="overflow-y-scroll" style="height: 100%;">
+        
+      </div>
+    </div>
+  </div>
+
+  <div class="col-xl-6 col-md-12 col-sm-12 mb-1">
+    <div class="card shadow">
+      <div class="d-flex bd-highlight">
+        <div class="p-1 flex-grow-1 bd-highlight text-center">
+          <span class="col-12 fw-bold">Valorisation des article en Fiche Technique</span>
+        </div>
+      </div>
+      <div class="overflow-y-scroll m-2" style="height: 100%;" style="height: 400px;">
+        <table class="table table-sm table-striped table-hover">
+          <thead>
+            <th>Articles</th>
+            <th>Nombre FT</th>
+            <th>Valorisation</th>
+          </thead>
+          <tbody>
+            <tr *ngFor="let item of valorisationarticlesFT">
+              <td>{{ item.libelle }}</td>
+              <td>{{ item.count }}</td>
+              <td>{{ item.valorisation | number:'1.2-2' }} €</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-xl-6 col-md-12 col-sm-12 mb-1">
     <div class="card bg-white shadow h-100 py-2">
       <div class="d-flex bd-highlight">
         <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Pertes</span></div>
-        <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-success" style="border: none;"
-            (click)="periodeperte()">
+        <div class="p-1 bd-highlight" *ngIf="!isperteperiode"><button class="btn btn-sm btn-outline-success" style="border: none;"
+            (click)="getchartarticleperte(null)">
             <i class="fas fa-chart-area"></i></button>
         </div>
+        <div class="p-1 bd-highlight" *ngIf="isperteperiode"><button class="btn btn-sm btn-outline-info" style="border: none;"
+            (click)="showchartperte()">
+            <i class="fas fa-pie-chart"></i></button>
+        </div>
+        
       </div>
       <div class="overflow-y-scroll m-2" style="height: 100%;" style="height: 400px;" *ngIf="isperteperiode">
         <table class="table table-sm table-striped table-hover">
@@ -109,26 +175,31 @@
            
           </thead>
           <tbody>
-            <!-- <tr *ngFor="let line of perte">
+            <tr *ngFor="let line of perte" (click)="getchartarticleperte(line)">
               <td>{{line.articlelibelle}}</td>
-              <td>{{+line.perteprecedent * +line.cout | number: '1.2-2'}} € </td>
-              <td>{{+line.perte * +line.cout| number: '1.2-2'}} € </td>
-              <td>{{(((+line.perte * +line.cout) - (+line.perteprecedent * +line.cout)) / (+line.perte * +line.cout)) * 100 | number: '1.2-2'}} %</td>
-            </tr> -->
-            <tr *ngFor="let line of perte">
-              <td>{{line.articlelibelle}}</td>
-              <td>{{+line.totalPertePrecedent| number: '1.2-2'}} €</td>
-              <td>{{+line.totalPerteEnCours | number: '1.2-2'}} €</td>
-              <td>{{+line.ecart| number: '1.2-2'}} %</td>
-              
+              <td>{{+line.perte * +line.cout| number: '1.2-2'}} €</td>
+              <td>{{+line.perteprecedent * +line.cout | number: '1.2-2'}} €</td>
+              <td class="fw-bold">
+                <span [ngClass]="((+line.perte * +line.cout) >= (+line.perteprecedent * +line.cout)) ? 'text-success':'text-danger'">{{ ((+line.perte * +line.cout) == (+line.perteprecedent * +line.cout)) ? '0.00': (((-1)*((+line.perte * +line.cout) - (+line.perteprecedent * +line.cout))) / (+line.perteprecedent * +line.cout)) * 100 | number: '1.2-2'}} %</span>
+                <i
+                  [ngClass]="((+line.perte * +line.cout) >= (+line.perteprecedent * +line.cout)) ? 'fas fa-chevron-down text-success':'fas fa-chevron-up text-danger'"></i>
+              </td>
             </tr>
           </tbody>
         </table>
       </div>
 
       <div class="overflow-y-scroll" style="height: 100%;" *ngIf="!isperteperiode">
-        <!-- <highcharts-chart [Highcharts]="Highcharts" [options]="chartVariationArticle"
-          style="width: 100%; height: 100%; display: block;"></highcharts-chart> -->
+       <highcharts-chart [Highcharts]="Highcharts" [options]="chartPerteArticle"
+          style="width: 100%; height: 100%; display: block;"></highcharts-chart> 
+      </div>
+    </div>
+  </div>
+  <div class="col-xl-6 col-md-12 col-sm-12 mb-1">
+    <div class="card bg-white shadow h-100 py-2">
+      <div class="card-body py-1" style="height: 400px;">
+          <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerteArticle"
+            style="width: 100%; height: 400px; display: block;"></highcharts-chart>
       </div>
     </div>
   </div>
@@ -233,8 +304,9 @@
         </div>
       </div>
       <div class="card-body">
-        <span class="h3">{{pertes[1] ? pertes[1].perte : 0 | number: '1.2-2'}} € <i *ngIf="pertes[0] && pertes[1]"
-            [ngClass]="(pertes[0].perte - pertes[1].perte) > 0 ? 'fas fa-chevron-down text-light':'fas fa-chevron-up text-light'"></i></span>
+        <span class="h3">{{ montantPertePrecedent? montantPertePrecedent:getMontantPertePrecedent() | number:'1.2-2'}} €</span>
+        <!--<span class="h3">{{pertes[1] ? pertes[1].perte : 0 | number: '1.2-2'}} € <i *ngIf="pertes[0] && pertes[1]"
+            [ngClass]="(pertes[0].perte - pertes[1].perte) > 0 ? 'fas fa-chevron-down text-light':'fas fa-chevron-up text-light'"></i></span>-->
         <br>
       </div>
     </div>
@@ -249,18 +321,13 @@
         </div>
       </div>
       <div class="card-body">
-        <span class="h3">{{pertes[0] ? pertes[0].perte : 0 | number: '1.2-2'}} €</span>
+        <span class="h3">
+          {{ montantPerteEnCours ? montantPerteEnCours:getMontantPerteEnCours() | number: '1.2-2' }} €
+          <!--{{pertes[0] ? pertes[0].perte : 0 | number: '1.2-2'}} €-->
+          </span>
         <br>
       </div>
     </div>
   </div>
-  <div class="card col-6 mb-1" style="height: 170px;">
-
-  </div>
-  <div class="card col-6 mb-1" style="height: 250px;">
-
-  </div>
-  <div class="card col-6 mb-1" style="height: 250px;">
-
-  </div>
+ 
 </div>
