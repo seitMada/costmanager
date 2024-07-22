@@ -9,7 +9,10 @@ export class DashboardService {
 
   private apivariationprixarticle = environment.APIVARIATIONARTICLE;
   private apiGetPpoByArticle = environment.APIGETPERTEARTICLE;
-  private apiGetValorisationArticleFt = environment.APIGETCOMPOSITIONFICHETECHNIQUE;
+  private apiGetArticlePlusUtilise = environment.APIGETARTICLEPLUSUTILISE;
+  private apiGetValorisationStock = environment.APIGETVALORISATIONSTOCK;
+  private apiGetValueStockTheorique = environment.APIGETVALUESTOCKTHEORIQUE;
+  private apiGetArticleInventaire = environment.APIGETARTICLEINVENTAIRE;
 
   constructor(private https: HttpClient) { }
 
@@ -21,8 +24,20 @@ export class DashboardService {
     return this.https.get<any>(this.apiGetPpoByArticle+articleId,{params : {operateurId:operateurId}});
   }
 
-  public getvalorisationArticleFT(){
-    return this.https.get<any>(this.apiGetValorisationArticleFt);
+  public getArticlePlusUtilise(dateDebut:any,dateFin:any,exploitationId:number,articleid:number){
+    return this.https.post(this.apiGetArticlePlusUtilise,{dateDebut,dateFin,exploitationId,articleid});
+  }
+
+  public getValorisationStock(operateurId:number,exploitationId:number){
+    return this.https.get<any>(this.apiGetValorisationStock+operateurId,{ params: { exploitationId:exploitationId}});
+  }
+
+  public getvaleurStockTheorique(dateInventaire:any,articleId:number){
+    return this.https.post<any>(this.apiGetValueStockTheorique, {dateInventaire,articleId});
+  }
+
+  public getstockArticle(articleId:number,operateurId:number){
+    return this.https.get<any>(this.apiGetArticleInventaire+articleId,{ params: { operateurId:operateurId}});
   }
 
 }

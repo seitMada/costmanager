@@ -62,6 +62,9 @@ export const environment = {
     APIPOSTUPDATEARTICLE: endPoint + 'articles/update_articles/',
     APIPOSTDELETEARTICLE: endPoint + 'articles/delete_articles',
     APIPOSTDELETEARTICLES: endPoint + 'articles/delete_multi_articles',
+
+    APIGETVALUESTOCKTHEORIQUE : endPoint + 'articles/stocktheorique',
+
     APIPOSTDESACTIVEARTICLE: endPoint + 'articleexploitation/desactive_articleexploitation/',
     APIPOSTDESACTIVEARTICLES: endPoint + 'articleexploitation/desactive_articleexploitations',
     APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID: endPoint + 'articleexploitation/',
@@ -107,7 +110,6 @@ export const environment = {
 
     APIUPDATECOMPOSITION: endPoint + 'composition/update_composition/',
     APIGETCOMPOSITIONBYFICHETECHNIQUE: endPoint + 'composition/',
-    APIGETCOMPOSITIONFICHETECHNIQUE:endPoint + 'composition',
 
     APIPOSTDESACTIVEFICHETECHNIQUE: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitation/',
     APIPOSTDESACTIVEFICHETECHNIQUES: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitations',
@@ -194,6 +196,12 @@ export const environment = {
     APIGETOPERATEURCENTREEXPLOITATIONBYOPERATEURID: endPoint + 'operateurcentreexploit/',
     APIGETPERTEARTICLE: endPoint + 'ppo/byarticle/',
     APIGETPPOSTATISTIQUE: endPoint + 'ppo/statistics/',
+
+    APIGETVALORISATIONSTOCK: endPoint + 'inventaire_detail/stock/',
+    APIGETARTICLEINVENTAIRE: endPoint + 'inventaire_detail/',
+    APIGETLASTPERIODEINVENTAIRE: endPoint + 'inventaire_detail/dernierperiodeinventaire',
+
+    APIGETARTICLEPLUSUTILISE : endPoint + 'vente_detail',
   
 };
    

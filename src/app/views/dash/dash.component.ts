@@ -54,7 +54,9 @@ import { FichetechniqueService } from 'src/app/shared/service/fichetechnique.ser
     DropdownToggleDirective,
     DropdownMenuDirective,
     DropdownItemDirective,
-    ChartjsComponent],
+    ChartjsComponent
+   
+  ],
   templateUrl: './dash.component.html',
   styleUrl: './dash.component.scss'
 })
@@ -80,11 +82,17 @@ export class DashComponent implements OnInit {
     article: any
   }[] = [];
 
+  public articleFt: {
+    ftId:number,
+    libelle:string,
+    articleId:number
+  }[] = [];
+
   public pertesData : any;
   public valorisationarticlesFT:{
     id:number,
     libelle:string,
-    count:number,
+    quantite:number,
     valorisation:number
   }[] =[];
 
@@ -99,6 +107,7 @@ export class DashComponent implements OnInit {
   public article : InterfaceArticle;
 
   public chartVariationArticle: Highcharts.Options;
+  public chartOptionsHistogramme:Highcharts.Options;
   public chartPerteArticle: Highcharts.Options;
   public chartOptionsMontantPerteArticle: Highcharts.Options;
 
@@ -131,6 +140,8 @@ export class DashComponent implements OnInit {
   }[] = [];
   public perteperiode: string = 'Période en cours';
   public isperteperiode: boolean = true;
+
+  public isstock:boolean = true;
   // public pertetoggle: boolean = true;
 
   public mouvemenstock: {
@@ -148,6 +159,18 @@ export class DashComponent implements OnInit {
     stock_initiale: number,
     prix: number
   }[] = [];
+
+  public valorisationStock:{
+    articleId:number,
+    articleLibelle:string,
+    stockInventaire:number,
+    stockTheorique:number,
+    dateInventaire: Date,
+    valorisationInventaire:number,
+    valorisationTechnique:number,
+    unite:string,
+    stockmin:number
+  }[] =[];
 
   public chiffreaffaire: {
     ca: number,
@@ -623,6 +646,100 @@ export class DashComponent implements OnInit {
     );
   }
 
+  getchartstockarticle(results: {
+    articleId: number,
+    articleLibelle: string,
+    stockInventaire: number,
+    stockTheorique: number,
+    dateInventaire: Date,
+    valorisationInventaire: number,
+    valorisationTechnique: number,
+    unite: string,
+    stockmin: number
+  } | null) {
+    this.isstock = !this.isstock;
+  
+    this.chartOptionsHistogramme = {
+      xAxis: {
+        categories: []
+      },
+      plotOptions: {
+        series: {
+          allowPointSelect: true
+        }
+      },
+      series: [{
+        type: 'column',
+        data: []
+      }]
+    };
+  
+    if (results != null) {
+      this.getDataStock(results.articleId).subscribe({
+        next: (result) => {
+          this.chartOptionsHistogramme = {
+            xAxis: {
+              categories: result.categories
+            },
+            yAxis: {
+              title: {
+                text: ''
+              }
+            },
+            title: {
+              text: results.articleLibelle.toUpperCase() + ' (' + results.unite+ ')'
+            },
+            legend: {
+              enabled: false
+            },
+            plotOptions: {
+              spline: {
+                lineWidth: 4,
+                states: {
+                  hover: {
+                    lineWidth: 5
+                  }
+                },
+                marker: {
+                  enabled: false
+                }
+              }
+            },
+            series: [{
+              type: 'column',
+              name: results.articleLibelle,
+              data: result.data
+            }]
+          };
+        },
+      });
+    }
+  }
+  
+  getDataStock(articleId: number){
+    return this.dashService.getstockArticle(articleId, this.operateurId).pipe(
+      map(_articleinventaire => {
+        const data = [];
+        const categories = [];
+        const unite = [];
+        if (_articleinventaire.length > 0) {
+          for (const _article of _articleinventaire) {
+            data.push(_article.quantite);
+            if (_article.inventaire && _article.inventaire.date_inventaire) {
+              const dateParts = _article.inventaire.date_inventaire.split('-');
+              if (dateParts.length === 3) {
+                const date = `${dateParts[2].substring(0, 2)}/${dateParts[1]}/${dateParts[0]}`;
+                categories.push(date);
+              }
+            }
+            unite.push(_article.unite.abreviation);
+          }
+        }
+        return { data:data, categories:categories , unite:unite};
+      })
+    );
+  }
+
   getchartarticleperte(results: {
     articlelibelle: string,
     articleId: number,
@@ -787,6 +904,7 @@ export class DashComponent implements OnInit {
 
   ngOnInit(): void {
     this.getValorisationArticleFt();
+    this.getValorisationStock();
   }
 
   showchartperte(){
@@ -877,22 +995,106 @@ export class DashComponent implements OnInit {
   //   // });
   // }
 
-  getValorisationArticleFt(){
-    this.dashService.getvalorisationArticleFT().subscribe({
-      next:(_compositions) =>{
-        for(const _ft of _compositions){
-          const valorisationarticles  = {
-            id:_ft.articleId,
-            libelle:_ft.libelle,
-            count:_ft.nbreFt,
-            valorisation:_ft.valorisation
-          }
-          this.valorisationarticlesFT.push(valorisationarticles);
+  formatDateRange(): string {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const debutFormatted = this.dates.debut.toLocaleDateString('fr-FR', options);
+    const finFormatted = this.dates.fin.toLocaleDateString('fr-FR', options);
+
+    return this.dates.debut.getTime() === this.dates.fin.getTime() 
+      ? `depuis l'inventaire du ${debutFormatted}` 
+      : `entre l'inventaire du ${debutFormatted} au ${finFormatted}`;
+  }
+
+  showFicheTechniques(articleId:number){
+    this.inventaireService.getLastPeriodeInventaire(this.idoperateur,this.idexploitation).subscribe({
+      next:(_periode:any) =>{
+        this.dates = {
+          debut: new Date(this.getrealdate(_periode.debut_inventaire)),
+          fin: new Date(this.getrealdate(_periode.fin_inventaire))
         }
-        console.log(this.valorisationarticlesFT);
-        
+        this.dashService.getArticlePlusUtilise(this.getrealdate(_periode.debut_inventaire),this.getrealdate(_periode.fin_inventaire),this.idexploitation,articleId).subscribe({
+          next:(_articles:any) =>{
+            this.articleFt = _articles;   
+            console.log(this.articleFt);
+                           
+          },
+        })
       },
     });
+  }
+
+  hideFicheTechniques() {
+    this.articleFt = [];
+  }
+
+  getValorisationArticleFt(){
+    this.inventaireService.getLastPeriodeInventaire(this.idoperateur,this.idexploitation).subscribe({
+      next:(_periode:any) =>{
+        this.dates = {
+          debut: new Date(this.getrealdate(_periode.debut_inventaire)),
+          fin: new Date(this.getrealdate(_periode.fin_inventaire))
+        }
+        const articleid = 0;
+        this.dashService.getArticlePlusUtilise(this.getrealdate(_periode.debut_inventaire),this.getrealdate(_periode.fin_inventaire),this.idexploitation,articleid).subscribe({
+          next:(_articles:any) =>{
+            const results = this.getSommeQuantiteEtValorisationArticle(_articles);
+            for(const article of results){
+              const articleVendu = {
+                id:article.articleId,
+                libelle:article.libelle,
+                quantite:article.qteArticle,
+                valorisation:article.valorisation
+              };
+              this.valorisationarticlesFT.push(articleVendu);
+            }            
+          },
+        })
+      },
+    });
+  }
+ getSommeQuantiteEtValorisationArticle(data: any){
+    const resultMap: { [key: string]: any } = {};
+    data.forEach((item:any) => {
+      const key = `${item.articleId}`;
+      if (!resultMap[key]) {
+        resultMap[key] = { ...item, qteArticle: '0', valorisation: '0' };
+      }
+      
+      resultMap[key].qteArticle = (parseFloat(resultMap[key].qteArticle) + parseFloat(item.qteArticle)).toFixed(2);
+      resultMap[key].valorisation = (parseFloat(resultMap[key].valorisation) + parseFloat(item.valorisation)).toFixed(2);
+    });
+    
+    return Object.values(resultMap);
+  }
+
+  getValorisationStock(){
+
+    this.dashService.getValorisationStock(this.operateurId,this.idexploitation).subscribe({
+      next:(_valorisations) =>{
+        for (const valeur of _valorisations) {          
+          this.dashService.getvaleurStockTheorique(this.getrealdate(valeur.date_inventaire),valeur.articleId).subscribe({
+            next:(_stocks) =>{
+              const articles = _stocks.filter((line:any) => line.articleId === valeur.articleId);
+                for(const _article of articles){
+                  
+                  const inventaire = {
+                    articleId:valeur.articleId,
+                    articleLibelle:valeur.libelle,
+                    stockInventaire:valeur.quantite,
+                    stockTheorique:Number(valeur.quantite) + Number(_article.qteAchat) - Number(_article.qteVente) - Number(_article.qtePerte),
+                    dateInventaire: new Date(valeur.date_inventaire),
+                    valorisationInventaire:valeur.cout * valeur.quantite,
+                    valorisationTechnique:(Number(valeur.quantite) + Number(_article.qteAchat) - Number(_article.qteVente) - Number(_article.qtePerte))*valeur.cout,
+                    unite:valeur.abreviation,
+                    stockmin:valeur.stockminimum
+                  };
+                  this.valorisationStock.push(inventaire);
+                }
+            },
+          }); 
+        }        
+      },
+    })
   }
 
   getMontantPerteEnCours():number{

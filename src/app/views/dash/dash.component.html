@@ -19,10 +19,10 @@
               <th>Ecart <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortArticleVariation($event, 'ecart','numeric')"></i></th>
             </tr>
             <tr>
-              <th> <input type="search" class="form-control" name="libelle" (input)="onSearchArticleVariation($event,'libelle')" placeholder="Rechercher..."></th>
-              <th> <input type="search" class="form-control" name="prixactuel" (input)="onSearchArticleVariation($event,'prixactuel')" placeholder="Rechercher..."></th>
-              <th> <input type="search" class="form-control" name="prixprecedent" (input)="onSearchArticleVariation($event,'prixprecedent')" placeholder="Rechercher..."></th>
-              <th> <input type="search" class="form-control" name="ecart" (input)="onSearchArticleVariation($event,'ecart')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control form-control-sm" name="libelle" (input)="onSearchArticleVariation($event,'libelle')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control form-control-sm" name="prixactuel" (input)="onSearchArticleVariation($event,'prixactuel')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control form-control-sm" name="prixprecedent" (input)="onSearchArticleVariation($event,'prixprecedent')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control form-control-sm" name="ecart" (input)="onSearchArticleVariation($event,'ecart')" placeholder="Rechercher..."></th>
             </tr>
           </thead>
           <tbody>
@@ -55,17 +55,16 @@
         <table class="table table-sm table-striped table-hover">
           <thead>
             <tr>
-              <th>Fiche techniques <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'fichetechnique.libelle')"></i></th>
-              <th>Cout <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'cout','numeric')"></i></th>
-              <th>Prix <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'prix','numeric')"></i></th>
-              <th>Ecart <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'ecart','numeric')"></i></th>
+              <th class="col-4">Fiche techniques <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'fichetechnique.libelle')"></i></th>
+              <th class="col-3">Cout <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'cout','numeric')"></i></th>
+              <th class="col-3">Prix Vente<i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'prix','numeric')"></i></th>
+              <th class="col-2">Marge <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortAnalyseVentes($event, 'ecart','numeric')"></i></th>
             </tr>
             <tr>
-              <th> <input type="search" class="form-control" name="libelle" (input)="onSearchAnalyseVentes($event,'fichetechnique.libelle')" placeholder="Rechercher..."></th>
-              <th> <input type="search" class="form-control" name="cout" (input)="onSearchAnalyseVentes($event,'cout')"  placeholder="Rechercher..."></th>
-              <th> <input type="search" class="form-control" name="libelle" (input)="onSearchAnalyseVentes($event,'prix')"  placeholder="Rechercher..."></th>
-              <th> <input type="search" class="form-control" name="libelle" (input)="onSearchAnalyseVentes($event,'ecart')"  placeholder="Rechercher..."></th>
-              <!-- <th></th> -->
+              <th> <input type="search" class="form-control form-control-sm" name="libelle" (input)="onSearchAnalyseVentes($event,'fichetechnique.libelle')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control form-control-sm" name="cout" (input)="onSearchAnalyseVentes($event,'cout')"  placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control form-control-sm" name="libelle" (input)="onSearchAnalyseVentes($event,'prix')"  placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control form-control-sm" name="libelle" (input)="onSearchAnalyseVentes($event,'ecart')"  placeholder="Rechercher..."></th>
             </tr>
           </thead>
           <tbody>
@@ -88,28 +87,43 @@
     <div class="card shadow">
       <div class="d-flex bd-highlight">
         <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Valorisation de stock</span></div>
-        <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-danger"
+        <div class="p-1 bd-highlight" *ngIf="!isstock"><button class="btn btn-sm btn-outline-danger" (click)="getchartstockarticle(null)"
             style="border: none;">
             <i class="fas fa-chart-area"></i></button>
         </div>
       </div>
-      <div class="overflow-y-scroll m-2" style="height: 100%;" style="height: 400px;" >
-        <table class="table table-sm table-striped table-hover">
-          <thead>
-            <th>Articles</th>
-            <th>Date dernier Inventaire</th>
-            <th>Stock réel</th>
-            <th>Valorisation</th>
+      <div class="overflow-y-scroll m-2" style="height: 100%;" style="height: 400px;" *ngIf="isstock">
+        <table class="table table-hover table-bordered table-sm table-striped">
+          <thead class="fw-bold">
+            <tr>
+               <th colspan="2"></th>
+              <th colspan="2" class="text-center">Stock</th>
+              <th colspan="2"  class="text-center">Valorisation</th>
+            </tr>
+            <tr>
+              <td>Articles</td>
+              <td>Date Inventaire</td>
+              <td>Inventaire</td>
+              <td>Théorique</td>
+              <td> Inventaire</td>
+              <td>Théorique</td>
+            </tr>
           </thead>
-          <tbody>
-            <tr >
-              
+          <tbody class="text-center">
+            <tr *ngFor="let lines of valorisationStock" [ngClass]="{'table-danger': lines.stockmin > lines.stockInventaire}" (click)="getchartstockarticle(lines)">
+              <td>{{ lines.articleLibelle }}</td>
+              <td>{{ lines.dateInventaire | date:'yyyy-MM-dd' }}</td>
+              <td>{{ lines.stockInventaire | number:'1.0-0' }}</td>
+              <td>{{ lines.stockTheorique }}</td>
+              <td>{{ lines.valorisationInventaire | number:'1.2-2' }} €</td>
+              <td>{{ lines.valorisationTechnique }}</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <div class="overflow-y-scroll" style="height: 100%;">
-        
+      <div class="overflow-y-scroll" style="height: 100%;" *ngIf="!isstock">
+        <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsHistogramme"
+          style="width: 100%; height: 100%; display: block;"></highcharts-chart> 
       </div>
     </div>
   </div>
@@ -118,20 +132,20 @@
     <div class="card shadow">
       <div class="d-flex bd-highlight">
         <div class="p-1 flex-grow-1 bd-highlight text-center">
-          <span class="col-12 fw-bold">Valorisation des article en Fiche Technique</span>
+          <span class="col-12 fw-bold">Les articles les plus utilisés  {{ formatDateRange() }}</span>
         </div>
       </div>
       <div class="overflow-y-scroll m-2" style="height: 100%;" style="height: 400px;">
         <table class="table table-sm table-striped table-hover">
           <thead>
             <th>Articles</th>
-            <th>Nombre FT</th>
+            <th>Quantité utilisé</th>
             <th>Valorisation</th>
           </thead>
           <tbody>
-            <tr *ngFor="let item of valorisationarticlesFT">
+            <tr *ngFor="let item of valorisationarticlesFT" (mouseover)="showFicheTechniques(item.id)" (mouseout)="hideFicheTechniques()">
               <td>{{ item.libelle }}</td>
-              <td>{{ item.count }}</td>
+              <td>{{ item.quantite | number:'1.0-0' }}</td>
               <td>{{ item.valorisation | number:'1.2-2' }} €</td>
             </tr>
           </tbody>
@@ -161,15 +175,15 @@
         <table class="table table-sm table-striped table-hover">
           <thead>
             <tr>
-              <th>Articles <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortPertes($event, 'articlelibelle')"></i></th>
-              <th>Pertes précédente <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortPertes($event, 'totalPertePrecedent','numeric')"></i></th>
-              <th>Pertes en cours <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortPertes($event, 'totalPerteEnCours','numeric')"></i></th>
-              <th>Ecart</th>
+              <th class="col-3">Articles <i class="fas fa-sort sort-style"  (click)="onSortPertes($event, 'articlelibelle')"></i></th>
+              <th class="col-4">Pertes précédente <i class="fas fa-sort sort-style"  (click)="onSortPertes($event, 'totalPertePrecedent','numeric')"></i></th>
+              <th class="col-3">Pertes en cours <i class="fas fa-sort sort-style"  (click)="onSortPertes($event, 'totalPerteEnCours','numeric')"></i></th>
+              <th class="col-2">Ecart</th>
             </tr>
             <tr>
-              <th> <input type="search" class="form-control" name="libelle" (input)="onSearchPertes($event,'articlelibelle')" placeholder="Rechercher..."></th>
-              <th> <input type="search" class="form-control" name="totalPertePrecedent" (input)="onSearchPertes($event,'totalPertePrecedent')" placeholder="Rechercher..."></th>
-              <th> <input type="search" class="form-control" name="totalPerteEnCours" (input)="onSearchPertes($event,'totalPerteEnCours')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control form-control-sm w-75" name="libelle" (input)="onSearchPertes($event,'articlelibelle')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control form-control-sm w-75" name="totalPertePrecedent" (input)="onSearchPertes($event,'totalPertePrecedent')" placeholder="Rechercher..."></th>
+              <th> <input type="search" class="form-control form-control-sm w-75" name="totalPerteEnCours" (input)="onSearchPertes($event,'totalPerteEnCours')" placeholder="Rechercher..."></th>
               <th></th>
             </tr>
            
@@ -195,14 +209,14 @@
       </div>
     </div>
   </div>
-  <div class="col-xl-6 col-md-12 col-sm-12 mb-1">
+  <!-- <div class="col-xl-6 col-md-12 col-sm-12 mb-1">
     <div class="card bg-white shadow h-100 py-2">
       <div class="card-body py-1" style="height: 400px;">
           <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerteArticle"
             style="width: 100%; height: 400px; display: block;"></highcharts-chart>
       </div>
     </div>
-  </div>
+  </div> -->
 </div>
 <div class="row">
   <div class="col-xl-4 col-md-12 col-sm-12 mb-1">

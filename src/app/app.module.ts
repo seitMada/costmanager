@@ -41,11 +41,12 @@ import {
   SharedModule,
   SidebarModule,
   TabsModule,
+  TooltipModule,
   UtilitiesModule
 } from '@coreui/angular';
 
 import { IconModule, IconSetService } from '@coreui/icons-angular';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 const APP_CONTAINERS = [
   DefaultFooterComponent,
@@ -86,6 +87,9 @@ const APP_CONTAINERS = [
     FormsModule,
     CommonModule,
     ModalModule,
+    TooltipModule,
+    NgbModule,
+    NgbTooltipModule,
     BsDatepickerModule.forRoot(),
   ],
   providers: [
