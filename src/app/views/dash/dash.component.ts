@@ -5,8 +5,8 @@ import { Router, ActivatedRoute } from '@angular/router';
 
 import { map } from 'rxjs/operators';
 
-import { ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent } from '@coreui/angular';
-import { NgbNavModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent, TooltipDirective } from '@coreui/angular';
+import { NgbNavModule, NgbDropdownModule, NgbTooltipModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { ArticleService } from 'src/app/shared/service/article.service';
 import { ExploitationService } from 'src/app/shared/service/exploitation.service';
 import { UnitesService } from 'src/app/shared/service/unites.service';
@@ -44,7 +44,8 @@ import { FichetechniqueService } from 'src/app/shared/service/fichetechnique.ser
 @Component({
   selector: 'app-dash',
   standalone: true,
-  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent, HighchartsChartModule, RowComponent,
+  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule, ToasterComponent, ToastComponent, ToastHeaderComponent, 
+    ToastBodyComponent, HighchartsChartModule, RowComponent,
     ColComponent,
     WidgetStatAComponent,
     TemplateIdDirective,
@@ -54,7 +55,10 @@ import { FichetechniqueService } from 'src/app/shared/service/fichetechnique.ser
     DropdownToggleDirective,
     DropdownMenuDirective,
     DropdownItemDirective,
-    ChartjsComponent
+    ChartjsComponent,
+    NgbModule,
+    NgbTooltipModule,
+    TooltipDirective
    
   ],
   templateUrl: './dash.component.html',
@@ -83,8 +87,8 @@ export class DashComponent implements OnInit {
   }[] = [];
 
   public articleFt: {
-    ftId:number,
-    libelle:string,
+    id:number,
+    libelleFt:string,
     articleId:number
   }[] = [];
 
@@ -93,7 +97,12 @@ export class DashComponent implements OnInit {
     id:number,
     libelle:string,
     quantite:number,
-    valorisation:number
+    valorisation:number,
+    fichetechnique:{
+      id:number,
+      libelleFt:string,
+      articleId:number
+    }
   }[] =[];
 
   public centrerevenus: InterfaceCentreRevenu[];
@@ -120,6 +129,7 @@ export class DashComponent implements OnInit {
   public montantPertePrecedent:number = 0;
 
   public articlevariationtoggle = true;
+  public pertechartetoggle = false;
 
   public bordercolor = '#FFFFFF';
 
@@ -140,6 +150,7 @@ export class DashComponent implements OnInit {
   }[] = [];
   public perteperiode: string = 'Période en cours';
   public isperteperiode: boolean = true;
+  public isarticleFt:boolean = true;
 
   public isstock:boolean = true;
   // public pertetoggle: boolean = true;
@@ -360,8 +371,7 @@ export class DashComponent implements OnInit {
         });
       }
     });
-
-    this.getchartperte();
+    this.initialiseChart();
     this.getMontantPerteEnCours();
     this.getMontantPertePrecedent();
   }
@@ -408,14 +418,17 @@ export class DashComponent implements OnInit {
   }
 
   private async getMouvementStock(_idexploitation: number[]) {
+    
     this.inventaireService.getPeriode(_idexploitation, true).subscribe({
       next: (value: any) => {
         this.periode = value;
-        console.log(value)
+        console.log(this.periode);
         if (this.periode.length > 0) {
           this.venteService.getVenteCrDate(this.exploitationsselected, this.getrealdate(this.periode[0].debut), this.getrealdate(this.periode[0].fin), true).subscribe({
             next: (_ventes: any) => {
               const _dateFin = new Date(this.periode[0].fin);
+              
+              
               _dateFin.setDate(_dateFin.getDate() - 1);
               let _chiffreaffaire = 0;
 
@@ -426,7 +439,6 @@ export class DashComponent implements OnInit {
               // this.periodeselected = this.periode[0];
               this.articleService.getMouvementStock({ debut: this.getrealdate(this.periode[0].debut), fin: this.getrealdate(_dateFin), final: this.getrealdate(this.periode[0].fin) }, this.exploitationsselected, true).subscribe({
                 next: (_articles: any) => {
-                  console.log(_articles);
                   
                   this.chiffreaffaire.push({
                     ca: _chiffreaffaire,
@@ -444,14 +456,14 @@ export class DashComponent implements OnInit {
                     periode: 0
                   });
                   
-                  for (const _pertes of _articles) {
+                  for (const _perte of _articles) {
                     this.perte.push({
-                      articlelibelle: _pertes.libelle,
-                      articleId: _pertes.article_id,
-                      perte: _pertes.pertes,
+                      articlelibelle: _perte.libelle,
+                      articleId: _perte.article_id,
+                      perte: _perte.pertes,
                       perteprecedent: 0,
-                      cout: _pertes.cout,
-                      totalPerteEnCours:+_pertes.pertes * +_pertes.cout,
+                      cout: _perte.cout,
+                      totalPerteEnCours:+_perte.pertes * +_perte.cout,
                       totalPertePrecedent:0,
                       ecart:0
                     });
@@ -475,6 +487,7 @@ export class DashComponent implements OnInit {
                             debut: this.getrealdate(this.periode[0].debut),
                             fin: this.getrealdate(new Date())
                           })
+                          
                           let pertevalue = 0;
                           for (const _pertes of _articles) {
                             pertevalue += +_pertes.pertes;
@@ -640,7 +653,6 @@ export class DashComponent implements OnInit {
           const date = (item.date_ppo.split('-')[2].substring(0, 2)) + '/' + item.date_ppo.split('-')[1] + '/' + item.date_ppo.split('-')[0];
           categories.push(date);
         }
-        console.log(categories);
         return { data, categories };
       })
     );
@@ -906,19 +918,7 @@ export class DashComponent implements OnInit {
     this.getValorisationArticleFt();
     this.getValorisationStock();
   }
-
-  showchartperte(){
-    const articlesId = this.perte.map((i:any) => i.articleId);
-    this.ppoService.getPpoStatistique(articlesId).subscribe({
-      next:(values) =>{
-        
-      }
-    })
-    
-  }
-
-  getchartperte(){
-       
+  initialiseChart(){
     this.chartOptionsMontantPerteArticle = {
       time: {
         Date: new Date(),
@@ -941,15 +941,10 @@ export class DashComponent implements OnInit {
           showInLegend: true,
           allowPointSelect: true,
           size: '98%',
-          events: {
-            // click: (event) => {
-            //   this.getTableauPerteArticle(event,this.perte);
-            // }
-          }
         }
       },
       title: {
-        text: "Montant ",
+        text: "Montant du perte en cours",
         align: "left",
         style: {
           fontSize: "16px",
@@ -964,8 +959,57 @@ export class DashComponent implements OnInit {
       ],
     };
   }
+  async showchartperte(){
+    this.inventaireService.getPeriode(this.exploitationsselected, true).subscribe({
+      next: async (value: any) => {
+        this.periode = value;
+        let dayNow = new Date();
+       if (this.periode[0].fin != null) {
+          dayNow = this.periode[0].fin;
+       }
+        
+        this.dates = {
+          debut: new Date(this.getrealdate(this.periode[0].debut)),
+          fin: new Date(this.getrealdate(dayNow))
+        };
+        const data = {
+          exploitation: this.exploitationsselected.length > 0,
+          id: this.exploitationsselected,
+          date: this.dates
+        }
+        this.ppoService.getPpoDetailData(data).subscribe({
+          next: async (_response: any) => {
+            let _categories: any[] = [];
+            const _dataquantityarticle: { y: number; name: any; color: any; id: any; exploitation: boolean; }[] | { y: number; name: string; color: string; }[] = [];
+            const _datacostarticle = [];
+            for (const _ppodetails of _response.article) {
+              _categories.push(_ppodetails.familleLibelle);
+              const dataqtyarticle = {
+                y: +_ppodetails.totalQuantity,
+                name: _ppodetails.familleLibelle,
+                color: _ppodetails.familleColor,
+                id: _ppodetails.familleId,
+                exploitation: data.exploitation
+              }
+              const datacostarticle = {
+                y: +_ppodetails.totalCost,
+                name: _ppodetails.familleLibelle,
+                color: _ppodetails.familleColor,
+                id: _ppodetails.familleId,
+                exploitation: data.exploitation
+              }
+              _dataquantityarticle.push(dataqtyarticle);
+              _datacostarticle.push(datacostarticle);
+            }
+            this.pertechartetoggle = !this.pertechartetoggle;            
+            this.syntheseMontantPerteArticle(_categories, _datacostarticle).then();
+          }
+        });
+      }
+    })
+  }
 
-  private async syntheseMontantPerteFtArticle(_categories: string[], _data: { y: number, name: string, color: string }[]) {
+  private async syntheseMontantPerteArticle(_categories: string[], _data: { y: number, name: string, color: string }[]) {
     Object.assign(this.chartOptionsMontantPerteArticle, {
       series: [
         {
@@ -975,6 +1019,7 @@ export class DashComponent implements OnInit {
       ],
     });
   }
+
   // private getTableauPerteArticle(event: any,perte:any) {
   //   console.log(event,perte)
   //   const article = 
@@ -1005,26 +1050,22 @@ export class DashComponent implements OnInit {
       : `entre l'inventaire du ${debutFormatted} au ${finFormatted}`;
   }
 
-  showFicheTechniques(articleId:number){
-    this.inventaireService.getLastPeriodeInventaire(this.idoperateur,this.idexploitation).subscribe({
-      next:(_periode:any) =>{
-        this.dates = {
-          debut: new Date(this.getrealdate(_periode.debut_inventaire)),
-          fin: new Date(this.getrealdate(_periode.fin_inventaire))
-        }
-        this.dashService.getArticlePlusUtilise(this.getrealdate(_periode.debut_inventaire),this.getrealdate(_periode.fin_inventaire),this.idexploitation,articleId).subscribe({
-          next:(_articles:any) =>{
-            this.articleFt = _articles;   
-            console.log(this.articleFt);
-                           
-          },
-        })
-      },
-    });
+  showFicheTechniques(article:any){
+    this.isarticleFt = !this.isarticleFt;
+    this.articleFt = article.fichetechnique;
+  }
+  getTooltipText(article: any): string {
+    if (article && article.fichetechnique) {
+      return article.fichetechnique.map((ft:any) => ft.libelleFt).join('\n');
+    }
+    console.log(article);
+    
+    return 'No fichetechnique available';
   }
 
   hideFicheTechniques() {
     this.articleFt = [];
+    this.isarticleFt = this.isarticleFt;
   }
 
   getValorisationArticleFt(){
@@ -1043,7 +1084,8 @@ export class DashComponent implements OnInit {
                 id:article.articleId,
                 libelle:article.libelle,
                 quantite:article.qteArticle,
-                valorisation:article.valorisation
+                valorisation:article.valorisation,
+                fichetechnique:article.fichetechnique
               };
               this.valorisationarticlesFT.push(articleVendu);
             }            
@@ -1056,14 +1098,23 @@ export class DashComponent implements OnInit {
     const resultMap: { [key: string]: any } = {};
     data.forEach((item:any) => {
       const key = `${item.articleId}`;
+      const fichetechnique = {
+        id:item.fichetechniqueId,
+        libelleFT: item.fichetechnique,
+        articleId: item.articleId
+      };
       if (!resultMap[key]) {
-        resultMap[key] = { ...item, qteArticle: '0', valorisation: '0' };
+        resultMap[key] = { ...item, qteArticle: '0', valorisation: '0',fichetechnique: [] };
+      }
+      
+      if (!resultMap[key].fichetechnique.some((ft: any) => ft.id === fichetechnique.id)) {
+        resultMap[key].fichetechnique.push(fichetechnique);
       }
       
       resultMap[key].qteArticle = (parseFloat(resultMap[key].qteArticle) + parseFloat(item.qteArticle)).toFixed(2);
       resultMap[key].valorisation = (parseFloat(resultMap[key].valorisation) + parseFloat(item.valorisation)).toFixed(2);
+
     });
-    
     return Object.values(resultMap);
   }
 
@@ -1196,7 +1247,6 @@ export class DashComponent implements OnInit {
       const date = item.achat.dateAchat.split('-')[2].substring(0, 2) + '/' + item.achat.dateAchat.split('-')[1] + '/' + item.achat.dateAchat.split('-')[0];
       categories.push(date)
     }
-    console.log(categories)
     return { data: data, categories: categories }
   }
 

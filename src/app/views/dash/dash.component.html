@@ -143,15 +143,22 @@
             <th>Valorisation</th>
           </thead>
           <tbody>
-            <tr *ngFor="let item of valorisationarticlesFT" (mouseover)="showFicheTechniques(item.id)" (mouseout)="hideFicheTechniques()">
-              <td>{{ item.libelle }}</td>
+            <!-- <tr *ngFor="let item of valorisationarticlesFT"[ngbTooltip]="tooltipTemplate" 
+            [tooltipContext]="{ articleFt: item.fichetechnique }" ngbTooltipClass="custom-tooltip"> -->
+            <tr *ngFor="let item of valorisationarticlesFT">
+              <td >{{ item.libelle }}</td>
               <td>{{ item.quantite | number:'1.0-0' }}</td>
               <td>{{ item.valorisation | number:'1.2-2' }} €</td>
             </tr>
+            
           </tbody>
         </table>
       </div>
-      
+      <!-- <ng-template #tooltipTemplate let-articleFt="articleFt">
+        <ul>
+          <li *ngFor="let line of articleFt">{{ line.libelleFt}}</li>
+        </ul>
+      </ng-template> -->
     </div>
   </div>
 </div>
@@ -209,21 +216,20 @@
       </div>
     </div>
   </div>
-  <!-- <div class="col-xl-6 col-md-12 col-sm-12 mb-1">
+  <div class="col-xl-6 col-md-12 col-sm-12 mb-1" *ngIf="pertechartetoggle">
     <div class="card bg-white shadow h-100 py-2">
       <div class="card-body py-1" style="height: 400px;">
           <highcharts-chart [Highcharts]="Highcharts" [options]="chartOptionsMontantPerteArticle"
             style="width: 100%; height: 400px; display: block;"></highcharts-chart>
       </div>
     </div>
-  </div> -->
+  </div>
 </div>
 <div class="row">
   <div class="col-xl-4 col-md-12 col-sm-12 mb-1">
     <div class="card bg-warning text-white shadow h-100 py-2">
       <div class="d-flex bd-highlight">
-        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Chiffre d'affaire (Derniére
-            période)</span></div>
+        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Chiffre d'affaire ({{chiffreaffaire[1].debut | date:'dd/MM/yyyy'}} - {{ chiffreaffaire[1].fin | date:'dd/MM/yyyy' }})</span></div>
         <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-dark" style="border: none;">
             <i class="fas fa-ellipsis-vertical"></i></button>
         </div>
@@ -243,8 +249,7 @@
   <div class="col-xl-4 col-md-12 col-sm-12 mb-1">
     <div class="card bg-info text-white shadow h-100 py-2">
       <div class="d-flex bd-highlight">
-        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Chiffre d'affaire (Période en
-            cours)</span></div>
+        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Chiffre d'affaire ({{ chiffreaffaire[1].fin | date:'dd/MM/yyyy' }} - {{ chiffreaffaire[0].fin | date:'dd/MM/yyyy' }})</span></div>
         <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-dark" style="border: none;">
             <i class="fas fa-ellipsis-vertical"></i></button>
         </div>

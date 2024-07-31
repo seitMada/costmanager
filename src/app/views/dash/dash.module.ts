@@ -7,12 +7,15 @@ import { DashComponent } from "./dash.component";
 
 // Components Routing
 import { DashRoutingModule } from './dash-routing.module';
+import { NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   imports: [
     CommonModule,
     DashRoutingModule,
-    DashComponent
+    DashComponent,
+    NgbModule,
+    NgbTooltipModule,
   ],
   declarations: [
     

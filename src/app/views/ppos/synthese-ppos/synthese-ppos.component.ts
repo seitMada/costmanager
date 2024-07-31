@@ -873,6 +873,8 @@ export class SynthesePposComponent implements OnInit {
   private getTableauPerteFtArticle(event: any) {
     this.bordercolor = event.point.color;
     let _id: number[] = [];
+    console.log(this.dates);
+    
     const data = {
       date: this.dates,
       id: this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected,
@@ -881,7 +883,7 @@ export class SynthesePposComponent implements OnInit {
     };
     this.ppoService.getPpoDetailDataFamille(data).subscribe({
       next: (_data: any) => {
-        // console.log(_data);
+        console.log(_data);
         this.ppodetailsftarticlebyfamille = _data.fichetechniquearticle;
       }
     });
@@ -1048,6 +1050,7 @@ export class SynthesePposComponent implements OnInit {
               _dataquantityarticle.push(dataqtyarticle);
               _datacostarticle.push(datacostarticle);
             }
+            console.log(_categories,_datacostarticle);
             this.syntheseMontantPerteArticle(_categories, _datacostarticle).then();
             // this.syntheseQuantitePerteArticle(_categories, _dataquantityarticle).then(() => {
             //   this.syntheseMontantPerteArticle(_categories, _dataquantityarticle).then(() => { })
