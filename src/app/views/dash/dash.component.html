@@ -143,9 +143,8 @@
             <th>Valorisation</th>
           </thead>
           <tbody>
-            <!-- <tr *ngFor="let item of valorisationarticlesFT"[ngbTooltip]="tooltipTemplate" 
-            [tooltipContext]="{ articleFt: item.fichetechnique }" ngbTooltipClass="custom-tooltip"> -->
-            <tr *ngFor="let item of valorisationarticlesFT">
+            <tr *ngFor="let item of valorisationarticlesFT"[ngbTooltip]="tooltipTemplate" 
+            [tooltipContext]="{ articleFt: item.fichetechnique }" ngbTooltipClass="custom-tooltip"> 
               <td >{{ item.libelle }}</td>
               <td>{{ item.quantite | number:'1.0-0' }}</td>
               <td>{{ item.valorisation | number:'1.2-2' }} €</td>
@@ -154,11 +153,11 @@
           </tbody>
         </table>
       </div>
-      <!-- <ng-template #tooltipTemplate let-articleFt="articleFt">
+      <ng-template #tooltipTemplate let-articleFt="articleFt">
         <ul>
           <li *ngFor="let line of articleFt">{{ line.libelleFt}}</li>
         </ul>
-      </ng-template> -->
+      </ng-template> 
     </div>
   </div>
 </div>
