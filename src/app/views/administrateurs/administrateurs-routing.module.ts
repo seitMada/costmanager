@@ -7,6 +7,7 @@ import { PrixArticlesComponent } from "./prix-articles/prix-articles.component";
 import { CentrerevenusComponent } from './centrerevenus/centrerevenus.component';
 import { ZonestockageComponent } from './zonestockage/zonestockage.component';
 import { LieustockageComponent } from './lieustockage/lieustockage.component';
+import { OptionsComponent } from './options/options.component';
 
 const routes: Routes = [
   {
@@ -19,6 +20,13 @@ const routes: Routes = [
         path: '',
         pathMatch: 'full',
         redirectTo: 'settings',
+      },
+      {
+        path: 'options/',
+        component: OptionsComponent,
+        data: {
+          title: 'Options',
+        },
       },
       {
         path: 'options/exploitation',
@@ -53,6 +61,13 @@ const routes: Routes = [
         component: GestionUtilisateursComponent,
         data: {
           title: 'Gestions utilisateurs',
+        },
+      },
+      {
+        path: 'option',
+        component: OptionsComponent,
+        data: {
+          title: 'Options',
         },
       },
       {

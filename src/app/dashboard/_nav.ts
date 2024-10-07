@@ -181,32 +181,37 @@ export const navItems: INavData[] = [
     name: 'Paramétres',
     url: '/settings',
     iconComponent: { name: 'cil-settings' },
+    
     children: [
+    //   {
+    //     name: 'Options',
+    //     url: 'settings/options',
+    //     children: [
+    //       {
+    //         "name": "Exploitation",
+    //         "url": "settings/options/exploitation",
+    //       },
+    //       {
+    //         "name": "Centre Revenu",
+    //         "url": "settings/options/centrerevenu",
+    //       },
+    //       {
+    //         "name": "Lieu Stockage",
+    //         "url": "settings/options/lieustockage",
+    //       },
+    //       {
+    //         "name": "Zone Stockage",
+    //         "url": "settings/options/zonestockage",
+    //       },
+    //       {
+    //         "name": "Utilisateurs",
+    //         "url": "settings/options/user",
+    //       },
+    //     ]
+    //   },
       {
         name: 'Options',
-        url: 'settings/options',
-        children: [
-          {
-            "name": "Exploitation",
-            "url": "settings/options/exploitation",
-          },
-          {
-            "name": "Centre Revenu",
-            "url": "settings/options/centrerevenu",
-          },
-          {
-            "name": "Lieu Stockage",
-            "url": "settings/options/lieustockage",
-          },
-          {
-            "name": "Zone Stockage",
-            "url": "settings/options/zonestockage",
-          },
-          {
-            "name": "Utilisateurs",
-            "url": "settings/options/user",
-          },
-        ]
+        url: 'settings/option'
       },
       {
         name: 'Prix articles',
