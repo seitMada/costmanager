@@ -345,7 +345,7 @@ export class FournisseursComponent implements OnInit {
 
   toggleModal() {
     this.toggle = !this.toggle;
-    this.addToggle = !this.addToggle;
+    this.addToggle = this.addToggle == false ? false : true;
     this.initFournisseur();
   }
 

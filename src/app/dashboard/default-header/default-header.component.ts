@@ -64,7 +64,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
         // console.log(_exploitation)
         this.exploitation = _exploitation;
         this.getstockminimum();
-        // this.refreshdata(150000);
+        this.refreshdata(150000);
       }
     })
   }
@@ -123,6 +123,8 @@ export class DefaultHeaderComponent extends HeaderComponent {
                   })
                 }
               })
+            } else {
+              this.isrefresh = false;
             }
           }
         })

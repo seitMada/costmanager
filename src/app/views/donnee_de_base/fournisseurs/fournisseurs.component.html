@@ -6,23 +6,23 @@
       <button type="button" class="btn btn-danger btn-sm mx-1" *ngIf="!modifToggle" (click)="cancel()">Annuler</button>
     </div>
     <div class="bd-highlight">
-      <button class="btn btn-outline-primary btn-sm me-1" title="Liste fichetechniques" (click)="toggleModal()"
+      <button class="btn btn-outline-primary btn-sm me-1" title="Liste fournisseur" (click)="toggleModal()"
         *ngIf="!toggle" [disabled]="!modifToggle">
         <i class="fas fa-list"></i>
       </button>
-      <button class="btn btn-outline-info btn-sm me-1" title="Modifier fichetechnique" (click)="modifToggleModal()"
+      <button class="btn btn-outline-info btn-sm me-1" title="Modifier fournisseur" (click)="modifToggleModal()"
         *ngIf="!toggle" [disabled]="!modifToggle">
         <i class="fas fa-pencil"></i>
       </button>
-      <button class="btn btn-outline-success btn-sm me-1" title="Ajouter fichetechnique" (click)="addToggleModal();"
+      <button class="btn btn-outline-success btn-sm me-1" title="Ajouter fournisseur" (click)="addToggleModal();"
         [disabled]="!addToggle">
         <i class="fas fa-plus"></i>
       </button>
-      <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer fichetechnique" (click)="delete()"
+      <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer fournisseur" (click)="delete()"
         *ngIf="!toggle">
         <i class="fas fa-trash"></i>
       </button>
-      <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer fichetechniques" (click)="deletes()"
+      <button class="btn btn-outline-danger btn-sm me-1" title="Supprimer fournisseurs" (click)="deletes()"
         *ngIf="toggle">
         <i class="fas fa-trash"></i>
       </button>

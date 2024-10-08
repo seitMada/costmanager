@@ -84,7 +84,7 @@ export class ArticlesComponent implements OnInit {
 
   toggleModal() {
     this.toggle = !this.toggle;
-    this.addToggle = !this.addToggle;
+    this.addToggle = this.addToggle == false ? false : true;
     this.initArticle();
   }
 

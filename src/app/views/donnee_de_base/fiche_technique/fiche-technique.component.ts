@@ -339,7 +339,7 @@ export class FicheTechniqueComponent implements OnInit {
 
   toggleModal() {
     this.toggle = !this.toggle;
-    this.addToggle = true;
+    this.addToggle = this.addToggle == false ? false : true;
     this.initFichetechnique();
   }
 
