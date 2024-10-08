@@ -9,8 +9,9 @@ import { Router } from '@angular/router';
 })
 export class LoginService {
 
-  private apiAuth = environment.APILOGIN
-  private apiOperateurConnecte = environment.APIOPERATEURCONNECTE
+  private apiAuth = environment.APILOGIN;
+  private apiAuthAdmin = environment.APILOGINADMIN;
+  private apiOperateurConnecte = environment.APIOPERATEURCONNECTE;
   private apiLogout = environment.APILOGOUT;
 
   redirectUrl: string | null = null;
@@ -23,22 +24,18 @@ export class LoginService {
   operateurId: Pick<InterfaceOperateur, "id">;
 
   public auth(operateurData: any) {
-    console.log(operateurData)
-    this.https.post(this.apiAuth, operateurData).subscribe(
-      (response: any) => {
-        console.log(response)
-        if (response.connect === true) {
-          sessionStorage.setItem('exploitation', operateurData.exploitationId);
-          // this.https.get(this.apiOperateurConnecte, operateurData.email).subscribe(
-          //   (data: any) => {
-          sessionStorage.setItem('id', response.id);
-          sessionStorage.setItem('admin', (response.code === '0000' ? '1' : '0'));
-          this.router.navigate(['dash']);
-          //   }
-          // )
-        }
-      }
-    )
+    // console.log(operateurData)
+    // this.https.post(this.apiAuth, operateurData).subscribe(
+    //   (response: any) => {
+    //     if (response.connect === true) {
+    //       sessionStorage.setItem('exploitation', operateurData.exploitationId);
+    //       sessionStorage.setItem('id', response.id);
+    //       sessionStorage.setItem('admin', (response.code === '0000' ? '1' : '0'));
+    //       this.router.navigate(['dash']);
+    //     }
+    //   }
+    // )
+    return this.https.post(this.apiAuth, operateurData);
   }
 
   public logout(operateurId: any) {

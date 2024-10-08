@@ -228,7 +228,7 @@
   <div class="col-xl-4 col-md-12 col-sm-12 mb-1">
     <div class="card bg-warning text-white shadow h-100 py-2">
       <div class="d-flex bd-highlight">
-        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Chiffre d'affaire ({{chiffreaffaire[1].debut | date:'dd/MM/yyyy'}} - {{ chiffreaffaire[1].fin | date:'dd/MM/yyyy' }})</span></div>
+        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Chiffre d'affaire ({{chiffreaffaire[1] ? chiffreaffaire[1].debut : '2000-01-01' | date:'dd/MM/yyyy'}} - {{ chiffreaffaire[1] ? chiffreaffaire[1].fin: '2000-01-01' | date:'dd/MM/yyyy' }})</span></div>
         <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-dark" style="border: none;">
             <i class="fas fa-ellipsis-vertical"></i></button>
         </div>
@@ -248,7 +248,7 @@
   <div class="col-xl-4 col-md-12 col-sm-12 mb-1">
     <div class="card bg-info text-white shadow h-100 py-2">
       <div class="d-flex bd-highlight">
-        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Chiffre d'affaire ({{ chiffreaffaire[1].fin | date:'dd/MM/yyyy' }} - {{ chiffreaffaire[0].fin | date:'dd/MM/yyyy' }})</span></div>
+        <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Chiffre d'affaire ({{chiffreaffaire[0] ? chiffreaffaire[0].debut : '2000-01-01' | date:'dd/MM/yyyy' }} - {{ chiffreaffaire[0] ? chiffreaffaire[0].fin : '2000-01-01' | date:'dd/MM/yyyy' }})</span></div>
         <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-dark" style="border: none;">
             <i class="fas fa-ellipsis-vertical"></i></button>
         </div>

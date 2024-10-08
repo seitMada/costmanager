@@ -364,7 +364,7 @@ export class DashComponent implements OnInit {
               }
             }
             this.exploitation = this.exploitations[0];
-
+            // console.log(this.exploitationsselected)
             await this.getMouvementStock(this.exploitationsselected);
 
           }
@@ -444,9 +444,10 @@ export class DashComponent implements OnInit {
                     ca: _chiffreaffaire,
                     cmr: this.getcout(_articles, 1),
                     cmt: this.getcout(_articles, 2),
-                    debut: this.getrealdate(this.periode[0].debut),
-                    fin: this.getrealdate(this.periode[0].fin)
+                    debut: this.getrealdate(this.periode[0].debut) != undefined ? this.getrealdate(this.periode[0].debut) : this.getrealdate(new Date()),
+                    fin: this.getrealdate(this.periode[0].fin) != undefined ? this.getrealdate(this.periode[0].fin) : this.getrealdate(new Date())
                   });
+                  console.log(this.chiffreaffaire)
                   let pertevalue = 0;
                   for (const _pertes of _articles) {
                     pertevalue += +_pertes.pertes;
@@ -484,7 +485,7 @@ export class DashComponent implements OnInit {
                             ca: _chiffreaffaire,
                             cmr: this.getcout(_articles, 1),
                             cmt: this.getcout(_articles, 2),
-                            debut: this.getrealdate(this.periode[0].debut),
+                            debut: this.getrealdate(this.periode[0].debut) != undefined ? this.getrealdate(this.periode[0].debut) : this.getrealdate(new Date()),
                             fin: this.getrealdate(new Date())
                           })
                           
@@ -583,6 +584,21 @@ export class DashComponent implements OnInit {
                 }
               })
             }
+          })
+        } else {
+          this.chiffreaffaire.push({
+            ca: 0,
+            cmr: 0,
+            cmt: 0,
+            debut: this.getrealdate(new Date()),
+            fin: this.getrealdate(new Date())
+          })
+          this.chiffreaffaire.push({
+            ca: 0,
+            cmr: 0,
+            cmt: 0,
+            debut: this.getrealdate(new Date()),
+            fin: this.getrealdate(new Date())
           })
         }
       }

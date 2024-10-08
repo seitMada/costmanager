@@ -24,6 +24,7 @@ export const environment = {
     
     APILOGOUT: endPoint + 'api/logout',
     APILOGIN: endPoint + 'api/login',
+    APILOGINADMIN: endPoint + 'api/loginadmin',
     APIOPERATEURCONNECTE: endPoint + 'operateur/connecte',
     APIADDOPERATEUR: endPoint + 'operateur',
     APIGETALLOPERATEUR: endPoint + 'operateur/list',

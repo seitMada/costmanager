@@ -17,6 +17,7 @@ import { LoginService } from "../shared/service/login.service";
 
 export class LoginComponent implements OnInit {
   public loginForm: FormGroup;
+  public choiceexp: boolean = false;
 
   constructor(
     public router: Router,
@@ -29,7 +30,7 @@ export class LoginComponent implements OnInit {
     this.loginForm = formBuilder.group({
       email: ["", Validators.required, Validators.email],
       mdp: ["", Validators.required, Validators.minLength(5)],
-      exploitationId: ["", Validators.required],
+      // exploitationId: ["", Validators.required],
       // centreId: ["", Validators.required]
     });
   }
@@ -59,24 +60,28 @@ export class LoginComponent implements OnInit {
 
   ngOnInit(): void {
 
-    this.exploitationService.getExploitation().subscribe({
-      next: (exploitation) => {
-        this.exploitations = exploitation;
-      },
-      error: (error) => {
-        alert('ERREUR EXP');
-      }
-    });
+
   }
 
   public onLogin(form: NgForm) {
-    this.loginService.auth(this.operateurData);
+    // this.loginService.auth(this.operateurData);
+    // sessionStorage.setItem('exploitation', this.operateurData.exploitationId);
+    // sessionStorage.setItem('id', response.id);
+    // sessionStorage.setItem('admin', (response.code === '0000' ? '1' : '0'));
+    if (this.operateurData.exploitationId) {
+      sessionStorage.setItem('exploitation', String(this.operateurData.exploitationId));
+      sessionStorage.setItem('id', String(this.operateurData.id));
+      sessionStorage.setItem('admin', (this.operateurData.code === '0000' ? '1' : '0'));
+      this.router.navigate(['dash']);
+    } else {
+      alert('Veuillez selectionner une exploitation.')
+    }
   }
 
 
   public selectCR() {
     this.centreRevenus = [];
-    this.centreRevenuService.getCrExploitation(this.operateurData.exploitationId? this.operateurData.exploitationId : 0).subscribe({
+    this.centreRevenuService.getCrExploitation(this.operateurData.exploitationId ? this.operateurData.exploitationId : 0).subscribe({
       next: (centreRevenu) => {
         this.centreRevenus = centreRevenu;
       },
@@ -84,6 +89,48 @@ export class LoginComponent implements OnInit {
         alert('ERREUR CR');
       }
     })
+  }
+
+  public goback() {
+    this.choiceexp = false;
+  }
+
+  public chooselogin() {
+    this.loginService.auth(this.operateurData).subscribe(
+      (response: any) => {
+        this.operateurData = response.operateur;
+        if (response.code == '0000') {
+          this.exploitationService.getExploitation().subscribe({
+            next: (exploitation) => {
+              this.choiceexp = false;
+              console.log(this.operateurData)
+              this.operateurData.exploitationId = exploitation.filter((obj: { codenaf: string; }) => obj.codenaf === "ADMIN").map((obj: { id: any; }) => obj.id).join(',');
+              sessionStorage.setItem('exploitation', String(this.operateurData.exploitationId));
+              sessionStorage.setItem('id', String(this.operateurData.id));
+              sessionStorage.setItem('admin', (this.operateurData.code === '0000' ? '1' : '0'));
+              this.router.navigate(['dash']);
+            },
+            error: (error) => {
+              alert('ERREUR EXP');
+            }
+          });
+        } else {
+          this.exploitationService.getExploitation().subscribe({
+            next: (exploitation) => {
+              // console.log(response.operateur.operateurscentreexploitation);
+              // console.log(exploitation);
+              this.exploitations = exploitation.filter((obj1: { id: any; }) =>
+                response.operateur.operateurscentreexploitation.some((obj2: { exploitationId: any; }) => obj1.id === obj2.exploitationId)
+              );
+              this.choiceexp = true;
+            },
+            error: (error) => {
+              alert('ERREUR EXP');
+            }
+          });
+        }
+      }
+    )
   }
 
 }

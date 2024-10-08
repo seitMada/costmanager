@@ -23,7 +23,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
   public newTasks = new Array(5)
   public newNotifications = new Array(5)
 
-  public idexploitation = +(sessionStorage.getItem('exploitation') || 3);
+  public idexploitation = +(sessionStorage.getItem('exploitation') || 0);
   public isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
   public periode: { debut: Date, fin: Date }[] = []
   public periodeselected: { debut: Date, fin: Date };
@@ -31,7 +31,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
   public exploitation: InterfaceExploitations;
 
   public idexploitations: number = 0;
-  public idoperateur = +(sessionStorage.getItem('id') || 3);
+  public idoperateur = +(sessionStorage.getItem('id') || 0);
   public idcentrerevenu: number = 0;
 
   public isrefresh: boolean = false;
@@ -61,9 +61,10 @@ export class DefaultHeaderComponent extends HeaderComponent {
     super();
     this.exploitationService.getExploitationById(this.idexploitation).subscribe({
       next: (_exploitation) => {
+        // console.log(_exploitation)
         this.exploitation = _exploitation;
         this.getstockminimum();
-        this.refreshdata(150000);
+        // this.refreshdata(150000);
       }
     })
   }
@@ -81,6 +82,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
         } else {
           exploitationid.push(this.idexploitation);
         }
+        console.log(exploitationid)
         this.inventaireService.getPeriode(exploitationid, true).subscribe({
           next: (value: any) => {
             for (const _date of value) {
@@ -99,7 +101,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
               if (this.periodeselected.fin == null) {
                 _dateFin.setDate(_dateFin.getDate() - 1);
               }
-              this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, [this.idexploitation], true).subscribe({
+              this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, exploitationid, true).subscribe({
                 next: (_articles: any) => {
                   this.mouvemenstock = _articles;
                   this.articleService.getArticlesByExploitation(this.idexploitation || 0).subscribe({
