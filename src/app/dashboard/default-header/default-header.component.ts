@@ -64,7 +64,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
         // console.log(_exploitation)
         this.exploitation = _exploitation;
         this.getstockminimum();
-        this.refreshdata(150000);
+        // this.refreshdata(150000);
       }
     })
   }
@@ -80,7 +80,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
             exploitationid.push(_exploitation.id);
           }
         } else {
-          exploitationid.push(this.idexploitation);
+          // exploitationid.push(this.idexploitation);
         }
         console.log(exploitationid)
         this.inventaireService.getPeriode(exploitationid, true).subscribe({
@@ -101,7 +101,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
               if (this.periodeselected.fin == null) {
                 _dateFin.setDate(_dateFin.getDate() - 1);
               }
-              this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, exploitationid, true).subscribe({
+              this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, [this.idexploitation], true).subscribe({
                 next: (_articles: any) => {
                   this.mouvemenstock = _articles;
                   this.articleService.getArticlesByExploitation(this.idexploitation || 0).subscribe({
@@ -123,15 +123,13 @@ export class DefaultHeaderComponent extends HeaderComponent {
                   })
                 }
               })
-            } else {
-              this.isrefresh = false;
             }
           }
         })
       }
     })
   }
-  
+
   private formatDate(date: Date, fin: boolean = false) {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
@@ -172,7 +170,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
     return nb;
   }
 
-  refreshdata(interval: number = 300000 ) {
+  refreshdata(interval: number = 300000) {
     this.isrefresh = true;
     setInterval(() => {
       this.getstockminimum();
