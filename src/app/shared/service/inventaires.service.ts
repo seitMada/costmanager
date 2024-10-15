@@ -42,7 +42,7 @@ export class InventairesService {
   // }
 
   public deleteInventaire(_numero: string) {
-    return this.https.post(this.apiDeleteInventaire, {numero: _numero});
+    return this.https.post(this.apiDeleteInventaire, { numero: _numero });
   }
 
   public deleteInventaires(_numero: string[]) {
@@ -64,14 +64,14 @@ export class InventairesService {
   public getInventaireById(id: number) {
     return this.https.get<any>(this.apiGetInventaireById + id);
   }
-  
+
   public getPeriode(id: number[], isexploitation: boolean = false) {
     return this.https.post(this.apiGetPeriode, { id: id, isexploitation: isexploitation });
   }
 
-  public getLastPeriodeInventaire(operateurId:number,exploitationId:number){
-    return this.https.post(this.apiGetLastPeriodeInventaire, { operateurId,exploitationId });
+  public getLastPeriodeInventaire(operateurId: number, exploitationId: number[]) {
+    return this.https.post(this.apiGetLastPeriodeInventaire, { operateurId, exploitationId });
   }
 
-  
+
 }

@@ -20,24 +20,24 @@ export class DashboardService {
     return this.https.post(this.apivariationprixarticle, { id: idexploitation, idarticle: idarticle });
   }
 
-  getPpoByArticle(articleId:number,operateurId:number){
-    return this.https.get<any>(this.apiGetPpoByArticle+articleId,{params : {operateurId:operateurId}});
+  getPpoByArticle(articleId: number, operateurId: number) {
+    return this.https.get<any>(this.apiGetPpoByArticle + articleId, { params: { operateurId: operateurId } });
   }
 
-  public getArticlePlusUtilise(dateDebut:any,dateFin:any,exploitationId:number,articleid:number){
-    return this.https.post(this.apiGetArticlePlusUtilise,{dateDebut,dateFin,exploitationId,articleid});
+  public getArticlePlusUtilise(dateDebut: any, dateFin: any, exploitationId: number, articleid: number) {
+    return this.https.post(this.apiGetArticlePlusUtilise, { dateDebut, dateFin, exploitationId, articleid });
   }
 
-  public getValorisationStock(operateurId:number,exploitationId:number){
-    return this.https.get<any>(this.apiGetValorisationStock+operateurId,{ params: { exploitationId:exploitationId}});
+  public getValorisationStock(operateurId: number, exploitationId: number[]) {
+    return this.https.get<any>(this.apiGetValorisationStock + operateurId, { params: { exploitationId: exploitationId } });
   }
 
-  public getvaleurStockTheorique(dateInventaire:any,articleId:number){
-    return this.https.post<any>(this.apiGetValueStockTheorique, {dateInventaire,articleId});
+  public getvaleurStockTheorique(dateInventaire: any, articleId: number) {
+    return this.https.post<any>(this.apiGetValueStockTheorique, { dateInventaire, articleId });
   }
 
-  public getstockArticle(articleId:number,operateurId:number){
-    return this.https.get<any>(this.apiGetArticleInventaire+articleId,{ params: { operateurId:operateurId}});
+  public getstockArticle(articleId: number, operateurId: number) {
+    return this.https.get<any>(this.apiGetArticleInventaire + articleId, { params: { operateurId: operateurId } });
   }
 
 }

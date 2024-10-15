@@ -123,6 +123,8 @@ export class DefaultHeaderComponent extends HeaderComponent {
                   })
                 }
               })
+            } else {
+              this.isrefresh = false;
             }
           }
         })

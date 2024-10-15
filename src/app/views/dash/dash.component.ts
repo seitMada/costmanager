@@ -1085,7 +1085,7 @@ export class DashComponent implements OnInit {
   }
 
   getValorisationArticleFt() {
-    this.inventaireService.getLastPeriodeInventaire(this.idoperateur, this.idexploitation).subscribe({
+    this.inventaireService.getLastPeriodeInventaire(this.idoperateur, this.exploitations.map(item => item.id ? item.id : 0)).subscribe({
       next: (_periode: any) => {
         this.dates = {
           debut: new Date(this.getrealdate(_periode.debut_inventaire)),
@@ -1135,8 +1135,7 @@ export class DashComponent implements OnInit {
   }
 
   getValorisationStock() {
-
-    this.dashService.getValorisationStock(this.operateurId, this.idexploitation).subscribe({
+    this.dashService.getValorisationStock(this.operateurId, this.exploitations.map(item => item.id ? item.id : 0)).subscribe({
       next: (_valorisations) => {
         for (const valeur of _valorisations) {
           this.dashService.getvaleurStockTheorique(this.getrealdate(valeur.date_inventaire), valeur.articleId).subscribe({
