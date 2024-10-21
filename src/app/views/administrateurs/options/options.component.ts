@@ -613,17 +613,17 @@ export class OptionsComponent implements OnInit {
         _centres.push(centre)
       }
     }
-    console.log(_centres)
+    // console.log(_centres)
     this.exploitationService.createExploitation(this.exploitation, _centres).subscribe({
       next: async () => {
         // this.toggleToast('Centre de revenu mis à jour');
-        await this.showAllExploitation();
+        // await this.showAllExploitation();
         // const _exploitation = this.exploitations.find(item => item.id === this.exploitation.id);
         // this.exploitation = _exploitation ? _exploitation : this.exploitation;
         this.exploitationService.getAllExploitationById(this.exploitation.id).subscribe({
           next: (_exploitation) => {
-            if (_exploitation.adresses === undefined) {
-              _exploitation.adresses = {
+            if (_exploitation[0].adresses === undefined) {
+              _exploitation[0].adresses = {
                 rue: ' ',
                 ville: ' ',
                 code_postal: ' ',
@@ -635,10 +635,9 @@ export class OptionsComponent implements OnInit {
               }
             } else {
               // console.log(_exploitation.adresses)
-              _exploitation.adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation.adresses.pays })
+              _exploitation[0].adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation[0].adresses.pays })
             }
-            console.log(_exploitation)
-            this.exploitation = _exploitation;
+            this.exploitation = _exploitation[0];
             this.modifcentreexploitation = false;
             alert('Centre de revenu mis à jour');
           }
@@ -648,7 +647,27 @@ export class OptionsComponent implements OnInit {
   }
 
   cancelcentreexploitation(_centrerevenu: any) {
-
+    this.exploitationService.getAllExploitationById(this.exploitation.id).subscribe({
+      next: (_exploitation) => {
+        if (_exploitation[0].adresses === undefined) {
+          _exploitation[0].adresses = {
+            rue: ' ',
+            ville: ' ',
+            code_postal: ' ',
+            pays: ' ',
+            selected: false,
+            centreRevenu: [],
+            exploitation: [],
+            operateur: [],
+          }
+        } else {
+          // console.log(_exploitation.adresses)
+          _exploitation[0].adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation[0].adresses.pays })
+        }
+        this.exploitation = _exploitation[0];
+        this.modifcentreexploitation = false;
+      }
+    })
   }
 
   getAllExploitation() {
