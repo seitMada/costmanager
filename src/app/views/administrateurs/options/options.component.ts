@@ -304,8 +304,8 @@ export class OptionsComponent implements OnInit {
     this.centreService.getAllCentreRevenuWithoutLinks().subscribe({
       next: (_centres) => {
         this.centres = _centres;
-        console.log(this.centres);
-
+        this.centresrevenusexploitations = _centres;
+        // console.log(this.centres);
         this.exploitation = {
           code_couleur: "...",
           libelle: "...",
@@ -681,13 +681,22 @@ export class OptionsComponent implements OnInit {
 
   saveExploitation() {
     if (this.isAdmin) {
-      this.centres = [];
-      this.exploitationService.createExploitation(this.exploitation, this.centres).subscribe({
-        next: (value) => {
-          this.getAllExploitation();
-          this.toggleToast('Nouveau centre de revenu crée avec succès!');
-          this.addExploitation = (this.addExploitation === false ? true : false);
-        },
+      // this.centres = [];
+      // this.exploitationService.createExploitation(this.exploitation, this.centres).subscribe({
+      //   next: (value) => {
+      //     this.getAllExploitation();
+      //     this.toggleToast('Nouveau centre de revenu crée avec succès!');
+      //     this.addExploitation = (this.addExploitation === false ? true : false);
+      //   },
+      // })
+      const _centres = this.centresrevenusexploitations.filter(item => item.selected === true);
+      // console.log(_centres)
+      this.exploitationService.createExploitation(this.exploitation, _centres).subscribe({
+        next: () => {
+          this.inputModif = !this.inputModif;
+          this.modifToggle = !this.modifToggle;
+          alert('Exploitation enregistree');
+        }
       })
     } else {
       alert('Il est impossible de créer un centre de revenu');

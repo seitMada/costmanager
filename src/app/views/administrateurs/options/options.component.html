@@ -7,7 +7,7 @@
         <div class="card py-1" style="border: none;">
           <div class="d-flex bd-highlight">
             <div class="flex-grow-1 bd-highlight">
-              <button type="button" *ngIf="!modifToggle" (click)="submit()"
+              <button type="button" *ngIf="!modifToggle" (click)="saveExploitation()"
                 class="btn btn-success btn-sm mx-1">Enregistrer</button>
               <button type="button" *ngIf="!modifToggle" (click)="cancel()"
                 class="btn btn-danger btn-sm mx-1">Annuler</button>
@@ -19,7 +19,7 @@
               <button class="btn btn-outline-info btn-sm me-1" [disabled]="!modifToggle" (click)="modifyExploitation()"
                 *ngIf="!toggleexploitation" title="Modifier exploitation"><i class="fas fa-pencil"></i></button>
               <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleexploitation"
-                (click)="toggleModal();getAllCentreRevenu()" title="Ajouter exploitation"><i
+                (click)="toggleModal();getAllCentreRevenu(); modifcentreexploitation = true;" title="Ajouter exploitation"><i
                   class="fas fa-plus"></i></button>
               <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!modifToggle" *ngIf="!toggleexploitation"
                 (click)="deleteExploitation()" title="Supprimer exploitation"><i class="fas fa-trash"></i></button>
@@ -110,7 +110,7 @@
             </div>
           </div>
           <!-- <form #exploitationForm="ngForm">
-            
+
           </form> -->
           <div class="overflow-y-scroll" style="max-height: 70vh;" *ngIf="toggleexploitation">
             <table class="table table-hover table-sm table-striped mb-0">
