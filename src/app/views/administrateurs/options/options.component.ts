@@ -34,6 +34,8 @@ export class OptionsComponent implements OnInit {
   public adresses: Adresse;
   public centre: InterfaceCentreRevenu;
   public centres: InterfaceCentreRevenu[];
+
+  public centresrevenusexploitations: InterfaceCentreRevenu[];
   public exploitation: InterfaceExploitations;
   public exploitations: InterfaceExploitations[];
   public lieuSTockage: InterfaceLieustockages;
@@ -49,6 +51,7 @@ export class OptionsComponent implements OnInit {
   public exploitationForm = FormGroup;
   public centreForm = FormGroup;
 
+  public modifcentreexploitation: boolean = false;
   public active = 1;
   public active_3 = 1;
 
@@ -182,7 +185,7 @@ export class OptionsComponent implements OnInit {
     }
   }
 
-  public resetExploitation() {
+  public async resetExploitation() {
     this.adresse = {
       rue: '',
       ville: '',
@@ -233,7 +236,7 @@ export class OptionsComponent implements OnInit {
 
   /* show all data*/
 
-  public showAllExploitation() {
+  public async showAllExploitation() {
     if (this.isAdmin) {
       this.exploitationService.findAllExploitation().subscribe({
         next: async (_exploitations) => {
@@ -251,9 +254,6 @@ export class OptionsComponent implements OnInit {
                 operateur: [],
               }
             } else {
-              console.log(_exploitation.adresses.pays)
-              console.log(this.country)
-              console.log(this.country.filter((item: any) => { item.translations.fr === _exploitation.adresses.pays }))
               _exploitation.adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation.adresses.pays })
             }
           }
@@ -275,6 +275,8 @@ export class OptionsComponent implements OnInit {
                 exploitation: [],
                 operateur: [],
               }
+            } else {
+              _exploitation.adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation.adresses.pays })
             }
           }
           this.exploitations = _exploitations.filter((item: { codenaf: string; }) => item.codenaf !== 'ADMIN');
@@ -587,6 +589,66 @@ export class OptionsComponent implements OnInit {
       };
       this.centres.push(this.centre);
     }
+  }
+
+  listecentrerevenuexploitation(_centrerevenu: any) {
+    this.centreService.getcentrerevenu().subscribe({
+      next: async (_centres) => {
+        _centres.forEach((element: { id: any; }) => {
+          const centre = _centrerevenu.find((c: { id: any; }) => c.id === element.id);
+          if (centre) {
+            Object.assign(element, { selected: true });
+          }
+        });
+        this.centresrevenusexploitations = _centres;
+        this.modifcentreexploitation = !this.modifcentreexploitation;
+      }
+    });
+  }
+
+  savecentreexploitation(_centresrevenusexploitations: any) {
+    const _centres = [];
+    for (const centre of _centresrevenusexploitations) {
+      if (centre.selected === true) {
+        _centres.push(centre)
+      }
+    }
+    console.log(_centres)
+    this.exploitationService.createExploitation(this.exploitation, _centres).subscribe({
+      next: async () => {
+        // this.toggleToast('Centre de revenu mis à jour');
+        await this.showAllExploitation();
+        // const _exploitation = this.exploitations.find(item => item.id === this.exploitation.id);
+        // this.exploitation = _exploitation ? _exploitation : this.exploitation;
+        this.exploitationService.getAllExploitationById(this.exploitation.id).subscribe({
+          next: (_exploitation) => {
+            if (_exploitation.adresses === undefined) {
+              _exploitation.adresses = {
+                rue: ' ',
+                ville: ' ',
+                code_postal: ' ',
+                pays: ' ',
+                selected: false,
+                centreRevenu: [],
+                exploitation: [],
+                operateur: [],
+              }
+            } else {
+              // console.log(_exploitation.adresses)
+              _exploitation.adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation.adresses.pays })
+            }
+            console.log(_exploitation)
+            this.exploitation = _exploitation;
+            this.modifcentreexploitation = false;
+            alert('Centre de revenu mis à jour');
+          }
+        })
+      }
+    });
+  }
+
+  cancelcentreexploitation(_centrerevenu: any) {
+
   }
 
   getAllExploitation() {

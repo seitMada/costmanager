@@ -85,20 +85,30 @@
                 </div>
               </div>
               <div class="col-3" *ngIf="exploitation.adresses.pays">
-                <div class="input-group">
-                  <span class="btn btn-outline-secondary bg-white col-3" data-bs-toggle="dropdown" aria-expanded="false">
+                <div class="input-group" *ngIf="inputModif !== true">
+                  <span class="btn btn-outline-secondary bg-white col-3" data-bs-toggle="dropdown"
+                    aria-expanded="false">
                     <img src="../../../../assets/img/flags/{{exploitation.adresses.flags}}" class="img-flag" alt="">
                     <span class="visually-hidden">Toggle Dropdown</span>
                   </span>
-                  <span class="end-border input-group-text bg-white col-9 " id="pays">{{exploitation.adresses.pays}}</span>
+                  <span class="end-border input-group-text bg-white col-9 "
+                    id="pays">{{exploitation.adresses.pays}}</span>
                   <ul class="dropdown-menu dropdown-menu-end col-12 overflow-y-scroll" style="height: 400px;">
-                    <li *ngFor="let line of country" (click)="selectCountry(line)"><span>{{line.translations.fr}}</span></li>
+                    <li *ngFor="let line of country" (click)="selectCountry(line)"><span>{{line.translations.fr}}</span>
+                    </li>
                   </ul>
+                </div>
+                <div class="input-group" *ngIf="inputModif === true">
+                  <span class="btn btn-outline-secondary bg-white col-3">
+                    <img src="../../../../assets/img/flags/{{exploitation.adresses.flags}}" class="img-flag" alt="">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                  </span>
+                  <span class="end-border input-group-text bg-white col-9 "
+                    id="pays">{{exploitation.adresses.pays}}</span>
                 </div>
               </div>
             </div>
           </div>
-
           <!-- <form #exploitationForm="ngForm">
             
           </form> -->
@@ -126,14 +136,52 @@
                     line.adresses ? line.adresses.pays : '' }}</td>
                   <td scope="col" class="col-1" (click)="showExploitation(line)">{{ line.codenaf }}</td>
                   <td scope="col" class="col-3" (click)="showExploitation(line)">
-                    <p  *ngFor="let lines of line.centreRevenu">{{ lines.libelle }}</p>
+                    <p *ngFor="let lines of line.centreRevenu">{{ lines.libelle }}</p>
                   </td>
                 </tr>
               </tbody>
             </table>
           </div>
+          <div class="card py-3 mt-4 mx-4" style="height: 40vh;" *ngIf="!toggleexploitation">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+              <div class="d-flex bd-highlight">
+                <button class="btn btn-outline-secondary btn-sm me-1"
+                  (click)="listecentrerevenuexploitation(exploitation.centreRevenu)" title="Assigner centre de revenu"
+                  *ngIf="!modifcentreexploitation"><i class="fas fa-pencil"></i></button>
+                <button class="btn btn-outline-success btn-sm me-1"
+                  (click)="savecentreexploitation(centresrevenusexploitations)" title="Enregistrer centre de revenu"
+                  *ngIf="modifcentreexploitation">Enregistrer</button>
+                <button class="btn btn-outline-danger btn-sm me-1"
+                  (click)="cancelcentreexploitation(exploitation.centreRevenu)" title="Supprimer centre de revenu"
+                  *ngIf="modifcentreexploitation">Annuler</button>
+              </div>
+            </div>
+            <table class="table table-hover table-sm table-striped mb-0">
+              <tr>
+                <th scope="col" class="col-1">#</th>
+                <th scope="col" class="col-8">Centre de revenue<i class="fas fa-sort sort-style" id="fa-sort"></i></th>
+                <th scope="col" class="col-3">Code<i class="fas fa-sort sort-style" id="fa-sort"></i></th>
+              </tr>
+              <tbody *ngIf="!modifcentreexploitation">
+                <tr *ngFor="let line of exploitation.centreRevenu">
+                  <td scope="col" class="col-1"></td>
+                  <td scope="col" class="col-8">{{ line.libelle }}</td>
+                  <td scope="col" class="col-3">{{ line.libelle }}</td>
+                </tr>
+              </tbody>
+              <tbody *ngIf="modifcentreexploitation">
+                <tr *ngFor="let line of centresrevenusexploitations">
+                  <td scope="col" class="col-1">
+                    <input type="checkbox" class="form-check-input" name="centrerevenu-{{line.libelle}}"
+                      id="centrerevenu-{{line.id}}" [(ngModel)]="line.selected">
+                  </td>
+                  <td scope="col" class="col-8">{{ line.libelle }}</td>
+                  <td scope="col" class="col-3">{{ line.libelle }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
-
       </ng-template>
     </li>
     <li [ngbNavItem]="2">
