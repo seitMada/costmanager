@@ -570,13 +570,6 @@ export class FournisseursComponent implements OnInit {
     console.log(line)
     this.adresseadd.pays = line.translations.fr;
     this.adresseadd.flags = line.alpha2Code.toLowerCase() + '.svg';
-    // if (this.fournisseur.adresse != undefined) {
-    //   this.fournisseur.adresse.pays = line.translations.fr;
-    //   this.flags = line.alpha2Code.toLowerCase() + '.svg';
-    // } else {
-    //   // this.fournisseur.adresse.pays = line.translations.fr;
-    //   this.flags = 'xx.svg';
-    // }
   }
 
   getFlag(line: InterfaceFournisseur): string {

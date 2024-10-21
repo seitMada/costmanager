@@ -4,36 +4,135 @@
       <button ngbNavLink>EXPLOITATIONS</button>
       <ng-template ngbNavContent>
 
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item">
-            <div class="card py-1">
-              <div class="d-flex bd-highlight">
-                <div class="flex-grow-1 bd-highlight">
-                  <button type="button" *ngIf="modifToggle" (click)="submit()"
-                    class="btn btn-success btn-sm mx-1">Enregistrer</button>
-                  <button type="button" *ngIf="modifToggle" (click)="cancel()"
-                    class="btn btn-danger btn-sm mx-1">Annuler</button>
+        <div class="card py-1" style="border: none;">
+          <div class="d-flex bd-highlight">
+            <div class="flex-grow-1 bd-highlight">
+              <button type="button" *ngIf="!modifToggle" (click)="submit()"
+                class="btn btn-success btn-sm mx-1">Enregistrer</button>
+              <button type="button" *ngIf="!modifToggle" (click)="cancel()"
+                class="btn btn-danger btn-sm mx-1">Annuler</button>
+            </div>
+            <div class="bd-highlight">
+              <button class="btn btn-outline-primary btn-sm me-1" (click)="cancelexploitation()"
+                [disabled]="!modifToggle" *ngIf="!toggleexploitation" title="Liste exploitation"><i
+                  class="fas fa-list"></i></button>
+              <button class="btn btn-outline-info btn-sm me-1" [disabled]="!modifToggle" (click)="modifyExploitation()"
+                *ngIf="!toggleexploitation" title="Modifier exploitation"><i class="fas fa-pencil"></i></button>
+              <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleexploitation"
+                (click)="toggleModal();getAllCentreRevenu()" title="Ajouter exploitation"><i
+                  class="fas fa-plus"></i></button>
+              <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!modifToggle" *ngIf="!toggleexploitation"
+                (click)="deleteExploitation()" title="Supprimer exploitation"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="card py-3 mt-2" style="border: none;">
+          <div class="card-body" style="max-height: 70vh;" *ngIf="!toggleexploitation">
+            <div class="row m-2">
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Libelle</span>
+                  <input type="text" class="form-control col-7" [disabled]="inputModif" name="libelle"
+                    [(ngModel)]="exploitation.libelle" autocomplete="off">
                 </div>
-                <div class="bd-highlight">
-                  <button class="btn btn-outline-primary btn-sm me-1" (click)="cancel()" [disabled]="!modifToggle"
-                    *ngIf="!toggle" title="Liste exploitation"><i class="fas fa-list"></i></button>
-                  <button class="btn btn-outline-info btn-sm me-1" [disabled]="!modifToggle"
-                    (click)="modifyExploitation()" *ngIf="!toggle" title="Modifier exploitation"><i
-                      class="fas fa-pencil"></i></button>
-                  <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggle"
-                    (click)="toggleModal();getAllCentreRevenu()" title="Ajouter exploitation"><i
-                      class="fas fa-plus"></i></button>
-                  <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!modifToggle" *ngIf="!toggle"
-                    (click)="deleteExploitation()" title="Supprimer exploitation"><i class="fas fa-trash"></i></button>
+              </div>
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Code Naf</span>
+                  <input type="text" class="form-control col-6" [disabled]="inputModif"
+                    [(ngModel)]="exploitation.codenaf" name="codenaf" aria-describedby="basic-addon1">
                 </div>
               </div>
             </div>
-          </li>
-          <li class="list-group-item">
+            <div class="row m-2">
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Site web</span>
+                  <input type="text" class="form-control col-7" [disabled]="inputModif"
+                    [(ngModel)]="exploitation.siteWeb" name="siteWeb" aria-describedby="basic-addon1">
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Siret</span>
+                  <input type="text" class="form-control col-7" [disabled]="inputModif" name="siret"
+                    [(ngModel)]="exploitation.siret">
+                </div>
+              </div>
+            </div>
+            <div class="row m-2">
+              <div class="col-5">
+                <div class="input-group">
+                  <span class="input-group-text col-4" id="adresse">Adresse</span>
+                  <input type="text" class="form-control col-8" [disabled]="inputModif" name="adressrue"
+                    [(ngModel)]="exploitation.adresses.rue">
+                  <!-- <span class="input-group-text col-8 bg-white point" id="adress">{{exploitation.adresses.rue}}</span> -->
+                </div>
+              </div>
+              <div class="col-3" *ngIf="exploitation.adresses.ville">
+                <div class="input-group">
+                  <input type="text" class="form-control col-12" [disabled]="inputModif" name="adressville"
+                    [(ngModel)]="exploitation.adresses.ville">
+                  <!-- <span class="input-group-text col-12 bg-white point" id="ville">{{exploitation.adresses.ville}}</span> -->
+                </div>
+              </div>
+              <div class="col-1" *ngIf="exploitation.adresses.code_postal">
+                <div class="input-group">
+                  <input type="text" class="form-control col-12" [disabled]="inputModif" name="adresscp"
+                    [(ngModel)]="exploitation.adresses.code_postal">
+                  <!-- <span class="input-group-text col-12 bg-white point"
+                    id="code_postal">{{exploitation.adresses.code_postal}}</span> -->
+                </div>
+              </div>
+              <div class="col-3" *ngIf="exploitation.adresses.pays">
+                <div class="input-group">
+                  <span class="btn btn-outline-secondary bg-white col-3" data-bs-toggle="dropdown" aria-expanded="false">
+                    <img src="../../../../assets/img/flags/{{exploitation.adresses.flags}}" class="img-flag" alt="">
+                    <span class="visually-hidden">Toggle Dropdown</span>
+                  </span>
+                  <span class="end-border input-group-text bg-white col-9 " id="pays">{{exploitation.adresses.pays}}</span>
+                  <ul class="dropdown-menu dropdown-menu-end col-12 overflow-y-scroll" style="height: 400px;">
+                    <li *ngFor="let line of country" (click)="selectCountry(line)"><span>{{line.translations.fr}}</span></li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
 
-          </li>
-        </ul>
-
+          <!-- <form #exploitationForm="ngForm">
+            
+          </form> -->
+          <div class="overflow-y-scroll" style="max-height: 70vh;" *ngIf="toggleexploitation">
+            <table class="table table-hover table-sm table-striped mb-0">
+              <thead>
+                <tr>
+                  <th scope="col" class="col-1">#</th>
+                  <th scope="col" class="col-3">Exploitation<i class="fas fa-sort sort-style" id="fa-sort"></i></th>
+                  <th scope="col" class="col-4">Adresse<i class="fas fa-sort sort-style" id="fa-sort"></i></th>
+                  <th scope="col" class="col-1">Code<i class="fas fa-sort sort-style" id="fa-sort"></i></th>
+                  <th scope="col" class="col-3">Centre Revenu<i class="fas fa-sort sort-style" id="fa-sort"></i></th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let line of exploitations">
+                  <td scope="col" class="col-1">
+                    <input type="checkbox" class="form-check-input" name="article-{{line.libelle}}"
+                      id="article-{{line.id}}" [(ngModel)]="line.selected">
+                  </td>
+                  <td scope="col" class="col-3" (click)="showExploitation(line)">{{ line.libelle }}</td>
+                  <td scope="col" class="col-4" (click)="showExploitation(line)">{{ line.adresses ? line.adresses.rue :
+                    '' }} {{ line.adresses ?
+                    line.adresses.ville : '' }} {{ line.adresses ? line.adresses.code_postal : '' }} {{
+                    line.adresses ? line.adresses.pays : '' }}</td>
+                  <td scope="col" class="col-1" (click)="showExploitation(line)">{{ line.codenaf }}</td>
+                  <td scope="col" class="col-3" (click)="showExploitation(line)">
+                    <p  *ngFor="let lines of line.centreRevenu">{{ lines.libelle }}</p>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
 
       </ng-template>
     </li>
@@ -53,6 +152,6 @@
       <button ngbNavLink>UTILISATEURS</button>
       <ng-template ngbNavContent></ng-template>
     </li>
-    <div [ngbNavOutlet]="nav" class="mt-2"></div>
   </ul>
+  <div [ngbNavOutlet]="nav" class="mt-2"></div>
 </div>

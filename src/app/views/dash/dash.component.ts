@@ -355,6 +355,12 @@ export class DashComponent implements OnInit {
             }
 
             await this.getvariation(this.exploitations);
+            this.initialiseChart();
+            this.getMontantPerteEnCours();
+            this.getMontantPertePrecedent();
+            
+            this.getValorisationArticleFt();
+            this.getValorisationStock();
 
             this.exploitations[0].selected = true;
             this.exploitationsselected = [this.exploitations[0].id || 0];
@@ -371,9 +377,10 @@ export class DashComponent implements OnInit {
         });
       }
     });
-    this.initialiseChart();
-    this.getMontantPerteEnCours();
-    this.getMontantPertePrecedent();
+  }
+
+  
+  ngOnInit(): void {
   }
 
   private formatDate(date: Date, fin: boolean = false) {
@@ -930,10 +937,6 @@ export class DashComponent implements OnInit {
     return prix;
   }
 
-  ngOnInit(): void {
-    this.getValorisationArticleFt();
-    this.getValorisationStock();
-  }
   initialiseChart() {
     this.chartOptionsMontantPerteArticle = {
       time: {
@@ -1085,6 +1088,7 @@ export class DashComponent implements OnInit {
   }
 
   getValorisationArticleFt() {
+    console.log(this.exploitations)
     this.inventaireService.getLastPeriodeInventaire(this.idoperateur, this.exploitations.map(item => item.id ? item.id : 0)).subscribe({
       next: (_periode: any) => {
         this.dates = {
@@ -1135,6 +1139,7 @@ export class DashComponent implements OnInit {
   }
 
   getValorisationStock() {
+    console.log(this.exploitations.map(item => item.id ? item.id : 0))
     this.dashService.getValorisationStock(this.operateurId, this.exploitations.map(item => item.id ? item.id : 0)).subscribe({
       next: (_valorisations) => {
         for (const valeur of _valorisations) {

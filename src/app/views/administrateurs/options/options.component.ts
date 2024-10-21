@@ -6,6 +6,7 @@ import { AlertModule, ToastBodyComponent, ToastHeaderComponent, ToasterComponent
 import { ModalDismissReasons, NgbDropdownModule, NgbModal, NgbModalConfig, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { Adress, Adresse } from 'src/app/shared/model/adresse';
 import { Exploitation } from 'src/app/shared/model/exploitations';
+import { InterfaceAdresse } from 'src/app/shared/model/interface-adresse';
 import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
 import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
 import { InterfaceLieustockages } from 'src/app/shared/model/interface-lieustockages';
@@ -43,6 +44,7 @@ export class OptionsComponent implements OnInit {
   public operateurs: InterfaceOperateur[];
   public operateurExploitationCentre: InterfaceOperateurCentreExploitation;
   public operateurExploitationCentres: InterfaceOperateurCentreExploitation[];
+  public adresseadd: InterfaceAdresse;
 
   public exploitationForm = FormGroup;
   public centreForm = FormGroup;
@@ -57,6 +59,7 @@ export class OptionsComponent implements OnInit {
   private operateurid = sessionStorage.getItem('id') ? Number(sessionStorage.getItem('id')) : 0;
 
   public toggle = true;
+  public toggleexploitation = true;
   public modifToggle = true;
   public inputModif = false;
   public addCentre = false;
@@ -234,21 +237,27 @@ export class OptionsComponent implements OnInit {
     if (this.isAdmin) {
       this.exploitationService.findAllExploitation().subscribe({
         next: async (_exploitations) => {
+          console.log(_exploitations)
           for (const _exploitation of _exploitations) {
             if (_exploitation.adresses === null) {
               _exploitation.adresses = {
-                rue: '...',
-                ville: '...',
-                code_postal: '...',
-                pays: '...',
+                rue: ' ',
+                ville: ' ',
+                code_postal: ' ',
+                pays: ' ',
                 selected: false,
                 centreRevenu: [],
                 exploitation: [],
                 operateur: [],
               }
+            } else {
+              console.log(_exploitation.adresses.pays)
+              console.log(this.country)
+              console.log(this.country.filter((item: any) => { item.translations.fr === _exploitation.adresses.pays }))
+              _exploitation.adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation.adresses.pays })
             }
           }
-          this.exploitations = _exploitations;
+          this.exploitations = _exploitations.filter((item: { codenaf: string; }) => item.codenaf !== 'ADMIN');
         }
       })
     } else {
@@ -257,10 +266,10 @@ export class OptionsComponent implements OnInit {
           for (const _exploitation of _exploitations) {
             if (_exploitation.adresses === null) {
               _exploitation.adresses = {
-                rue: '...',
-                ville: '...',
-                code_postal: '...',
-                pays: '...',
+                rue: ' ',
+                ville: ' ',
+                code_postal: ' ',
+                pays: ' ',
                 selected: false,
                 centreRevenu: [],
                 exploitation: [],
@@ -268,7 +277,7 @@ export class OptionsComponent implements OnInit {
               }
             }
           }
-          this.exploitations = _exploitations;
+          this.exploitations = _exploitations.filter((item: { codenaf: string; }) => item.codenaf !== 'ADMIN');
         },
       });
     }
@@ -401,7 +410,7 @@ export class OptionsComponent implements OnInit {
 
   toggleModal() {
     if (this.isAdmin) {
-      this.toggle = !this.toggle;
+      this.toggleexploitation = !this.toggleexploitation;
       this.modifToggle = !this.modifToggle;
       this.resetExploitation();
       this.getAllCentreRevenu();
@@ -501,13 +510,16 @@ export class OptionsComponent implements OnInit {
     this.adresse = data;
   }
 
+  cancelexploitation() {
+    this.toggleexploitation = !this.toggleexploitation ? true : false;
+    this.resetExploitation();
+    this.showAllExploitation();
+  }
+
   cancel() {
     this.modifToggle = true;
-    this.toggle = !this.toggle;
-    this.resetExploitation();
     this.exploitations = this.exploitations;
     this.addCentre = false;
-    this.showAllExploitation();
     this.centres = [];
     this.resetOperateur();
     this.showAllOperateur();
@@ -559,7 +571,7 @@ export class OptionsComponent implements OnInit {
     this.resetExploitation();
     this.exploitation = exploitation;
     this.inputModif = true;
-    this.toggle = !this.toggle;
+    this.toggleexploitation = !this.toggleexploitation;
     for (const _centre of this.exploitation.centreRevenu) {
       this.centre = {
         code: _centre.code,
@@ -580,7 +592,8 @@ export class OptionsComponent implements OnInit {
   getAllExploitation() {
     this.exploitationService.findAllExploitation().subscribe({
       next: (_exploitations) => {
-        this.exploitations = _exploitations;
+        console.log(_exploitations.filter((item: { codenaf: string; }) => item.codenaf !== 'ADMIN'))
+        this.exploitations = _exploitations.filter((item: { codenaf: string; }) => item.codenaf !== 'ADMIN');
       },
     })
   }
@@ -651,7 +664,7 @@ export class OptionsComponent implements OnInit {
           next: (value) => {
             this.resetExploitation();
             this.toggleToast('Cet exploitation a été supprimé avec succès !');
-            this.toggle = !this.toggle;
+            this.toggleexploitation = !this.toggleexploitation;
             this.showAllExploitation();
           },
         })
@@ -944,5 +957,11 @@ export class OptionsComponent implements OnInit {
         })
       },
     })
+  }
+
+  selectCountry(line: any) {
+    console.log(line)
+    this.exploitation.adresses.pays = line.translations.fr;
+    this.exploitation.adresses.flags = line.alpha2Code.toLowerCase() + '.svg';
   }
 }
