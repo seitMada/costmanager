@@ -51,7 +51,6 @@ export class OptionsComponent implements OnInit {
   public exploitationForm = FormGroup;
   public centreForm = FormGroup;
 
-  public modifcentreexploitation: boolean = false;
   public active = 1;
   public active_3 = 1;
 
@@ -62,8 +61,14 @@ export class OptionsComponent implements OnInit {
   private operateurid = sessionStorage.getItem('id') ? Number(sessionStorage.getItem('id')) : 0;
 
   public toggle = true;
-  public toggleexploitation = true;
-  public modifToggle = true;
+
+  public toggleexploitation: boolean = true;
+  public modifToggleExploitation: boolean = false;
+  public toggleCentreExploitation: boolean = true;
+  public inputModifExploitation: boolean = true;
+  public modifcentreexploitation: boolean = false;
+
+  public modifToggle: boolean = true;
   public inputModif = false;
   public addCentre = false;
   public addLieu = false;
@@ -121,7 +126,6 @@ export class OptionsComponent implements OnInit {
     this.resetCentre();
     this.resetExploitation();
     this.resetLieuStockage();
-    this.resetExploitation();
   }
 
   ngOnInit(): void {
@@ -406,22 +410,20 @@ export class OptionsComponent implements OnInit {
     });
   }
 
-
-
-
-
-  toggleModal() {
+  createExploitations() {
     if (this.isAdmin) {
-      this.toggleexploitation = !this.toggleexploitation;
-      this.modifToggle = !this.modifToggle;
+      this.toggleexploitation = false;
+      this.modifToggleExploitation = true;
+      this.toggleCentreExploitation = false;
+      this.inputModifExploitation = false;
       this.resetExploitation();
       this.getAllCentreRevenu();
-      this.fournisseurService.getAllAdresse().subscribe({
-        next: (adresses) => {
-          this.adresses = adresses;
-          this.adresse = adresses[0];
-        },
-      })
+      // this.fournisseurService.getAllAdresse().subscribe({
+      //   next: (adresses) => {
+      //     this.adresses = adresses;
+      //     this.adresse = adresses[0];
+      //   },
+      // })
     }
   }
 
@@ -492,8 +494,10 @@ export class OptionsComponent implements OnInit {
   }
 
   modifyExploitation() {
-    this.inputModif = !this.inputModif;
-    this.modifToggle = !this.modifToggle;
+    this.inputModifExploitation = false;
+    this.modifToggleExploitation = true;
+    this.toggleCentreExploitation = false;
+    this.modifcentreexploitation = false;
   }
 
 
@@ -512,51 +516,59 @@ export class OptionsComponent implements OnInit {
     this.adresse = data;
   }
 
-  cancelexploitation() {
+  public listexploitation() {
     this.toggleexploitation = !this.toggleexploitation ? true : false;
+    this.modifToggle = false;
+    this.inputModifExploitation = true;
     this.resetExploitation();
     this.showAllExploitation();
   }
 
-  cancel() {
-    this.modifToggle = true;
-    this.exploitations = this.exploitations;
-    this.addCentre = false;
-    this.centres = [];
-    this.resetOperateur();
-    this.showAllOperateur();
-  }
-
-  submit() {
-    if (this.isAdmin) {
-      this.exploitationId = this.exploitation.id ? this.exploitation.id : 0;
-      if (this.exploitationId == 0) {
-        this.exploitation.centreRevenu = this.centres.filter((line: any) => line.selected);
-        this.centres = this.exploitation.centreRevenu;
-        if (this.exploitation.centreRevenu.length > 0) {
-          this.exploitationService.createExploitation(this.exploitation, this.centres).subscribe({
-            next: (value) => {
-              this.toggleToast('Nouveau exploitation crée avec succès !');
-              this.inputModif = !this.inputModif;
-              this.modifToggle = true;
-            },
-          });
-        } else {
-          alert('Veuiller sélectionner au moins un centre de revenu');
-        }
-      } else {
-        console.log(this.exploitation);
-
-        this.exploitationService.updateExploitation(this.exploitation).subscribe({
-          next: (value) => {
-            this.toggleToast('Cet exploitation a été modifié avec succès !');
-            this.inputModif = !this.inputModif;
-            this.modifToggle = true;
-          },
-        });
-      }
+  public cancelexploitation() {
+    console.log(this.exploitation.id)
+    this.modifToggleExploitation = false;
+    this.inputModifExploitation = true;
+    this.toggleCentreExploitation = true;
+    if (!this.exploitation.id) {
+      this.toggleexploitation = !this.toggleexploitation ? true : false;
+      this.exploitations = this.exploitations;
+      this.addCentre = false;
+      this.centres = [];
+      this.resetOperateur();
+      this.showAllOperateur();
     }
   }
+
+  // submit() {
+  //   if (this.isAdmin) {
+  //     this.exploitationId = this.exploitation.id ? this.exploitation.id : 0;
+  //     if (this.exploitationId == 0) {
+  //       this.exploitation.centreRevenu = this.centres.filter((line: any) => line.selected);
+  //       this.centres = this.exploitation.centreRevenu;
+  //       if (this.exploitation.centreRevenu.length > 0) {
+  //         this.exploitationService.createExploitation(this.exploitation, this.centres).subscribe({
+  //           next: (value) => {
+  //             this.toggleToast('Nouveau exploitation crée avec succès !');
+  //             this.inputModif = !this.inputModif;
+  //             this.modifToggle = true;
+  //           },
+  //         });
+  //       } else {
+  //         alert('Veuiller sélectionner au moins un centre de revenu');
+  //       }
+  //     } else {
+  //       console.log(this.exploitation);
+
+  //       this.exploitationService.updateExploitation(this.exploitation).subscribe({
+  //         next: (value) => {
+  //           this.toggleToast('Cet exploitation a été modifié avec succès !');
+  //           this.inputModif = !this.inputModif;
+  //           this.modifToggle = true;
+  //         },
+  //       });
+  //     }
+  //   }
+  // }
 
   saveCentre() {
     this.lieuSTockages = this.centre.lieuStockage;
@@ -572,8 +584,9 @@ export class OptionsComponent implements OnInit {
   showExploitation(exploitation: InterfaceExploitations) {
     this.resetExploitation();
     this.exploitation = exploitation;
-    this.inputModif = true;
+    this.inputModifExploitation = true;
     this.toggleexploitation = !this.toggleexploitation;
+    this.modifcentreexploitation = false;
     for (const _centre of this.exploitation.centreRevenu) {
       this.centre = {
         code: _centre.code,
@@ -592,7 +605,7 @@ export class OptionsComponent implements OnInit {
   }
 
   listecentrerevenuexploitation(_centrerevenu: any) {
-    this.centreService.getcentrerevenu().subscribe({
+    this.centreService.getAllCentreRevenuWithoutLinks().subscribe({
       next: async (_centres) => {
         _centres.forEach((element: { id: any; }) => {
           const centre = _centrerevenu.find((c: { id: any; }) => c.id === element.id);
@@ -613,13 +626,8 @@ export class OptionsComponent implements OnInit {
         _centres.push(centre)
       }
     }
-    // console.log(_centres)
     this.exploitationService.createExploitation(this.exploitation, _centres).subscribe({
       next: async () => {
-        // this.toggleToast('Centre de revenu mis à jour');
-        // await this.showAllExploitation();
-        // const _exploitation = this.exploitations.find(item => item.id === this.exploitation.id);
-        // this.exploitation = _exploitation ? _exploitation : this.exploitation;
         this.exploitationService.getAllExploitationById(this.exploitation.id).subscribe({
           next: (_exploitation) => {
             if (_exploitation[0].adresses === undefined) {
@@ -681,25 +689,28 @@ export class OptionsComponent implements OnInit {
 
   saveExploitation() {
     if (this.isAdmin) {
-      // this.centres = [];
-      // this.exploitationService.createExploitation(this.exploitation, this.centres).subscribe({
-      //   next: (value) => {
-      //     this.getAllExploitation();
-      //     this.toggleToast('Nouveau centre de revenu crée avec succès!');
-      //     this.addExploitation = (this.addExploitation === false ? true : false);
-      //   },
-      // })
-      const _centres = this.centresrevenusexploitations.filter(item => item.selected === true);
-      // console.log(_centres)
-      this.exploitationService.createExploitation(this.exploitation, _centres).subscribe({
-        next: () => {
-          this.inputModif = !this.inputModif;
-          this.modifToggle = !this.modifToggle;
-          alert('Exploitation enregistree');
-        }
-      })
+      if (this.exploitation.id) {
+        const _centres = this.centresrevenusexploitations.filter(item => item.selected === true);
+        this.exploitationService.createExploitation(this.exploitation, _centres).subscribe({
+          next: () => {
+            this.inputModifExploitation = !this.inputModifExploitation;
+            this.modifToggleExploitation = !this.modifToggleExploitation;
+            this.toggleCentreExploitation = true;
+            alert('Exploitation enregistree');
+          }
+        })
+      } else {
+        this.exploitationService.createExploitation(this.exploitation, this.exploitation.centreRevenu).subscribe({
+          next: () => {
+            this.inputModifExploitation = !this.inputModifExploitation;
+            this.modifToggleExploitation = !this.modifToggleExploitation;
+            this.toggleCentreExploitation = true;
+            alert('Exploitation mis a jour');
+          }
+        })
+      }
     } else {
-      alert('Il est impossible de créer un centre de revenu');
+      alert('');
     }
 
   }

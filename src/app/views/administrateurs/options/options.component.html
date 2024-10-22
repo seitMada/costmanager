@@ -7,21 +7,21 @@
         <div class="card py-1" style="border: none;">
           <div class="d-flex bd-highlight">
             <div class="flex-grow-1 bd-highlight">
-              <button type="button" *ngIf="!modifToggle" (click)="saveExploitation()"
+              <button type="button" *ngIf="modifToggleExploitation" (click)="saveExploitation()"
                 class="btn btn-success btn-sm mx-1">Enregistrer</button>
-              <button type="button" *ngIf="!modifToggle" (click)="cancel()"
+              <button type="button" *ngIf="modifToggleExploitation" (click)="cancelexploitation()"
                 class="btn btn-danger btn-sm mx-1">Annuler</button>
             </div>
             <div class="bd-highlight">
-              <button class="btn btn-outline-primary btn-sm me-1" (click)="cancelexploitation()"
-                [disabled]="!modifToggle" *ngIf="!toggleexploitation" title="Liste exploitation"><i
+              <button class="btn btn-outline-primary btn-sm me-1" (click)="listexploitation()"
+                [disabled]="modifToggleExploitation" *ngIf="!toggleexploitation" title="Liste exploitation"><i
                   class="fas fa-list"></i></button>
-              <button class="btn btn-outline-info btn-sm me-1" [disabled]="!modifToggle" (click)="modifyExploitation()"
+              <button class="btn btn-outline-info btn-sm me-1" [disabled]="modifToggleExploitation" (click)="modifyExploitation()"
                 *ngIf="!toggleexploitation" title="Modifier exploitation"><i class="fas fa-pencil"></i></button>
               <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleexploitation"
-                (click)="toggleModal();getAllCentreRevenu(); modifcentreexploitation = true;" title="Ajouter exploitation"><i
+                (click)="createExploitations();getAllCentreRevenu(); modifcentreexploitation = true;" title="Ajouter exploitation"><i
                   class="fas fa-plus"></i></button>
-              <button class="btn btn-outline-danger btn-sm me-1" [disabled]="!modifToggle" *ngIf="!toggleexploitation"
+              <button class="btn btn-outline-danger btn-sm me-1" [disabled]="modifToggleExploitation" *ngIf="!toggleexploitation"
                 (click)="deleteExploitation()" title="Supprimer exploitation"><i class="fas fa-trash"></i></button>
             </div>
           </div>
@@ -32,14 +32,14 @@
               <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Libelle</span>
-                  <input type="text" class="form-control col-7" [disabled]="inputModif" name="libelle"
+                  <input type="text" class="form-control col-7" [disabled]="inputModifExploitation" name="libelle"
                     [(ngModel)]="exploitation.libelle" autocomplete="off">
                 </div>
               </div>
               <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Code Naf</span>
-                  <input type="text" class="form-control col-6" [disabled]="inputModif"
+                  <input type="text" class="form-control col-6" [disabled]="inputModifExploitation"
                     [(ngModel)]="exploitation.codenaf" name="codenaf" aria-describedby="basic-addon1">
                 </div>
               </div>
@@ -48,14 +48,14 @@
               <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Site web</span>
-                  <input type="text" class="form-control col-7" [disabled]="inputModif"
+                  <input type="text" class="form-control col-7" [disabled]="inputModifExploitation"
                     [(ngModel)]="exploitation.siteWeb" name="siteWeb" aria-describedby="basic-addon1">
                 </div>
               </div>
               <div class="col-6">
                 <div class="input-group">
                   <span class="input-group-text col-5" id="basic-addon1">Siret</span>
-                  <input type="text" class="form-control col-7" [disabled]="inputModif" name="siret"
+                  <input type="text" class="form-control col-7" [disabled]="inputModifExploitation" name="siret"
                     [(ngModel)]="exploitation.siret">
                 </div>
               </div>
@@ -64,28 +64,28 @@
               <div class="col-5">
                 <div class="input-group">
                   <span class="input-group-text col-4" id="adresse">Adresse</span>
-                  <input type="text" class="form-control col-8" [disabled]="inputModif" name="adressrue"
+                  <input type="text" class="form-control col-8" [disabled]="inputModifExploitation" name="adressrue" placeholder="Rue"
                     [(ngModel)]="exploitation.adresses.rue">
                   <!-- <span class="input-group-text col-8 bg-white point" id="adress">{{exploitation.adresses.rue}}</span> -->
                 </div>
               </div>
-              <div class="col-3" *ngIf="exploitation.adresses.ville">
+              <div class="col-3">
                 <div class="input-group">
-                  <input type="text" class="form-control col-12" [disabled]="inputModif" name="adressville"
+                  <input type="text" class="form-control col-12" [disabled]="inputModifExploitation" name="adressville" placeholder="Ville"
                     [(ngModel)]="exploitation.adresses.ville">
                   <!-- <span class="input-group-text col-12 bg-white point" id="ville">{{exploitation.adresses.ville}}</span> -->
                 </div>
               </div>
-              <div class="col-1" *ngIf="exploitation.adresses.code_postal">
+              <div class="col-1">
                 <div class="input-group">
-                  <input type="text" class="form-control col-12" [disabled]="inputModif" name="adresscp"
+                  <input type="text" class="form-control col-12" [disabled]="inputModifExploitation" name="adresscp" placeholder="CP"
                     [(ngModel)]="exploitation.adresses.code_postal">
                   <!-- <span class="input-group-text col-12 bg-white point"
                     id="code_postal">{{exploitation.adresses.code_postal}}</span> -->
                 </div>
               </div>
-              <div class="col-3" *ngIf="exploitation.adresses.pays">
-                <div class="input-group" *ngIf="inputModif !== true">
+              <div class="col-3">
+                <div class="input-group" *ngIf="inputModifExploitation !== true">
                   <span class="btn btn-outline-secondary bg-white col-3" data-bs-toggle="dropdown"
                     aria-expanded="false">
                     <img src="../../../../assets/img/flags/{{exploitation.adresses.flags}}" class="img-flag" alt="">
@@ -98,7 +98,7 @@
                     </li>
                   </ul>
                 </div>
-                <div class="input-group" *ngIf="inputModif === true">
+                <div class="input-group" *ngIf="inputModifExploitation === true">
                   <span class="btn btn-outline-secondary bg-white col-3">
                     <img src="../../../../assets/img/flags/{{exploitation.adresses.flags}}" class="img-flag" alt="">
                     <span class="visually-hidden">Toggle Dropdown</span>
@@ -143,7 +143,7 @@
             </table>
           </div>
           <div class="card py-3 mt-4 mx-4" style="height: 40vh;" *ngIf="!toggleexploitation">
-            <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+            <div class="d-grid gap-2 d-md-flex justify-content-md-end" *ngIf="toggleCentreExploitation">
               <div class="d-flex bd-highlight">
                 <button class="btn btn-outline-secondary btn-sm me-1"
                   (click)="listecentrerevenuexploitation(exploitation.centreRevenu)" title="Assigner centre de revenu"
