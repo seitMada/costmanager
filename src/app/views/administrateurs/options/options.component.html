@@ -19,7 +19,7 @@
               <button class="btn btn-outline-info btn-sm me-1" [disabled]="modifToggleExploitation" (click)="modifyExploitation()"
                 *ngIf="!toggleexploitation" title="Modifier exploitation"><i class="fas fa-pencil"></i></button>
               <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleexploitation"
-                (click)="createExploitations();getAllCentreRevenu(); modifcentreexploitation = true;" title="Ajouter exploitation"><i
+                (click)="createExploitations();getAllCentreRevenu();" title="Ajouter exploitation"><i
                   class="fas fa-plus"></i></button>
               <button class="btn btn-outline-danger btn-sm me-1" [disabled]="modifToggleExploitation" *ngIf="!toggleexploitation"
                 (click)="deleteExploitation()" title="Supprimer exploitation"><i class="fas fa-trash"></i></button>
@@ -112,7 +112,7 @@
           <!-- <form #exploitationForm="ngForm">
 
           </form> -->
-          <div class="overflow-y-scroll" style="max-height: 70vh;" *ngIf="toggleexploitation">
+          <div class="overflow-y-scroll" style="max-height: 60vh;" *ngIf="toggleexploitation">
             <table class="table table-hover table-sm table-striped mb-0">
               <thead>
                 <tr>
@@ -152,7 +152,7 @@
                   (click)="savecentreexploitation(centresrevenusexploitations)" title="Enregistrer centre de revenu"
                   *ngIf="modifcentreexploitation">Enregistrer</button>
                 <button class="btn btn-outline-danger btn-sm me-1"
-                  (click)="cancelcentreexploitation(exploitation.centreRevenu)" title="Supprimer centre de revenu"
+                  (click)="cancelcentreexploitation(exploitation.id)" title="Supprimer centre de revenu"
                   *ngIf="modifcentreexploitation">Annuler</button>
               </div>
             </div>

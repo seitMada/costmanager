@@ -189,33 +189,7 @@ export class OptionsComponent implements OnInit {
     }
   }
 
-  public async resetExploitation() {
-    this.adresse = {
-      rue: '',
-      ville: '',
-      code_postal: null,
-      pays: '',
-      selected: false,
-      centreRevenu: [],
-      exploitation: [],
-      operateur: [],
-    }
-    this.exploitation = {
-      code_couleur: "...",
-      libelle: "...",
-      nbDecimal: 0,
-      commentaire: "...",
-      siteWeb: "...",
-      codenaf: "...",
-      siret: "...",
-      logo: "...",
-      actif: true,
-      adressesId: 0,
-      adresses: new Adress(),
-      selected: false,
-      centreRevenu: []
-    }
-  }
+
 
   public resetZonestockage() {
     this.zoneStockage = {
@@ -239,6 +213,35 @@ export class OptionsComponent implements OnInit {
   }
 
   /* show all data*/
+
+  /***********************EXPLOITATION****************************/
+  private async resetExploitation() {
+    this.adresse = {
+      rue: '',
+      ville: '',
+      code_postal: null,
+      pays: '',
+      selected: false,
+      centreRevenu: [],
+      exploitation: [],
+      operateur: [],
+    }
+    this.exploitation = {
+      code_couleur: "",
+      libelle: "",
+      nbDecimal: 0,
+      commentaire: "...",
+      siteWeb: "",
+      codenaf: "",
+      siret: "",
+      logo: "",
+      actif: true,
+      adressesId: 0,
+      adresses: new Adress(),
+      selected: false,
+      centreRevenu: []
+    }
+  }
 
   public async showAllExploitation() {
     if (this.isAdmin) {
@@ -288,6 +291,28 @@ export class OptionsComponent implements OnInit {
       });
     }
   }
+
+  public createExploitations() {
+    if (this.isAdmin) {
+      this.toggleexploitation = false;
+      this.modifToggleExploitation = true;
+      this.toggleCentreExploitation = false;
+      this.inputModifExploitation = false;
+      this.resetExploitation();
+      this.getAllCentreRevenu();
+    }
+  }
+
+  public modifyExploitation() {
+    this.inputModifExploitation = false;
+    this.modifToggleExploitation = true;
+    this.toggleCentreExploitation = false;
+    this.modifcentreexploitation = false;
+  }
+
+  /***************************************************************/
+
+
 
   findAllLieuStockage() {
     this.lieustockageService.getAllLieuStockage().subscribe({
@@ -410,22 +435,7 @@ export class OptionsComponent implements OnInit {
     });
   }
 
-  createExploitations() {
-    if (this.isAdmin) {
-      this.toggleexploitation = false;
-      this.modifToggleExploitation = true;
-      this.toggleCentreExploitation = false;
-      this.inputModifExploitation = false;
-      this.resetExploitation();
-      this.getAllCentreRevenu();
-      // this.fournisseurService.getAllAdresse().subscribe({
-      //   next: (adresses) => {
-      //     this.adresses = adresses;
-      //     this.adresse = adresses[0];
-      //   },
-      // })
-    }
-  }
+
 
   selectCentreRevenu(centre: InterfaceCentreRevenu) {
     this.exploitation.centreRevenu = [];
@@ -493,12 +503,7 @@ export class OptionsComponent implements OnInit {
     this.adresse.id = data.id;
   }
 
-  modifyExploitation() {
-    this.inputModifExploitation = false;
-    this.modifToggleExploitation = true;
-    this.toggleCentreExploitation = false;
-    this.modifcentreexploitation = false;
-  }
+
 
 
   private getDismissReason(reason: any): string {
@@ -654,8 +659,8 @@ export class OptionsComponent implements OnInit {
     });
   }
 
-  cancelcentreexploitation(_centrerevenu: any) {
-    this.exploitationService.getAllExploitationById(this.exploitation.id).subscribe({
+  cancelcentreexploitation(_idexploitation: any) {
+    this.exploitationService.getAllExploitationById(_idexploitation).subscribe({
       next: (_exploitation) => {
         if (_exploitation[0].adresses === undefined) {
           _exploitation[0].adresses = {
@@ -689,12 +694,13 @@ export class OptionsComponent implements OnInit {
 
   saveExploitation() {
     if (this.isAdmin) {
-      if (this.exploitation.id) {
+      if (!this.exploitation.id) {
         const _centres = this.centresrevenusexploitations.filter(item => item.selected === true);
         this.exploitationService.createExploitation(this.exploitation, _centres).subscribe({
-          next: () => {
-            this.inputModifExploitation = !this.inputModifExploitation;
-            this.modifToggleExploitation = !this.modifToggleExploitation;
+          next: (value) => {
+            this.exploitation.id = value;
+            this.inputModifExploitation = true;
+            this.modifToggleExploitation = false;
             this.toggleCentreExploitation = true;
             alert('Exploitation enregistree');
           }
@@ -702,8 +708,8 @@ export class OptionsComponent implements OnInit {
       } else {
         this.exploitationService.createExploitation(this.exploitation, this.exploitation.centreRevenu).subscribe({
           next: () => {
-            this.inputModifExploitation = !this.inputModifExploitation;
-            this.modifToggleExploitation = !this.modifToggleExploitation;
+            this.inputModifExploitation = true;
+            this.modifToggleExploitation = false;
             this.toggleCentreExploitation = true;
             alert('Exploitation mis a jour');
           }
