@@ -1,6 +1,6 @@
 <div class="card" style="max-height: 70vh;">
   <ul ngbNav #nav="ngbNav" [(activeId)]="active" [destroyOnHide]="false" class="nav-tabs">
-    <li [ngbNavItem]="1">
+    <li [ngbNavItem]="1" (click)="initializeview()">
       <button ngbNavLink>EXPLOITATIONS</button>
       <ng-template ngbNavContent>
         <div class="card py-1" style="border: none;">
@@ -165,7 +165,7 @@
                       name="centrerevenu-{{line.libelle}}" id="centrerevenu-{{line.id}}" [(ngModel)]="line.selected">
                   </td>
                   <td scope="col" class="col-8">{{ line.libelle }}</td>
-                  <td scope="col" class="col-3">{{ line.libelle }}</td>
+                  <td scope="col" class="col-3">{{ line.code }}</td>
                 </tr>
               </tbody>
               <tbody *ngIf="modifcentreexploitation">
@@ -175,7 +175,7 @@
                       id="centrerevenu-{{line.id}}" [(ngModel)]="line.selected">
                   </td>
                   <td scope="col" class="col-8">{{ line.libelle }}</td>
-                  <td scope="col" class="col-3">{{ line.libelle }}</td>
+                  <td scope="col" class="col-3">{{ line.code }}</td>
                 </tr>
               </tbody>
             </table>
@@ -183,7 +183,7 @@
         </div>
       </ng-template>
     </li>
-    <li [ngbNavItem]="2">
+    <li [ngbNavItem]="2" (click)="initializeview()">
       <button ngbNavLink>CENTRE DE REVENU</button>
       <ng-template ngbNavContent>
         <div class="card py-1" style="border: none;">

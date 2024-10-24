@@ -92,7 +92,19 @@ export class OptionsComponent implements OnInit {
   public addZone = false;
   selectedExploitationId: number | null = null;
 
-  public country = PAYS;
+  // public country = PAYS;
+  public country = PAYS.sort((a, b) => {
+    const nameA = a.translations?.fr?.toLowerCase() || '';
+    const nameB = b.translations?.fr?.toLowerCase() || '';
+
+    if (nameA < nameB) {
+      return -1;
+    }
+    if (nameA > nameB) {
+      return 1;
+    }
+    return 0;
+  });
   public flags: string = '';
 
   public exploitationId = 0;
@@ -153,6 +165,10 @@ export class OptionsComponent implements OnInit {
 
   /* renitialiser variable */
 
+  public initializeview() {
+    this.toggleexploitation = true;
+    this.toggleCentre = true;
+  }
 
   public resetLieuStockage() {
     this.lieuSTockage = {
@@ -315,21 +331,6 @@ export class OptionsComponent implements OnInit {
     this.inputModifExploitation = true;
     this.toggleexploitation = !this.toggleexploitation;
     this.modifcentreexploitation = false;
-    for (const _centre of this.exploitation.centreRevenu) {
-      this.centre = {
-        code: _centre.code,
-        libelle: _centre.libelle,
-        exploitationsId: _centre.exploitationsId,
-        adressesId: _centre.adressesId,
-        email: _centre.email,
-        telephone: _centre.telephone,
-        exploitations: _centre.exploitations,
-        selected: true,
-        adresses: _centre.adresses,
-        lieuStockage: _centre.lieuStockage,
-      };
-      // this.centres.push(this.centre);
-    }
     this.exploitations = this.exploitations.map(_exploitation => ({
       ..._exploitation,
       selected: false
