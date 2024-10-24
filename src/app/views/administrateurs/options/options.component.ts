@@ -32,12 +32,16 @@ export class OptionsComponent implements OnInit {
 
   public adresse: Adress;
   public adresses: Adresse;
+
   public centre: InterfaceCentreRevenu;
   public centres: InterfaceCentreRevenu[];
+  public centresexploitations: InterfaceExploitations[];
+  public showbtnmodifcentreexploitation: boolean = true;
 
   public centresrevenusexploitations: InterfaceCentreRevenu[];
   public exploitation: InterfaceExploitations;
   public exploitations: InterfaceExploitations[];
+
   public lieuSTockage: InterfaceLieustockages;
   public lieuSTockages: InterfaceLieustockages[];
   public zoneStockage: InterfaceZonestockages;
@@ -67,6 +71,13 @@ export class OptionsComponent implements OnInit {
   public toggleCentreExploitation: boolean = true;
   public inputModifExploitation: boolean = true;
   public modifcentreexploitation: boolean = false;
+
+  public toggleCentre: boolean = true;
+  public modifToggleCentre: boolean = false;
+  public toggleExploitationCentre: boolean = true;
+  public inputModifCentre: boolean = true;
+  public modifExploitationCentre: boolean = false;
+  public exploitationselected: number = 0;
 
   public modifToggle: boolean = true;
   public inputModif = false;
@@ -130,7 +141,7 @@ export class OptionsComponent implements OnInit {
 
   ngOnInit(): void {
     this.showAllExploitation();
-    this.getAllCentreRevenu();
+    this.getAllCentreRevenuWithoutLink();
     this.showAllCentreRevenu();
     this.findAllLieuStockage();
     this.showAllOperateur();
@@ -139,29 +150,6 @@ export class OptionsComponent implements OnInit {
 
   /* renitialiser variable */
 
-  public resetCentre() {
-    this.adresse = {
-      rue: '...',
-      ville: '...',
-      code_postal: '...',
-      pays: '...',
-      selected: false,
-      centreRevenu: [],
-      exploitation: [],
-      operateur: []
-    }
-    this.centre = {
-      code: '',
-      libelle: '',
-      exploitationsId: 0,
-      adressesId: 0,
-      email: '',
-      telephone: '',
-      exploitations: new Exploitation(),
-      adresses: new Adress(),
-      lieuStockage: [],
-    }
-  }
 
   public resetLieuStockage() {
     this.lieuSTockage = {
@@ -299,7 +287,7 @@ export class OptionsComponent implements OnInit {
       this.toggleCentreExploitation = false;
       this.inputModifExploitation = false;
       this.resetExploitation();
-      this.getAllCentreRevenu();
+      this.getAllCentreRevenuWithoutLink();
     }
   }
 
@@ -310,9 +298,482 @@ export class OptionsComponent implements OnInit {
     this.modifcentreexploitation = false;
   }
 
+  public listexploitation() {
+    this.toggleexploitation = !this.toggleexploitation ? true : false;
+    this.modifToggle = false;
+    this.inputModifExploitation = true;
+    this.resetExploitation();
+    this.showAllExploitation();
+  }
+
+  public showExploitation(exploitation: InterfaceExploitations) {
+    this.resetExploitation();
+    this.exploitation = exploitation;
+    this.inputModifExploitation = true;
+    this.toggleexploitation = !this.toggleexploitation;
+    this.modifcentreexploitation = false;
+    for (const _centre of this.exploitation.centreRevenu) {
+      this.centre = {
+        code: _centre.code,
+        libelle: _centre.libelle,
+        exploitationsId: _centre.exploitationsId,
+        adressesId: _centre.adressesId,
+        email: _centre.email,
+        telephone: _centre.telephone,
+        exploitations: _centre.exploitations,
+        selected: true,
+        adresses: _centre.adresses,
+        lieuStockage: _centre.lieuStockage,
+      };
+      // this.centres.push(this.centre);
+    }
+    this.exploitations = this.exploitations.map(_exploitation => ({
+      ..._exploitation,
+      selected: false
+    }));
+  }
+
+  listecentrerevenuexploitation(_centrerevenu: any) {
+    this.centreService.getcentrerevenu().subscribe({
+      next: async (_centres) => {
+        _centres.forEach((element: { exploitationsId: any; id: any; }) => {
+          const centre = _centrerevenu.find((c: { exploitationsId: number | undefined; id: any; }) => c.id === element.id && (c.exploitationsId === null || c.exploitationsId === this.exploitation.id));
+          if (centre) {
+            Object.assign(element, { selected: element.exploitationsId ? true : false });
+          }
+        });
+        this.centresrevenusexploitations = _centres;
+        this.modifcentreexploitation = !this.modifcentreexploitation;
+      }
+    });
+  }
+
+  savecentreexploitation(_centresrevenusexploitations: any) {
+    const _centres = [];
+    for (const centre of _centresrevenusexploitations) {
+      if (centre.selected === true) {
+        _centres.push(centre)
+      }
+    }
+    this.exploitationService.createExploitation(this.exploitation, _centres).subscribe({
+      next: async () => {
+        this.exploitationService.getAllExploitationById(this.exploitation.id).subscribe({
+          next: (_exploitation) => {
+            if (_exploitation[0].adresses === undefined) {
+              _exploitation[0].adresses = {
+                rue: ' ',
+                ville: ' ',
+                code_postal: ' ',
+                pays: ' ',
+                selected: false,
+                centreRevenu: [],
+                exploitation: [],
+                operateur: [],
+              }
+            } else {
+              // console.log(_exploitation.adresses)
+              _exploitation[0].adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation[0].adresses.pays })
+            }
+            this.exploitation = _exploitation[0];
+            this.modifcentreexploitation = false;
+            alert('Centre de revenu mis à jour');
+          }
+        })
+      }
+    });
+  }
+
+  public cancelexploitation() {
+    // console.log(this.exploitation.id)
+    this.modifToggleExploitation = false;
+    this.inputModifExploitation = true;
+    this.toggleCentreExploitation = true;
+    if (!this.exploitation.id) {
+      this.toggleexploitation = !this.toggleexploitation ? true : false;
+      this.exploitations = this.exploitations;
+      this.addCentre = false;
+      // this.centres = [];
+      this.resetOperateur();
+      this.showAllOperateur();
+    }
+  }
+
+  public cancelcentreexploitation(_idexploitation: any) {
+    this.exploitationService.getAllExploitationById(_idexploitation).subscribe({
+      next: (_exploitation) => {
+        if (_exploitation[0].adresses === undefined) {
+          _exploitation[0].adresses = {
+            rue: ' ',
+            ville: ' ',
+            code_postal: ' ',
+            pays: ' ',
+            selected: false,
+            centreRevenu: [],
+            exploitation: [],
+            operateur: [],
+          }
+        } else {
+          // console.log(_exploitation.adresses)
+          _exploitation[0].adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation[0].adresses.pays })
+        }
+        this.exploitation = _exploitation[0];
+        this.modifcentreexploitation = false;
+      }
+    })
+  }
+
+  public getAllExploitation() {
+    this.exploitationService.findAllExploitation().subscribe({
+      next: (_exploitations) => {
+        console.log(_exploitations.filter((item: { codenaf: string; }) => item.codenaf !== 'ADMIN'))
+        this.exploitations = _exploitations.filter((item: { codenaf: string; }) => item.codenaf !== 'ADMIN');
+      },
+    })
+  }
+
+  public saveExploitation() {
+    if (this.isAdmin) {
+      if (!this.exploitation.id) {
+        const _centres = this.centresrevenusexploitations.filter(item => item.selected === true);
+        this.exploitationService.createExploitation(this.exploitation, _centres).subscribe({
+          next: (value) => {
+            this.exploitation.id = value;
+            this.inputModifExploitation = true;
+            this.modifToggleExploitation = false;
+            this.toggleCentreExploitation = true;
+            alert('Exploitation enregistree');
+          }
+        })
+      } else {
+        this.exploitationService.createExploitation(this.exploitation, this.exploitation.centreRevenu).subscribe({
+          next: () => {
+            this.inputModifExploitation = true;
+            this.modifToggleExploitation = false;
+            this.toggleCentreExploitation = true;
+            alert('Exploitation mis a jour');
+          }
+        })
+      }
+    } else {
+      alert('');
+    }
+  }
+
+
+  public deleteExploitation() {
+    if (this.isAdmin) {
+      const listexploitationtodelete = [];
+      this.exploitations.forEach(_exploitation => {
+        if (_exploitation.selected == true) {
+          listexploitationtodelete.push(_exploitation.id)
+        }
+      });
+      if (listexploitationtodelete.length == 0 && this.exploitation.id != undefined) {
+        listexploitationtodelete.push(this.exploitation.id)
+      }
+      if (listexploitationtodelete.length > 0) {
+        this.exploitationService.deleteExploitation(listexploitationtodelete).subscribe({
+          next: () => {
+            this.resetExploitation();
+            this.toggleexploitation = true;
+            this.showAllExploitation();
+            alert('Exploitation supprimés');
+          }
+        })
+      }
+    }
+  }
+
   /***************************************************************/
 
+  /***********************CENTREREVENU****************************/
+  public gerercentrerevenu() {
+    this.active = 2;
+  }
 
+  public resetCentre() {
+    this.adresse = {
+      rue: '...',
+      ville: '...',
+      code_postal: '...',
+      pays: '...',
+      selected: false,
+      centreRevenu: [],
+      exploitation: [],
+      operateur: []
+    }
+    this.centre = {
+      code: '',
+      libelle: '',
+      exploitationsId: 0,
+      adressesId: 0,
+      email: '',
+      telephone: '',
+      exploitations: {
+        id: 0,
+        code_couleur: "",
+        libelle: "",
+        nbDecimal: 0,
+        commentaire: "...",
+        siteWeb: "",
+        codenaf: "",
+        siret: "",
+        logo: "",
+        actif: true,
+        adressesId: 0,
+        adresses: new Adress(),
+        centreRevenu: []
+      },
+      adresses: new Adress(),
+      lieuStockage: [],
+      id: undefined,
+    }
+  }
+
+  public selectexploitation(_event: any) {
+    this.exploitationselected = _event.target.id.split('-')[1];
+    if (this.inputModifCentre === false) {
+      // console.log(_event.target.id.split('-')[2])
+      this.centre.exploitations.libelle = _event.target.id.split('-')[2];
+    }
+  }
+
+  public savecentrerevenuexploitation(_centre: InterfaceCentreRevenu, _save: boolean = true) {
+    if (_save) {
+      console.log(_centre)
+      _centre.exploitationsId = this.exploitationselected;
+      this.centreService.updateCentreRevenu(_centre, []).subscribe({
+        next: (value) => {
+          alert('Exploitation de ' + _centre.libelle + ' mis à jour');
+          if (this.exploitationselected == 0) {
+            value.exploitations = {
+              id: 0,
+              code_couleur: "",
+              libelle: "",
+              nbDecimal: 0,
+              commentaire: "...",
+              siteWeb: "",
+              codenaf: "",
+              siret: "",
+              logo: "",
+              actif: true,
+              adressesId: 0,
+              adresses: new Adress(),
+              centreRevenu: []
+            }
+          }
+          this.centre = value;
+          this.showbtnmodifcentreexploitation = true;
+          this.exploitationselected = 0
+        }
+      })
+    } else {
+      this.showbtnmodifcentreexploitation = true;
+      this.exploitationselected = 0;
+      this.modifToggleCentre = false;
+    }
+  }
+
+  public async showCentreRevenu(centreRevenu: InterfaceCentreRevenu) {
+    this.resetCentre();
+    // this.resetExploitation();
+    // this.resetLieuStockage();
+
+    this.centre = centreRevenu;
+    this.centreId = centreRevenu.id ? centreRevenu.id : 0;
+
+    if (!this.centre.exploitations) {
+      this.centre.exploitations = {
+        code_couleur: '',
+        libelle: '',
+        nbDecimal: 0,
+        commentaire: '',
+        siteWeb: '',
+        codenaf: '',
+        siret: '',
+        logo: '',
+        actif: false,
+        adressesId: 0,
+        adresses: new Adress(),
+        centreRevenu: []
+      }
+    }
+    this.exploitationService.getExploitation().subscribe({
+      next: (_exploitations) => {
+        _exploitations = _exploitations.filter((item: { codenaf: string; }) => item.codenaf != 'ADMIN');
+        _exploitations.forEach((element: { exploitationsId: any; centreRevenu: any[]; }) => {
+          const centre = element.centreRevenu.find((_centre: { id: number | undefined; }) => _centre.id == centreRevenu.id)
+          if (centre) {
+            Object.assign(element, { selected: true });
+          } else {
+            Object.assign(element, { selected: false });
+          }
+        });
+        this.centresexploitations = _exploitations;
+        this.inputModifCentre = true;
+        this.toggleCentre = false;
+        this.modifToggleCentre = false;
+        this.showbtnmodifcentreexploitation = true;
+        this.centres = this.centres.map(_centre => ({
+          ..._centre,
+          selected: false
+        }));
+      },
+    })
+  }
+
+  public listcentrerevenu() {
+    this.toggleCentre = !this.toggleCentre ? true : false;
+    this.modifToggleCentre = false;
+    this.inputModifCentre = true;
+    this.resetCentre();
+    this.showAllCentreRevenu();
+  }
+
+  public createCentrerevenu() {
+    if (this.isAdmin) {
+      console.log('AAAAA')
+      this.toggleCentre = false;
+      this.modifToggleCentre = false;
+      this.showbtnmodifcentreexploitation = false;
+      this.inputModifCentre = false;
+      this.resetCentre();
+      this.exploitationService.getExploitation().subscribe({
+        next: (_exploitations) => {
+          _exploitations = _exploitations.filter((item: { codenaf: string; }) => item.codenaf != 'ADMIN');
+          this.centresexploitations = _exploitations;
+        }
+      })
+    }
+  }
+
+  public showAllCentreRevenu() {
+    if (this.isAdmin) {
+      this.centreService.getcentrerevenu().subscribe({
+        next: async (_centres) => {
+          this.centres = _centres;
+        }
+      });
+    } else {
+      this.centreService.getCrExploitation(this.exploitationid).subscribe({
+        next: async (_centres) => {
+          this.centres = _centres;
+        }
+      });
+    }
+  }
+
+  public savecentrerevenu() {
+    if (this.isAdmin) {
+      if (this.centre.id) { // MODIFIER CENTRE REVENU
+        this.centreService.updateCentreRevenu(this.centre, []).subscribe({
+          next: async (value) => {
+            await this.showCentreRevenu(value);
+            this.exploitationselected = 0;
+            alert('Centre de revenu modifié !');
+            this.inputModifCentre = true;
+            this.modifToggleCentre = false;
+            this.showbtnmodifcentreexploitation = true;
+          }
+        })
+      } else { // CREER CENTRE REVENU
+        this.centreService.createCentreRevenu(this.centre, []).subscribe({
+          next: async (_centre) => {
+            _centre.exploitationsId = this.exploitationselected;
+            this.centreService.updateCentreRevenu(_centre, []).subscribe({
+              next: async (value) => {
+                if (this.exploitationselected == 0) {
+                  value.exploitations = {
+                    id: 0,
+                    code_couleur: "",
+                    libelle: "",
+                    nbDecimal: 0,
+                    commentaire: "...",
+                    siteWeb: "",
+                    codenaf: "",
+                    siret: "",
+                    logo: "",
+                    actif: true,
+                    adressesId: 0,
+                    adresses: new Adress(),
+                    centreRevenu: []
+                  }
+                }
+                await this.showCentreRevenu(value);
+                this.exploitationselected = 0;
+                alert('Nouveau centre de revenu crée avec succès !');
+                this.inputModifCentre = true;
+                this.modifToggleCentre = false;
+                this.showbtnmodifcentreexploitation = true;
+              }
+            })
+          },
+        });
+      }
+    }
+  }
+
+  public async cancelcentrerevenu(_idcentre: any, _centre: InterfaceCentreRevenu) {
+    if (!_idcentre) {
+      if (this.isAdmin) {
+        this.centreService.getcentrerevenu().subscribe({
+          next: async (_centres) => {
+            this.centres = _centres;
+            this.toggleCentre = true;
+            this.modifToggleCentre = true;
+            this.showbtnmodifcentreexploitation = true;
+            this.inputModifCentre = true;
+          }
+        });
+      } else {
+        this.centreService.getCrExploitation(this.exploitationid).subscribe({
+          next: async (_centres) => {
+            this.centres = _centres;
+            this.toggleCentre = true;
+            this.modifToggleCentre = true;
+            this.showbtnmodifcentreexploitation = true;
+            this.inputModifCentre = true;
+          }
+        });
+      }
+    } else {
+      await this.showCentreRevenu(_centre);
+    }
+  }
+
+  public modifyCentre() {
+    this.toggleCentre = false;
+    this.modifToggleCentre = false;
+    this.showbtnmodifcentreexploitation = true;
+    this.inputModifCentre = false;
+  }
+
+  public deletecentrerevenu() {
+    // console.log(this.centres)
+    if (this.isAdmin) {
+      const listcentrerevenutodelete = [];
+      this.centres.forEach(_centre => {
+        if (_centre.selected === true) {
+          listcentrerevenutodelete.push(_centre.id)
+        }
+      });
+      if (listcentrerevenutodelete.length === 0 && this.centre.id != undefined) {
+        listcentrerevenutodelete.push(this.centre.id)
+      }
+      if (listcentrerevenutodelete.length > 0) {
+        // console.log(listcentrerevenutodelete)
+        this.centreService.deleteCentreRevenu(listcentrerevenutodelete).subscribe({
+          next: () => {
+            this.resetCentre();
+            alert('Centre de revenu supprimé');
+            this.toggleCentre = true;
+            this.showAllCentreRevenu();
+          }
+        })
+      }
+    }
+  }
+  /***************************************************************/
 
   findAllLieuStockage() {
     this.lieustockageService.getAllLieuStockage().subscribe({
@@ -329,10 +790,10 @@ export class OptionsComponent implements OnInit {
     })
   }
 
-  getAllCentreRevenu() {
+  getAllCentreRevenuWithoutLink() {
     this.centreService.getAllCentreRevenuWithoutLinks().subscribe({
       next: (_centres) => {
-        this.centres = _centres;
+        // this.centres = _centres;
         this.centresrevenusexploitations = _centres;
         // console.log(this.centres);
         this.exploitation = {
@@ -521,28 +982,6 @@ export class OptionsComponent implements OnInit {
     this.adresse = data;
   }
 
-  public listexploitation() {
-    this.toggleexploitation = !this.toggleexploitation ? true : false;
-    this.modifToggle = false;
-    this.inputModifExploitation = true;
-    this.resetExploitation();
-    this.showAllExploitation();
-  }
-
-  public cancelexploitation() {
-    console.log(this.exploitation.id)
-    this.modifToggleExploitation = false;
-    this.inputModifExploitation = true;
-    this.toggleCentreExploitation = true;
-    if (!this.exploitation.id) {
-      this.toggleexploitation = !this.toggleexploitation ? true : false;
-      this.exploitations = this.exploitations;
-      this.addCentre = false;
-      this.centres = [];
-      this.resetOperateur();
-      this.showAllOperateur();
-    }
-  }
 
   // submit() {
   //   if (this.isAdmin) {
@@ -581,242 +1020,26 @@ export class OptionsComponent implements OnInit {
       next: (value) => {
         this.toggleToast('Nouveau centre de revenu crée avec succès !');
         this.addCentre = (this.addCentre === false ? true : false);
-        this.getAllCentreRevenu();
+        this.getAllCentreRevenuWithoutLink();
       },
     })
   }
 
-  showExploitation(exploitation: InterfaceExploitations) {
-    this.resetExploitation();
-    this.exploitation = exploitation;
-    this.inputModifExploitation = true;
-    this.toggleexploitation = !this.toggleexploitation;
-    this.modifcentreexploitation = false;
-    for (const _centre of this.exploitation.centreRevenu) {
-      this.centre = {
-        code: _centre.code,
-        libelle: _centre.libelle,
-        exploitationsId: _centre.exploitationsId,
-        adressesId: _centre.adressesId,
-        email: _centre.email,
-        telephone: _centre.telephone,
-        exploitations: _centre.exploitations,
-        selected: true,
-        adresses: _centre.adresses,
-        lieuStockage: _centre.lieuStockage,
-      };
-      this.centres.push(this.centre);
-    }
-  }
+  // deleteCentreRevenu() {
+  //   if (this.isAdmin) {
+  //     this.centreService.deleteCentreRevenu(this.centre).subscribe({
+  //       next: (value) => {
+  //         this.resetCentre();
+  //         this.toggleToast('Ce centre de revenu a été supprimé avec succès!');
+  //         this.toggle = !this.toggle;
+  //         this.showAllCentreRevenu();
+  //       },
+  //     });
+  //   }
+  // }
 
-  listecentrerevenuexploitation(_centrerevenu: any) {
-    this.centreService.getAllCentreRevenuWithoutLinks().subscribe({
-      next: async (_centres) => {
-        _centres.forEach((element: { id: any; }) => {
-          const centre = _centrerevenu.find((c: { id: any; }) => c.id === element.id);
-          if (centre) {
-            Object.assign(element, { selected: true });
-          }
-        });
-        this.centresrevenusexploitations = _centres;
-        this.modifcentreexploitation = !this.modifcentreexploitation;
-      }
-    });
-  }
 
-  savecentreexploitation(_centresrevenusexploitations: any) {
-    const _centres = [];
-    for (const centre of _centresrevenusexploitations) {
-      if (centre.selected === true) {
-        _centres.push(centre)
-      }
-    }
-    this.exploitationService.createExploitation(this.exploitation, _centres).subscribe({
-      next: async () => {
-        this.exploitationService.getAllExploitationById(this.exploitation.id).subscribe({
-          next: (_exploitation) => {
-            if (_exploitation[0].adresses === undefined) {
-              _exploitation[0].adresses = {
-                rue: ' ',
-                ville: ' ',
-                code_postal: ' ',
-                pays: ' ',
-                selected: false,
-                centreRevenu: [],
-                exploitation: [],
-                operateur: [],
-              }
-            } else {
-              // console.log(_exploitation.adresses)
-              _exploitation[0].adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation[0].adresses.pays })
-            }
-            this.exploitation = _exploitation[0];
-            this.modifcentreexploitation = false;
-            alert('Centre de revenu mis à jour');
-          }
-        })
-      }
-    });
-  }
 
-  cancelcentreexploitation(_idexploitation: any) {
-    this.exploitationService.getAllExploitationById(_idexploitation).subscribe({
-      next: (_exploitation) => {
-        if (_exploitation[0].adresses === undefined) {
-          _exploitation[0].adresses = {
-            rue: ' ',
-            ville: ' ',
-            code_postal: ' ',
-            pays: ' ',
-            selected: false,
-            centreRevenu: [],
-            exploitation: [],
-            operateur: [],
-          }
-        } else {
-          // console.log(_exploitation.adresses)
-          _exploitation[0].adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation[0].adresses.pays })
-        }
-        this.exploitation = _exploitation[0];
-        this.modifcentreexploitation = false;
-      }
-    })
-  }
-
-  getAllExploitation() {
-    this.exploitationService.findAllExploitation().subscribe({
-      next: (_exploitations) => {
-        console.log(_exploitations.filter((item: { codenaf: string; }) => item.codenaf !== 'ADMIN'))
-        this.exploitations = _exploitations.filter((item: { codenaf: string; }) => item.codenaf !== 'ADMIN');
-      },
-    })
-  }
-
-  saveExploitation() {
-    if (this.isAdmin) {
-      if (!this.exploitation.id) {
-        const _centres = this.centresrevenusexploitations.filter(item => item.selected === true);
-        this.exploitationService.createExploitation(this.exploitation, _centres).subscribe({
-          next: (value) => {
-            this.exploitation.id = value;
-            this.inputModifExploitation = true;
-            this.modifToggleExploitation = false;
-            this.toggleCentreExploitation = true;
-            alert('Exploitation enregistree');
-          }
-        })
-      } else {
-        this.exploitationService.createExploitation(this.exploitation, this.exploitation.centreRevenu).subscribe({
-          next: () => {
-            this.inputModifExploitation = true;
-            this.modifToggleExploitation = false;
-            this.toggleCentreExploitation = true;
-            alert('Exploitation mis a jour');
-          }
-        })
-      }
-    } else {
-      alert('');
-    }
-
-  }
-
-  modifyCentre() {
-    this.inputModif = !this.inputModif;
-    this.modifToggle = !this.modifToggle;
-  }
-
-  showAllCentreRevenu() {
-    if (this.isAdmin) {
-      this.centreService.getcentrerevenu().subscribe({
-        next: async (_centres) => {
-          this.centres = _centres;
-          this.centre = _centres[0];
-          console.log(this.centres);
-
-        }
-      });
-    } else {
-      this.centreService.getCrExploitation(this.exploitationid).subscribe({
-        next: async (_centres) => {
-          this.centres = _centres;
-          this.centre = _centres[0]
-        }
-      });
-    }
-
-  }
-
-  deleteCentreRevenu() {
-    if (this.isAdmin) {
-      this.centreService.deleteCentreRevenu(this.centre).subscribe({
-        next: (value) => {
-          this.resetCentre();
-          this.toggleToast('Ce centre de revenu a été supprimé avec succès!');
-          this.toggle = !this.toggle;
-          this.showAllCentreRevenu();
-        },
-      });
-    }
-  }
-
-  deleteExploitation() {
-    if (this.isAdmin) {
-      this.exploitationId = this.exploitation.id ? this.exploitation.id : 0;
-      if (this.exploitationId == 0) {
-        alert('Cet exploitation ne peut pas supprimé');
-      } else {
-        this.centres = this.exploitation.centreRevenu;
-        this.exploitationService.deleteExploitation(this.exploitation).subscribe({
-          next: (value) => {
-            this.resetExploitation();
-            this.toggleToast('Cet exploitation a été supprimé avec succès !');
-            this.toggleexploitation = !this.toggleexploitation;
-            this.showAllExploitation();
-          },
-        })
-      }
-    }
-  }
-
-  showCentreRevenu(centreRevenu: InterfaceCentreRevenu) {
-    this.resetCentre();
-    this.resetExploitation();
-    this.resetLieuStockage();
-    this.centre = centreRevenu;
-    this.centreId = centreRevenu.id ? centreRevenu.id : 0;
-
-    this.exploitationService.getExploitationByCentreId(this.centreId).subscribe({
-      next: (_exploitations) => {
-        this.exploitations = [];
-        this.inputModif = true;
-        this.toggle = !this.toggle;
-        for (const exploitation of _exploitations) {
-          this.exploitation = {
-            code_couleur: exploitation.code_couleur,
-            libelle: exploitation.libelle,
-            nbDecimal: exploitation.nbDecimal,
-            commentaire: exploitation.commentaire,
-            siteWeb: exploitation.siteWeb,
-            codenaf: exploitation.codenaf,
-            siret: exploitation.siret,
-            logo: exploitation.logo,
-            actif: exploitation.actif,
-            adressesId: exploitation.adresseId,
-            adresses: exploitation.adresses,
-            selected: false,
-            centreRevenu: exploitation.centreRevenu
-          }
-          this.exploitations.push(this.exploitation);
-        }
-        this.lieustockageService.findListLieuStockage(this.centreId).subscribe({
-          next: (_lieuStockages) => {
-            this.zoneStockages = _lieuStockages;
-          }
-        })
-      },
-    })
-  }
 
   findAllLieuStockageWithoutLinks() {
     this.lieustockageService.findAllLieuStockageWithoutLinks().subscribe({

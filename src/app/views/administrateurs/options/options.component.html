@@ -3,7 +3,6 @@
     <li [ngbNavItem]="1">
       <button ngbNavLink>EXPLOITATIONS</button>
       <ng-template ngbNavContent>
-
         <div class="card py-1" style="border: none;">
           <div class="d-flex bd-highlight">
             <div class="flex-grow-1 bd-highlight">
@@ -16,12 +15,13 @@
               <button class="btn btn-outline-primary btn-sm me-1" (click)="listexploitation()"
                 [disabled]="modifToggleExploitation" *ngIf="!toggleexploitation" title="Liste exploitation"><i
                   class="fas fa-list"></i></button>
-              <button class="btn btn-outline-info btn-sm me-1" [disabled]="modifToggleExploitation" (click)="modifyExploitation()"
-                *ngIf="!toggleexploitation" title="Modifier exploitation"><i class="fas fa-pencil"></i></button>
+              <button class="btn btn-outline-info btn-sm me-1" [disabled]="modifToggleExploitation"
+                (click)="modifyExploitation()" *ngIf="!toggleexploitation" title="Modifier exploitation"><i
+                  class="fas fa-pencil"></i></button>
               <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleexploitation"
-                (click)="createExploitations();getAllCentreRevenu();" title="Ajouter exploitation"><i
+                (click)="createExploitations();getAllCentreRevenuWithoutLink();" title="Ajouter exploitation"><i
                   class="fas fa-plus"></i></button>
-              <button class="btn btn-outline-danger btn-sm me-1" [disabled]="modifToggleExploitation" *ngIf="!toggleexploitation"
+              <button class="btn btn-outline-danger btn-sm me-1" [disabled]="modifToggleExploitation"
                 (click)="deleteExploitation()" title="Supprimer exploitation"><i class="fas fa-trash"></i></button>
             </div>
           </div>
@@ -64,24 +64,20 @@
               <div class="col-5">
                 <div class="input-group">
                   <span class="input-group-text col-4" id="adresse">Adresse</span>
-                  <input type="text" class="form-control col-8" [disabled]="inputModifExploitation" name="adressrue" placeholder="Rue"
-                    [(ngModel)]="exploitation.adresses.rue">
-                  <!-- <span class="input-group-text col-8 bg-white point" id="adress">{{exploitation.adresses.rue}}</span> -->
+                  <input type="text" class="form-control col-8" [disabled]="inputModifExploitation" name="adressrue"
+                    placeholder="Rue" [(ngModel)]="exploitation.adresses.rue">
                 </div>
               </div>
               <div class="col-3">
                 <div class="input-group">
-                  <input type="text" class="form-control col-12" [disabled]="inputModifExploitation" name="adressville" placeholder="Ville"
-                    [(ngModel)]="exploitation.adresses.ville">
-                  <!-- <span class="input-group-text col-12 bg-white point" id="ville">{{exploitation.adresses.ville}}</span> -->
+                  <input type="text" class="form-control col-12" [disabled]="inputModifExploitation" name="adressville"
+                    placeholder="Ville" [(ngModel)]="exploitation.adresses.ville">
                 </div>
               </div>
               <div class="col-1">
                 <div class="input-group">
-                  <input type="text" class="form-control col-12" [disabled]="inputModifExploitation" name="adresscp" placeholder="CP"
-                    [(ngModel)]="exploitation.adresses.code_postal">
-                  <!-- <span class="input-group-text col-12 bg-white point"
-                    id="code_postal">{{exploitation.adresses.code_postal}}</span> -->
+                  <input type="text" class="form-control col-12" [disabled]="inputModifExploitation" name="adresscp"
+                    placeholder="CP" [(ngModel)]="exploitation.adresses.code_postal">
                 </div>
               </div>
               <div class="col-3">
@@ -109,9 +105,7 @@
               </div>
             </div>
           </div>
-          <!-- <form #exploitationForm="ngForm">
 
-          </form> -->
           <div class="overflow-y-scroll" style="max-height: 60vh;" *ngIf="toggleexploitation">
             <table class="table table-hover table-sm table-striped mb-0">
               <thead>
@@ -136,8 +130,8 @@
                     line.adresses ? line.adresses.pays : '' }}</td>
                   <td scope="col" class="col-1" (click)="showExploitation(line)">{{ line.codenaf }}</td>
                   <td scope="col" class="col-3" (click)="showExploitation(line)">
-                    <p *ngFor="let lines of line.centreRevenu">{{ lines.libelle }}</p>
-                  </td>
+                <tr *ngFor="let lines of line.centreRevenu">{{ lines.libelle }}</tr>
+                </td>
                 </tr>
               </tbody>
             </table>
@@ -151,9 +145,11 @@
                 <button class="btn btn-outline-success btn-sm me-1"
                   (click)="savecentreexploitation(centresrevenusexploitations)" title="Enregistrer centre de revenu"
                   *ngIf="modifcentreexploitation">Enregistrer</button>
-                <button class="btn btn-outline-danger btn-sm me-1"
-                  (click)="cancelcentreexploitation(exploitation.id)" title="Supprimer centre de revenu"
-                  *ngIf="modifcentreexploitation">Annuler</button>
+                <button class="btn btn-outline-danger btn-sm me-1" (click)="cancelcentreexploitation(exploitation.id)"
+                  title="Supprimer centre de revenu" *ngIf="modifcentreexploitation">Annuler</button>
+                <button class="btn btn-primary btn-sm me-1" (click)="gerercentrerevenu()"
+                  title="Gérer les centres de revenu" *ngIf="!modifcentreexploitation">Gérer les centres de
+                  revenu</button>
               </div>
             </div>
             <table class="table table-hover table-sm table-striped mb-0">
@@ -164,7 +160,10 @@
               </tr>
               <tbody *ngIf="!modifcentreexploitation">
                 <tr *ngFor="let line of exploitation.centreRevenu">
-                  <td scope="col" class="col-1"></td>
+                  <td scope="col" class="col-1">
+                    <input *ngIf="!exploitation.id" type="checkbox" class="form-check-input"
+                      name="centrerevenu-{{line.libelle}}" id="centrerevenu-{{line.id}}" [(ngModel)]="line.selected">
+                  </td>
                   <td scope="col" class="col-8">{{ line.libelle }}</td>
                   <td scope="col" class="col-3">{{ line.libelle }}</td>
                 </tr>
@@ -186,7 +185,152 @@
     </li>
     <li [ngbNavItem]="2">
       <button ngbNavLink>CENTRE DE REVENU</button>
-      <ng-template ngbNavContent></ng-template>
+      <ng-template ngbNavContent>
+        <div class="card py-1" style="border: none;">
+          <div class="d-flex bd-highlight">
+            <div class="flex-grow-1 bd-highlight">
+              <button type="button" *ngIf="!inputModifCentre" (click)="savecentrerevenu()"
+                class="btn btn-success btn-sm mx-1">Enregistrer</button>
+              <button type="button" *ngIf="!inputModifCentre" (click)="cancelcentrerevenu(centre.id, centre)"
+                class="btn btn-danger btn-sm mx-1">Annuler</button>
+            </div>
+            <div class="bd-highlight">
+              <button class="btn btn-outline-primary btn-sm me-1" (click)="listcentrerevenu()"
+                [disabled]="modifToggleCentre" *ngIf="!toggleCentre" title="Liste centre revenu"><i
+                  class="fas fa-list"></i></button>
+              <button class="btn btn-outline-info btn-sm me-1" [disabled]="modifToggleCentre" (click)="modifyCentre()"
+                *ngIf="!toggleCentre" title="Modifier centre revenu"><i class="fas fa-pencil"></i></button>
+              <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleCentre"
+                (click)="createCentrerevenu()" title="Ajouter centre revenu"><i class="fas fa-plus"></i></button>
+              <button class="btn btn-outline-danger btn-sm me-1" [disabled]="modifToggleCentre"
+                (click)="deletecentrerevenu()" title="Supprimer centre revenu"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="card py-3 mt-2" style="border: none;">
+          <div class="card-body" style="max-height: 70vh;" *ngIf="!toggleCentre">
+            <div class="row m-2">
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Code</span>
+                  <input type="text" class="form-control col-6" [disabled]="inputModifCentre" [(ngModel)]="centre.code"
+                    name="code" aria-describedby="basic-addon1">
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Libelle</span>
+                  <input type="text" class="form-control col-7" [disabled]="inputModifCentre" name="libelle"
+                    [(ngModel)]="centre.libelle" autocomplete="off">
+                </div>
+              </div>
+            </div>
+            <div class="row m-2">
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Email</span>
+                  <input type="email" class="form-control col-7" [disabled]="inputModifCentre"
+                    [(ngModel)]="centre.email" name="email" aria-describedby="basic-addon1">
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Téléphone</span>
+                  <input type="text" class="form-control col-7" [disabled]="inputModifCentre" name="telephone"
+                    [(ngModel)]="centre.telephone">
+                </div>
+              </div>
+            </div>
+            <div class="row m-2">
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Exploitation</span>
+                  <input type="text" class="form-control col-7" disabled [(ngModel)]="centre.exploitations.libelle"
+                    name="email" aria-describedby="basic-addon1">
+                  <button class="btn btn-outline-secondary btn-sm" *ngIf="showbtnmodifcentreexploitation"
+                    [disabled]="!inputModifCentre" (click)="showbtnmodifcentreexploitation = false"><i
+                      class="fas fa-pencil"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="overflow-y-scroll" style="max-height: 60vh;" *ngIf="toggleCentre">
+            <div class="card-body overflow-scroll-y py-1" style="height: 600px;">
+              <table class="table table-hover table-sm table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th scope="col" class="col-1">#</th>
+                    <th scope="col" class="col-2">Code</th>
+                    <th scope="col" class="col-3">Libelle</th>
+                    <th scope="col" class="col-2">Email</th>
+                    <th scope="col" class="col-2">Téléphone</th>
+                    <th scope="col" class="col-2">Exploitation</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of centres">
+                    <td scope="col" class="col-1">
+                      <input type="checkbox" class="form-check-input" name="centre-{{line.libelle}}"
+                        id="centre-{{line.id}}" [(ngModel)]="line.selected">
+                    </td>
+                    <td scope="col" class="col-2" (click)="showCentreRevenu(line)">{{ line.code }}</td>
+                    <td scope="col" class="col-3" (click)="showCentreRevenu(line)">{{ line.libelle }}</td>
+                    <td scope="col" class="col-2" (click)="showCentreRevenu(line)">{{ line.email }}</td>
+                    <td scope="col" class="col-2" (click)="showCentreRevenu(line)">{{ line.telephone }}</td>
+                    <td scope="col" class="col-2" (click)="showCentreRevenu(line)">{{ line.exploitations ?
+                      line.exploitations.libelle : '' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card py-3 mt-4 mx-4" style="height: 45vh; border: none;" *ngIf="!toggleCentre">
+            <div class="row">
+              <div class="card"
+                [ngClass]="{'col-12': showbtnmodifcentreexploitation, 'col-3': !showbtnmodifcentreexploitation}"
+                style="height: 40vh;" *ngIf="!showbtnmodifcentreexploitation">
+                <div class="h6 text-center fw-bold">EXPLOITATION</div>
+                <div class="card-body col-12">
+                  <div class="overflow-y-scroll" style="height: 30vh;">
+                    <table class="table table-hover table-sm table-striped mb-0">
+                      <tbody>
+                        <tr *ngFor="let exploitation of centresexploitations">
+                          <td>
+                            <input type="radio" class="form-check-input" name="exploitation"
+                              id="exploitation-{{exploitation.id}}-{{exploitation.libelle}}"
+                              [value]="exploitation.selected" (change)="selectexploitation($event)">
+                          </td>
+                          <td>{{ exploitation.libelle }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                  <div class="row" *ngIf="!showbtnmodifcentreexploitation && inputModifCentre">
+                    <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                      <div class="d-flex bd-highlight">
+                        <button class="btn btn-outline-success btn-sm me-1" *ngIf="exploitationselected !== 0"
+                          (click)="savecentrerevenuexploitation(centre, true)"
+                          title="Enregistrer exploitation">Enregistrer l'exploitation</button>
+                        <button class="btn btn-success btn-sm me-1" *ngIf="exploitationselected == 0"
+                          (click)="exploitationselected = 0; savecentrerevenuexploitation(centre, true)">Enregistrer</button>
+                        <button class="btn btn-outline-danger btn-sm me-1"
+                          (click)="savecentrerevenuexploitation(centre, false)">Annuler</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card"
+                [ngClass]="{'col-12': showbtnmodifcentreexploitation, 'col-9': !showbtnmodifcentreexploitation}"
+                style="height: 40vh;">
+                <div class="h6 text-center fw-bold">LIEU DE STOCKAGES</div>
+                <div class="card-body col-12"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
     </li>
     <li [ngbNavItem]="3">
       <button ngbNavLink>LIEU DE STOCKAGE</button>

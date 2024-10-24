@@ -26,19 +26,19 @@ export class CentreRevenuService {
     return this.https.get<any>(this.apiGetcentrerevenu)
   }
 
-  public createCentreRevenu(centre:InterfaceCentreRevenu,lieuStockages:InterfaceLieustockages[]){
-    return this.https.post<any>(this.apiCreateCentreRevenu,{centre,lieuStockages});
+  public createCentreRevenu(centre: InterfaceCentreRevenu, lieuStockages: InterfaceLieustockages[]) {
+    return this.https.post<any>(this.apiCreateCentreRevenu, { centre, lieuStockages });
   }
 
-  public updateCentreRevenu(centre:InterfaceCentreRevenu,lieuStockages:InterfaceLieustockages[]){
-    return this.https.patch<any>(this.apiUpdateCentreRevenu + centre.id,{centre,lieuStockages});
+  public updateCentreRevenu(centre: InterfaceCentreRevenu, lieuStockages: InterfaceLieustockages[]) {
+    return this.https.patch<any>(this.apiUpdateCentreRevenu + centre.id, { centre, lieuStockages });
   }
 
-  public deleteCentreRevenu(centre:InterfaceCentreRevenu){
+  public deleteCentreRevenu(centre: number[]) {
     return this.https.post<any>(this.apiDeleteCentreRevenu, centre);
   }
 
-  public getAllCentreRevenuWithoutLinks(){
+  public getAllCentreRevenuWithoutLinks() {
     return this.https.get<any>(this.apiGetAllCentreRevenuWithoutLinks);
   }
 }
