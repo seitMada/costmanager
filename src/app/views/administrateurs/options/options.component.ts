@@ -78,6 +78,9 @@ export class OptionsComponent implements OnInit {
   public inputModifCentre: boolean = true;
   public modifExploitationCentre: boolean = false;
   public exploitationselected: number = 0;
+  public lieustockagescentrerevenus: InterfaceLieustockages[];
+  public lieustockagescentrerevenusselected: number = 0;
+  public modifLieustockageCentre: boolean = false;
 
   public modifToggle: boolean = true;
   public inputModif = false;
@@ -618,6 +621,12 @@ export class OptionsComponent implements OnInit {
           ..._centre,
           selected: false
         }));
+        this.lieustockageService.getAllLieuStockage().subscribe({
+          next: (_lieustocks) => {
+            this.lieustockagescentrerevenus = _lieustocks.filter((item: { centreId: number | undefined; }) => item.centreId === this.centre.id);
+            console.log(this.lieustockagescentrerevenus)
+          },
+        });
       },
     })
   }
@@ -628,6 +637,47 @@ export class OptionsComponent implements OnInit {
     this.inputModifCentre = true;
     this.resetCentre();
     this.showAllCentreRevenu();
+  }
+
+  public listelieustockagecentrerevenu(_lieustockages: any) {
+    this.lieustockageService.getAllLieuStockage().subscribe({
+      next: (_lieustocks) => {
+        // this.centres = this.centres.map(_centre => ({
+        //   ..._centre,
+        //   selected: false
+        // }));
+        _lieustocks.forEach((element: { selected: boolean; centreId: number | undefined; }) => {
+          if (element.centreId === this.centre.id) {
+            element.selected = true;
+          }
+        });
+        this.lieustockagescentrerevenus = _lieustocks;
+        this.modifLieustockageCentre = true;
+        // console.log(this.lieustockagescentrerevenus)
+      },
+    });
+  }
+
+  public savecentrelieustockage() {
+    const _lieu = this.lieustockagescentrerevenus.filter(item => item.selected === true);
+    this.centreService.updateCentreRevenu(this.centre, _lieu).subscribe({
+      next: async (value) => {
+        await this.showCentreRevenu(value);
+        alert('Lieu de stockage mis à jour');
+        this.modifLieustockageCentre = false;
+      }
+    })
+  }
+
+  public cancelcentrelieustockage() {
+    this.lieustockageService.getAllLieuStockage().subscribe({
+      next: (_lieustocks) => {
+        this.lieustockagescentrerevenus = _lieustocks.filter((item: { centreId: number | undefined; }) => item.centreId === this.centre.id);
+        this.modifLieustockageCentre = false;
+      },
+    });
+    // this.lieustockagescentrerevenus = _lieustockages;
+    // this.modifLieustockageCentre = false;
   }
 
   public createCentrerevenu() {
@@ -652,6 +702,12 @@ export class OptionsComponent implements OnInit {
       this.centreService.getcentrerevenu().subscribe({
         next: async (_centres) => {
           this.centres = _centres;
+          // this.lieustockageService.getAllLieuStockage().subscribe({
+          //   next: (_lieustocks) => {
+          //     this.lieustockagescentrerevenus = _lieustocks.filter((item: { centreId: number | undefined; }) => item.centreId === this.centre.id);
+          //     console.log(this.lieustockagescentrerevenus)
+          //   },
+          // });
         }
       });
     } else {

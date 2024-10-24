@@ -325,7 +325,44 @@
                 [ngClass]="{'col-12': showbtnmodifcentreexploitation, 'col-9': !showbtnmodifcentreexploitation}"
                 style="height: 40vh;">
                 <div class="h6 text-center fw-bold">LIEU DE STOCKAGES</div>
-                <div class="card-body col-12"></div>
+                <div class="card-body col-12">
+                  <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-1"
+                    *ngIf="showbtnmodifcentreexploitation">
+                    <div class="d-flex bd-highlight" *ngIf="inputModifCentre">
+                      <button class="btn btn-outline-secondary btn-sm me-1"
+                        (click)="listelieustockagecentrerevenu(centre.lieuStockage)" title="Assigner lieu de stockage"
+                        *ngIf="!modifLieustockageCentre"><i class="fas fa-pencil"></i></button>
+                      <button class="btn btn-outline-success btn-sm me-1" (click)="savecentrelieustockage()"
+                        title="Enregistrer centre de revenu" *ngIf="modifLieustockageCentre">Enregistrer</button>
+                      <button class="btn btn-outline-danger btn-sm me-1" (click)="cancelcentrelieustockage()"
+                        title="Supprimer centre de revenu" *ngIf="modifLieustockageCentre">Annuler</button>
+                    </div>
+                  </div>
+                  <div class="overflow-y-scroll" style="height: 30vh; overflow-x: hidden;">
+                    <div class="row d-flex justify-content-center">
+
+                      <div class="card text-center m-1" style="width: 18rem;"
+                        *ngFor="let _lieustockage of lieustockagescentrerevenus">
+                        <div class="card-body">
+                          <div class="clearfix">
+                            <h5 class="float-center">{{_lieustockage.lieu}}</h5>
+                            <input type="checkbox" class="form-check-input float-right" *ngIf="modifLieustockageCentre"
+                              name="_lieustockage-{{_lieustockage.lieu}}" id="_lieustockage-{{_lieustockage.id}}"
+                              [(ngModel)]="_lieustockage.selected">
+                          </div>
+                          <table class="table table-sm table-striped">
+                            <tbody>
+                              <tr *ngFor="let _zonestockage of _lieustockage.zonestockage">
+                                <td>{{ _zonestockage.zone }}</td>
+                              </tr>
+                            </tbody>
+                          </table>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
