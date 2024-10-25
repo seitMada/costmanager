@@ -500,7 +500,7 @@
                       <tbody>
                         <tr *ngFor="let zonestockage of zonestockageslieustockages">
                           <td>
-                            <input *ngIf="!inputModifLieu" type="checkbox" class="form-check-input"
+                            <input *ngIf="!inputModifLieu || !inputModifZone" type="checkbox" class="form-check-input"
                               name="zonestockage-{{zonestockage.id}}" id="zonestockage-{{zonestockage.id}}"
                               [(ngModel)]="zonestockage.selected">
                           </td>

@@ -89,6 +89,7 @@ export class OptionsComponent implements OnInit {
   public zonestockageslieustockages: InterfaceZonestockages[];
   public centrerevenulieustockages: InterfaceCentreRevenu[];
   public centrerevenulieustockagesselected: number = 0;
+  public inputModifZone: boolean = true;
 
   public modifToggle: boolean = true;
   public inputModif = false;
