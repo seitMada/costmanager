@@ -333,9 +333,9 @@
                         (click)="listelieustockagecentrerevenu(centre.lieuStockage)" title="Assigner lieu de stockage"
                         *ngIf="!modifLieustockageCentre"><i class="fas fa-pencil"></i></button>
                       <button class="btn btn-outline-success btn-sm me-1" (click)="savecentrelieustockage()"
-                        title="Enregistrer centre de revenu" *ngIf="modifLieustockageCentre">Enregistrer</button>
-                      <button class="btn btn-outline-danger btn-sm me-1" (click)="cancelcentrelieustockage()"
-                        title="Supprimer centre de revenu" *ngIf="modifLieustockageCentre">Annuler</button>
+                        title="Enregistrer" *ngIf="modifLieustockageCentre">Enregistrer</button>
+                      <button class="btn btn-outline-danger btn-sm me-1" (click)="cancelcentrelieustockage()" title=""
+                        *ngIf="modifLieustockageCentre">Annuler</button>
                     </div>
                   </div>
                   <div class="overflow-y-scroll" style="height: 30vh; overflow-x: hidden;">
@@ -369,9 +369,150 @@
         </div>
       </ng-template>
     </li>
-    <li [ngbNavItem]="3">
+    <li [ngbNavItem]="3" (click)="initializeview()">
       <button ngbNavLink>LIEU DE STOCKAGE</button>
-      <ng-template ngbNavContent></ng-template>
+      <ng-template ngbNavContent>
+        <div class="card py-1" style="border: none;">
+          <div class="d-flex bd-highlight">
+            <div class="flex-grow-1 bd-highlight">
+              <button type="button" *ngIf="!inputModifLieu" (click)="saveLieuDeStockage()"
+                class="btn btn-success btn-sm mx-1">Enregistrer</button>
+              <button type="button" *ngIf="!inputModifLieu" (click)="cancelLieuDeStockage(lieuStockage)"
+                class="btn btn-danger btn-sm mx-1">Annuler</button>
+            </div>
+            <div class="bd-highlight">
+              <button class="btn btn-outline-primary btn-sm me-1" (click)="listLieuStockage()"
+                [disabled]="modifToggleLieu" *ngIf="!toggleLieu" title="Liste centre revenu"><i
+                  class="fas fa-list"></i></button>
+              <button class="btn btn-outline-info btn-sm me-1" [disabled]="modifToggleLieu"
+                (click)="modifyLieuStockage()" *ngIf="!toggleLieu" title="Modifier centre revenu"><i
+                  class="fas fa-pencil"></i></button>
+              <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleLieu"
+                (click)="createLieuStockage()" title="Ajouter centre revenu"><i class="fas fa-plus"></i></button>
+              <button class="btn btn-outline-danger btn-sm me-1" [disabled]="modifToggleLieu"
+                (click)="deleteLieuStockage()" title="Supprimer centre revenu"><i class="fas fa-trash"></i></button>
+            </div>
+          </div>
+        </div>
+        <div class="card py-3 mt-2" style="border: none;">
+          <div class="overflow-y-scroll" style="max-height: 60vh;" *ngIf="toggleLieu">
+            <div class="card-body overflow-scroll-y py-1" style="height: 600px;">
+              <table class="table table-hover table-sm table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th scope="col" class="col-1"></th>
+                    <th scope="col" class="col-2">Lieu</th>
+                    <th scope="col" class="col-2">Zone de stockage</th>
+                    <th scope="col" class="col-2">Centre de revenu</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of lieuSTockages">
+                    <th scope="col" class="col-1">
+                      <input type="checkbox" class="form-check-input" name="lieuSTockage-{{line.id}}"
+                        id="lieuSTockage-{{line.id}}" [(ngModel)]="line.selected">
+                    </th>
+                    <td scope="col" class="col-2" (click)="showOneLieuStockage(line)">{{ line.lieu }}</td>
+                    <td scope="col" class="col-2" (click)="showOneLieuStockage(line)">{{ line.lieu }}</td>
+                    <td scope="col" class="col-2" (click)="showOneLieuStockage(line)">{{ line.centre ?
+                      line.centre.libelle: '' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="card-body" style="max-height: 70vh;" *ngIf="!toggleLieu">
+            <div class="row m-2">
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Lieu de stockage</span>
+                  <input type="text" class="form-control col-6" [disabled]="inputModifLieu"
+                    [(ngModel)]="lieuStockage.lieu" name="code" aria-describedby="basic-addon1">
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="input-group">
+                  <span class="input-group-text col-5" id="basic-addon1">Centre de revenu</span>
+                  <input type="text" class="form-control col-7" disabled [(ngModel)]="lieuStockage.centre.libelle"
+                    name="email" aria-describedby="basic-addon1">
+                  <button class="btn btn-outline-secondary btn-sm" *ngIf="showbtnmodiflieucentre"
+                    [disabled]="!inputModifLieu" (click)="showbtnmodiflieucentre = false"><i
+                      class="fas fa-pencil"></i></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card py-3 mt-4 mx-4" style="height: 45vh; border: none;" *ngIf="!toggleLieu">
+            <div class="row">
+              <div class="card" [ngClass]="{'col-12': showbtnmodiflieucentre, 'col-3': !showbtnmodiflieucentre}"
+                style="height: 40vh;" *ngIf="!showbtnmodiflieucentre">
+                <div class="h6 text-center fw-bold">CENTRE DE REVENU</div>
+                <div class="overflow-y-scroll" style="height: 30vh;">
+                  <table class="table table-hover table-sm table-striped mb-0">
+                    <tbody>
+                      <tr *ngFor="let centrerevenu of centrerevenulieustockages">
+                        <td>
+                          <input type="radio" class="form-check-input" name="centrerevenu"
+                            id="centrerevenu-{{centrerevenu.id}}-{{centrerevenu.libelle}}"
+                            [value]="centrerevenu.selected" (change)="selectcentrerevenulieu($event)">
+                        </td>
+                        <td>{{ centrerevenu.libelle }}</td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+                <div class="row" *ngIf="!showbtnmodiflieucentre && inputModifLieu">
+                  <div class="d-grid gap-2 d-md-flex justify-content-md-end">
+                    <div class="d-flex bd-highlight">
+                      <button class="btn btn-outline-success btn-sm me-1"
+                        *ngIf="centrerevenulieustockagesselected !== 0"
+                        (click)="savelieucentrerevenu(lieuStockage, true)"
+                        title="Enregistrer exploitation">Enregistrer</button>
+                      <button class="btn btn-success btn-sm me-1" *ngIf="centrerevenulieustockagesselected == 0"
+                        (click)="centrerevenulieustockagesselected = 0; savelieucentrerevenu(lieuStockage, true)">Enregistrer</button>
+                      <button class="btn btn-outline-danger btn-sm me-1"
+                        (click)="savelieucentrerevenu(lieuStockage, false)">Annuler</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="card" [ngClass]="{'col-12': showbtnmodiflieucentre, 'col-9': !showbtnmodiflieucentre}"
+                style="height: 40vh;">
+                <div class="h6 text-center fw-bold">ZONE DE STOCKAGES</div>
+                <div class="card-body">
+                  <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-1" *ngIf="showbtnmodiflieucentre">
+                    <div class="d-flex bd-highlight" *ngIf="inputModifLieu">
+                      <button class="btn btn-outline-secondary btn-sm me-1"
+                        (click)="listelieustockagecentrerevenu(lieuStockage)" title="Assigner zone de stockage"
+                        *ngIf="!modifToggleLieu"><i class="fas fa-pencil"></i></button>
+                      <button class="btn btn-outline-success btn-sm me-1" (click)="savezonelieustockage()"
+                        title="Enregistrer centre de revenu" *ngIf="modifToggleLieu">Enregistrer</button>
+                      <button class="btn btn-outline-danger btn-sm me-1" (click)="cancelzonelieustockage()"
+                        title="Supprimer centre de revenu" *ngIf="modifToggleLieu">Annuler</button>
+                    </div>
+                  </div>
+                  <div class="overflow-y-scroll" style="height: 30vh;">
+                    <table class="table table-hover table-sm table-striped mb-0">
+                      <tbody>
+                        <tr *ngFor="let zonestockage of zonestockageslieustockages">
+                          <td>
+                            <input *ngIf="!inputModifLieu" type="checkbox" class="form-check-input"
+                              name="zonestockage-{{zonestockage.id}}" id="zonestockage-{{zonestockage.id}}"
+                              [(ngModel)]="zonestockage.selected">
+                          </td>
+                          <td>{{ zonestockage.zone }}</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-template>
     </li>
     <li [ngbNavItem]="4">
       <button ngbNavLink>ZONE DE STOCKAGE</button>

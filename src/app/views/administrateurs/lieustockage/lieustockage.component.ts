@@ -18,11 +18,11 @@ import { ZonestockagesService } from 'src/app/shared/service/zonestockages.servi
 @Component({
   selector: 'app-lieustockage',
   standalone: true,
-  imports: [CommonModule, FormsModule,NgbNavModule,NgbDropdownModule,AlertModule,ToasterComponent,ToastComponent,ToastHeaderComponent,ToastBodyComponent],
+  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule, AlertModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
   templateUrl: './lieustockage.component.html',
   styleUrl: './lieustockage.component.scss'
 })
-export class LieustockageComponent implements OnInit{
+export class LieustockageComponent implements OnInit {
 
   public adresse: Adress;
   public adresses: Adresse;
@@ -32,10 +32,10 @@ export class LieustockageComponent implements OnInit{
   public lieustockages: InterfaceLieustockages[];
   public zonestockage: InterfaceZonestockages;
   public zonestockages: InterfaceZonestockages[];
-  public exploitation : InterfaceExploitations;
+  public exploitation: InterfaceExploitations;
 
   public lieuStockageForm = FormGroup;
-  public centreForm =  FormGroup;
+  public centreForm = FormGroup;
   closeResult = '';
 
   private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
@@ -76,12 +76,12 @@ export class LieustockageComponent implements OnInit{
     public route: ActivatedRoute,
     public centreService: CentreRevenuService,
     public fournisseurService: FournisseurService,
-    public lieuStockageService : LieustockageService,
+    public lieuStockageService: LieustockageService,
     public zonestockageService: ZonestockagesService,
     private modalService: NgbModal,
     config: NgbModalConfig
   ) {
-    config.backdrop =  'static';
+    config.backdrop = 'static';
     config.keyboard = false;
     this.resetLieuStockage();
     this.resetCentre();
@@ -92,22 +92,22 @@ export class LieustockageComponent implements OnInit{
     this.showAllLieuStockage();
   }
 
-  showAllLieuStockage(){
+  showAllLieuStockage() {
     this.lieuStockageService.getAllLieuStockage().subscribe({
-      next:(_lieustocks) =>{
+      next: (_lieustocks) => {
         this.lieustockages = _lieustocks;
         this.lieustockage = _lieustocks[0];
       },
-    });    
+    });
   }
 
-  public resetLieuStockage(){
+  public resetLieuStockage() {
     this.lieustockage = {
-      lieu : '',
-      centreId:0,
-      selected:false,
-      centre:this.centre,
-      zonestockage:this.zonestockages
+      lieu: '',
+      centreId: 0,
+      selected: false,
+      centre: this.centre,
+      zonestockage: this.zonestockages
     }
   }
 
@@ -134,69 +134,69 @@ export class LieustockageComponent implements OnInit{
       actif: true,
       adressesId: 0,
       adresses: new Adress(),
-      centreRevenu:[]
+      centreRevenu: []
     }
     this.centre = {
       code: '',
       libelle: '',
       exploitationsId: 0,
-      adressesId:0,
+      adressesId: 0,
       email: '',
       telephone: '',
       exploitations: new Exploitation(),
       adresses: new Adress(),
-      lieuStockage:[],
+      lieuStockage: [],
     }
   }
 
-  public resetZonestockage(){
+  public resetZonestockage() {
     this.zonestockage = {
-      zone:'',
+      zone: '',
       lieuId: 0,
       selected: false,
       lieu: this.lieustockage,
     }
   }
 
-  getAllCentreRevenu(){
+  getAllCentreRevenu() {
     this.centreService.getcentrerevenu().subscribe({
-      next:(_centres) =>{
+      next: (_centres) => {
         this.centres = _centres
         this.centre = _centres[0];
       },
     });
   }
 
-  getAllZoneStockageWithoutLinks(){
+  getAllZoneStockageWithoutLinks() {
     this.zonestockageService.getAllZoneStockageWithoutLinks().subscribe({
-      next:(_zones) =>{
+      next: (_zones) => {
         this.zonestockages = _zones;
         this.zonestockage = _zones[0];
       },
     })
   }
 
-  toggleModal(){
+  toggleModal() {
     if (this.isAdmin) {
       this.resetLieuStockage();
       this.modifToggle = !this.modifToggle;
       this.toggle = !this.toggle;
       this.centreService.getcentrerevenu().subscribe({
-        next:(_centres) =>{
+        next: (_centres) => {
           this.centres = _centres
           this.centre = _centres[0];
 
           this.zonestockageService.getAllZoneStockageWithoutLinks().subscribe({
-            next:(_zones) =>{
+            next: (_zones) => {
               this.zonestockages = _zones;
               this.zonestockage = _zones[0];
 
               this.lieustockage = {
-                lieu : '',
-                centreId:this.centre.id ? this.centre.id:0,
-                selected:false,
-                centre:this.centre,
-                zonestockage:this.zonestockages
+                lieu: '',
+                centreId: this.centre.id ? this.centre.id : 0,
+                selected: false,
+                centre: this.centre,
+                zonestockage: this.zonestockages
               }
             },
           })
@@ -205,12 +205,12 @@ export class LieustockageComponent implements OnInit{
     }
   }
 
-  selectAdress(data: Adress){
+  selectAdress(data: Adress) {
     this.adresse = data;
     this.adresse.id = data.id;
   }
 
-  updateSelect(data:Adress){
+  updateSelect(data: Adress) {
     this.adresse = data;
   }
 
@@ -248,43 +248,43 @@ export class LieustockageComponent implements OnInit{
     })
   }
 
-  addFormCentre(){
+  addFormCentre() {
     if (this.isAdmin) {
       this.resetCentre();
-      this.addCentre = (this.addCentre === false ? true:false);
+      this.addCentre = (this.addCentre === false ? true : false);
     }
   }
 
-  saveCentre(){
+  saveCentre() {
     this.lieustockages = [];
-    this.centreService.createCentreRevenu(this.centre,this.lieustockages).subscribe({
-      next:(value) =>{
+    this.centreService.createCentreRevenu(this.centre, this.lieustockages).subscribe({
+      next: (value) => {
         this.toggleToast('Nouveau centre de revenu crée avec succès !');
-        this.addCentre = (this.addCentre === false ? true:false);
+        this.addCentre = (this.addCentre === false ? true : false);
         this.getAllCentreRevenu();
       },
     })
   }
 
-  saveZoneDeStockage(){
+  saveZoneDeStockage() {
     this.zonestockageService.createZoneDeStockage(this.zonestockage).subscribe({
-      next:(value) =>{
+      next: (value) => {
         this.toggleToast('Nouveau zone de stockage crée avec succès !');
-        this.addZone = (this.addZone === false ? true:false);
+        this.addZone = (this.addZone === false ? true : false);
         this.getAllZoneStockageWithoutLinks();
       },
     });
   }
 
-  addFormZoneStockage(){
+  addFormZoneStockage() {
     if (this.isAdmin) {
       this.resetZonestockage();
-      this.addZone = (this.addZone === false ? true:false);
+      this.addZone = (this.addZone === false ? true : false);
     }
   }
 
-  private getDismissReason(reason:any):string{
-    switch(reason){
+  private getDismissReason(reason: any): string {
+    switch (reason) {
       case ModalDismissReasons.ESC:
         return 'by pressing ESC';
       case ModalDismissReasons.BACKDROP_CLICK:
@@ -294,7 +294,7 @@ export class LieustockageComponent implements OnInit{
     }
   }
 
-  cancel(){
+  cancel() {
     this.modifToggle = true;
     this.toggle = !this.toggle;
     this.addCentre = false;
@@ -303,93 +303,93 @@ export class LieustockageComponent implements OnInit{
     this.showAllLieuStockage();
   }
 
-  submit(){
-    
-      this.lieuId = this.lieustockage.id ? this.lieustockage.id : 0;
-      if(this.lieuId == 0){
-        const zoneStockageSelect = this.zonestockages.filter(line => line.selected);
-        if (zoneStockageSelect.length >0) {
-          this.lieustockage.zonestockage = zoneStockageSelect;
-          for(const _centre of this.centres){
-            if (_centre.selected) {
-              this.lieustockage.centre = _centre;
-              this.lieustockage.centreId = _centre.id? _centre.id :0;
-              this.lieuStockageService.createLieuStockage(this.lieustockage,zoneStockageSelect).subscribe({
-                next:(value) =>{
-                  this.toggleToast('Nouveau lieu de stockage crée avec succès !');
-                  this.inputModif = !this.inputModif;
-                  this.modifToggle = true;
-                },
-              })
-            }
+  submit() {
+
+    this.lieuId = this.lieustockage.id ? this.lieustockage.id : 0;
+    if (this.lieuId == 0) {
+      const zoneStockageSelect = this.zonestockages.filter(line => line.selected);
+      if (zoneStockageSelect.length > 0) {
+        this.lieustockage.zonestockage = zoneStockageSelect;
+        for (const _centre of this.centres) {
+          if (_centre.selected) {
+            this.lieustockage.centre = _centre;
+            this.lieustockage.centreId = _centre.id ? _centre.id : 0;
+            this.lieuStockageService.createLieuStockage(this.lieustockage, zoneStockageSelect).subscribe({
+              next: (value) => {
+                this.toggleToast('Nouveau lieu de stockage crée avec succès !');
+                this.inputModif = !this.inputModif;
+                this.modifToggle = true;
+              },
+            })
           }
-        } else {
-          alert('Veuillez sélectionner au moins un lieu de stockage et centre de revenu');
         }
-      }else{
-        const zoneStockageSelect = this.zonestockages.filter(line => line.selected);
-        if (zoneStockageSelect.length >0) {
-          this.lieustockage.zonestockage = zoneStockageSelect;
-          for(const _centre of this.centres){
-            if (_centre.selected) {
-              this.lieustockage.centre = _centre;
-              this.lieustockage.centreId = _centre.id? _centre.id :0;
-              this.lieuStockageService.updateLieuDeStockage(this.lieustockage,zoneStockageSelect).subscribe({
-                next:(value) =>{
-                  this.toggleToast('Lieu de stockage modifié avec succès !');
-                  this.inputModif = !this.inputModif;
-                  this.modifToggle = true;
-                },
-              })
-            }
-          }
-        }else {
-          alert('Veuillez sélectionner au moins un lieu de stockage et centre de revenu');
-        }
+      } else {
+        alert('Veuillez sélectionner au moins un lieu de stockage et centre de revenu');
       }
+    } else {
+      const zoneStockageSelect = this.zonestockages.filter(line => line.selected);
+      if (zoneStockageSelect.length > 0) {
+        this.lieustockage.zonestockage = zoneStockageSelect;
+        for (const _centre of this.centres) {
+          if (_centre.selected) {
+            this.lieustockage.centre = _centre;
+            this.lieustockage.centreId = _centre.id ? _centre.id : 0;
+            this.lieuStockageService.updateLieuDeStockage(this.lieustockage, zoneStockageSelect).subscribe({
+              next: (value) => {
+                this.toggleToast('Lieu de stockage modifié avec succès !');
+                this.inputModif = !this.inputModif;
+                this.modifToggle = true;
+              },
+            })
+          }
+        }
+      } else {
+        alert('Veuillez sélectionner au moins un lieu de stockage et centre de revenu');
+      }
+    }
   }
 
-  showOneLieuStockage(lieustockage:InterfaceLieustockages){
+  showOneLieuStockage(lieustockage: InterfaceLieustockages) {
     this.resetLieuStockage();
     this.resetCentre();
     this.lieustockage = lieustockage;
-    
-    this.lieuId = this.lieustockage.id ? this.lieustockage.id :0;
+
+    this.lieuId = this.lieustockage.id ? this.lieustockage.id : 0;
 
     this.centreService.getcentrerevenu().subscribe({
-      next:(_centres) =>{
+      next: (_centres) => {
         this.centres = [];
         this.inputModif = true;
         this.toggle = !this.toggle;
-        for(const centre of _centres){
-          if (centre.id == lieustockage.centreId ) {
+        for (const centre of _centres) {
+          if (centre.id == lieustockage.centreId) {
             this.centre = {
               code: centre.code,
               libelle: centre.libelle,
-              exploitationsId: centre.exploitationId ? centre.exploitationId :0,
-              adressesId: centre.adresseId ? centre.adresseId :0,
+              exploitationsId: centre.exploitationId ? centre.exploitationId : 0,
+              adressesId: centre.adresseId ? centre.adresseId : 0,
               email: centre.email,
               telephone: centre.telephone,
-              exploitations:centre.exploitation,
+              exploitations: centre.exploitation,
               adresses: centre.adresse,
-              selected:false,
-              lieuStockage:[]
+              selected: false,
+              lieuStockage: []
             }
             this.centres.push(this.centre);
           }
         }
         this.zonestockageService.getListZoneWithoutLinksByLieuId(this.lieuId).subscribe({
-          next:(_zonestockages) =>{
-            
-            for(const zonestock of _zonestockages){
+          next: (_zonestockages) => {
+
+            for (const zonestock of _zonestockages) {
               let selected = false;
               this.zonestockages = [];
-              for(const _lieustock of this.lieustockage.zonestockage){
-                if(zonestock.id === _lieustock.id){
+              for (const _lieustock of this.lieustockage.zonestockage) {
+                if (zonestock.id === _lieustock.id) {
                   selected = true;
                 }
                 this.zonestockage = {
-                  zone:_lieustock.zone,
+                  zone: _lieustock.zone,
                   lieuId: _lieustock.lieuId,
                   selected: selected,
                   lieu: this.lieustockage,
@@ -403,19 +403,19 @@ export class LieustockageComponent implements OnInit{
     })
   }
 
-  modifLieuStockage(){
-    this.inputModif = ! this.inputModif;
+  modifLieuStockage() {
+    this.inputModif = !this.inputModif;
     this.modifToggle = !this.modifToggle;
   }
 
-  deleteLieuStockage(){
-    this.lieuStockageService.deleteOneLieuDeStockage(this.lieustockage).subscribe({
-      next:(value) =>{
-        this.resetLieuStockage();
-        this.toggleToast('Ce lieu de stockage a été supprimé avec succès!');
-        this.toggle = !this.toggle;
-        this.showAllLieuStockage(); 
-      },
-    })
+  deleteLieuStockage() {
+    // this.lieuStockageService.deleteOneLieuDeStockage(this.lieustockage).subscribe({
+    //   next:(value) =>{
+    //     this.resetLieuStockage();
+    //     this.toggleToast('Ce lieu de stockage a été supprimé avec succès!');
+    //     this.toggle = !this.toggle;
+    //     this.showAllLieuStockage(); 
+    //   },
+    // })
   }
 }

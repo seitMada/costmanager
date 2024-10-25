@@ -4,10 +4,10 @@ export const environment = {
     production: false,
     APIGETEXPLOITATION: endPoint + 'exploitation',
     APICREATEEXPLOITATION: endPoint + 'exploitation',
-    APIGETEXPLOITATIONBYID: endPoint+'exploitation/',
-    APIGETEXPLOITATIONBYCENTREID : endPoint + 'exploitation/centre/',
+    APIGETEXPLOITATIONBYID: endPoint + 'exploitation/',
+    APIGETEXPLOITATIONBYCENTREID: endPoint + 'exploitation/centre/',
     APIGETLISTEXPLOITATION: endPoint + 'exploitation/list',
-    APIGETALLEXPLOITATIONBYID: endPoint+ 'exploitation/list/',
+    APIGETALLEXPLOITATIONBYID: endPoint + 'exploitation/list/',
     APIDELETEEXPLOITATION: endPoint + 'exploitation/delete',
     APIUPDATEEXPLOITATION: endPoint + 'exploitation/update/',
 
@@ -15,13 +15,13 @@ export const environment = {
     APIGETCENTREREVENUS: endPoint + 'centre-revenu',
     APICREATECENTREREVENUS: endPoint + 'centre-revenu',
     APIUPDATECENTREREVENUS: endPoint + 'centre-revenu/update/',
-    APIDELETECENTREREVENU :endPoint + 'centre-revenu/delete',
-    APIGETCENTREWITHOUTLINKS : endPoint + 'centre-revenu/list',
+    APIDELETECENTREREVENU: endPoint + 'centre-revenu/delete',
+    APIGETCENTREWITHOUTLINKS: endPoint + 'centre-revenu/list',
 
     APIGETEXPLOITATIONBYARTICLE: endPoint + 'articleexploitation/article_exploitation/',
     APIPOSTDELETEARTICLEEXPLOITATIONBYARTICLE: endPoint + 'articleexploitation/delete_articleexploitation/',
-    APIPOSTCREATEARTICLEEXPLOITATION:  endPoint + 'articleexploitation/add_article_exploitation',
-    
+    APIPOSTCREATEARTICLEEXPLOITATION: endPoint + 'articleexploitation/add_article_exploitation',
+
     APILOGOUT: endPoint + 'api/logout',
     APILOGIN: endPoint + 'api/login',
     APILOGINADMIN: endPoint + 'api/loginadmin',
@@ -33,7 +33,7 @@ export const environment = {
     APIDELETEOPERATEURS: endPoint + 'operateur/delete_operateurs/',
     APIUPDATEOPERATEURS: endPoint + 'operateur/update_operateur/',
     APIFINDOPERATEURBYID: endPoint + 'operateur/operateurid/',
-    
+
     APIGETFOURNISSEUR: endPoint + 'fournisseur',
     APIGETFOURNISSEURBYEXPLOITATION: endPoint + 'fournisseur/exploitation/',
     APIONEFOURNISSEUR: endPoint + 'fournisseur/',
@@ -48,15 +48,15 @@ export const environment = {
 
     APIGETCOMMANDEBYFOURNISSEUREXPLOITATION: endPoint + 'commande/fournisseur/',
     APIGETCOMMANDEBYFOURNISSEUREXPLOITATIONVALIDATE: endPoint + 'commande/fournisseurValidate/',
-    APICREATECOMMANDEDETAIL :endPoint + 'commande/commandeDetail',
+    APICREATECOMMANDEDETAIL: endPoint + 'commande/commandeDetail',
     APIGETDIXDERNIERCOMMANDE: endPoint + 'commande_detail/derniersCommandes/',
     APIGETCOMMANDEDETAILBYCOMMANDEID: endPoint + 'commande_detail/',
     APICREATECOMMANDE: endPoint + 'commande',
-    APIGETCOMMANDE : endPoint +'commande/',
-    APIDELETECOMMANDE: endPoint +'commande/delete_commande',
+    APIGETCOMMANDE: endPoint + 'commande/',
+    APIDELETECOMMANDE: endPoint + 'commande/delete_commande',
     APIVALIDATECOMMANDE: endPoint + 'commande/validate',
 
-    APIGETARTICLE : endPoint + 'articles',
+    APIGETARTICLE: endPoint + 'articles',
     APIGETARTICLEBYID: endPoint + 'articles/',
     APIGETARTICLEBYEXPLOITATION: endPoint + 'articles/exploitation/',
     APIPOSTCREATEARTICLE: endPoint + 'articles/add_articles',
@@ -64,7 +64,7 @@ export const environment = {
     APIPOSTDELETEARTICLE: endPoint + 'articles/delete_articles',
     APIPOSTDELETEARTICLES: endPoint + 'articles/delete_multi_articles',
 
-    APIGETVALUESTOCKTHEORIQUE : endPoint + 'articles/stocktheorique',
+    APIGETVALUESTOCKTHEORIQUE: endPoint + 'articles/stocktheorique',
 
     APIPOSTDESACTIVEARTICLE: endPoint + 'articleexploitation/desactive_articleexploitation/',
     APIPOSTDESACTIVEARTICLES: endPoint + 'articleexploitation/desactive_articleexploitations',
@@ -72,14 +72,14 @@ export const environment = {
 
     APIUPDATESTOCKMINIMUM: endPoint + 'articleexploitation/updatestock',
 
-    APIGETPERIODE : endPoint + 'inventaire/periode',
+    APIGETPERIODE: endPoint + 'inventaire/periode',
 
-    APIGETARTICLEEXCLUDE : endPoint + 'articles/articleexclude',
+    APIGETARTICLEEXCLUDE: endPoint + 'articles/articleexclude',
     APIGETARTICLEBYIDFOURNISSEUR: endPoint + 'articles/fournisseur/',
-    APIGETMOUVEMENTSTOCK : endPoint + 'articles/mouvement',
-    
+    APIGETMOUVEMENTSTOCK: endPoint + 'articles/mouvement',
+
     APIGETARTICLEBYFOURNISSEUR: endPoint + 'articlefournisseur/',
-    APIGETARTICLEFOURNISSEURBYID:endPoint +'articlefournisseur/list/',
+    APIGETARTICLEFOURNISSEURBYID: endPoint + 'articlefournisseur/list/',
     APIADDARTICLEFOURNISSEUR: endPoint + 'articlefournisseur',
     APIDELETEARTICLEFOURNISSEUR: endPoint + 'articlefournisseur/delete',
     APIUPDATEARTICLEFOURNISSEUR: endPoint + 'articlefournisseur/update',
@@ -115,11 +115,11 @@ export const environment = {
     APIPOSTDESACTIVEFICHETECHNIQUE: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitation/',
     APIPOSTDESACTIVEFICHETECHNIQUES: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitations',
     APIUPDATEFICHETECHNIQUEEXPLOITATION: endPoint + 'fichetechniqueexploitation/delete_fichetechniqueexploitation/',
-    
+
     APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID: endPoint + 'articlefournisseur/',
     APIGETARTICLEFOURNISSEURBYARTICLEID: endPoint + 'articlefournisseur/byarticleId/',
-    ARTICLEFOURNISSEURBYARTICLE: endPoint+ 'articlefournisseur/byarticleId',
-    
+    ARTICLEFOURNISSEURBYARTICLE: endPoint + 'articlefournisseur/byarticleId',
+
     APIGETADRESS: endPoint + 'adresse',
     APIADDADRESS: endPoint + 'adresse/addadresse',
 
@@ -130,37 +130,38 @@ export const environment = {
     APIUPDATEINVENTAIRE: endPoint + 'inventaire/update',
     APIGETINVENTAIREBYID: endPoint + 'inventaire/',
     APIGETINVENTAIREDETAILBYNUMERO: endPoint + 'inventaire/numero',
-    
+
     APIGETLIEUSTOCKAGEBYCENTREID: endPoint + 'lieustockage',
     APIGETZONESTOCKAGEBYEXPLOITATIONID: endPoint + 'zonestockage/exploitation',
     // APIDELETEARTICLEZONESTOCKAGE:  endPoint + 'articlezonestockage/',
     // APIGETARTICLEBYZONE: endPoint + 'articlezonestockage/',
-    
+    APIGETLIEUSTOCKAGEBYEXPLOITATIONID: endPoint + 'lieustockage/exploitation/',
+
     APIGETALLZONESTOCKAGEWITHOUTLINKS: endPoint + 'zonestockage',
     APIGETZONESTOCKAGEBYLIEUID: endPoint + 'zonestockage',
     APIGETARTICLEBYZONE: endPoint + 'zonestockage/article',
     APICREATEZONEDESTOCKAGE: endPoint + 'zonestockage/create',
-    APIGETLISTZONEWITHOUTLINKSBYLIEUID : endPoint + 'zonestockage/listzone/',
+    APIGETLISTZONEWITHOUTLINKSBYLIEUID: endPoint + 'zonestockage/listzone/',
     APIGETALLZONESTOCKAGE: endPoint + 'zonestockage/list',
     APIUPDATEZONESTOCKAGE: endPoint + 'zonestockage/update/',
     APIDELETEZONESTOCKAGE: endPoint + 'zonestockage/delete',
-    
+
     APIDELETEARTICLEZONESTOCKAGE: endPoint + 'articlezonestockage/delete/',
 
     APIGETPPOBYCRANDDATE: endPoint + 'ppo',
     APICREATEPPO: endPoint + 'ppo/create',
     APIUPDATEPPO: endPoint + 'ppo/update',
 
-    APIGETLIVRAISONBYFOURNISSEUR : endPoint + 'livraison/fournisseur/',
+    APIGETLIVRAISONBYFOURNISSEUR: endPoint + 'livraison/fournisseur/',
     APICREATEBONLIVRAISON: endPoint + 'livraison',
-    APIGETLIVRAISON : endPoint + 'livraison/',
+    APIGETLIVRAISON: endPoint + 'livraison/',
     DELETEBONLIVRAISON: endPoint + 'livraison/delete',
     APIVALIDATELIVRAISON: endPoint + 'livraison/validate',
     APIGETLIVRAISONBYFOURNISSEUREXPLOITATIONVALIDATE: endPoint + 'livraison/fournisseurValidate/',
 
-    APIGETDETAILLIVRAISONBYLIVRAISONID : endPoint + 'livraisondetail/',
-    
-    
+    APIGETDETAILLIVRAISONBYLIVRAISONID: endPoint + 'livraisondetail/',
+
+
     APIDELETEPPO: endPoint + 'ppo/delete',
     APIDELETESPPO: endPoint + 'ppo/deletes',
     APIPPOEXPLOITATION: endPoint + 'ppo/exploitation',
@@ -169,9 +170,9 @@ export const environment = {
     APIGETFACTUREBYFOURNISSEUREXPLOITATION: endPoint + 'achat/facture/',
     APICREATEFACTURE: endPoint + 'achat',
     APIGETALLFACTURE: endPoint + 'achat/',
-    APIGETFACTUREBYFOURNISSEUR : endPoint + 'achat/fournisseur/',
+    APIGETFACTUREBYFOURNISSEUR: endPoint + 'achat/fournisseur/',
     APIVALIDATEFACTURE: endPoint + 'achat/validate',
-    
+
     APIPPODETAILEXPLOITATION: endPoint + 'ppo/exploitation/detail',
     APIPPODETAILCENTREREVENU: endPoint + 'ppo/centrerevenu/detail',
     APIGETPPODETAIL: endPoint + 'ppo/detail',
@@ -186,11 +187,11 @@ export const environment = {
     APIIMPORTVENTE: endPoint + 'vente/importedfile',
 
     APIVARIATIONARTICLE: endPoint + 'articles/articlevariationprix',
-    
+
     APIGETALLLIEUSTOCKAGE: endPoint + 'lieustockage',
-    APIGETLISTLIEUSTOCKAGE : endPoint + 'lieustockage/list/',
+    APIGETLISTLIEUSTOCKAGE: endPoint + 'lieustockage/list/',
     APICREATELIEUSTOCKAGE: endPoint + 'lieustockage/create',
-    APIGETLIEUSTOCKAGESANSLIEN : endPoint + 'lieustockage/sansLien',
+    APIGETLIEUSTOCKAGESANSLIEN: endPoint + 'lieustockage/sansLien',
     APIUPDATELIEUSTOCKAGE: endPoint + 'lieustockage/update/',
     APIDELETEONELIEUSTOCKAGE: endPoint + 'lieustockage/delete',
 
@@ -202,7 +203,7 @@ export const environment = {
     APIGETARTICLEINVENTAIRE: endPoint + 'inventaire_detail/',
     APIGETLASTPERIODEINVENTAIRE: endPoint + 'inventaire_detail/dernierperiodeinventaire',
 
-    APIGETARTICLEPLUSUTILISE : endPoint + 'vente_detail',
-  
+    APIGETARTICLEPLUSUTILISE: endPoint + 'vente_detail',
+
 };
-   
+

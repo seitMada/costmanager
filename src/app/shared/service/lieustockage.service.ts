@@ -15,30 +15,35 @@ export class LieustockageService {
   private apiGetAllLieuStockage = environment.APIGETALLLIEUSTOCKAGE;
   private apiUpdateLieuStockage = environment.APIUPDATELIEUSTOCKAGE;
   private apiDeleteOneLieuStockage = environment.APIDELETEONELIEUSTOCKAGE;
+  private apiGetLieuStockageByExploitationId = environment.APIGETLIEUSTOCKAGEBYEXPLOITATIONID;
 
-  constructor(private https:HttpClient) { }
+  constructor(private https: HttpClient) { }
 
-  public getAllLieuStockage(){
+  public getAllLieuStockage() {
     return this.https.get<any>(this.apiGetAllLieuStockage);
   }
 
-  public updateLieuDeStockage(lieu:InterfaceLieustockages,zonestockages:InterfaceZonestockages[]){
-    return this.https.patch<any>(this.apiUpdateLieuStockage +lieu.id,{ lieu,zonestockages });
+  public updateLieuDeStockage(lieu: InterfaceLieustockages, zonestockages: InterfaceZonestockages[]) {
+    return this.https.patch<any>(this.apiUpdateLieuStockage + lieu.id, { lieu, zonestockages });
   }
 
-  public createLieuStockage(lieu:InterfaceLieustockages,zonseStockages:InterfaceZonestockages[]){
-    return this.https.post<any>(this.apiCreateLieuStockage,{ lieu,zonseStockages } );
+  public createLieuStockage(lieu: InterfaceLieustockages, zonseStockages: InterfaceZonestockages[]) {
+    return this.https.post<any>(this.apiCreateLieuStockage, { lieu, zonseStockages });
   }
 
-  public findAllLieuStockageWithoutLinks(){
+  public findAllLieuStockageWithoutLinks() {
     return this.https.get<any>(this.apiGetLieuStockageSansLien);
   }
 
-  public findListLieuStockage(centreId:number){
-    return this.https.get<any>(this.apiGetListLieuStockage+centreId);
+  public findListLieuStockage(centreId: number) {
+    return this.https.get<any>(this.apiGetListLieuStockage + centreId);
   }
 
-  public deleteOneLieuDeStockage(lieu:InterfaceLieustockages){
-    return this.https.post<any>(this.apiDeleteOneLieuStockage,lieu);
+  public findListLieuStockageByExploitation(exploitationId: number) {
+    return this.https.get<any>(this.apiGetLieuStockageByExploitationId + exploitationId);
+  }
+
+  public deleteOneLieuDeStockage(idLieu: number[]) {
+    return this.https.post<any>(this.apiDeleteOneLieuStockage, idLieu);
   }
 }

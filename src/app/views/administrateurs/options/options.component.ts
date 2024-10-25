@@ -42,7 +42,7 @@ export class OptionsComponent implements OnInit {
   public exploitation: InterfaceExploitations;
   public exploitations: InterfaceExploitations[];
 
-  public lieuSTockage: InterfaceLieustockages;
+  public lieuStockage: InterfaceLieustockages;
   public lieuSTockages: InterfaceLieustockages[];
   public zoneStockage: InterfaceZonestockages;
   public zoneStockages: InterfaceZonestockages[];
@@ -55,7 +55,7 @@ export class OptionsComponent implements OnInit {
   public exploitationForm = FormGroup;
   public centreForm = FormGroup;
 
-  public active = 1;
+  public active = 3;
   public active_3 = 1;
 
   closeResult = '';
@@ -81,6 +81,14 @@ export class OptionsComponent implements OnInit {
   public lieustockagescentrerevenus: InterfaceLieustockages[];
   public lieustockagescentrerevenusselected: number = 0;
   public modifLieustockageCentre: boolean = false;
+
+  public toggleLieu: boolean = true;
+  public modifToggleLieu: boolean = false;
+  public inputModifLieu: boolean = true;
+  public showbtnmodiflieucentre: boolean = true;
+  public zonestockageslieustockages: InterfaceZonestockages[];
+  public centrerevenulieustockages: InterfaceCentreRevenu[];
+  public centrerevenulieustockagesselected: number = 0;
 
   public modifToggle: boolean = true;
   public inputModif = false;
@@ -158,7 +166,7 @@ export class OptionsComponent implements OnInit {
     this.showAllExploitation();
     this.getAllCentreRevenuWithoutLink();
     this.showAllCentreRevenu();
-    this.findAllLieuStockage();
+    this.showAllLieuStockage();
     this.showAllOperateur();
     this.showAllZoneStockage();
   }
@@ -168,16 +176,7 @@ export class OptionsComponent implements OnInit {
   public initializeview() {
     this.toggleexploitation = true;
     this.toggleCentre = true;
-  }
-
-  public resetLieuStockage() {
-    this.lieuSTockage = {
-      lieu: '',
-      centreId: 0,
-      selected: false,
-      centre: this.centre,
-      zonestockage: this.zoneStockages
-    }
+    this.toggleLieu = true;
   }
 
   public resetOperateur() {
@@ -203,7 +202,7 @@ export class OptionsComponent implements OnInit {
       zone: '',
       lieuId: 0,
       selected: false,
-      lieu: this.lieuSTockage,
+      lieu: this.lieuStockage,
     }
   }
 
@@ -625,7 +624,7 @@ export class OptionsComponent implements OnInit {
         this.lieustockageService.getAllLieuStockage().subscribe({
           next: (_lieustocks) => {
             this.lieustockagescentrerevenus = _lieustocks.filter((item: { centreId: number | undefined; }) => item.centreId === this.centre.id);
-            console.log(this.lieustockagescentrerevenus)
+            // console.log(this.lieustockagescentrerevenus)
           },
         });
       },
@@ -643,10 +642,6 @@ export class OptionsComponent implements OnInit {
   public listelieustockagecentrerevenu(_lieustockages: any) {
     this.lieustockageService.getAllLieuStockage().subscribe({
       next: (_lieustocks) => {
-        // this.centres = this.centres.map(_centre => ({
-        //   ..._centre,
-        //   selected: false
-        // }));
         _lieustocks.forEach((element: { selected: boolean; centreId: number | undefined; }) => {
           if (element.centreId === this.centre.id) {
             element.selected = true;
@@ -683,7 +678,6 @@ export class OptionsComponent implements OnInit {
 
   public createCentrerevenu() {
     if (this.isAdmin) {
-      console.log('AAAAA')
       this.toggleCentre = false;
       this.modifToggleCentre = false;
       this.showbtnmodifcentreexploitation = false;
@@ -703,12 +697,6 @@ export class OptionsComponent implements OnInit {
       this.centreService.getcentrerevenu().subscribe({
         next: async (_centres) => {
           this.centres = _centres;
-          // this.lieustockageService.getAllLieuStockage().subscribe({
-          //   next: (_lieustocks) => {
-          //     this.lieustockagescentrerevenus = _lieustocks.filter((item: { centreId: number | undefined; }) => item.centreId === this.centre.id);
-          //     console.log(this.lieustockagescentrerevenus)
-          //   },
-          // });
         }
       });
     } else {
@@ -832,20 +820,314 @@ export class OptionsComponent implements OnInit {
   }
   /***************************************************************/
 
-  findAllLieuStockage() {
-    this.lieustockageService.getAllLieuStockage().subscribe({
-      next: (_lieuStockages) => {
-        this.lieuSTockages = _lieuStockages;
-        this.lieuSTockage = _lieuStockages[0];
-        this.zoneStockage = {
-          zone: '',
-          lieuId: _lieuStockages[0].id ? _lieuStockages[0].id : 0,
-          selected: false,
-          lieu: _lieuStockages[0],
-        }
+  /*********************LIEU DE STOCKAGE**************************/
+
+  // public findAllLieuStockage() {
+  //   this.lieustockageService.getAllLieuStockage().subscribe({
+  //     next: (_lieuStockages) => {
+  //       this.lieuSTockages = _lieuStockages;
+  //       // this.lieuStockage = _lieuStockages[0];
+  //       // this.zoneStockage = {
+  //       //   zone: '',
+  //       //   lieuId: _lieuStockages[0].id ? _lieuStockages[0].id : 0,
+  //       //   selected: false,
+  //       //   lieu: _lieuStockages[0],
+  //       // }
+  //     },
+  //   })
+  // }
+
+  public resetLieuStockage() {
+    this.lieuStockage = {
+      lieu: '',
+      centreId: 0,
+      selected: false,
+      centre: {
+        code: '',
+        libelle: '',
+        exploitationsId: 0,
+        adressesId: 0,
+        email: '',
+        telephone: '',
+        exploitations: new Exploitation(),
+        adresses: new Adress(),
+        selected: false,
+        lieuStockage: []
       },
+      zonestockage: [],
+      id: undefined
+    }
+  }
+
+  public async showOneLieuStockage(lieustockage: InterfaceLieustockages) {
+    this.resetLieuStockage();
+    // this.resetCentre();
+    this.lieuStockage = lieustockage;
+
+    this.lieuId = this.lieuStockage.id ? this.lieuStockage.id : 0;
+
+    this.inputModifLieu = true;
+    this.toggleLieu = false;
+    this.modifToggleLieu = false;
+    this.showbtnmodiflieucentre = true;
+
+    if (!this.lieuStockage.centre) {
+      this.lieuStockage.centre = {
+        code: '',
+        libelle: '',
+        exploitationsId: 0,
+        adressesId: 0,
+        email: '',
+        telephone: '',
+        exploitations: new Exploitation(),
+        adresses: new Adress(),
+        selected: false,
+        lieuStockage: []
+      }
+    }
+
+    this.zonestockageslieustockages = lieustockage.zonestockage;
+
+    this.lieuSTockages = this.lieuSTockages.map(_lieu => ({
+      ..._lieu,
+      selected: false
+    }));
+
+    this.centreService.getcentrerevenu().subscribe({
+      next: (_centre) => {
+        if (this.isAdmin) {
+          this.centrerevenulieustockages = _centre;
+        } else {
+          this.centrerevenulieustockages = _centre.filter((item: { exploitationsId: number; }) => item.exploitationsId === this.exploitationId);
+        }
+      }
+    })
+    // this.centreService.getcentrerevenu().subscribe({
+    //   next: (_centres) => {
+    //     this.centres = [];
+    //     this.inputModif = true;
+    //     this.toggle = !this.toggle;
+    //     for (const centre of _centres) {
+    //       if (centre.id == lieustockage.centreId) {
+    //         this.centre = {
+    //           code: centre.code,
+    //           libelle: centre.libelle,
+    //           exploitationsId: centre.exploitationId ? centre.exploitationId : 0,
+    //           adressesId: centre.adresseId ? centre.adresseId : 0,
+    //           email: centre.email,
+    //           telephone: centre.telephone,
+    //           exploitations: centre.exploitation,
+    //           adresses: centre.adresse,
+    //           selected: false,
+    //           lieuStockage: []
+    //         }
+    //         this.centres.push(this.centre);
+    //       }
+    //     }
+    //     this.zonestockageService.getListZoneWithoutLinksByLieuId(this.lieuId).subscribe({
+    //       next: (_zonestockages) => {
+
+    //         for (const zonestock of _zonestockages) {
+    //           let selected = false;
+    //           this.zoneStockages = [];
+    //           for (const _lieustock of this.lieuStockage.zonestockage) {
+    //             if (zonestock.id === _lieustock.id) {
+    //               selected = true;
+    //             }
+    //             this.zoneStockage = {
+    //               zone: _lieustock.zone,
+    //               lieuId: _lieustock.lieuId,
+    //               selected: selected,
+    //               lieu: this.lieuStockage,
+    //             }
+    //             this.zoneStockages.push(this.zoneStockage);
+    //           }
+    //         }
+    //       },
+    //     })
+    //   },
+    // })
+  }
+
+  public showAllLieuStockage() {
+    // this.resetLieuStockage();
+    if (this.isAdmin) {
+      this.lieustockageService.getAllLieuStockage().subscribe({
+        next: (_lieustocks) => {
+          this.lieuSTockages = _lieustocks;
+        },
+      });
+    } else {
+      this.lieustockageService.findListLieuStockageByExploitation(this.exploitationId).subscribe({
+        next: (_lieustocks) => {
+          this.lieuSTockages = _lieustocks;
+        },
+      })
+    }
+  }
+
+  public modifyLieuStockage() {
+    this.toggleLieu = false;
+    this.modifToggleLieu = false;
+    this.showbtnmodiflieucentre = true;
+    this.inputModifLieu = false;
+    this.zonestockageService.getAllZoneDeStockage().subscribe({
+      next: (_zonestockages) => {
+        _zonestockages = _zonestockages.filter((item: { lieuId: number; }) => item.lieuId == 0 || item.lieuId === this.lieuStockage.id);
+        _zonestockages.forEach((element: { lieuId: number | undefined; }) => {
+          if (element.lieuId === this.lieuStockage.id) {
+            Object.assign(element, { selected: true });
+          } else {
+            Object.assign(element, { selected: false });
+          }
+        });
+        this.zonestockageslieustockages = _zonestockages;
+      }
     })
   }
+
+  public listLieuStockage() {
+    this.toggleLieu = !this.toggleLieu ? true : false;
+    this.modifToggleLieu = false;
+    this.inputModifLieu = true;
+    this.resetLieuStockage();
+    this.showAllLieuStockage();
+  }
+
+  public createLieuStockage() {
+    if (this.isAdmin) {
+      this.toggleLieu = false;
+      this.modifToggleLieu = false;
+      this.showbtnmodiflieucentre = false;
+      this.inputModifLieu = false;
+      this.resetLieuStockage();
+      this.zonestockageService.getAllZoneDeStockage().subscribe({
+        next: (_zonestockages) => {
+          this.zonestockageslieustockages = _zonestockages.filter((item: { lieuId: number; }) => item.lieuId == 0);
+        }
+      })
+    }
+  }
+
+  public selectcentrerevenulieu(_event: any) {
+    this.centrerevenulieustockagesselected = _event.target.id.split('-')[1];
+    if (this.inputModifLieu === false) {
+      // console.log(_event.target.id.split('-')[2])
+      // this.centre.exploitations.libelle = _event.target.id.split('-')[2];
+    }
+  }
+
+  public saveLieuDeStockage() {
+    if (this.isAdmin) {
+      if (this.lieuStockage.id) { /// MODIFIER LIEU DE STOCKAGE
+        const _zonestockages = this.zonestockageslieustockages.filter(item => item.selected === true);
+        this.lieustockageService.updateLieuDeStockage(this.lieuStockage, _zonestockages).subscribe({
+          next: async (value) => {
+            await this.showOneLieuStockage(value);
+            alert('Lieu de stockage mis à jour');
+          }
+        })
+      } else { /// CREER LIEU DE STOCKAGE
+        const _zonestockages = this.zonestockageslieustockages.filter(item => item.selected === true);
+        this.lieuStockage.centreId = this.centrerevenulieustockagesselected;
+        // console.log(this.lieuStockage, _zonestockages)
+        this.lieustockageService.createLieuStockage(this.lieuStockage, _zonestockages).subscribe({
+          next: async (value) => {
+            await this.showOneLieuStockage(value);
+            this.centrerevenulieustockagesselected = 0;
+            alert('Lieu de stockage ajouté');
+          }
+        })
+      }
+    } else {
+      alert('Il est impossible de créer un lieu de stockage');
+    }
+  }
+
+  public savelieucentrerevenu(_lieu: InterfaceLieustockages, _save: boolean = true) {
+    if (_save) {
+      console.log(_lieu)
+      _lieu.centreId = this.centrerevenulieustockagesselected;
+      this.lieustockageService.updateLieuDeStockage(_lieu, []).subscribe({
+        next: async (value) => {
+          await this.showOneLieuStockage(value);
+          alert('Centre revenu de ' + _lieu.lieu + ' mis à jour');
+          this.centrerevenulieustockagesselected = 0;
+        }
+      })
+    } else {
+      this.showbtnmodiflieucentre = true;
+      this.centrerevenulieustockagesselected = 0;
+      this.modifToggleLieu = false;
+    }
+  }
+
+  public async cancelLieuDeStockage(_lieu: InterfaceLieustockages) {
+    if (_lieu.id === undefined) {
+      if (this.isAdmin) {
+        this.lieustockageService.getAllLieuStockage().subscribe({
+          next: (_lieustocks) => {
+            this.lieuSTockages = _lieustocks;
+            this.toggleLieu = true;
+            this.modifToggleLieu = true;
+            this.showbtnmodiflieucentre = true;
+            this.inputModifLieu = true;
+          },
+        });
+      } else {
+        this.lieustockageService.findListLieuStockageByExploitation(this.exploitationId).subscribe({
+          next: (_lieustocks) => {
+            this.lieuSTockages = _lieustocks;
+            this.toggleLieu = true;
+            this.modifToggleLieu = true;
+            this.showbtnmodiflieucentre = true;
+            this.inputModifLieu = true;
+          },
+        })
+      }
+    } else {
+      await this.showOneLieuStockage(_lieu);
+    }
+  }
+
+  public deleteLieuStockage() {
+    if (this.isAdmin) {
+      const listlieustockagetodelete = [];
+      this.lieuSTockages.forEach(_lieu => {
+        if (_lieu.selected === true) {
+          listlieustockagetodelete.push(_lieu.id)
+        }
+      });
+      if (listlieustockagetodelete.length === 0 && this.lieuStockage.id != undefined) {
+        listlieustockagetodelete.push(this.lieuStockage.id)
+      }
+      if (listlieustockagetodelete.length > 0) {
+        this.lieustockageService.deleteOneLieuDeStockage(listlieustockagetodelete).subscribe({
+          next: (value) => {
+            this.resetLieuStockage();
+            alert('Lieu de stockage supprimé');
+            this.toggleLieu = true;
+            this.showAllLieuStockage();
+          },
+        })
+      }
+    }
+  }
+
+  public listezonestockageforlieustockage(_lieuStockage: any) {
+
+  }
+
+  public savezonelieustockage() {
+
+  }
+
+  public cancelzonelieustockage() {
+
+  }
+
+  /***************************************************************/
+
 
   getAllCentreRevenuWithoutLink() {
     this.centreService.getAllCentreRevenuWithoutLinks().subscribe({
@@ -900,9 +1182,9 @@ export class OptionsComponent implements OnInit {
     this.zoneId = this.zoneStockage.id ? this.zoneStockage.id : 0;
     this.zoneStockages = [];
     if (this.zoneId == 0) {
-      this.lieustockageService.createLieuStockage(this.lieuSTockage, this.zoneStockages).subscribe({
+      this.lieustockageService.createLieuStockage(this.lieuStockage, this.zoneStockages).subscribe({
         next: () => {
-          this.findAllLieuStockage();
+          this.showAllLieuStockage();
           this.toggleToast('Nouveau lieu de stockage crée avec succès !');
           this.addLieu = (this.addLieu === false ? true : false);
         }
@@ -921,14 +1203,14 @@ export class OptionsComponent implements OnInit {
         this.lieuSTockages = [];
         for (const _lieu of _lieuStockages) {
           if (_lieu.id == zonestockage.lieuId) {
-            this.lieuSTockage = {
+            this.lieuStockage = {
               lieu: _lieu.lieu,
               centreId: _lieu.centreId,
               selected: false,
               centre: _lieu.centre,
               zonestockage: _lieu.zoneStockage
             }
-            this.lieuSTockages.push(this.lieuSTockage);
+            this.lieuSTockages.push(this.lieuStockage);
           }
         }
       },
@@ -1113,21 +1395,7 @@ export class OptionsComponent implements OnInit {
     }
   }
 
-  saveLieuDeStockage() {
-    if (this.isAdmin) {
-      this.centreId = this.centre.id ? this.centre.id : 0;
-      this.zoneStockages = [];
-      this.lieustockageService.createLieuStockage(this.lieuSTockage, this.zoneStockages).subscribe({
-        next: () => {
-          this.findAllLieuStockageWithoutLinks();
-          this.toggleToast('Nouveau lieu de stockage crée avec succès !');
-          this.addLieuStockage = (this.addLieuStockage === false ? true : false);
-        }
-      })
-    } else {
-      alert('Il est impossible de créer un lieu de stockage');
-    }
-  }
+
 
   addFormLieuStockage() {
     if (this.isAdmin) {
@@ -1136,84 +1404,6 @@ export class OptionsComponent implements OnInit {
     }
   }
 
-  showAllLieuStockage() {
-    this.lieustockageService.getAllLieuStockage().subscribe({
-      next: (_lieustocks) => {
-        this.lieuSTockages = _lieustocks;
-        this.zoneStockage = _lieustocks[0];
-      },
-    });
-  }
-
-  modifLieuStockage() {
-    this.inputModif = !this.inputModif;
-    this.modifToggle = !this.modifToggle;
-  }
-
-  showOneLieuStockage(lieustockage: InterfaceLieustockages) {
-    this.resetLieuStockage();
-    this.resetCentre();
-    this.lieuSTockage = lieustockage;
-
-    this.lieuId = this.lieuSTockage.id ? this.lieuSTockage.id : 0;
-
-    this.centreService.getcentrerevenu().subscribe({
-      next: (_centres) => {
-        this.centres = [];
-        this.inputModif = true;
-        this.toggle = !this.toggle;
-        for (const centre of _centres) {
-          if (centre.id == lieustockage.centreId) {
-            this.centre = {
-              code: centre.code,
-              libelle: centre.libelle,
-              exploitationsId: centre.exploitationId ? centre.exploitationId : 0,
-              adressesId: centre.adresseId ? centre.adresseId : 0,
-              email: centre.email,
-              telephone: centre.telephone,
-              exploitations: centre.exploitation,
-              adresses: centre.adresse,
-              selected: false,
-              lieuStockage: []
-            }
-            this.centres.push(this.centre);
-          }
-        }
-        this.zonestockageService.getListZoneWithoutLinksByLieuId(this.lieuId).subscribe({
-          next: (_zonestockages) => {
-
-            for (const zonestock of _zonestockages) {
-              let selected = false;
-              this.zoneStockages = [];
-              for (const _lieustock of this.lieuSTockage.zonestockage) {
-                if (zonestock.id === _lieustock.id) {
-                  selected = true;
-                }
-                this.zoneStockage = {
-                  zone: _lieustock.zone,
-                  lieuId: _lieustock.lieuId,
-                  selected: selected,
-                  lieu: this.lieuSTockage,
-                }
-                this.zoneStockages.push(this.zoneStockage);
-              }
-            }
-          },
-        })
-      },
-    })
-  }
-
-  deleteLieuStockage() {
-    this.lieustockageService.deleteOneLieuDeStockage(this.lieuSTockage).subscribe({
-      next: (value) => {
-        this.resetLieuStockage();
-        this.toggleToast('Ce lieu de stockage a été supprimé avec succès!');
-        this.toggle = !this.toggle;
-        this.showAllLieuStockage();
-      },
-    })
-  }
 
   addFormZoneStockage() {
     if (this.isAdmin) {
