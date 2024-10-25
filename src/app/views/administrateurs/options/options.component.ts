@@ -179,6 +179,17 @@ export class OptionsComponent implements OnInit {
     this.toggleLieu = true;
   }
 
+  public truncateWord(word: string, maxLength = 50) {
+    if (word.length > maxLength) {
+      return word.slice(0, maxLength) + "...";
+    }
+    return word;
+  }
+
+  public getZoneNames(line: any): string {
+    return line.zonestockage.map((lines: any) => lines.zone).join(', ');
+  }
+
   public resetOperateur() {
     this.operateur = {
       nom: '',

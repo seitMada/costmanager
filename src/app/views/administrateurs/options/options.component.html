@@ -401,8 +401,8 @@
                 <thead>
                   <tr>
                     <th scope="col" class="col-1"></th>
-                    <th scope="col" class="col-2">Lieu</th>
-                    <th scope="col" class="col-2">Zone de stockage</th>
+                    <th scope="col" class="col-3">Lieu</th>
+                    <th scope="col" class="col-6">Zone de stockage</th>
                     <th scope="col" class="col-2">Centre de revenu</th>
                   </tr>
                 </thead>
@@ -412,8 +412,10 @@
                       <input type="checkbox" class="form-check-input" name="lieuSTockage-{{line.id}}"
                         id="lieuSTockage-{{line.id}}" [(ngModel)]="line.selected">
                     </th>
-                    <td scope="col" class="col-2" (click)="showOneLieuStockage(line)">{{ line.lieu }}</td>
-                    <td scope="col" class="col-2" (click)="showOneLieuStockage(line)">{{ line.lieu }}</td>
+                    <td scope="col" class="col-3" (click)="showOneLieuStockage(line)">{{ line.lieu }}</td>
+                    <td scope="col" class="col-6" (click)="showOneLieuStockage(line)">
+                      <span>{{ truncateWord(getZoneNames(line)) }}</span>
+                    </td>
                     <td scope="col" class="col-2" (click)="showOneLieuStockage(line)">{{ line.centre ?
                       line.centre.libelle: '' }}</td>
                   </tr>
@@ -515,10 +517,6 @@
       </ng-template>
     </li>
     <li [ngbNavItem]="4">
-      <button ngbNavLink>ZONE DE STOCKAGE</button>
-      <ng-template ngbNavContent></ng-template>
-    </li>
-    <li [ngbNavItem]="5">
       <button ngbNavLink>UTILISATEURS</button>
       <ng-template ngbNavContent></ng-template>
     </li>
