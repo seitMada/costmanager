@@ -487,8 +487,10 @@
                   <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-1" *ngIf="showbtnmodiflieucentre">
                     <div class="d-flex bd-highlight" *ngIf="inputModifLieu">
                       <button class="btn btn-outline-secondary btn-sm me-1"
-                        (click)="listelieustockagecentrerevenu(lieuStockage)" title="Assigner zone de stockage"
+                        (click)="listezonestockageforlieustockage(lieuStockage)" title="Assigner zone de stockage"
                         *ngIf="!modifToggleLieu"><i class="fas fa-pencil"></i></button>
+                      <button class="btn btn-secondary btn-sm me-1" (click)="createzonestockage(lieuStockage)"
+                        title="Ajouter zone de stockage" *ngIf="!modifToggleLieu">Ajouter une zone de stockage</button>
                       <button class="btn btn-outline-success btn-sm me-1" (click)="savezonelieustockage()"
                         title="Enregistrer centre de revenu" *ngIf="modifToggleLieu">Enregistrer</button>
                       <button class="btn btn-outline-danger btn-sm me-1" (click)="cancelzonelieustockage()"
@@ -518,7 +520,9 @@
     </li>
     <li [ngbNavItem]="4">
       <button ngbNavLink>UTILISATEURS</button>
-      <ng-template ngbNavContent></ng-template>
+      <ng-template ngbNavContent>
+
+      </ng-template>
     </li>
   </ul>
   <div [ngbNavOutlet]="nav" class="mt-2"></div>

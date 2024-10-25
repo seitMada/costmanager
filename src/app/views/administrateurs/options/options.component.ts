@@ -1128,6 +1128,22 @@ export class OptionsComponent implements OnInit {
 
   public listezonestockageforlieustockage(_lieuStockage: any) {
 
+    // this.lieustockageService.getAllLieuStockage().subscribe({
+    //   next: (_lieustocks) => {
+    //     _lieustocks.forEach((element: { selected: boolean; centreId: number | undefined; }) => {
+    //       if (element.centreId === this.centre.id) {
+    //         element.selected = true;
+    //       }
+    //     });
+    //     this.lieustockagescentrerevenus = _lieustocks;
+    //     this.modifLieustockageCentre = true;
+    //     // console.log(this.lieustockagescentrerevenus)
+    //   },
+    // });
+  }
+
+  public createzonestockage(_lieuStockage: InterfaceLieustockages) {
+
   }
 
   public savezonelieustockage() {
