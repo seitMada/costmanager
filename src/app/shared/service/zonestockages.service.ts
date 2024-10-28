@@ -11,7 +11,7 @@ export class ZonestockagesService {
   private apiGetLieuStockageByCentreId = environment.APIGETLIEUSTOCKAGEBYCENTREID;
   private apiGetZoneStockageByLieuId = environment.APIGETZONESTOCKAGEBYLIEUID;
   private apiGetZoneStockageByExploitationId = environment.APIGETZONESTOCKAGEBYEXPLOITATIONID;
-  
+
   private apiDeleteArticleZonestockage = environment.APIDELETEARTICLEZONESTOCKAGE;
   private apiGetAllZoneStockageWithoutLinks = environment.APIGETALLZONESTOCKAGEWITHOUTLINKS;
   private apiCreateZoneDeStockage = environment.APICREATEZONEDESTOCKAGE;
@@ -22,11 +22,11 @@ export class ZonestockagesService {
 
   constructor(private https: HttpClient) { }
 
-  getAllZoneDeStockage(){
+  getAllZoneDeStockage() {
     return this.https.get<any>(this.apiGetZoneDeStockage);
   }
 
-  getAllZoneStockageWithoutLinks(){
+  getAllZoneStockageWithoutLinks() {
     return this.https.get<any>(this.apiGetAllZoneStockageWithoutLinks);
   }
 
@@ -46,19 +46,19 @@ export class ZonestockagesService {
     return this.https.post(this.apiDeleteArticleZonestockage + articleId, zonestockageId);
   }
 
-  createZoneDeStockage(zone:InterfaceZonestockages){
-    return this.https.post<any>(this.apiCreateZoneDeStockage,zone);
+  createZoneDeStockage(zone: InterfaceZonestockages) {
+    return this.https.post<any>(this.apiCreateZoneDeStockage, zone);
   }
 
-  updateZoneDeStockage(zone:InterfaceZonestockages){
-    return this.https.post<any>(this.apiUpdateZoneDeStockage,zone);
+  updateZoneDeStockage(zone: InterfaceZonestockages) {
+    return this.https.post<any>(this.apiUpdateZoneDeStockage, zone);
   }
 
-  getListZoneWithoutLinksByLieuId(lieuId:number){
-    return this.https.get<any>(this.apiGetListZoneWithoutLinks+lieuId);
+  getListZoneWithoutLinksByLieuId(lieuId: number) {
+    return this.https.get<any>(this.apiGetListZoneWithoutLinks + lieuId);
   }
 
-  deleteZoneStockage(zone:InterfaceZonestockages){
-    return this.https.post<any>(this.apiDeleteZoneStockage,zone);
+  deleteZoneStockage(zone: number[]) {
+    return this.https.post<any>(this.apiDeleteZoneStockage, zone);
   }
 }

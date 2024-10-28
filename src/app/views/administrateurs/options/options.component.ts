@@ -44,7 +44,7 @@ export class OptionsComponent implements OnInit {
 
   public lieuStockage: InterfaceLieustockages;
   public lieuSTockages: InterfaceLieustockages[];
-  public zoneStockage: InterfaceZonestockages;
+  // public zoneStockage: InterfaceZonestockages;
   public zoneStockages: InterfaceZonestockages[];
   public operateur: InterfaceOperateur;
   public operateurs: InterfaceOperateur[];
@@ -55,7 +55,7 @@ export class OptionsComponent implements OnInit {
   public exploitationForm = FormGroup;
   public centreForm = FormGroup;
 
-  public active = 3;
+  public active = 1;
   public active_3 = 1;
 
   closeResult = '';
@@ -89,7 +89,9 @@ export class OptionsComponent implements OnInit {
   public zonestockageslieustockages: InterfaceZonestockages[];
   public centrerevenulieustockages: InterfaceCentreRevenu[];
   public centrerevenulieustockagesselected: number = 0;
-  public inputModifZone: boolean = true;
+  public inputModifZone: boolean = false;
+  public zoneStockage: InterfaceZonestockages;
+  public zoneStockageselected: number = 0;
 
   public modifToggle: boolean = true;
   public inputModif = false;
@@ -209,14 +211,7 @@ export class OptionsComponent implements OnInit {
 
 
 
-  public resetZonestockage() {
-    this.zoneStockage = {
-      zone: '',
-      lieuId: 0,
-      selected: false,
-      lieu: this.lieuStockage,
-    }
-  }
+
 
   public resetOperateurCentreExploitation() {
     this.operateurExploitationCentre = {
@@ -898,12 +893,17 @@ export class OptionsComponent implements OnInit {
       }
     }
 
-    this.zonestockageslieustockages = lieustockage.zonestockage;
+    this.zonestockageslieustockages = lieustockage.zonestockage.map(_zone => ({
+      ..._zone,
+      selected: false
+    }));
+    this.zoneStockageselected = 0;
 
     this.lieuSTockages = this.lieuSTockages.map(_lieu => ({
       ..._lieu,
       selected: false
     }));
+
 
     this.centreService.getcentrerevenu().subscribe({
       next: (_centre) => {
@@ -1143,15 +1143,64 @@ export class OptionsComponent implements OnInit {
   }
 
   public createzonestockage(_lieuStockage: InterfaceLieustockages) {
-
+    this.inputModifZone = true;
+    this.resetZonestockage();
   }
 
-  public savezonelieustockage() {
-
+  public savezonelieustockage(_lieuStockage: InterfaceLieustockages) {
+    this.zoneStockage.lieu = _lieuStockage;
+    this.zoneStockage.lieuId = _lieuStockage.id ? _lieuStockage.id : 0;
+    this.zonestockageService.createZoneDeStockage(this.zoneStockage).subscribe({
+      next: (value) => {
+        alert('Zone de stockage ajouter');
+        this.inputModifZone = false;
+        for (const element of value) {
+          _lieuStockage.zonestockage.push(element);
+          this.zonestockageslieustockages = _lieuStockage.zonestockage;
+        }
+        console.log(_lieuStockage)
+      },
+    });
   }
 
-  public cancelzonelieustockage() {
+  public deletezonelieustockage() {
+    const idzone: any[] = [];
+    this.zonestockageslieustockages.forEach(element => {
+      if (element.selected === true) {
+        idzone.push(element.id)
+      }
+    });
+    this.zonestockageService.deleteZoneStockage(idzone).subscribe({
+      next: (value) => {
+        alert('Zone de stocakage supprimée !');
+        this.zonestockageslieustockages = this.zonestockageslieustockages.filter(item => item.selected !== true);
+        this.lieuStockage.zonestockage = this.zonestockageslieustockages;
+        this.selectzonestockage();
+      },
+    });
+  }
 
+  public selectzonestockage() {
+    this.zoneStockageselected = 0;
+    this.zonestockageslieustockages.forEach(element => {
+      if (element.selected === true) {
+        this.zoneStockageselected++;
+      }
+    });
+  }
+
+  public cancelzonelieustockage(_lieuStockage: InterfaceLieustockages) {
+    this.zonestockageslieustockages = this.lieuStockage.zonestockage;
+    this.inputModifZone = false;
+  }
+
+  public resetZonestockage() {
+    this.zoneStockage = {
+      zone: '',
+      lieuId: 0,
+      selected: false,
+      lieu: this.lieuStockage,
+    }
   }
 
   /***************************************************************/
@@ -1252,16 +1301,16 @@ export class OptionsComponent implements OnInit {
     }
   }
 
-  deleteZoneStockage() {
-    this.zonestockageService.deleteZoneStockage(this.zoneStockage).subscribe({
-      next: (value) => {
-        this.resetZonestockage();
-        this.toggleToast('Ce zone de stocakage a été supprimé avec succès!');
-        this.toggle = !this.toggle;
-        this.showAllZoneStockage();
-      },
-    });
-  }
+  // deleteZoneStockage() {
+  //   this.zonestockageService.deleteZoneStockage(this.zoneStockage).subscribe({
+  //     next: (value) => {
+  //       this.resetZonestockage();
+  //       this.toggleToast('Ce zone de stocakage a été supprimé avec succès!');
+  //       this.toggle = !this.toggle;
+  //       this.showAllZoneStockage();
+  //     },
+  //   });
+  // }
 
 
 

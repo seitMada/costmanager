@@ -104,7 +104,7 @@ export class ZonestockageComponent implements OnInit{
         this.zonestockages = _zonestockages;
         this.zonestockage =_zonestockages[0];
         console.log(this.zonestockages);
-        
+
       },
     })
   }
@@ -236,14 +236,14 @@ export class ZonestockageComponent implements OnInit{
   }
 
   deleteZoneStockage(){
-    this.zonestockageService.deleteZoneStockage(this.zonestockage).subscribe({
-      next:(value) =>{
-        this.resetZonestockage();
-        this.toggleToast('Ce zone de stocakage a été supprimé avec succès!');
-        this.toggle = !this.toggle;
-        this.showAllZoneStockage();
-      },
-    });
+    // this.zonestockageService.deleteZoneStockage(this.zonestockage).subscribe({
+    //   next:(value) =>{
+    //     this.resetZonestockage();
+    //     this.toggleToast('Ce zone de stocakage a été supprimé avec succès!');
+    //     this.toggle = !this.toggle;
+    //     this.showAllZoneStockage();
+    //   },
+    // });
   }
 
 
