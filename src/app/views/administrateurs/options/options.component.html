@@ -138,32 +138,32 @@
           </div>
           <div class="card py-3 mt-4 mx-4" style="height: 40vh;" *ngIf="!toggleexploitation">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end" *ngIf="toggleCentreExploitation">
-                <div class="d-flex bd-highlight" *ngIf="!togglearticle">
-                  <button class="btn btn-outline-secondary btn-sm me-1"
-                    (click)="listecentrerevenuexploitation(exploitation.centreRevenu)" title="Assigner centre de revenu"
-                    *ngIf="!modifcentreexploitation"><i class="fas fa-pencil"></i></button>
-                  <button class="btn btn-outline-success btn-sm me-1"
-                    (click)="savecentreexploitation(centresrevenusexploitations)" title="Enregistrer centre de revenu"
-                    *ngIf="modifcentreexploitation">Enregistrer</button>
-                  <button class="btn btn-outline-danger btn-sm me-1" (click)="cancelcentreexploitation(exploitation.id)"
-                    title="Supprimer centre de revenu" *ngIf="modifcentreexploitation">Annuler</button>
-                  <div *ngIf="!togglearticle">
-                    <button class="btn btn-primary btn-sm me-1" (click)="gererarticle()" title="Gérer les articles"
-                      *ngIf="!modifcentreexploitation">Gérer les articles</button>
-                  </div>
+              <div class="d-flex bd-highlight" *ngIf="!togglearticle">
+                <button class="btn btn-outline-secondary btn-sm me-1"
+                  (click)="listecentrerevenuexploitation(exploitation.centreRevenu)" title="Assigner centre de revenu"
+                  *ngIf="!modifcentreexploitation"><i class="fas fa-pencil"></i></button>
+                <button class="btn btn-outline-success btn-sm me-1"
+                  (click)="savecentreexploitation(centresrevenusexploitations)" title="Enregistrer centre de revenu"
+                  *ngIf="modifcentreexploitation">Enregistrer</button>
+                <button class="btn btn-outline-danger btn-sm me-1" (click)="cancelcentreexploitation(exploitation.id)"
+                  title="Supprimer centre de revenu" *ngIf="modifcentreexploitation">Annuler</button>
+                <div *ngIf="!togglearticle">
+                  <button class="btn btn-primary btn-sm me-1" (click)="gererarticle()" title="Gérer les articles"
+                    *ngIf="!modifcentreexploitation">Gérer les articles</button>
                 </div>
-                <div class="d-flex bd-highlight" *ngIf="togglearticle">
-                  <button class="btn btn-primary btn-sm me-1" (click)="addarticle()" *ngIf="!addarticletoggle"
-                    title="">Ajouter des articles</button>
-                  <button class="btn btn-danger btn-sm me-1" (click)="togglearticle = false; addarticletoggle = true;"
-                    *ngIf="!addarticletoggle" title="">Fermer</button>
-                  <button class="btn btn-danger btn-sm me-1" (click)="deletearticle()"
-                    *ngIf="articlesselected > 0 && !addarticletoggle" title="">Supprimer</button>
-                  <button class="btn btn-success btn-sm me-1" (click)="addarticleexploitation()"
-                    *ngIf="addarticletoggle" title="">Enregistrer</button>
-                  <button class="btn btn-danger btn-sm me-1" (click)="cancelarticleexploitation()"
-                    *ngIf="addarticletoggle" title="">Annuler</button>
-                </div>
+              </div>
+              <div class="d-flex bd-highlight" *ngIf="togglearticle">
+                <button class="btn btn-primary btn-sm me-1" (click)="addarticle()" *ngIf="!addarticletoggle"
+                  title="">Ajouter des articles</button>
+                <button class="btn btn-danger btn-sm me-1" (click)="togglearticle = false; addarticletoggle = true;"
+                  *ngIf="!addarticletoggle" title="">Fermer</button>
+                <button class="btn btn-danger btn-sm me-1" (click)="deletearticle()"
+                  *ngIf="articlesselected > 0 && !addarticletoggle" title="">Supprimer</button>
+                <button class="btn btn-success btn-sm me-1" (click)="addarticleexploitation()" *ngIf="addarticletoggle"
+                  title="">Enregistrer</button>
+                <button class="btn btn-danger btn-sm me-1" (click)="cancelarticleexploitation()"
+                  *ngIf="addarticletoggle" title="">Annuler</button>
+              </div>
             </div>
             <table class="table table-hover table-sm table-striped mb-0" *ngIf="!togglearticle">
               <tr>
@@ -196,7 +196,12 @@
               <table class="table table-hover table-sm table-striped mb-0">
                 <thead>
                   <tr>
-                    <th scope="col" class="col-1">#</th>
+                    <th scope="col" class="col-1">
+                      <span *ngIf="!addarticletoggle">#</span>
+                      <!-- <span *ngIf="addarticletoggle">AAA</span> -->
+                      <input type="checkbox" *ngIf="addarticletoggle" class="form-check-input" name="article"
+                        id="article" (change)="selectedallarticle($event)">
+                    </th>
                     <th scope="col" class="col-6">Article<i class="fas fa-sort sort-style" id="fa-sort"></i></th>
                     <th scope="col" class="col-2">Code Article<i class="fas fa-sort sort-style" id="fa-sort"></i></th>
                     <th scope="col" class="col-3">Reference croise<i class="fas fa-sort sort-style" id="fa-sort"></i>

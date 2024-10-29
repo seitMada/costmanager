@@ -34,26 +34,40 @@
       <thead>
         <tr>
           <th scope="col" class="">#</th>
-          <th scope="col" class="col-1">Code <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortArticles($event, 'codeArticle','numeric')"></i></th>
-          <th scope="col" class="col-3">Désignation <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortArticles($event, 'libelle')"></i></th>
-          <th scope="col" class="col-1">Unite <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortArticles($event, 'unite.abreviation')"></i></th>
-          <th scope="col" class="col-2">Groupe analytique <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortArticles($event, 'groupeanalytique.groupe')"></i></th>
-          <th scope="col" class="col-2">Famille <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortArticles($event, 'familles.libelle')"></i></th>
-          <th scope="col" class="col-2">Sous-famille <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortArticles($event, 'sousfamilles.libelle')"></i></th>
-          <th scope="col" class="col-3">Coéfficient pondération <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortArticles($event, 'coefficientPonderation')"></i></th>
+          <th scope="col" class="col-1">Code <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortArticles($event, 'codeArticle','numeric')"></i></th>
+          <th scope="col" class="col-3">Désignation <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortArticles($event, 'libelle')"></i></th>
+          <th scope="col" class="col-1">Unite <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortArticles($event, 'unite.abreviation')"></i></th>
+          <th scope="col" class="col-2">Groupe analytique <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortArticles($event, 'groupeanalytique.groupe')"></i></th>
+          <th scope="col" class="col-2">Famille <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortArticles($event, 'familles.libelle')"></i></th>
+          <th scope="col" class="col-2">Sous-famille <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortArticles($event, 'sousfamilles.libelle')"></i></th>
+          <th scope="col" class="col-3">Coéfficient pondération <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortArticles($event, 'coefficientPonderation')"></i></th>
         </tr>
         <tr>
           <th scope="col" colspan="2">
-            <input type="search" name="codeArticle" class="form-control form-control-sm"  (input)="onSearchArticles($event,'codeArticle')" placeholder="Rechercher...">
+            <input type="search" name="codeArticle" class="form-control form-control-sm"
+              (input)="onSearchArticles($event,'codeArticle')" placeholder="Rechercher...">
           </th>
           <th scope="col" class="col-3">
-            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchArticles($event,'libelle')" placeholder="Rechercher...">
+            <input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchArticles($event,'libelle')" placeholder="Rechercher...">
           </th>
-          <th scope="col" class="col-1"><input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchArticles($event,'unite.abreviation')" placeholder="Rechercher..."></th>
-          <th scope="col" class="col-2"><input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchArticles($event,'groupeanalytique.groupe')" placeholder="Rechercher..."></th>
-          <th scope="col" class="col-2"><input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchArticles($event,'familles.libelle')" placeholder="Rechercher..."></th>
-          <th scope="col" class="col-2"><input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchArticles($event,'sousfamilles.libelle')" placeholder="Rechercher..."></th>
-          <th scope="col" class="col-3"><input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchArticles($event,'coefficientPonderation')" placeholder="Rechercher..."></th>
+          <th scope="col" class="col-1"><input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchArticles($event,'unite.abreviation')" placeholder="Rechercher..."></th>
+          <th scope="col" class="col-2"><input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchArticles($event,'groupeanalytique.groupe')" placeholder="Rechercher..."></th>
+          <th scope="col" class="col-2"><input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchArticles($event,'familles.libelle')" placeholder="Rechercher..."></th>
+          <th scope="col" class="col-2"><input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchArticles($event,'sousfamilles.libelle')" placeholder="Rechercher..."></th>
+          <th scope="col" class="col-3"><input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchArticles($event,'coefficientPonderation')" placeholder="Rechercher..."></th>
         </tr>
       </thead>
     </table>
@@ -74,7 +88,7 @@
           <td class="col-2 " (click)="showArticle(line); toggleModal()">{{truncateWord(line.familles.libelle, 20)}}</td>
           <td class="col-2 " (click)="showArticle(line); toggleModal()">{{truncateWord(line.sousfamilles.libelle, 20)}}
           </td>
-          <td class="col-3" (click)="showArticle(line); toggleModal()">{{line.coefficientPonderation / 100}} €</td>
+          <td class="col-3" (click)="showArticle(line); toggleModal()">{{line.coefficientPonderation / 100}} %</td>
         </tr>
       </tbody>
     </table>
@@ -250,26 +264,26 @@
                   <tr *ngFor="let line of article.articlefournisseur">
                     <td class="col-3">{{line.fournisseur?.raison_social}}</td>
                     <td class="col-2">
-                      <tr *ngFor="let lines of line.conditionnement" (click)="showFournisseur(lines)">
-                        <td>{{lines.uniteCommande.libelle}}</td>
-                      </tr>
-                    </td>
-                    <td class="col-3">
-                      <tr *ngFor="let lines of line.conditionnement">
-                        <td>{{lines.prixAchat / lines.coefficientAchatCommande | number: '1.2-2'}} €</td>
-                      </tr>
-                    </td>
-                    <td class="col-2">
-                      <tr *ngFor="let lines of line.conditionnement">
-                        <td>{{lines.uniteFt.libelle}}</td>
-                      </tr>
-                    </td>
-                    <td class="col-2">
-                      <tr *ngFor="let lines of line.conditionnement">
-                        <td>{{lines.prixAchat / lines.coefficientAchatCommande / lines.coefficientInventaireAchat /
-                          lines.coefficientInventaire | number: '1.2-2'}} €</td>
-                      </tr>
-                    </td>
+                  <tr *ngFor="let lines of line.conditionnement" (click)="showFournisseur(lines)">
+                    <td>{{lines.uniteCommande.libelle}}</td>
+                  </tr>
+                  </td>
+                  <td class="col-3">
+                    <tr *ngFor="let lines of line.conditionnement">
+                      <td>{{lines.prixAchat / lines.coefficientAchatCommande | number: '1.2-2'}} €</td>
+                    </tr>
+                  </td>
+                  <td class="col-2">
+                    <tr *ngFor="let lines of line.conditionnement">
+                      <td>{{lines.uniteFt.libelle}}</td>
+                    </tr>
+                  </td>
+                  <td class="col-2">
+                    <tr *ngFor="let lines of line.conditionnement">
+                      <td>{{lines.prixAchat / lines.coefficientAchatCommande / lines.coefficientInventaireAchat /
+                        lines.coefficientInventaire | number: '1.2-2'}} €</td>
+                    </tr>
+                  </td>
                   </tr>
                 </tbody>
               </table>

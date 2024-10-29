@@ -536,9 +536,9 @@ export class OptionsComponent implements OnInit {
       }
     });
     const data = {
-    articleId: articleselected,
-    exploitationsId: [this.exploitation.id]
-  }
+      articleId: articleselected,
+      exploitationsId: [this.exploitation.id]
+    }
     this.articleService.desactiveArticles(data).subscribe({
       next: () => {
         this.articlesselected = 0;
@@ -590,6 +590,18 @@ export class OptionsComponent implements OnInit {
         this.articlesselected++;
       }
     });
+  }
+
+  public selectedallarticle(_event: any) {
+    if (_event.target.checked === true) {
+      this.articles.forEach(element => {
+        Object.assign(element, { selected: true })
+      });
+    } else {
+      this.articles.forEach(element => {
+        Object.assign(element, { selected: false })
+      });
+    }
   }
 
   /***************************************************************/
