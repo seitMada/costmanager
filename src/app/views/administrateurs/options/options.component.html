@@ -138,21 +138,34 @@
           </div>
           <div class="card py-3 mt-4 mx-4" style="height: 40vh;" *ngIf="!toggleexploitation">
             <div class="d-grid gap-2 d-md-flex justify-content-md-end" *ngIf="toggleCentreExploitation">
-              <div class="d-flex bd-highlight">
-                <button class="btn btn-outline-secondary btn-sm me-1"
-                  (click)="listecentrerevenuexploitation(exploitation.centreRevenu)" title="Assigner centre de revenu"
-                  *ngIf="!modifcentreexploitation"><i class="fas fa-pencil"></i></button>
-                <button class="btn btn-outline-success btn-sm me-1"
-                  (click)="savecentreexploitation(centresrevenusexploitations)" title="Enregistrer centre de revenu"
-                  *ngIf="modifcentreexploitation">Enregistrer</button>
-                <button class="btn btn-outline-danger btn-sm me-1" (click)="cancelcentreexploitation(exploitation.id)"
-                  title="Supprimer centre de revenu" *ngIf="modifcentreexploitation">Annuler</button>
-                <button class="btn btn-primary btn-sm me-1" (click)="gerercentrerevenu()"
-                  title="Gérer les centres de revenu" *ngIf="!modifcentreexploitation">Gérer les centres de
-                  revenu</button>
-              </div>
+                <div class="d-flex bd-highlight" *ngIf="!togglearticle">
+                  <button class="btn btn-outline-secondary btn-sm me-1"
+                    (click)="listecentrerevenuexploitation(exploitation.centreRevenu)" title="Assigner centre de revenu"
+                    *ngIf="!modifcentreexploitation"><i class="fas fa-pencil"></i></button>
+                  <button class="btn btn-outline-success btn-sm me-1"
+                    (click)="savecentreexploitation(centresrevenusexploitations)" title="Enregistrer centre de revenu"
+                    *ngIf="modifcentreexploitation">Enregistrer</button>
+                  <button class="btn btn-outline-danger btn-sm me-1" (click)="cancelcentreexploitation(exploitation.id)"
+                    title="Supprimer centre de revenu" *ngIf="modifcentreexploitation">Annuler</button>
+                  <div *ngIf="!togglearticle">
+                    <button class="btn btn-primary btn-sm me-1" (click)="gererarticle()" title="Gérer les articles"
+                      *ngIf="!modifcentreexploitation">Gérer les articles</button>
+                  </div>
+                </div>
+                <div class="d-flex bd-highlight" *ngIf="togglearticle">
+                  <button class="btn btn-primary btn-sm me-1" (click)="addarticle()" *ngIf="!addarticletoggle"
+                    title="">Ajouter des articles</button>
+                  <button class="btn btn-danger btn-sm me-1" (click)="togglearticle = false; addarticletoggle = true;"
+                    *ngIf="!addarticletoggle" title="">Fermer</button>
+                  <button class="btn btn-danger btn-sm me-1" (click)="deletearticle()"
+                    *ngIf="articlesselected > 0 && !addarticletoggle" title="">Supprimer</button>
+                  <button class="btn btn-success btn-sm me-1" (click)="addarticleexploitation()"
+                    *ngIf="addarticletoggle" title="">Enregistrer</button>
+                  <button class="btn btn-danger btn-sm me-1" (click)="cancelarticleexploitation()"
+                    *ngIf="addarticletoggle" title="">Annuler</button>
+                </div>
             </div>
-            <table class="table table-hover table-sm table-striped mb-0">
+            <table class="table table-hover table-sm table-striped mb-0" *ngIf="!togglearticle">
               <tr>
                 <th scope="col" class="col-1">#</th>
                 <th scope="col" class="col-8">Centre de revenue<i class="fas fa-sort sort-style" id="fa-sort"></i></th>
@@ -179,6 +192,30 @@
                 </tr>
               </tbody>
             </table>
+            <div class="overflow-y-scroll" style="height: 40vh;" *ngIf="togglearticle">
+              <table class="table table-hover table-sm table-striped mb-0">
+                <thead>
+                  <tr>
+                    <th scope="col" class="col-1">#</th>
+                    <th scope="col" class="col-6">Article<i class="fas fa-sort sort-style" id="fa-sort"></i></th>
+                    <th scope="col" class="col-2">Code Article<i class="fas fa-sort sort-style" id="fa-sort"></i></th>
+                    <th scope="col" class="col-3">Reference croise<i class="fas fa-sort sort-style" id="fa-sort"></i>
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of articles">
+                    <td scope="col" class="col-1">
+                      <input type="checkbox" class="form-check-input" name="article-{{line.libelle}}"
+                        id="article-{{line.id}}" [(ngModel)]="line.selected" (change)="selectedarticle()">
+                    </td>
+                    <td scope="col" class="col-6">{{ line.libelle }}</td>
+                    <td scope="col" class="col-2">{{ line.codeArticle }}</td>
+                    <td scope="col" class="col-3"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </ng-template>
@@ -492,15 +529,18 @@
                       <button class="btn btn-secondary btn-sm me-1" (click)="createzonestockage(lieuStockage)"
                         title="Creer zone de stockage" *ngIf="!inputModifZone">Gerer les zones de stockage</button>
                       <button class="btn btn-outline-success btn-sm me-1" (click)="savezonelieustockage(lieuStockage)"
-                        title="Enregistrer zone de stockage" *ngIf="inputModifZone && zoneStockage.zone.length > 0">Enregistrer</button>
+                        title="Enregistrer zone de stockage"
+                        *ngIf="inputModifZone && zoneStockage.zone.length > 0">Enregistrer</button>
                       <button class="btn btn-outline-danger btn-sm me-1" (click)="cancelzonelieustockage(lieuStockage)"
                         title="" *ngIf="inputModifZone">Annuler</button>
                       <button class="btn btn-danger btn-sm me-1" (click)="deletezonelieustockage()"
-                        title="Supprimer zone de stockage" *ngIf="zoneStockageselected > 0 && inputModifLieu">Supprimer</button>
+                        title="Supprimer zone de stockage"
+                        *ngIf="zoneStockageselected > 0 && inputModifLieu">Supprimer</button>
                     </div>
                   </div>
                   <div class="row">
-                    <div class="overflow-y-scroll" [ngClass]="{'col-12': !inputModifZone, 'col-6': inputModifZone}" style="height: 30vh;">
+                    <div class="overflow-y-scroll" [ngClass]="{'col-12': !inputModifZone, 'col-6': inputModifZone}"
+                      style="height: 30vh;">
                       <table class="table table-hover table-sm table-striped mb-0">
                         <tbody>
                           <tr *ngFor="let zonestockage of zonestockageslieustockages">

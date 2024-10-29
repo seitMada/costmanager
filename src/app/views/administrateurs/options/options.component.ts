@@ -7,12 +7,15 @@ import { ModalDismissReasons, NgbDropdownModule, NgbModal, NgbModalConfig, NgbNa
 import { Adress, Adresse } from 'src/app/shared/model/adresse';
 import { Exploitation } from 'src/app/shared/model/exploitations';
 import { InterfaceAdresse } from 'src/app/shared/model/interface-adresse';
+import { InterfaceArticleExploitation } from 'src/app/shared/model/interface-articleexploitations';
+import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
 import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
 import { InterfaceLieustockages } from 'src/app/shared/model/interface-lieustockages';
 import { InterfaceOperateur } from 'src/app/shared/model/interface-operateur';
 import { InterfaceOperateurCentreExploitation } from 'src/app/shared/model/interface-operateurcentreexploitation';
 import { InterfaceZonestockages } from 'src/app/shared/model/interface-zonestockages';
+import { ArticleService } from 'src/app/shared/service/article.service';
 import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
 import { ExploitationService } from 'src/app/shared/service/exploitation.service';
 import { FournisseurService } from 'src/app/shared/service/fournisseur.service';
@@ -71,6 +74,10 @@ export class OptionsComponent implements OnInit {
   public toggleCentreExploitation: boolean = true;
   public inputModifExploitation: boolean = true;
   public modifcentreexploitation: boolean = false;
+  public togglearticle: boolean = false;
+  public articles: InterfaceArticle[];
+  public articlesselected: number = 0;
+  public addarticletoggle: boolean = false;
 
   public toggleCentre: boolean = true;
   public modifToggleCentre: boolean = false;
@@ -154,6 +161,7 @@ export class OptionsComponent implements OnInit {
     private lieustockageService: LieustockageService,
     private zonestockageService: ZonestockagesService,
     private operateurService: OperateursService,
+    private articleService: ArticleService,
     private modalService: NgbModal,
     config: NgbModalConfig,
   ) {
@@ -341,6 +349,12 @@ export class OptionsComponent implements OnInit {
       ..._exploitation,
       selected: false
     }));
+    this.articleService.getArticlesByExploitation(exploitation.id || 0).subscribe({
+      next: (_articles) => {
+        this.articles = _articles;
+        console.log(this.articles)
+      }
+    })
   }
 
   listecentrerevenuexploitation(_centrerevenu: any) {
@@ -487,19 +501,100 @@ export class OptionsComponent implements OnInit {
             this.resetExploitation();
             this.toggleexploitation = true;
             this.showAllExploitation();
-            alert('Exploitation supprimés');
+            alert('Exploitation supprimé');
           }
         })
       }
     }
   }
 
+  public gererarticle() {
+    this.togglearticle = true;
+    this.addarticletoggle = false;
+  }
+
+  public addarticle() {
+    this.addarticletoggle = true;
+    // this.articles = [];
+    this.articleService.getAllArticle().subscribe({
+      next: (_articles) => {
+        _articles.forEach((_article: { selected: boolean; articleexploitation: any[] }) => {
+          _article.selected = _article.articleexploitation.some(
+            element => element.exploitationsId === this.exploitation.id
+          );
+        });
+        this.articles = _articles;
+      }
+    })
+  }
+
+  public deletearticle() {
+    const articleselected: any[] = [];
+    this.articles.forEach(element => {
+      if (element.selected === true) {
+        articleselected.push(element.id);
+      }
+    });
+    const data = {
+    articleId: articleselected,
+    exploitationsId: [this.exploitation.id]
+  }
+    this.articleService.desactiveArticles(data).subscribe({
+      next: () => {
+        this.articlesselected = 0;
+        this.articleService.getArticlesByExploitation(this.exploitation.id || 0).subscribe({
+          next: (_articles) => {
+            alert("Liste article pour " + this.exploitation.libelle + " mis a jour");
+            this.articles = _articles;
+          }
+        })
+      }
+    })
+  }
+
+  public addarticleexploitation() {
+    const articleadd: any[] = [];
+    this.articles.forEach(element => {
+      if (element.selected === true) {
+        articleadd.push(element.id);
+      }
+    });
+    this.articleService.addArticleExploitationByExploitation(articleadd, this.exploitation.id || 0).subscribe({
+      next: () => {
+        alert("Liste article pour " + this.exploitation.libelle + " mis a jour");
+        this.articlesselected = 0;
+        this.articleService.getArticlesByExploitation(this.exploitation.id || 0).subscribe({
+          next: (_articles) => {
+            this.articles = _articles;
+            this.addarticletoggle = false;
+          }
+        })
+      }
+    })
+  }
+
+  public cancelarticleexploitation() {
+    this.articleService.getArticlesByExploitation(this.exploitation.id || 0).subscribe({
+      next: (_articles) => {
+        this.articles = _articles;
+        this.addarticletoggle = false;
+        this.articlesselected = 0;
+      }
+    })
+  }
+
+  public selectedarticle() {
+    this.articlesselected = 0;
+    this.articles.forEach(element => {
+      if (element.selected === true) {
+        this.articlesselected++;
+      }
+    });
+  }
+
   /***************************************************************/
 
   /***********************CENTREREVENU****************************/
-  public gerercentrerevenu() {
-    this.active = 2;
-  }
 
   public resetCentre() {
     this.adresse = {

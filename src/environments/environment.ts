@@ -69,6 +69,7 @@ export const environment = {
     APIPOSTDESACTIVEARTICLE: endPoint + 'articleexploitation/desactive_articleexploitation/',
     APIPOSTDESACTIVEARTICLES: endPoint + 'articleexploitation/desactive_articleexploitations',
     APIGETARTICLEEXPLOITATIONBYEXPLOITATIONID: endPoint + 'articleexploitation/',
+    APIADDARTICLEEXPLOITATIONBYEXPLOITATION: endPoint + 'articleexploitation/addarticleexploitationbyexploitation',
 
     APIUPDATESTOCKMINIMUM: endPoint + 'articleexploitation/updatestock',
 

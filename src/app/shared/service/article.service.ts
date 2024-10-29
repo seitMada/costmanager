@@ -34,6 +34,7 @@ export class ArticleService {
   private apiPostDesactiveArticles = environment.APIPOSTDESACTIVEARTICLES;
   private apiGetArticleExclude = environment.APIGETARTICLEEXCLUDE;
   private apiGetArticleByZone = environment.APIGETARTICLEBYZONE;
+  private apiPostAddArticleExploitationByExploitation = environment.APIADDARTICLEEXPLOITATIONBYEXPLOITATION;
 
   private apiGetArticleByFournisseur = environment.APIGETARTICLEBYFOURNISSEUR;
   private apiGetArticleByIdFournisseur = environment.APIGETARTICLEBYFOURNISSEUR;
@@ -77,6 +78,10 @@ export class ArticleService {
 
   public deleteArticleExploitationByArticle(articleId: number, exploitationid: number[]) {
     return this.https.post(this.apiPostDeleteArticleExploitationByArticle + articleId, exploitationid);
+  }
+
+  public addArticleExploitationByExploitation(articleId: number[], exploitationid: number) {
+    return this.https.post(this.apiPostAddArticleExploitationByExploitation , { articleId: articleId, exploitationId: exploitationid });
   }
 
   public deleteAllergeneArticle(articleId: number, allergeneId: number[]) {
