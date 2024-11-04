@@ -36,40 +36,56 @@
       <thead>
         <tr>
           <th scope="col" class="">#</th>
-          <th scope="col" class="col-1">Code <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'code','numeric')"></i></th>
-          <th scope="col" class="col-2">Libelle <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'libelle')"></i></th>
-          <th scope="col" class="col-2">Famille <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'famille.libelle')"></i></th>
-          <th scope="col" class="col-1">Unite <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'unite.abreviation')"></i></th>
-          <th scope="col" class="col-2">Groupe analytique <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'groupeanalytique.groupe')"></i></th>
-          <th scope="col" class="col-2">Categorie <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'categorie.libelle')"></i></th>
-          <th scope="col" class="col-1">Prix <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'prix','numeric')"></i></th>
-          <th scope="col" class="col-1">Coût <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFicheTechniques($event, 'cout','numeric')"></i></th>
+          <th scope="col" class="col-1">Code <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortFicheTechniques($event, 'code','numeric')"></i></th>
+          <th scope="col" class="col-2">Libelle <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortFicheTechniques($event, 'libelle')"></i></th>
+          <th scope="col" class="col-2">Famille <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortFicheTechniques($event, 'famille.libelle')"></i></th>
+          <th scope="col" class="col-1">Unite <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortFicheTechniques($event, 'unite.abreviation')"></i></th>
+          <th scope="col" class="col-2">Groupe analytique <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortFicheTechniques($event, 'groupeanalytique.groupe')"></i></th>
+          <th scope="col" class="col-2">Categorie <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortFicheTechniques($event, 'categorie.libelle')"></i></th>
+          <th scope="col" class="col-1">Prix <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortFicheTechniques($event, 'prix','numeric')"></i></th>
+          <th scope="col" class="col-1">Coût <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortFicheTechniques($event, 'cout','numeric')"></i></th>
         </tr>
         <tr>
           <th colspan="2">
-            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'code')" placeholder="Rechercher...">
+            <input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchFicheTechniques($event,'code')" placeholder="Rechercher...">
           </th>
           <th class="col-2">
-            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'libelle')" placeholder="Rechercher...">
+            <input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchFicheTechniques($event,'libelle')" placeholder="Rechercher...">
           </th>
           <th class="col-2">
-            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'famille.libelle')" placeholder="Rechercher...">
+            <input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchFicheTechniques($event,'famille.libelle')" placeholder="Rechercher...">
           </th>
           <th class="col-1">
-            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'unite.abreviation')" placeholder="Rechercher...">
+            <input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchFicheTechniques($event,'unite.abreviation')" placeholder="Rechercher...">
           </th>
           <th class="col-2">
-            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'groupeanalytique.groupe')" placeholder="Rechercher...">
+            <input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchFicheTechniques($event,'groupeanalytique.groupe')" placeholder="Rechercher...">
           </th>
           <th class="col-2">
-            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'categorie.libelle')" placeholder="Rechercher...">
+            <input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchFicheTechniques($event,'categorie.libelle')" placeholder="Rechercher...">
           </th>
           <th class="col-1">
-            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'prix')" placeholder="Rechercher...">
+            <input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchFicheTechniques($event,'prix')" placeholder="Rechercher...">
           </th>
           <th class="col-1">
-            <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFicheTechniques($event,'cout')" placeholder="Rechercher...">
-          </th>          
+            <input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchFicheTechniques($event,'cout')" placeholder="Rechercher...">
+          </th>
         </tr>
       </thead>
     </table>
@@ -114,14 +130,14 @@
             <div class="row g-2">
               <div class="input-group col">
                 <span class="input-group-text col-6" id="cout">Coût</span>
-                <input type="number" class="form-control col-3 bg-white" aria-label="cout" aria-describedby="basic-addon1"
-                  [(ngModel)]="fichetechnique.cout" disabled="true" step=".00">
+                <input type="number" class="form-control col-3 bg-white" aria-label="cout"
+                  aria-describedby="basic-addon1" [(ngModel)]="fichetechnique.cout" disabled="true" step=".00">
                 <span class="input-group-text col-2">€</span>
               </div>
               <div class="input-group col">
                 <span class="input-group-text col-6" id="prix">Prix de vente</span>
-                <input type="number" class="form-control col-3 bg-white" aria-label="prix" aria-describedby="basic-addon1"
-                  [(ngModel)]="fichetechnique.prix" [disabled]="modifToggle"step=".00">
+                <input type="number" class="form-control col-3 bg-white" aria-label="prix"
+                  aria-describedby="basic-addon1" [(ngModel)]="fichetechnique.prix" [disabled]="modifToggle" step=".00">
                 <span class="input-group-text col-2">€</span>
               </div>
             </div>
@@ -129,21 +145,29 @@
         </div>
         <div class="row m-2">
           <div class="col-6">
-            <div class="input-group">
-              <span class="input-group-text col-5" id="unite">Unité</span>
-              <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
-                aria-label="Code" aria-describedby="unite" [(ngModel)]="fichetechnique.unite.libelle"
-                [disabled]="true">
-              <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
-                data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
-                <span class="visually-hidden">Toggle Dropdown</span>
-              </button>
-              <ul class="dropdown-menu dropdown-menu-end p-1" *ngIf="!modifToggle">
-                <li *ngFor="let line of unites">
-                  <!-- <span (click)="selectUnite(line)">{{line.libelle}}</span> -->
-                  <button class="btn btn-sm btn-outline-secondary col-12 mt-1"(click)="selectUnite(line)">{{line.libelle}}</button>
-                </li>
-              </ul>
+            <div class="row g-2">
+              <div class="input-group col">
+                <span class="input-group-text col-6" id="cout">Code</span>
+                <input type="text" class="form-control col-3 bg-white" aria-label="cout" aria-describedby="basic-addon1"
+                  [(ngModel)]="fichetechnique.code" [disabled]="modifToggle">
+              </div>
+              <div class="input-group col">
+                <span class="input-group-text col-5" id="unite">Unité</span>
+                <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
+                  aria-label="Code" aria-describedby="unite" [(ngModel)]="fichetechnique.unite.libelle"
+                  [disabled]="true">
+                <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                  data-bs-toggle="dropdown" aria-expanded="false" *ngIf="!modifToggle">
+                  <span class="visually-hidden">Toggle Dropdown</span>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end p-1" *ngIf="!modifToggle">
+                  <li *ngFor="let line of unites">
+                    <!-- <span (click)="selectUnite(line)">{{line.libelle}}</span> -->
+                    <button class="btn btn-sm btn-outline-secondary col-12 mt-1"
+                      (click)="selectUnite(line)">{{line.libelle}}</button>
+                  </li>
+                </ul>
+              </div>
             </div>
           </div>
           <div class="col-6">
@@ -158,7 +182,8 @@
               </button>
               <ul class="dropdown-menu dropdown-menu-end p-1" *ngIf="!modifToggle">
                 <li *ngFor="let line of groupeanalytiques">
-                  <button class="btn btn-sm btn-outline-secondary col-12 mt-1"(click)="selectGroupeanalytique(line)">{{line.groupe}}</button>
+                  <button class="btn btn-sm btn-outline-secondary col-12 mt-1"
+                    (click)="selectGroupeanalytique(line)">{{line.groupe}}</button>
                 </li>
               </ul>
             </div>
@@ -177,7 +202,8 @@
               </button>
               <ul class="dropdown-menu dropdown-menu-end p-1" *ngIf="!modifToggle">
                 <li *ngFor="let line of familles">
-                  <button class="btn btn-sm btn-outline-secondary col-12 mt-1"(click)="selectFamille(line)">{{line.libelle}}</button>
+                  <button class="btn btn-sm btn-outline-secondary col-12 mt-1"
+                    (click)="selectFamille(line)">{{line.libelle}}</button>
                 </li>
               </ul>
             </div>
@@ -194,7 +220,8 @@
               </button>
               <ul class="dropdown-menu dropdown-menu-end p-1" *ngIf="!modifToggle">
                 <li *ngFor="let line of categories">
-                  <button class="btn btn-sm btn-outline-secondary col-12 mt-1"(click)="selectCategorie(line)">{{line.libelle}}</button>
+                  <button class="btn btn-sm btn-outline-secondary col-12 mt-1"
+                    (click)="selectCategorie(line)">{{line.libelle}}</button>
                 </li>
               </ul>
             </div>
@@ -266,13 +293,15 @@
                 <div class="col-12 mb-1">
                   <div class="input-group input-group-sm">
                     <span class="input-group-text col-6 fw-bold">Coût FT</span>
-                    <span class="input-group-text bg-white col-6 fw-bold">{{cout.fichetechnique | number : '1.2-2'}} €</span>
+                    <span class="input-group-text bg-white col-6 fw-bold">{{cout.fichetechnique | number : '1.2-2'}}
+                      €</span>
                   </div>
                 </div>
                 <div class="col-6">
                   <div class="input-group input-group-sm">
                     <span class="input-group-text col-8 fw-bold">Coût alimentaire</span>
-                    <span class="input-group-text bg-white col-4 fw-bold">{{cout.alimentaire | number : '1.2-2'}} €</span>
+                    <span class="input-group-text bg-white col-4 fw-bold">{{cout.alimentaire | number : '1.2-2'}}
+                      €</span>
                   </div>
                 </div>
                 <div class="col-6">

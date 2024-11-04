@@ -358,7 +358,7 @@ export class DashComponent implements OnInit {
             this.initialiseChart();
             this.getMontantPerteEnCours();
             this.getMontantPertePrecedent();
-            
+
             this.getValorisationArticleFt();
             this.getValorisationStock();
 
@@ -379,7 +379,7 @@ export class DashComponent implements OnInit {
     });
   }
 
-  
+
   ngOnInit(): void {
   }
 
@@ -409,8 +409,7 @@ export class DashComponent implements OnInit {
       const date = new Date(this.today);
       const year = date.getFullYear();
       const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
-      const day = (date.getDate()) < 10 ? '0' + (date.getDate() - 1) : (date.getDate() + 1);
-
+      const day = (date.getDate()) < 10 ? '0' + (date.getDate()) : (date.getDate());
       return (`${year}-${month}-${day}`);
     }
   }

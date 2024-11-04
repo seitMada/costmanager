@@ -11,6 +11,7 @@ import { InterfaceArticleExploitation } from 'src/app/shared/model/interface-art
 import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
 import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
+import { InterfaceFichetechnique } from 'src/app/shared/model/interface-fichetechnique';
 import { InterfaceLieustockages } from 'src/app/shared/model/interface-lieustockages';
 import { InterfaceOperateur } from 'src/app/shared/model/interface-operateur';
 import { InterfaceOperateurCentreExploitation } from 'src/app/shared/model/interface-operateurcentreexploitation';
@@ -18,6 +19,7 @@ import { InterfaceZonestockages } from 'src/app/shared/model/interface-zonestock
 import { ArticleService } from 'src/app/shared/service/article.service';
 import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
 import { ExploitationService } from 'src/app/shared/service/exploitation.service';
+import { FichetechniqueService } from 'src/app/shared/service/fichetechnique.service';
 import { FournisseurService } from 'src/app/shared/service/fournisseur.service';
 import { LieustockageService } from 'src/app/shared/service/lieustockage.service';
 import { OperateursService } from 'src/app/shared/service/operateurs.service';
@@ -78,6 +80,10 @@ export class OptionsComponent implements OnInit {
   public articles: InterfaceArticle[];
   public articlesselected: number = 0;
   public addarticletoggle: boolean = false;
+  public togglefichetechnique: boolean = false;
+  public fichetechniques: InterfaceFichetechnique[];
+  public fichetechniquesselected: number = 0;
+  public addfichetechniquetoggle: boolean = false;
 
   public toggleCentre: boolean = true;
   public modifToggleCentre: boolean = false;
@@ -162,6 +168,7 @@ export class OptionsComponent implements OnInit {
     private zonestockageService: ZonestockagesService,
     private operateurService: OperateursService,
     private articleService: ArticleService,
+    private fichetechniqueService: FichetechniqueService,
     private modalService: NgbModal,
     config: NgbModalConfig,
   ) {
@@ -352,7 +359,11 @@ export class OptionsComponent implements OnInit {
     this.articleService.getArticlesByExploitation(exploitation.id || 0).subscribe({
       next: (_articles) => {
         this.articles = _articles;
-        console.log(this.articles)
+      }
+    })
+    this.fichetechniqueService.getFichetechniqueByExploitation(exploitation.id || 0).subscribe({
+      next: (_fichetechniques) => {
+        this.fichetechniques = _fichetechniques;
       }
     })
   }
@@ -417,8 +428,8 @@ export class OptionsComponent implements OnInit {
       this.exploitations = this.exploitations;
       this.addCentre = false;
       // this.centres = [];
-      this.resetOperateur();
-      this.showAllOperateur();
+      // this.resetOperateur();
+      // this.showAllOperateur();
     }
   }
 
@@ -509,8 +520,113 @@ export class OptionsComponent implements OnInit {
   }
 
   public gererarticle() {
+    this.toggle = false;
     this.togglearticle = true;
     this.addarticletoggle = false;
+    this.togglefichetechnique = false;
+  }
+
+  public gererfichetechnique() {
+    this.toggle = false;
+    this.togglearticle = false;
+    this.togglefichetechnique = true;
+    this.addfichetechniquetoggle = false;
+  }
+
+  public addfichetechnique() {
+    this.addfichetechniquetoggle = true;
+    // this.articles = [];
+    this.fichetechniqueService.getFichetechniques().subscribe({
+      next: (_fichetechniques) => {
+        _fichetechniques.forEach((_fichetechnique: { selected: boolean; fichetechniqueexploitation: any[] }) => {
+          _fichetechnique.selected = _fichetechnique.fichetechniqueexploitation.some(
+            element => element.exploitationsId === this.exploitation.id
+          );
+        });
+        // _articles.forEach((_article: { selected: boolean; articleexploitation: any[] }) => {
+        //   _article.selected = _article.articleexploitation.some(
+        //     element => element.exploitationsId === this.exploitation.id
+        //   );
+        // });
+        this.fichetechniques = _fichetechniques;
+      }
+    })
+  }
+
+  public deletefichetechnique() {
+    const fichetechniquesselected: any[] = [];
+    this.fichetechniques.forEach(element => {
+      if (element.selected === true) {
+        fichetechniquesselected.push(element.id);
+      }
+    });
+    const data = {
+      fichetechniqueId: fichetechniquesselected,
+      exploitationsId: [this.exploitation.id]
+    }
+    this.fichetechniqueService.desactiveFichetechniques(data).subscribe({
+      next: () => {
+        this.fichetechniquesselected = 0;
+        this.fichetechniqueService.getFichetechniqueByExploitation(this.exploitation.id || 0).subscribe({
+          next: (_fichetechniques) => {
+            this.fichetechniques = _fichetechniques;
+            alert("Liste fichetechnique pour " + this.exploitation.libelle + " mis a jour");
+            this.addfichetechniquetoggle = false;
+          }
+        })
+      }
+    })
+  }
+
+  public addfichetechniqueexploitation() {
+    const fichetechniqueadd: any[] = [];
+    this.fichetechniques.forEach(element => {
+      if (element.selected === true) {
+        fichetechniqueadd.push(element.id);
+      }
+    });
+    this.fichetechniqueService.addFichetechniqueExploitation(fichetechniqueadd, this.exploitation.id || 0).subscribe({
+      next: () => {
+        alert("Liste fichetechnique pour " + this.exploitation.libelle + " mis a jour");
+        this.fichetechniquesselected = 0;
+        this.fichetechniqueService.getFichetechniqueByExploitation(this.exploitation.id || 0).subscribe({
+          next: (_fichetechniques) => {
+            this.fichetechniques = _fichetechniques;
+            this.addfichetechniquetoggle = false;
+          }
+        })
+      }
+    })
+  }
+
+  public selectedfichetechnique() {
+    this.fichetechniquesselected = 0;
+    this.fichetechniques.forEach(element => {
+      if (element.selected === true) {
+        this.fichetechniquesselected++;
+      }
+    });
+  }
+
+  public cancelfichetechniqueexploitation() {
+    this.fichetechniqueService.getFichetechniqueByExploitation(this.exploitation.id || 0).subscribe({
+      next: (_fichetechniques) => {
+        this.fichetechniques = _fichetechniques;
+        this.addfichetechniquetoggle = false;
+      }
+    })
+  }
+
+  public selectedallfichetechnique(_event: any) {
+    if (_event.target.checked === true) {
+      this.fichetechniques.forEach(element => {
+        Object.assign(element, { selected: true })
+      });
+    } else {
+      this.fichetechniques.forEach(element => {
+        Object.assign(element, { selected: false })
+      });
+    }
   }
 
   public addarticle() {

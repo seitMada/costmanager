@@ -103,6 +103,7 @@ export const environment = {
     APIGETSOUSFAMILLEBYGROUPE: endPoint + 'sousfamilles/famille/',
 
     APIGETFICHETECHNIQUEBYID: endPoint + 'fichetechnique/',
+    APIGETFICHETECHNIQUE: endPoint + 'fichetechnique',
     APIGETFICHETECHNIQUEBYEXPLOITATION: endPoint + 'fichetechnique/exploitation/',
     APIADDFICHETECHNIQUE: endPoint + 'fichetechnique/add_fichetechniques',
     APIGETEXPLOITATIONBYFICHETECHNIQUE: endPoint + 'fichetechniqueexploitation/',
@@ -116,6 +117,7 @@ export const environment = {
     APIPOSTDESACTIVEFICHETECHNIQUE: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitation/',
     APIPOSTDESACTIVEFICHETECHNIQUES: endPoint + 'fichetechniqueexploitation/desactive_fichetechniqueexploitations',
     APIUPDATEFICHETECHNIQUEEXPLOITATION: endPoint + 'fichetechniqueexploitation/delete_fichetechniqueexploitation/',
+    APIPOSTADDFICHETECHNIQUEEXPLOITATION: endPoint + 'fichetechniqueexploitation/addfichetechniqueexploitations',
 
     APIGETARTICLEBYFOURNISSEURIDANDEXPLOITATIONID: endPoint + 'articlefournisseur/',
     APIGETARTICLEFOURNISSEURBYARTICLEID: endPoint + 'articlefournisseur/byarticleId/',

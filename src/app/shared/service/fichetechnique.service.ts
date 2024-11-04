@@ -15,11 +15,13 @@ import { InterfaceUnite } from '../model/interface-unite';
 export class FichetechniqueService {
 
   private apiGetFichetechniqueByExploitation = environment.APIGETFICHETECHNIQUEBYEXPLOITATION;
+  private apiGetFichetechnique = environment.APIGETFICHETECHNIQUE;
   private apiAddFichetechnique = environment.APIADDFICHETECHNIQUE;
   private apiUpdateFichetechniqueExploitation = environment.APIUPDATEFICHETECHNIQUEEXPLOITATION;
   private apiGetExploitationByFichetechnique = environment.APIGETEXPLOITATIONBYFICHETECHNIQUE;
   private apiUpdateFichetechnique = environment.APIUPDATEFICHETECHNIQUE;
   private apiGetFichetechniqueById = environment.APIGETFICHETECHNIQUEBYID;
+  private apiAddFichetechniqueExploitation = environment.APIPOSTADDFICHETECHNIQUEEXPLOITATION;
 
   private apiPostDesactiveFichetechnique = environment.APIPOSTDESACTIVEFICHETECHNIQUE;
   private apiPostDesactiveFichetechniques = environment.APIPOSTDESACTIVEFICHETECHNIQUES;
@@ -31,9 +33,14 @@ export class FichetechniqueService {
 
   constructor(private https: HttpClient) { }
 
-  public getFichetechniqueByExploitation(id: number){
+  public getFichetechniqueByExploitation(id: number) {
     return this.https.get<any>(this.apiGetFichetechniqueByExploitation + id)
   }
+
+  public getFichetechniques() {
+    return this.https.get<any>(this.apiGetFichetechnique)
+  }
+
 
   public addFichetechnique(fichetechnique: InterfaceFichetechnique) {
     return this.https.post(this.apiAddFichetechnique, fichetechnique);
@@ -52,7 +59,7 @@ export class FichetechniqueService {
     return this.https.patch(this.apiUpdateFichetechnique + id, fichetechnique);
   }
 
-  public getFichetechniqueById(id: number){
+  public getFichetechniqueById(id: number) {
     return this.https.get<any>(this.apiGetFichetechniqueById + id)
   }
 
@@ -78,6 +85,10 @@ export class FichetechniqueService {
 
   public getCompositionByFichetechnique(id: number) {
     return this.https.get<any>(this.apiGetCompositionByFichetechnique + id);
+  }
+
+  public addFichetechniqueExploitation(id: number[], idexploitation: number) {
+    return this.https.post(this.apiAddFichetechniqueExploitation, { idexploitation: idexploitation, id: id });
   }
 
   public resetFichetechnique() {
