@@ -45,7 +45,7 @@ export class ArticlesComponent implements OnInit {
     private exploitationService: ExploitationService,
     private allergeneService: AllergenesService,
     private zonestockageService: ZonestockagesService,
-    private sortFilterSearchService:SortFilterSearchService
+    private sortFilterSearchService: SortFilterSearchService
   ) { }
 
   private modalService = inject(NgbModal);
@@ -111,7 +111,7 @@ export class ArticlesComponent implements OnInit {
   public zonestockage: InterfaceZonestockages;
 
   private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
-  public exploitation = +(sessionStorage.getItem('exploitation') || 3);
+  public exploitation = +(sessionStorage.getItem('exploitation') || 0);
 
   ngOnInit(): void {
     this.resetArticle();
@@ -568,10 +568,10 @@ export class ArticlesComponent implements OnInit {
   }
 
   onSortArticles(event: any, colonne: any, type: string = 'string') {
-    return this.sortFilterSearchService.handleSort(event, this.articles.articles as any, colonne, type, this.articlesBack.articles as any) ;
+    return this.sortFilterSearchService.handleSort(event, this.articles.articles as any, colonne, type, this.articlesBack.articles as any);
   }
 
   onSearchArticles(event: any, colonne: any) {
-     this.articles.articles   =  (this.sortFilterSearchService.handleSearch(event, this.articles.articles as any, colonne, this.articlesBack.articles as any )) ;
+    this.articles.articles = (this.sortFilterSearchService.handleSearch(event, this.articles.articles as any, colonne, this.articlesBack.articles as any));
   }
 }

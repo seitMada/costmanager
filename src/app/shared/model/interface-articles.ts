@@ -37,6 +37,8 @@ export interface InterfaceArticle {
   groupeanalytique: InterfaceGroupeanalytiques;
   articlezonestockages: InterfaceArticlezonestockages[];
   conditionnement?: IntefaceConditionnement;
+
+  composition?: any[];
 }
 
 export interface InterfaceArticles {

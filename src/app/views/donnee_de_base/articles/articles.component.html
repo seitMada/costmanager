@@ -333,9 +333,16 @@
                 <tr>
                   <th scope="col" class="col-6">Désignation</th>
                   <th scope="col" class="col-3">Quantité</th>
-                  <th scope="col" class="col-3">Quantité préparée</th>
+                  <th scope="col" class="col-3">Cout</th>
                 </tr>
               </thead>
+              <tbody>
+                <tr *ngFor="let line of article.composition">
+                  <td>{{line.fichetechnique.libelle}}</td>
+                  <td>{{line.quantite}}</td>
+                  <td>{{line.cout}} €</td>
+                </tr>
+              </tbody>
             </table>
           </ng-template>
         </li>
