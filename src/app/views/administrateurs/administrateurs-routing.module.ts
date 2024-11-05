@@ -57,7 +57,7 @@ const routes: Routes = [
         },
       },
       {
-        path: 'options/user',
+        path: 'user',
         component: GestionUtilisateursComponent,
         data: {
           title: 'Gestions utilisateurs',

@@ -39,11 +39,11 @@ export const navItems: INavData[] = [
           name: 'Stock minimum',
           url: 'donnee_de_base/gestion_stock/stock_minimum'
         },
-        // {
-        //   name: 'Zones de stockage',
-        //   url: 'donnee_de_base/gestion_stock/zones_stockages'
-        // }
-      ]
+          // {
+          //   name: 'Zones de stockage',
+          //   url: 'donnee_de_base/gestion_stock/zones_stockages'
+          // }
+        ]
       },
     ]
   },
@@ -52,14 +52,14 @@ export const navItems: INavData[] = [
     url: '/achats',
     iconComponent: { name: 'cil-cart' },
     children: [
-      {
-        name: 'Simulations',
-        url: 'achats/simulations'
-      },
-      {
-        name: 'Mercuriales',
-        url: 'achats/mercuriales'
-      },
+      // {
+      //   name: 'Simulations',
+      //   url: 'achats/simulations'
+      // },
+      // {
+      //   name: 'Mercuriales',
+      //   url: 'achats/mercuriales'
+      // },
       {
         name: 'Bon de commande',
         url: 'achats/bon_commande'
@@ -181,37 +181,41 @@ export const navItems: INavData[] = [
     name: 'Paramétres',
     url: '/settings',
     iconComponent: { name: 'cil-settings' },
-    
+
     children: [
-    //   {
-    //     name: 'Options',
-    //     url: 'settings/options',
-    //     children: [
-    //       {
-    //         "name": "Exploitation",
-    //         "url": "settings/options/exploitation",
-    //       },
-    //       {
-    //         "name": "Centre Revenu",
-    //         "url": "settings/options/centrerevenu",
-    //       },
-    //       {
-    //         "name": "Lieu Stockage",
-    //         "url": "settings/options/lieustockage",
-    //       },
-    //       {
-    //         "name": "Zone Stockage",
-    //         "url": "settings/options/zonestockage",
-    //       },
-    //       {
-    //         "name": "Utilisateurs",
-    //         "url": "settings/options/user",
-    //       },
-    //     ]
-    //   },
+      //   {
+      //     name: 'Options',
+      //     url: 'settings/options',
+      //     children: [
+      //       {
+      //         "name": "Exploitation",
+      //         "url": "settings/options/exploitation",
+      //       },
+      //       {
+      //         "name": "Centre Revenu",
+      //         "url": "settings/options/centrerevenu",
+      //       },
+      //       {
+      //         "name": "Lieu Stockage",
+      //         "url": "settings/options/lieustockage",
+      //       },
+      //       {
+      //         "name": "Zone Stockage",
+      //         "url": "settings/options/zonestockage",
+      //       },
+      //       {
+      //         "name": "Utilisateurs",
+      //         "url": "settings/options/user",
+      //       },
+      //     ]
+      //   },
       {
         name: 'Options',
         url: 'settings/option'
+      },
+      {
+        name: "Utilisateurs",
+        url: "settings/user",
       },
       {
         name: 'Prix articles',

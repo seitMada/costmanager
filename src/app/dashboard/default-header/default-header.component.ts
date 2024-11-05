@@ -80,7 +80,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
             exploitationid.push(_exploitation.id);
           }
         } else {
-          // exploitationid.push(this.idexploitation);
+          exploitationid.push(this.idexploitation);
         }
         console.log(exploitationid)
         this.inventaireService.getPeriode(exploitationid, true).subscribe({
