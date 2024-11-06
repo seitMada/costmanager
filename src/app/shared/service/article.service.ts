@@ -48,8 +48,8 @@ export class ArticleService {
     return this.https.get<any>(this.apiGetArticle)
   }
 
-  public getArticlesById(id: number) {
-    return this.https.get<any>(this.apiGetArticleById + id)
+  public getArticlesById(id: number, exploitationid: number) {
+    return this.https.get<any>(this.apiGetArticleById + id + '-' + exploitationid)
   }
 
   public getArticlesByExploitation(id: number) {
@@ -81,7 +81,7 @@ export class ArticleService {
   }
 
   public addArticleExploitationByExploitation(articleId: number[], exploitationid: number) {
-    return this.https.post(this.apiPostAddArticleExploitationByExploitation , { articleId: articleId, exploitationId: exploitationid });
+    return this.https.post(this.apiPostAddArticleExploitationByExploitation, { articleId: articleId, exploitationId: exploitationid });
   }
 
   public deleteAllergeneArticle(articleId: number, allergeneId: number[]) {

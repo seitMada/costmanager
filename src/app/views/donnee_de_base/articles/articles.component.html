@@ -328,22 +328,24 @@
         <li [ngbNavItem]="5" *ngIf="modifToggle">
           <button ngbNavLink>REFERENCE CROISEE</button>
           <ng-template ngbNavContent>
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th scope="col" class="col-6">Désignation</th>
-                  <th scope="col" class="col-3">Quantité</th>
-                  <th scope="col" class="col-3">Cout</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr *ngFor="let line of article.composition">
-                  <td>{{line.fichetechnique.libelle}}</td>
-                  <td>{{line.quantite}}</td>
-                  <td>{{line.cout}} €</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="overflow-y-scroll" style="height: 40vh;">
+              <table class="table table-striped">
+                <thead>
+                  <tr>
+                    <th scope="col" class="col-6">Désignation</th>
+                    <th scope="col" class="col-3">Quantité</th>
+                    <th scope="col" class="col-3">Cout</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let line of article.composition">
+                    <td>{{line.fichetechnique.libelle}}</td>
+                    <td>{{line.quantite}} {{line.unite.libelle}}</td>
+                    <td>{{line.cout}} €</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </ng-template>
         </li>
         <li [ngbNavItem]="6">

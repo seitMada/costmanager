@@ -223,7 +223,7 @@ export class ArticlesComponent implements OnInit {
       this.exploitationToggle = true;
       this.resetArticle();
     } else {
-      this.articleService.getArticlesById(this.idArticle).subscribe({
+      this.articleService.getArticlesById(this.idArticle, this.exploitation).subscribe({
         next: async (article) => {
           this.article = article;
           await this.showArticle(article);
@@ -450,7 +450,7 @@ export class ArticlesComponent implements OnInit {
               console.log(zonestockage)
               this.zonestockageService.deleteArticleZoneStockage(article.id, zonestockage).subscribe({
                 next: async () => {
-                  this.articleService.getArticlesById(article.id).subscribe({
+                  this.articleService.getArticlesById(article.id, this.exploitation).subscribe({
                     next: async (_article) => {
                       this.article = _article;
                       await this.showArticle(_article);
@@ -496,7 +496,7 @@ export class ArticlesComponent implements OnInit {
                         item.selected = true;
                       }
                     }
-                    this.articleService.getArticlesById(this.idArticle).subscribe({
+                    this.articleService.getArticlesById(this.idArticle, this.exploitation).subscribe({
                       next: async (_article) => {
                         this.article = _article;
                         await this.showArticle(_article);
