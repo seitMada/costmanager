@@ -125,7 +125,7 @@ export class VenteComponent implements OnInit {
     private fichetetchniqueService: FichetechniqueService,
     private datePipe: DatePipe,
     private pdfService: PdfserviceService,
-    private sortFilterSearchService:SortFilterSearchService
+    private sortFilterSearchService: SortFilterSearchService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
@@ -134,7 +134,7 @@ export class VenteComponent implements OnInit {
       next: (count) => {
         this.nbvente = count == 0 ? count : count + 1;
         this.numticket = ((this.formatDate(this.today))?.replaceAll('-', '')).split(' ')[0] + this.nbvente.toString().padStart(3, '0');
-        this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+        this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
           next: async (_centreRevenu) => {
             this.exploitations = [];
             this.centrerevenus = _centreRevenu;
@@ -426,11 +426,11 @@ export class VenteComponent implements OnInit {
   }
 
   onSortVentes(event: any, colonne: any, type: string = 'string') {
-    return this.sortFilterSearchService.handleSort(event, this.ventes, colonne, type, this.ventesBack ) ;
+    return this.sortFilterSearchService.handleSort(event, this.ventes, colonne, type, this.ventesBack);
   }
 
   onSearchVentes(event: any, colonne: any) {
-     this.ventes   =  (this.sortFilterSearchService.handleSearch(event, this.ventes , colonne, this.ventesBack )) ;
+    this.ventes = (this.sortFilterSearchService.handleSearch(event, this.ventes, colonne, this.ventesBack));
   }
 
 }

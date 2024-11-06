@@ -18,8 +18,8 @@ export class CentreRevenuService {
 
   constructor(private https: HttpClient) { }
 
-  public getCrExploitation(idExploitation: number) {
-    return this.https.get<any>(this.apiGetCRExploitation + idExploitation)
+  public getCrExploitation(idExploitation: number, isAdmin: boolean = false) {
+    return this.https.get<any>(this.apiGetCRExploitation + idExploitation + '-' + isAdmin)
   }
 
   public getcentrerevenu() {
