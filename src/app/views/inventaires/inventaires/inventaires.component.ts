@@ -120,7 +120,7 @@ export class InventairesComponent {
     private articleService: ArticleService,
     private datePipe: DatePipe,
     private pdfService: PdfserviceService,
-    private sortFilterSearchService:SortFilterSearchService
+    private sortFilterSearchService: SortFilterSearchService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
@@ -191,7 +191,7 @@ export class InventairesComponent {
               exploitation: [],
               operateur: []
             },
-            lieuStockage:[]
+            lieuStockage: []
           },
           zonestockage: []
         },
@@ -211,7 +211,7 @@ export class InventairesComponent {
       telephone: '',
       exploitations: this.exploitation,
       adresses: new Adress(),
-      lieuStockage:[]
+      lieuStockage: []
     }
   }
 
@@ -227,7 +227,7 @@ export class InventairesComponent {
   ngOnInit(): void {
     // console.log(this.dates.debut, this.dates.fin)
     this.exploitations = [];
-    this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+    this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
       next: async (_centreRevenu) => {
         this.centrerevenus = _centreRevenu;
         this.centrerevenusdefault = _centreRevenu;
@@ -264,7 +264,8 @@ export class InventairesComponent {
   }
 
   selectExploitation(_exploitation: InterfaceExploitations) {
-    this.centrerevenuService.getCrExploitation(_exploitation.id || 0).subscribe({
+    // this.centrerevenuService.getCrExploitation(_exploitation.id || 0).subscribe({
+    this.centrerevenuService.getCrExploitation(_exploitation.id || 0, true).subscribe({
       next: (_centrerevenus) => {
         this.exploitation = _exploitation;
         this.centrerevenus = _centrerevenus;
@@ -439,8 +440,8 @@ export class InventairesComponent {
   }
 
   addToggleModal() {
-    
-    this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+
+    this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
       next: async (_centrerevenu) => {
         this.modifToggle = !this.modifToggle;
         this.toggle = (this.toggle === false ? true : false);
@@ -607,7 +608,7 @@ export class InventairesComponent {
     return word;
   }
 
-  
+
 
   openArticle(content: TemplateRef<any>, lieu: InterfaceInventairesDetailsZone) {
     this.articleService.getArticlesByExploitation(this.idexploitation).subscribe({
@@ -773,7 +774,7 @@ export class InventairesComponent {
   }
 
   calcultotal(_datas: InterfaceInventairesDetailsZone[]) {
-    
+
     let prix = 0;
     for (const _data of _datas) {
       for (const _i of _data.inventairedetail) {
@@ -784,11 +785,11 @@ export class InventairesComponent {
   }
 
   onSortInventaires(event: any, colonne: any, type: string = 'string') {
-    return this.sortFilterSearchService.handleSort(event, this.inventaires, colonne, type, this.inventairesBack ) ;
+    return this.sortFilterSearchService.handleSort(event, this.inventaires, colonne, type, this.inventairesBack);
   }
 
   onSearchInventaires(event: any, colonne: any) {
-     this.inventaires   =  (this.sortFilterSearchService.handleSearch(event, this.inventaires , colonne, this.inventairesBack )) ;
+    this.inventaires = (this.sortFilterSearchService.handleSearch(event, this.inventaires, colonne, this.inventairesBack));
   }
 
 }

@@ -105,12 +105,12 @@ export class PposComponent implements OnInit {
     private fichetetchniqueService: FichetechniqueService,
     private datePipe: DatePipe,
     private pdfService: PdfserviceService,
-    private sortFilterSearchService:SortFilterSearchService
+    private sortFilterSearchService: SortFilterSearchService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
     this.exploitations = [];
-    this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+    this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
       next: async (_centreRevenu) => {
         this.centrerevenus = _centreRevenu;
         this.centrerevenusdefault = _centreRevenu;
@@ -159,7 +159,7 @@ export class PposComponent implements OnInit {
       telephone: '',
       exploitations: this.exploitation,
       adresses: new Adress(),
-      lieuStockage:[]
+      lieuStockage: []
     }
   }
 
@@ -243,7 +243,7 @@ export class PposComponent implements OnInit {
     this.ppoService.deletePpo(this.idPpo || 0).subscribe({
       next: () => {
         // this.addToggleModal();
-        this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+        this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
           next: async (_centrerevenu) => {
             this.centrerevenus = _centrerevenu;
             await this.selectCentreRevenus(_centrerevenu[0]);
@@ -267,7 +267,7 @@ export class PposComponent implements OnInit {
     this.ppoService.deletePpos(selectedIds).subscribe({
       next: () => {
         // this.addToggleModal();
-        this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+        this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
           next: async (_centrerevenu) => {
             this.centrerevenus = _centrerevenu;
             await this.selectCentreRevenus(_centrerevenu[0]);
@@ -477,7 +477,8 @@ export class PposComponent implements OnInit {
   }
 
   selectExploitation(_exploitation: InterfaceExploitations) {
-    this.centrerevenuService.getCrExploitation(_exploitation.id || 0).subscribe({
+    // this.centrerevenuService.getCrExploitation(_exploitation.id || 0).subscribe({
+    this.centrerevenuService.getCrExploitation(_exploitation.id || 0, true).subscribe({
       next: (_centrerevenus) => {
         this.exploitation = _exploitation;
         this.centrerevenus = _centrerevenus;
@@ -625,10 +626,10 @@ export class PposComponent implements OnInit {
   }
 
   onSortPpo(event: any, colonne: any, type: string = 'string') {
-    return this.sortFilterSearchService.handleSort(event, this.ppos, colonne, type, this.pposBack ) ;
+    return this.sortFilterSearchService.handleSort(event, this.ppos, colonne, type, this.pposBack);
   }
 
   onSearchPpo(event: any, colonne: any) {
-     this.ppos   =  (this.sortFilterSearchService.handleSearch(event, this.ppos , colonne, this.pposBack )) ;
+    this.ppos = (this.sortFilterSearchService.handleSearch(event, this.ppos, colonne, this.pposBack));
   }
 }

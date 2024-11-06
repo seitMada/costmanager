@@ -118,13 +118,13 @@ export class StockMinimumComponent implements OnInit {
     public fournisseurService: FournisseurService,
     private commandeService: CommandeService,
     private datePipe: DatePipe,
-    private sortFilterSearchService:SortFilterSearchService
+    private sortFilterSearchService: SortFilterSearchService
   ) {
     this.headerchoice = '';
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
     this.exploitations = [];
-    this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+    this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
       next: async (_centreRevenu) => {
         this.headerchoice = '';
         this.centrerevenus = _centreRevenu;
@@ -257,7 +257,7 @@ export class StockMinimumComponent implements OnInit {
 
   refreshdata() {
     this.exploitations = [];
-    this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+    this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
       next: async (_centreRevenu) => {
         this.headerchoice = '';
         this.centrerevenus = _centreRevenu;
@@ -531,12 +531,12 @@ export class StockMinimumComponent implements OnInit {
     return { quantiteFt: quantiteFt, quantite: quantite };
   }
 
-    
+
   onSortStockMinimum(event: any, colonne: any, type: string = 'string') {
-    return this.sortFilterSearchService.handleSort(event, this.articles, colonne, type, this.articlesBack ) ;
+    return this.sortFilterSearchService.handleSort(event, this.articles, colonne, type, this.articlesBack);
   }
 
   onSearchStockMinimum(event: any, colonne: any) {
-     this.articles   =  (this.sortFilterSearchService.handleSearch(event, this.articles , colonne, this.articlesBack )) ;
+    this.articles = (this.sortFilterSearchService.handleSearch(event, this.articles, colonne, this.articlesBack));
   }
 }

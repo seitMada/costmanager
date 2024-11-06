@@ -337,7 +337,7 @@ export class DashComponent implements OnInit {
     private datePipe: DatePipe,
     private sortFilterSearchService: SortFilterSearchService
   ) {
-    this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+    this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
       next: async (_centreRevenu) => {
         this.exploitations = [];
         this.centrerevenus = _centreRevenu;

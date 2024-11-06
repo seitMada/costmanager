@@ -42,7 +42,7 @@ import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-sear
 @Component({
   selector: 'app-bon-commande-achats',
   standalone: true,
-  imports: [CommonModule, FormsModule, BsDatepickerModule,NgbNavModule, AlertModule,TooltipModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
+  imports: [CommonModule, FormsModule, BsDatepickerModule, NgbNavModule, AlertModule, TooltipModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
   templateUrl: './bon-commande-achats.component.html',
   styleUrl: './bon-commande-achats.component.scss',
   providers: [NgbModalConfig, NgbModal]
@@ -138,7 +138,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     private modalService: NgbModal,
     config: NgbModalConfig,
     private datePipe: DatePipe,
-    private sortFilterSearchService:SortFilterSearchService
+    private sortFilterSearchService: SortFilterSearchService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     config.backdrop = 'static';
@@ -167,12 +167,12 @@ export class BonCommandeAchatsComponent implements OnInit {
       next: (artExploitation) => {
         if (artExploitation) {
           this.artExploitationArticleId = artExploitation.map((i: any) => i.articleId);
-               
+
           this.commandeService.getArticleFournisseurByArticleId(this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
             next: (artFournisseur: any) => {
               this.articleFournisseurs = artFournisseur;
               for (const articlefournisseur of artFournisseur) {
-                const conditionnement = articlefournisseur.conditionnement.reduce((min:any, current:any) => {
+                const conditionnement = articlefournisseur.conditionnement.reduce((min: any, current: any) => {
                   return current.prixAchat < min.prixAchat ? current : min;
                 });
                 this.commandeDetail = {
@@ -187,7 +187,7 @@ export class BonCommandeAchatsComponent implements OnInit {
                   validationdetailbc: false,
                   articlefournisseur: articlefournisseur,
                   selected: false,
-                  conditionnement:conditionnement,
+                  conditionnement: conditionnement,
                   article: articlefournisseur.article
                 }
                 this.commandes.push(this.commandeDetail);
@@ -212,7 +212,7 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.commandeService.getAllCommande(this.idFournisseur).subscribe({
             next: (boncommande) => {
               this.commandes = [];
-              this.boncommandes = boncommande;  
+              this.boncommandes = boncommande;
             },
             error: (error) => {
               alert('Liste de bon de commande vide');
@@ -222,7 +222,7 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.commandeService.getCommandeByFournisseurExploitation(this.idFournisseur, this.exploitation.id ? this.exploitation.id : 0).subscribe({
             next: (boncommande) => {
               this.commandes = [];
-              this.boncommandes = boncommande;  
+              this.boncommandes = boncommande;
             },
             error: (error) => {
               alert('Liste de bon de commande vide');
@@ -240,7 +240,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.exploitationService.getExploitationById(this.exploitationId).subscribe({
       next: (exploitation) => {
         this.exploitation = exploitation;
-        this.centreRevenuService.getCrExploitation(this.exploitation.id ? this.exploitation.id : 0).subscribe({
+        this.centreRevenuService.getCrExploitation(this.exploitation.id ? this.exploitation.id : 0, true).subscribe({
           next: (_centre) => {
             this.centres = _centre;
             this.centre = _centre[0];
@@ -281,7 +281,7 @@ export class BonCommandeAchatsComponent implements OnInit {
       selected: false,
 
       article: this.article,
-      fournisseur:this.fournisseur,
+      fournisseur: this.fournisseur,
       conditionnement: []
     }
   }
@@ -404,7 +404,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     if (!this.isAdmin) {
       const selectedBonCommandes = this.boncommandes.filter(line => line.selected);
 
-      if (selectedBonCommandes.length >0) {
+      if (selectedBonCommandes.length > 0) {
         for (const bonCommande of selectedBonCommandes) {
           if (bonCommande.validation == 0) {
             this.commandeService.validateCommande(bonCommande).subscribe({
@@ -430,8 +430,8 @@ export class BonCommandeAchatsComponent implements OnInit {
           },
         });
       }
-    }else{
-        alert('Il est impossible de valider cette commande.!');
+    } else {
+      alert('Il est impossible de valider cette commande.!');
     }
   }
 
@@ -473,7 +473,7 @@ export class BonCommandeAchatsComponent implements OnInit {
               console.log(this.closeResult)
               if (this.closeResult == 'Closed with: Save click') {
                 for (const articlefournisseur of this.articleFournisseurs) {
-                  for(const condition of articlefournisseur.conditionnement){
+                  for (const condition of articlefournisseur.conditionnement) {
                     if (condition.selected !== undefined) {
                       this.commandeDetail = {
                         commandeId: 0,
@@ -493,9 +493,9 @@ export class BonCommandeAchatsComponent implements OnInit {
                       this.commandes.push(this.commandeDetail);
                       this.addBtn = false;
                     }
-                  }            
+                  }
                 }
-                
+
               }
             },
             (reason) => {
@@ -523,7 +523,7 @@ export class BonCommandeAchatsComponent implements OnInit {
                     console.log(this.closeResult)
                     if (this.closeResult == 'Closed with: Save click') {
                       for (const articlefournisseur of artFournisseur) {
-                        for(const condition of articlefournisseur.conditionnement){
+                        for (const condition of articlefournisseur.conditionnement) {
                           if (condition.selected !== undefined) {
                             this.commandeDetail = {
                               commandeId: 0,
@@ -707,7 +707,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   addBonCommande() {
     if (!this.isAdmin) {
       this.boncommande = this.boncommande;
-    
+
       if (this.commandes.length > 0) {
         this.commandeService.createBonCommande(this.boncommande, this.commandes).subscribe({
           next: (commande: any) => {
@@ -728,7 +728,7 @@ export class BonCommandeAchatsComponent implements OnInit {
       } else {
         alert('veuillez sélectionné un article!');
       }
-    }else{
+    } else {
       alert('Il est impossible de créer une commande.!');
     }
   }
@@ -758,14 +758,14 @@ export class BonCommandeAchatsComponent implements OnInit {
 
   }
   deleteSelectedRows() {
-    if(!this.isAdmin){
+    if (!this.isAdmin) {
       this.commandes = this.commandes.filter(line => !line.selected);
       this.showDeleteBtn = false;
       this.addBtn = true;
       for (const _comDetail of this.commandes) {
         this.articleFournisseurs = this.articleFournisseurs.filter(line => line.id !== _comDetail.articlefournisseurId);
       }
-    }else{
+    } else {
       alert('Il est impossible de supprimer ces articles.!');
     }
   }
@@ -793,7 +793,7 @@ export class BonCommandeAchatsComponent implements OnInit {
           alert('Ce bon de commande ne peut pas supprimer!')!
         }
       }
-    }else{
+    } else {
       alert('Il est impossible de supprimer cette commande.!');
     }
   }
@@ -839,11 +839,11 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   onSortBonDeCommandes(event: any, colonne: any, type: string = 'string') {
-    return this.sortFilterSearchService.handleSort(event, this.boncommandes, colonne, type, this.boncommandesBack ) ;
+    return this.sortFilterSearchService.handleSort(event, this.boncommandes, colonne, type, this.boncommandesBack);
   }
 
   onSearchBonDeCommandes(event: any, colonne: any) {
-     this.boncommandes   =  (this.sortFilterSearchService.handleSearch(event, this.boncommandes , colonne, this.boncommandesBack )) ;
+    this.boncommandes = (this.sortFilterSearchService.handleSearch(event, this.boncommandes, colonne, this.boncommandesBack));
   }
 
 }

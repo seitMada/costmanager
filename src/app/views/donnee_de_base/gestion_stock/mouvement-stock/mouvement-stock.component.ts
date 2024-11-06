@@ -34,7 +34,7 @@ export class MouvementStockComponent implements OnInit {
   public exploitation: InterfaceExploitations;
   public centrerevenusselected: number[];
   public exploitationsselected: number[];
-  
+
   public commandeDetails: InterfaceCommandeDetail[];
   public commandeDetail: InterfaceCommandeDetail;
   public boncommande: InterfaceBonCommande;
@@ -115,14 +115,14 @@ export class MouvementStockComponent implements OnInit {
     private inventaireService: InventairesService,
     private datePipe: DatePipe,
     private pdfService: PdfserviceService,
-    private sortFilterSearchService:SortFilterSearchService
+    private sortFilterSearchService: SortFilterSearchService
   ) {
     this.headerchoice = '';
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
     this.exploitations = [];
 
-    this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
+    this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
       next: async (_centreRevenu) => {
         this.headerchoice = '';
         this.centrerevenus = _centreRevenu;
@@ -192,11 +192,11 @@ export class MouvementStockComponent implements OnInit {
 
   private getrealdate(dateString: any) {
     const date = new Date(dateString);
-    
+
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1)  < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
+    const month = (date.getMonth() + 1) < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
     const day = date.getDate();
-    
+
     return (`${year}-${month}-${day}`);
   }
 
@@ -247,8 +247,8 @@ export class MouvementStockComponent implements OnInit {
         console.log(this.formatDate(new Date(this.periodeselected.debut)), this.formatDate(new Date(_dateFin)), this.formatDate(new Date(_datefinal)))
         this.mouvemenstock = _articles;
         this.mouvemenstockback = _articles;
-        
-        
+
+
         this.unitefilter = [];
         this.dates.debut = new Date(this.periodeselected.debut);
         this.dates.fin = new Date(this.periodeselected.fin ? this.periodeselected.fin : new Date());
@@ -263,11 +263,11 @@ export class MouvementStockComponent implements OnInit {
 
   // private getrealdate(dateString: any) {
   //   const date = new Date(dateString);
-    
+
   //   const year = date.getFullYear();
   //   const month = (date.getMonth() + 1)  < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
   //   const day = date.getDate();
-    
+
   //   return (`${year}-${month}-${day}`);
   // }
 
@@ -473,13 +473,13 @@ export class MouvementStockComponent implements OnInit {
             total += +_mouvement.inventaires * +_mouvement.cout;
             break;
           case 1:
-            total += +_mouvement.inventairesfinal * +_mouvement.cout;            
+            total += +_mouvement.inventairesfinal * +_mouvement.cout;
             break;
           case 2:
             total += (+_mouvement.inventaires - +_mouvement.pertes - +_mouvement.ventes +
               +_mouvement.achats) * +_mouvement.cout;
             break;
-  
+
           default:
             break;
         }
@@ -493,7 +493,7 @@ export class MouvementStockComponent implements OnInit {
   }
 
   onSearchMouvemenstock(event: any, colonne: any) {
-    this.mouvemenstock =  this.sortFilterSearchService.handleSearch(event, this.mouvemenstock, colonne, this.mouvemenstockback);
+    this.mouvemenstock = this.sortFilterSearchService.handleSearch(event, this.mouvemenstock, colonne, this.mouvemenstockback);
   }
 
 }

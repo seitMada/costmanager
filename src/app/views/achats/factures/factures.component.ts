@@ -132,7 +132,7 @@ export class FacturesComponent implements OnInit {
     private modalService: NgbModal,
     config: NgbModalConfig,
     private datePipe: DatePipe,
-    private sortFilterSearchService:SortFilterSearchService
+    private sortFilterSearchService: SortFilterSearchService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     config.backdrop = 'static';
@@ -170,7 +170,7 @@ export class FacturesComponent implements OnInit {
               this.detailFactures = [];
               this.factures = _factures;
               console.log(this.factures);
-  
+
               this.detailFactures = _factures.map((_facture: any) => _facture.achatDetail);
             },
           })
@@ -180,7 +180,7 @@ export class FacturesComponent implements OnInit {
               this.detailFactures = [];
               this.factures = _factures;
               console.log(this.factures);
-  
+
               this.detailFactures = _factures.map((_facture: any) => _facture.achatDetail);
             },
           })
@@ -215,7 +215,7 @@ export class FacturesComponent implements OnInit {
     this.exploitationService.getExploitationById(this.exploitationId).subscribe({
       next: (exploitation) => {
         this.exploitation = exploitation;
-        this.centreRevenuService.getCrExploitation(this.exploitation.id ? this.exploitation.id : 0).subscribe({
+        this.centreRevenuService.getCrExploitation(this.exploitation.id ? this.exploitation.id : 0, true).subscribe({
           next: (_centre) => {
             this.centres = _centre;
             this.centre = _centre[0];
@@ -425,7 +425,7 @@ export class FacturesComponent implements OnInit {
       } else {
         alert('Veuillez réessayer!');
       }
-    }else {
+    } else {
       alert('Il est impossible de créer une facture.!');
     }
   }
@@ -670,7 +670,7 @@ export class FacturesComponent implements OnInit {
     } else {
       alert('Il est impossible de supprimer ces articles.!');
     }
-    
+
   }
 
   getTotalMontant(): number {
@@ -740,11 +740,11 @@ export class FacturesComponent implements OnInit {
   }
 
   onSortFactures(event: any, colonne: any, type: string = 'string') {
-    return this.sortFilterSearchService.handleSort(event, this.factures, colonne, type, this.facturesBack ) ;
+    return this.sortFilterSearchService.handleSort(event, this.factures, colonne, type, this.facturesBack);
   }
 
   onSearchFactures(event: any, colonne: any) {
-     this.factures   =  (this.sortFilterSearchService.handleSearch(event, this.factures , colonne, this.facturesBack )) ;
+    this.factures = (this.sortFilterSearchService.handleSearch(event, this.factures, colonne, this.facturesBack));
   }
 
 }
