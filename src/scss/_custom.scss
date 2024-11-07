@@ -49,3 +49,7 @@ table {
     background-color: var(--cui-card-cap-bg);
     border-bottom: var(--cui-card-border-width) solid var(--cui-card-border-color);
 }
+
+input[type="text"]:disabled {
+    background-color: white;
+}

@@ -106,7 +106,7 @@ export class CentrerevenusComponent implements OnInit {
         }
       });
     } else {
-      this.centreService.getCrExploitation(this.exploitationid).subscribe({
+      this.centreService.getCrExploitation(this.exploitationid, this.isAdmin).subscribe({
         next: async (_centres) => {
           this.centres = _centres;
           this.centre = _centres[0]

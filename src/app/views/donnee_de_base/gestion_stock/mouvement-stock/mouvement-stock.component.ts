@@ -122,7 +122,7 @@ export class MouvementStockComponent implements OnInit {
     this.resetCentreRevenu();
     this.exploitations = [];
 
-    this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
+    this.centrerevenuService.getCrExploitation(this.idexploitation, this.isAdmin).subscribe({
       next: async (_centreRevenu) => {
         this.headerchoice = '';
         this.centrerevenus = _centreRevenu;

@@ -124,7 +124,7 @@ export class StockMinimumComponent implements OnInit {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
     this.exploitations = [];
-    this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
+    this.centrerevenuService.getCrExploitation(this.idexploitation, this.isAdmin).subscribe({
       next: async (_centreRevenu) => {
         this.headerchoice = '';
         this.centrerevenus = _centreRevenu;
@@ -257,7 +257,7 @@ export class StockMinimumComponent implements OnInit {
 
   refreshdata() {
     this.exploitations = [];
-    this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
+    this.centrerevenuService.getCrExploitation(this.idexploitation, this.isAdmin).subscribe({
       next: async (_centreRevenu) => {
         this.headerchoice = '';
         this.centrerevenus = _centreRevenu;

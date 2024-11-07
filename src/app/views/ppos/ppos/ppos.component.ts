@@ -110,7 +110,7 @@ export class PposComponent implements OnInit {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
     this.resetCentreRevenu();
     this.exploitations = [];
-    this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
+    this.centrerevenuService.getCrExploitation(this.idexploitation, this.isAdmin).subscribe({
       next: async (_centreRevenu) => {
         this.centrerevenus = _centreRevenu;
         this.centrerevenusdefault = _centreRevenu;
@@ -243,7 +243,7 @@ export class PposComponent implements OnInit {
     this.ppoService.deletePpo(this.idPpo || 0).subscribe({
       next: () => {
         // this.addToggleModal();
-        this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
+        this.centrerevenuService.getCrExploitation(this.idexploitation, this.isAdmin).subscribe({
           next: async (_centrerevenu) => {
             this.centrerevenus = _centrerevenu;
             await this.selectCentreRevenus(_centrerevenu[0]);
@@ -267,7 +267,7 @@ export class PposComponent implements OnInit {
     this.ppoService.deletePpos(selectedIds).subscribe({
       next: () => {
         // this.addToggleModal();
-        this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
+        this.centrerevenuService.getCrExploitation(this.idexploitation, this.isAdmin).subscribe({
           next: async (_centrerevenu) => {
             this.centrerevenus = _centrerevenu;
             await this.selectCentreRevenus(_centrerevenu[0]);
@@ -478,7 +478,7 @@ export class PposComponent implements OnInit {
 
   selectExploitation(_exploitation: InterfaceExploitations) {
     // this.centrerevenuService.getCrExploitation(_exploitation.id || 0).subscribe({
-    this.centrerevenuService.getCrExploitation(_exploitation.id || 0, true).subscribe({
+    this.centrerevenuService.getCrExploitation(_exploitation.id || 0, this.isAdmin).subscribe({
       next: (_centrerevenus) => {
         this.exploitation = _exploitation;
         this.centrerevenus = _centrerevenus;

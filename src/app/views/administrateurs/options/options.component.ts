@@ -930,7 +930,7 @@ export class OptionsComponent implements OnInit {
         }
       });
     } else {
-      this.centreService.getCrExploitation(this.exploitationid).subscribe({
+      this.centreService.getCrExploitation(this.exploitationid, this.isAdmin).subscribe({
         next: async (_centres) => {
           this.centres = _centres;
         }
@@ -1001,7 +1001,7 @@ export class OptionsComponent implements OnInit {
           }
         });
       } else {
-        this.centreService.getCrExploitation(this.exploitationid).subscribe({
+        this.centreService.getCrExploitation(this.exploitationid, this.isAdmin).subscribe({
           next: async (_centres) => {
             this.centres = _centres;
             this.toggleCentre = true;
@@ -1133,7 +1133,7 @@ export class OptionsComponent implements OnInit {
         if (this.isAdmin) {
           this.centrerevenulieustockages = _centre;
         } else {
-          this.centrerevenulieustockages = _centre.filter((item: { exploitationsId: number; }) => item.exploitationsId === this.exploitationId);
+          this.centrerevenulieustockages = _centre.filter((item: { exploitationsId: number; }) => item.exploitationsId === this.exploitationid);
         }
       }
     })
@@ -1193,8 +1193,9 @@ export class OptionsComponent implements OnInit {
         },
       });
     } else {
-      this.lieustockageService.findListLieuStockageByExploitation(this.exploitationId).subscribe({
+      this.lieustockageService.findListLieuStockageByExploitation(this.exploitationid).subscribe({
         next: (_lieustocks) => {
+          console.log(_lieustocks)
           this.lieuSTockages = _lieustocks;
         },
       })
@@ -1310,7 +1311,7 @@ export class OptionsComponent implements OnInit {
           },
         });
       } else {
-        this.lieustockageService.findListLieuStockageByExploitation(this.exploitationId).subscribe({
+        this.lieustockageService.findListLieuStockageByExploitation(this.exploitationid).subscribe({
           next: (_lieustocks) => {
             this.lieuSTockages = _lieustocks;
             this.toggleLieu = true;

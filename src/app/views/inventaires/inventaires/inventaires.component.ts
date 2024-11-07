@@ -227,7 +227,7 @@ export class InventairesComponent {
   ngOnInit(): void {
     // console.log(this.dates.debut, this.dates.fin)
     this.exploitations = [];
-    this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
+    this.centrerevenuService.getCrExploitation(this.idexploitation, this.isAdmin).subscribe({
       next: async (_centreRevenu) => {
         this.centrerevenus = _centreRevenu;
         this.centrerevenusdefault = _centreRevenu;
@@ -265,7 +265,7 @@ export class InventairesComponent {
 
   selectExploitation(_exploitation: InterfaceExploitations) {
     // this.centrerevenuService.getCrExploitation(_exploitation.id || 0).subscribe({
-    this.centrerevenuService.getCrExploitation(_exploitation.id || 0, true).subscribe({
+    this.centrerevenuService.getCrExploitation(_exploitation.id || 0, this.isAdmin).subscribe({
       next: (_centrerevenus) => {
         this.exploitation = _exploitation;
         this.centrerevenus = _centrerevenus;
@@ -441,7 +441,7 @@ export class InventairesComponent {
 
   addToggleModal() {
 
-    this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
+    this.centrerevenuService.getCrExploitation(this.idexploitation, this.isAdmin).subscribe({
       next: async (_centrerevenu) => {
         this.modifToggle = !this.modifToggle;
         this.toggle = (this.toggle === false ? true : false);

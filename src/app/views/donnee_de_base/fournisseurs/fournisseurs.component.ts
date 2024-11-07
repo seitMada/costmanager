@@ -65,7 +65,7 @@ export class FournisseursComponent implements OnInit {
     public operateurService: OperateursService,
     public articleService: ArticleService,
     public uniteService: UnitesService,
-    private sortFilterSearchService:SortFilterSearchService
+    private sortFilterSearchService: SortFilterSearchService
   ) { }
 
   public toggle = true;
@@ -309,7 +309,7 @@ export class FournisseursComponent implements OnInit {
       })
     }
     this.fournisseursBack = this.fournisseurs;
-   
+
   }
 
   delete() {
@@ -529,13 +529,23 @@ export class FournisseursComponent implements OnInit {
   open(content: TemplateRef<any>) {
     this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
       next: (article) => {
-        console.log(article)
+        const filteredArticles = article.filter((_article: any) =>
+          _article.article.articleexploitation.some(
+            (element: any) => element.exploitationsId === this.exploitation
+          )
+        );
+        // console.log(filteredArticles)
+        // article.forEach((_article: any) => {
+        //   _article.article.articleexploitation.forEach((element: any) => {
+        //     console.log(element)
+        //   });
+        // });
         this.articleExclude = [0];
-        for (const _article of article) {
+        for (const _article of filteredArticles) {
           this.articleExclude.push(_article.articleId)
         }
         console.log(this.articleExclude);
-        this.articleFournisseurs = article;
+        this.articleFournisseurs = filteredArticles;
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
           (result) => {
             this.closeResult = `Closed with: ${result}`;
@@ -568,8 +578,8 @@ export class FournisseursComponent implements OnInit {
 
   selectCountry(line: any) {
     console.log(line)
-    this.adresseadd.pays = line.translations.fr;
-    this.adresseadd.flags = line.alpha2Code.toLowerCase() + '.svg';
+    this.fournisseur.adresse.pays = line.translations.fr;
+    this.fournisseur.adresse.flags = line.alpha2Code.toLowerCase() + '.svg';
   }
 
   getFlag(line: InterfaceFournisseur): string {
@@ -852,10 +862,10 @@ export class FournisseursComponent implements OnInit {
   }
 
   onSortFournisseurs(event: any, colonne: any, type: string = 'string') {
-    return this.sortFilterSearchService.handleSort(event, this.fournisseurs, colonne, type, this.fournisseursBack ) ;
+    return this.sortFilterSearchService.handleSort(event, this.fournisseurs, colonne, type, this.fournisseursBack);
   }
 
   onSearchFournisseurs(event: any, colonne: any) {
-     this.fournisseurs   =  (this.sortFilterSearchService.handleSearch(event, this.fournisseurs , colonne, this.fournisseursBack )) ;
+    this.fournisseurs = (this.sortFilterSearchService.handleSearch(event, this.fournisseurs, colonne, this.fournisseursBack));
   }
 }

@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { VenteComponent } from './vente/vente.component';
+import { loginGuard } from 'src/app/login/login.guard';
 
 
 const routes: Routes = [
@@ -10,6 +11,7 @@ const routes: Routes = [
     data: {
       title: 'Ventes',
     },
+    canActivate: [loginGuard]
   }
 ];
 

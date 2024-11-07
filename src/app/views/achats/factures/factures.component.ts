@@ -215,7 +215,7 @@ export class FacturesComponent implements OnInit {
     this.exploitationService.getExploitationById(this.exploitationId).subscribe({
       next: (exploitation) => {
         this.exploitation = exploitation;
-        this.centreRevenuService.getCrExploitation(this.exploitation.id ? this.exploitation.id : 0, true).subscribe({
+        this.centreRevenuService.getCrExploitation(this.exploitation.id ? this.exploitation.id : 0, this.isAdmin).subscribe({
           next: (_centre) => {
             this.centres = _centre;
             this.centre = _centre[0];

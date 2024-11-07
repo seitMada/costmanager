@@ -134,7 +134,7 @@ export class VenteComponent implements OnInit {
       next: (count) => {
         this.nbvente = count == 0 ? count : count + 1;
         this.numticket = ((this.formatDate(this.today))?.replaceAll('-', '')).split(' ')[0] + this.nbvente.toString().padStart(3, '0');
-        this.centrerevenuService.getCrExploitation(this.idexploitation, true).subscribe({
+        this.centrerevenuService.getCrExploitation(this.idexploitation, this.isAdmin).subscribe({
           next: async (_centreRevenu) => {
             this.exploitations = [];
             this.centrerevenus = _centreRevenu;

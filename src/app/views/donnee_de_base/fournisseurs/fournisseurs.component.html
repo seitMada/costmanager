@@ -36,19 +36,25 @@
       <thead>
         <tr>
           <th scope="col" class="">#</th>
-          <th scope="col" class="col-3">Raison social   <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFournisseurs($event, 'raison_social')"></i></th>
-          <th scope="col" class="col-2">Code <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFournisseurs($event, 'codeFournisseur')"></i></th>
-          <th scope="col" class="col-7">Adresse <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortFournisseurs($event, 'adresse.rue')"></i></th>
+          <th scope="col" class="col-3">Raison social <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortFournisseurs($event, 'raison_social')"></i></th>
+          <th scope="col" class="col-2">Code <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortFournisseurs($event, 'codeFournisseur')"></i></th>
+          <th scope="col" class="col-7">Adresse <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortFournisseurs($event, 'adresse.rue')"></i></th>
         </tr>
         <tr>
           <th colspan="2">
-               <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFournisseurs($event,'raison_social')" placeholder="Rechercher...">
+            <input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchFournisseurs($event,'raison_social')" placeholder="Rechercher...">
           </th>
           <th class="col-2">
-               <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFournisseurs($event,'codeFournisseur')" placeholder="Rechercher...">
+            <input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchFournisseurs($event,'codeFournisseur')" placeholder="Rechercher...">
           </th>
           <th class="col-7">
-               <input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchFournisseurs($event,'adresse.rue')" placeholder="Rechercher...">
+            <input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchFournisseurs($event,'adresse.rue')" placeholder="Rechercher...">
           </th>
         </tr>
       </thead>
@@ -97,6 +103,45 @@
           <div class="col-5">
             <div class="input-group">
               <span class="input-group-text col-4" id="adresse">Adresse</span>
+              <input type="text" class="form-control col-8" [disabled]="modifToggle" name="adressrue" placeholder="Rue"
+                [(ngModel)]="fournisseur.adresse.rue">
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="input-group">
+              <input type="text" class="form-control col-12" [disabled]="modifToggle" name="adressville"
+                placeholder="Ville" [(ngModel)]="fournisseur.adresse.ville">
+            </div>
+          </div>
+          <div class="col-1">
+            <div class="input-group">
+              <input type="text" class="form-control col-12" [disabled]="modifToggle" name="adresscp" placeholder="CP"
+                [(ngModel)]="fournisseur.adresse.code_postal">
+            </div>
+          </div>
+          <div class="col-3">
+            <div class="input-group" *ngIf="modifToggle !== true">
+              <span class="btn btn-outline-secondary bg-white col-3" data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="../../../../assets/img/flags/{{fournisseur.adresse.flags}}" class="img-flag" alt="">
+                <span class="visually-hidden">Toggle Dropdown</span>
+              </span>
+              <span class="end-border input-group-text bg-white col-9 " id="pays">{{fournisseur.adresse.pays}}</span>
+              <ul class="dropdown-menu dropdown-menu-end col-12 overflow-y-scroll" style="height: 400px;">
+                <li *ngFor="let line of country" (click)="selectCountry(line)"><span>{{line.translations.fr}}</span>
+                </li>
+              </ul>
+            </div>
+            <div class="input-group" *ngIf="modifToggle === true">
+              <span class="btn btn-outline-secondary bg-white col-3">
+                <img src="../../../../assets/img/flags/{{fournisseur.adresse.flags}}" class="img-flag" alt="">
+                <span class="visually-hidden">Toggle Dropdown</span>
+              </span>
+              <span class="end-border input-group-text bg-white col-9 " id="pays">{{fournisseur.adresse.pays}}</span>
+            </div>
+          </div>
+          <!-- <div class="col-5">
+            <div class="input-group">
+              <span class="input-group-text col-4" id="adresse">Adresse</span>
               <span class="input-group-text col-8 bg-white point" id="adress"
                 (click)="changeAdress(content)">{{fournisseur.adresse.rue}}</span>
             </div>
@@ -121,7 +166,7 @@
               <span class="input-group-text col-9 bg-white point" id="pays"
                 (click)="changeAdress(content)">{{fournisseur.adresse.pays}}</span>
             </div>
-          </div>
+          </div> -->
         </div>
         <div class="row m-2">
           <div class="col-6">

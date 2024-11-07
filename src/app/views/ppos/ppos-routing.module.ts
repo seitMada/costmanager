@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { PposComponent } from "./ppos/ppos.component";
 import { SynthesePposComponent } from "./synthese-ppos/synthese-ppos.component";
+import { loginGuard } from 'src/app/login/login.guard';
 
 const routes: Routes = [
   {
@@ -22,6 +23,7 @@ const routes: Routes = [
         data: {
           title: 'Pertes',
         },
+        canActivate: [loginGuard]
       },
       {
         path: 'synthese_ppo',
@@ -29,6 +31,7 @@ const routes: Routes = [
         data: {
           title: 'Synthese pertes',
         },
+        canActivate: [loginGuard]
       },
     ]
   },

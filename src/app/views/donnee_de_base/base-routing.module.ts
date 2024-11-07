@@ -11,6 +11,7 @@ import { StockMinimumComponent } from "./gestion_stock/stock-minimum/stock-minim
 import { ZoneStockageComponent } from "./gestion_stock/zone-stockage/zone-stockage.component";
 import { MatriceSaisieComponent } from "./matrice-saisie/matrice-saisie.component";
 import { SyntheseFicheTechniqueComponent } from "./synthese-fiche-technique/synthese-fiche-technique.component";
+import { PrixArticlesComponent } from './gestion_stock/prix-articles/prix-articles.component';
 
 const routes: Routes = [
   {
@@ -30,7 +31,7 @@ const routes: Routes = [
         data: {
           title: 'Articles',
         },
-        canActivate:[loginGuard]
+        canActivate: [loginGuard]
       },
       {
         path: 'fichetechnique',
@@ -38,7 +39,7 @@ const routes: Routes = [
         data: {
           title: 'Fiche techniques',
         },
-        canActivate:[loginGuard]
+        canActivate: [loginGuard]
       },
       {
         path: 'fournisseurs',
@@ -46,7 +47,7 @@ const routes: Routes = [
         data: {
           title: 'Fournisseurs',
         },
-        canActivate:[loginGuard]
+        canActivate: [loginGuard]
       },
       {
         path: 'gestion_stock',
@@ -59,7 +60,7 @@ const routes: Routes = [
           data: {
             title: 'Mouvements stocks',
           },
-          canActivate:[loginGuard]
+          canActivate: [loginGuard]
         },
         {
           path: 'gestion_stock_minimum',
@@ -67,7 +68,7 @@ const routes: Routes = [
           data: {
             title: 'Gestions Stock Minimum',
           },
-          canActivate:[loginGuard]
+          canActivate: [loginGuard]
         },
         {
           path: 'stock_minimum',
@@ -75,7 +76,7 @@ const routes: Routes = [
           data: {
             title: 'Stock Minimum',
           },
-          canActivate:[loginGuard]
+          canActivate: [loginGuard]
         },
         {
           path: 'zones_stockages',
@@ -83,7 +84,7 @@ const routes: Routes = [
           data: {
             title: 'Zones de stockages',
           },
-          canActivate:[loginGuard]
+          canActivate: [loginGuard]
         }]
       },
       {
@@ -92,7 +93,7 @@ const routes: Routes = [
         data: {
           title: 'Synthese Fiche Techniques',
         },
-        canActivate:[loginGuard]
+        canActivate: [loginGuard]
       },
       {
         path: 'matrice_saisie',
@@ -100,8 +101,16 @@ const routes: Routes = [
         data: {
           title: 'Matrices de saisie',
         },
-        canActivate:[loginGuard]
-      }
+        canActivate: [loginGuard]
+      },
+      {
+        path: 'articles',
+        component: PrixArticlesComponent,
+        data: {
+          title: 'Prix Articles',
+        },
+        canActivate: [loginGuard]
+      },
     ],
   },
 ];

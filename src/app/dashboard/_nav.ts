@@ -40,6 +40,11 @@ export const navItems: INavData[] = [
           url: 'donnee_de_base/gestion_stock/stock_minimum'
         },
           // {
+          //   name: 'Prix articles',
+          //   url: 'donnee_de_base/gestion_stock/articles'
+          // }
+
+          // {
           //   name: 'Zones de stockage',
           //   url: 'donnee_de_base/gestion_stock/zones_stockages'
           // }
@@ -217,10 +222,6 @@ export const navItems: INavData[] = [
         name: "Utilisateurs",
         url: "settings/user",
       },
-      {
-        name: 'Prix articles',
-        url: 'settings/articles'
-      }
     ]
   }
 

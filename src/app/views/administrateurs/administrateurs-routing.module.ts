@@ -3,11 +3,12 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { GestionUtilisateursComponent } from "./gestion-utilisateurs/gestion-utilisateurs.component";
 import { ExploitationsComponent } from "./exploitations/exploitations.component";
-import { PrixArticlesComponent } from "./prix-articles/prix-articles.component";
+import { PrixArticlesComponent } from "../donnee_de_base/gestion_stock/prix-articles/prix-articles.component";
 import { CentrerevenusComponent } from './centrerevenus/centrerevenus.component';
 import { ZonestockageComponent } from './zonestockage/zonestockage.component';
 import { LieustockageComponent } from './lieustockage/lieustockage.component';
 import { OptionsComponent } from './options/options.component';
+import { loginGuard } from 'src/app/login/login.guard';
 
 const routes: Routes = [
   {
@@ -27,6 +28,7 @@ const routes: Routes = [
         data: {
           title: 'Options',
         },
+        canActivate: [loginGuard]
       },
       {
         path: 'options/exploitation',
@@ -34,6 +36,7 @@ const routes: Routes = [
         data: {
           title: 'Gestions d\'exploitation',
         },
+        canActivate: [loginGuard]
       },
       {
         path: 'options/centrerevenu',
@@ -41,6 +44,7 @@ const routes: Routes = [
         data: {
           title: 'Centre Revenu',
         },
+        canActivate: [loginGuard]
       },
       {
         path: 'options/lieustockage',
@@ -48,6 +52,7 @@ const routes: Routes = [
         data: {
           title: 'Lieu de stockage',
         },
+        canActivate: [loginGuard]
       },
       {
         path: 'options/zonestockage',
@@ -55,6 +60,7 @@ const routes: Routes = [
         data: {
           title: 'Zone de stockage',
         },
+        canActivate: [loginGuard]
       },
       {
         path: 'user',
@@ -62,6 +68,7 @@ const routes: Routes = [
         data: {
           title: 'Gestions utilisateurs',
         },
+        canActivate: [loginGuard]
       },
       {
         path: 'option',
@@ -69,6 +76,7 @@ const routes: Routes = [
         data: {
           title: 'Options',
         },
+        canActivate: [loginGuard]
       },
       {
         path: 'articles',
@@ -76,6 +84,7 @@ const routes: Routes = [
         data: {
           title: 'Prix Articles',
         },
+        canActivate: [loginGuard]
       },
     ]
   }
