@@ -613,6 +613,7 @@ export class OptionsComponent implements OnInit {
       next: (_fichetechniques) => {
         this.fichetechniques = _fichetechniques;
         this.addfichetechniquetoggle = false;
+        this.fichetechniquesselected = 0;
       }
     })
   }

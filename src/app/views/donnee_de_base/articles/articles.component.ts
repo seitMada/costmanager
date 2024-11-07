@@ -430,11 +430,14 @@ export class ArticlesComponent implements OnInit {
         next: (article: any) => {
           this.article = article;
           const exploitation: number[] = [];
-          exploitation.push(this.exploitation)
-          for (const i of this.exploitations) {
-            if (i.selected === true) {
-              exploitation.push(i.id)
+          if (this.isAdmin) {
+            for (const i of this.exploitations) {
+              if (i.selected === true) {
+                exploitation.push(i.id ? i.id : 0)
+              }
             }
+          } else {
+            exploitation.push(this.exploitation);
           }
           const zonestockage: number[] = [];
           // zonestockage.push(3)
@@ -469,11 +472,14 @@ export class ArticlesComponent implements OnInit {
       this.articleService.updateArticle(this.article).subscribe((response) => {
         this.toggleToast('Article modifier')
         const exploitation: number[] = [];
-        exploitation.push(this.exploitation);
-        for (const i of this.exploitations) {
-          if (i.selected === true) {
-            exploitation.push(i.id)
+        if (this.isAdmin) {
+          for (const i of this.exploitations) {
+            if (i.selected === true) {
+              exploitation.push(i.id ? i.id : 0)
+            }
           }
+        } else {
+          exploitation.push(this.exploitation);
         }
         const zonestockage: number[] = [];
         // zonestockage.push(3)

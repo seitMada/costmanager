@@ -372,11 +372,14 @@ export class FournisseursComponent implements OnInit {
           this.fournisseur = fournisseur;
           this.idFournisseur = fournisseur.id;
           const exploitation: number[] = [];
-          exploitation.push(this.exploitation);
-          for (const i of this.exploitations) {
-            if (i.selected === true) {
-              exploitation.push(i.id ? i.id : 0)
+          if (this.isAdmin) {
+            for (const i of this.exploitations) {
+              if (i.selected === true) {
+                exploitation.push(i.id ? i.id : 0)
+              }
             }
+          } else {
+            exploitation.push(this.exploitation);
           }
           this.fournisseurService.updateFournisseurExploitation(fournisseur.id, exploitation).subscribe({
             next: () => {
@@ -390,11 +393,14 @@ export class FournisseursComponent implements OnInit {
       console.log(this.fournisseur)
       this.fournisseurService.updateFournisseur(this.idFournisseur, this.fournisseur).subscribe((response) => {
         const exploitation: number[] = [];
-        exploitation.push(this.exploitation);
-        for (const i of this.exploitations) {
-          if (i.selected === true) {
-            exploitation.push(i.id ? i.id : 0)
+        if (this.isAdmin) {
+          for (const i of this.exploitations) {
+            if (i.selected === true) {
+              exploitation.push(i.id ? i.id : 0)
+            }
           }
+        } else {
+          exploitation.push(this.exploitation);
         }
         forkJoin({
           fournisseur: this.fournisseurService.getFournisseurById(this.idFournisseur),

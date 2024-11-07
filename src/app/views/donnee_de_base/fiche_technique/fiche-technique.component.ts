@@ -73,7 +73,7 @@ export class FicheTechniqueComponent implements OnInit {
     private articleService: ArticleService,
     private exploitationService: ExploitationService,
     // private allergeneService: AllergenesService
-    private sortFilterSearchService:SortFilterSearchService
+    private sortFilterSearchService: SortFilterSearchService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
   }
@@ -215,11 +215,19 @@ export class FicheTechniqueComponent implements OnInit {
         next: (fichetechnique: any) => {
           // this.fichetechnique = fichetechnique;
           const exploitation: number[] = [];
-          exploitation.push(this.exploitation)
-          for (const i of this.exploitations) {
-            if (i.selected === true) {
-              exploitation.push(i.id ? i.id : 0)
+          if (this.isAdmin) {
+            for (const i of this.exploitations) {
+              if (i.selected === true) {
+                exploitation.push(i.id ? i.id : 0)
+              }
             }
+          } else {
+            exploitation.push(this.exploitation)
+            // for (const i of this.exploitations) {
+            //   if (i.selected === true) {
+            //     exploitation.push(i.id ? i.id : 0)
+            //   }
+            // }
           }
           this.idFichetechnique = fichetechnique;
           this.fichetechniqueService.updateFichetechniqueExploitation(fichetechnique, this.fichetechnique.id || 0, exploitation).subscribe({
@@ -241,13 +249,43 @@ export class FicheTechniqueComponent implements OnInit {
     } else {
       this.fichetechniqueService.updateFichetechnique(this.idFichetechnique, this.fichetechnique).subscribe(() => {
         const exploitation: number[] = [];
-        exploitation.push(this.exploitation)
-        for (const i of this.exploitations) {
-          if (i.selected === true) {
-            exploitation.push(i.id ? i.id : 0)
+        if (this.isAdmin) {
+          for (const i of this.exploitations) {
+            if (i.selected === true) {
+              exploitation.push(i.id ? i.id : 0)
+            }
           }
+        } else {
+          exploitation.push(this.exploitation)
+          // for (const i of this.exploitations) {
+          //   if (i.selected === true) {
+          //     exploitation.push(i.id ? i.id : 0)
+          //   }
+          // }
         }
-        this.fichetechniqueService.updateFichetechniqueExploitation(this.idFichetechnique, this.idFichetechnique, exploitation).subscribe(() => {
+        if (this.isAdmin) {
+          this.fichetechniqueService.updateFichetechniqueExploitation(this.idFichetechnique, this.idFichetechnique, exploitation).subscribe(() => {
+            this.fichetechniqueService.getFichetechniqueById(this.idFichetechnique).subscribe({
+              next: (fichetechnique: InterfaceFichetechnique) => {
+                this.fichetechnique = fichetechnique;
+                this.fichetechniqueService.getAllExploitationByFichetechnique(this.idFichetechnique).subscribe({
+                  next: (fichetechniqueExploitation: any) => {
+                    for (const item of this.exploitations) {
+                      const comparisonItem = fichetechniqueExploitation.find((i: any) => i.exploitationsId === item.id);
+                      if (comparisonItem != undefined) {
+                        item.selected = true;
+                      } else {
+                        item.selected = false;
+                      }
+                    }
+                    this.modifToggle = !this.modifToggle;
+                    this.toggleToast('Fichetechnique modifier')
+                  }
+                })
+              }
+            })
+          })
+        } else {
           this.fichetechniqueService.getFichetechniqueById(this.idFichetechnique).subscribe({
             next: (fichetechnique: InterfaceFichetechnique) => {
               this.fichetechnique = fichetechnique;
@@ -267,7 +305,7 @@ export class FicheTechniqueComponent implements OnInit {
               })
             }
           })
-        })
+        }
       })
     }
   }
@@ -444,11 +482,14 @@ export class FicheTechniqueComponent implements OnInit {
             next: (idfichetechnique: any) => {
               this.idFichetechnique = idfichetechnique;
               const exploitation: number[] = [];
-              exploitation.push(this.exploitation)
-              for (const i of this.exploitations) {
-                if (i.selected === true) {
-                  exploitation.push(i.id ? i.id : 0)
+              if (this.isAdmin) {
+                for (const i of this.exploitations) {
+                  if (i.selected === true) {
+                    exploitation.push(i.id ? i.id : 0)
+                  }
                 }
+              } else {
+                exploitation.push(this.exploitation)
               }
               this.fichetechniqueService.updateFichetechniqueExploitation(idfichetechnique, this.fichetechnique.id || 0, exploitation).subscribe({
                 next: () => {
@@ -572,10 +613,10 @@ export class FicheTechniqueComponent implements OnInit {
   }
 
   onSortFicheTechniques(event: any, colonne: any, type: string = 'string') {
-    return this.sortFilterSearchService.handleSort(event, this.fichetechniques, colonne, type, this.fichetechniquesBack ) ;
+    return this.sortFilterSearchService.handleSort(event, this.fichetechniques, colonne, type, this.fichetechniquesBack);
   }
 
   onSearchFicheTechniques(event: any, colonne: any) {
-     this.fichetechniques   =  (this.sortFilterSearchService.handleSearch(event, this.fichetechniques , colonne, this.fichetechniquesBack )) ;
+    this.fichetechniques = (this.sortFilterSearchService.handleSearch(event, this.fichetechniques, colonne, this.fichetechniquesBack));
   }
 }
