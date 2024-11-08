@@ -46,8 +46,10 @@
               (click)="onSortArticles($event, 'familles.libelle')"></i></th>
           <th scope="col" class="col-2">Sous-famille <i class="fas fa-sort sort-style" id="fa-sort"
               (click)="onSortArticles($event, 'sousfamilles.libelle')"></i></th>
-          <th scope="col" class="col-3">Coéfficient pondération <i class="fas fa-sort sort-style" id="fa-sort"
+          <th scope="col" [ngClass]="{'col-1': isAdmin, 'col-2': !isAdmin}">Coéfficient pondération <i
+              class="fas fa-sort sort-style" id="fa-sort"
               (click)="onSortArticles($event, 'coefficientPonderation')"></i></th>
+          <th scope="col" class="col-1" *ngIf="isAdmin">Exploitation</th>
         </tr>
         <tr>
           <th scope="col" colspan="2">
@@ -66,8 +68,10 @@
               (input)="onSearchArticles($event,'familles.libelle')" placeholder="Rechercher..."></th>
           <th scope="col" class="col-2"><input type="search" name="libelle" class="form-control form-control-sm"
               (input)="onSearchArticles($event,'sousfamilles.libelle')" placeholder="Rechercher..."></th>
-          <th scope="col" class="col-3"><input type="search" name="libelle" class="form-control form-control-sm"
-              (input)="onSearchArticles($event,'coefficientPonderation')" placeholder="Rechercher..."></th>
+          <th scope="col" [ngClass]="{'col-1': isAdmin, 'col-2': !isAdmin}"><input type="search" name="libelle"
+              class="form-control form-control-sm" (input)="onSearchArticles($event,'coefficientPonderation')"
+              placeholder="Rechercher..."></th>
+          <th class="col-1" *ngIf="isAdmin"></th>
         </tr>
       </thead>
     </table>
@@ -88,7 +92,10 @@
           <td class="col-2 " (click)="showArticle(line); toggleModal()">{{truncateWord(line.familles.libelle, 20)}}</td>
           <td class="col-2 " (click)="showArticle(line); toggleModal()">{{truncateWord(line.sousfamilles.libelle, 20)}}
           </td>
-          <td class="col-3" (click)="showArticle(line); toggleModal()">{{line.coefficientPonderation / 100}} %</td>
+          <td [ngClass]="{'col-1': isAdmin, 'col-2': !isAdmin}" (click)="showArticle(line); toggleModal()">
+            {{line.coefficientPonderation / 100}} %</td>
+          <td class="col-1" *ngIf="isAdmin" (click)="showArticle(line); toggleModal()">
+            <p *ngFor="let exploitation of line.articleexploitation"></p></td>
         </tr>
       </tbody>
     </table>

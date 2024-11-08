@@ -7,7 +7,7 @@ import { InterfacePpos } from '../model/interface-ppos';
   providedIn: 'root'
 })
 export class PpoService {
-  
+
   private apiGetPpoByCentreAndDate = environment.APIGETPPOBYCRANDDATE;
   private apiCreatePpo = environment.APICREATEPPO;
   private apiUpdatePpo = environment.APIUPDATEPPO;
@@ -21,7 +21,7 @@ export class PpoService {
   private apiGetPpoDetailData = environment.APIGETPPODETAILDATA;
   private apiGetPpoDetailDataFamille = environment.APIGETPPODETAILDATAFAMILLE;
   private apiGetPpoStatistique = environment.APIGETPPOSTATISTIQUE;
-  
+
 
   constructor(private https: HttpClient) { }
 
@@ -33,7 +33,7 @@ export class PpoService {
     return this.https.post(this.apiGetPpoDetail, { id: id, dateDebut: dateDebut, dateFin: dateFin, exploitation: exploitation });
   }
 
-  
+
   createPpo(ppo: InterfacePpos) {
     return this.https.post(this.apiCreatePpo, { ppo: ppo });
   }
@@ -50,31 +50,31 @@ export class PpoService {
     return this.https.post(this.apiDeletePpos, { id: id });
   }
 
-  // getPpoExploitation(data: any) {
-  //   return this.https.post(this.apiPpoExploitation, data);
-  // }
-  
-  // getPpoCentreRevenu(data: any) {
-  //   return this.https.post(this.apiPpoCentreRevenu, data);
-  // }
 
-  // getPpoDetailExploitation(data: any) {
-  //   return this.https.post(this.apiPpoDetailExploitation, data);
-  // }
-  
-  // getPpoDetailCentreRevenu(data: any) {
-  //   return this.https.post(this.apiPpoDetailCentreRevenu, data);
-  // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   getPpoDetailData(data: any) {
     return this.https.post(this.apiGetPpoDetailData, data);
   }
-  
+
   getPpoDetailDataFamille(data: any) {
     return this.https.post(this.apiGetPpoDetailDataFamille, data);
   }
 
-  getPpoStatistique(articlesId:number[]){
-    return this.https.get(this.apiGetPpoStatistique,{})
+  getPpoStatistique(articlesId: number[]) {
+    return this.https.get(this.apiGetPpoStatistique, {})
   }
 }

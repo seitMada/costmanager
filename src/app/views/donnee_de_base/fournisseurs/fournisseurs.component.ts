@@ -168,7 +168,7 @@ export class FournisseursComponent implements OnInit {
     }).subscribe({
       next: (data) => {
         const { fournisseurs, exploitations, unites } = data;
-        console.log(fournisseurs)
+
         for (const fournisseur of fournisseurs) {
           if (fournisseur.adresseId == null) {
             fournisseur.adresse = {
@@ -353,7 +353,7 @@ export class FournisseursComponent implements OnInit {
     if (this.idFournisseur === 0) {
       this.toggle = true;
       this.modifToggle = true;
-      // this.exploitationToggle = true;
+
       this.resetFournisseur();
     } else {
       this.fournisseurService.getFournisseurById(this.idFournisseur || 0).subscribe({
@@ -390,7 +390,7 @@ export class FournisseursComponent implements OnInit {
         }
       })
     } else {
-      console.log(this.fournisseur)
+
       this.fournisseurService.updateFournisseur(this.idFournisseur, this.fournisseur).subscribe((response) => {
         const exploitation: number[] = [];
         if (this.isAdmin) {
@@ -425,7 +425,7 @@ export class FournisseursComponent implements OnInit {
   }
 
   checked(event: any, operateur: InterfaceOperateur) {
-    console.log(event.target?.checked)
+
     if (event.target?.checked === true) {
       if (operateur.id) {
         this.checkContact.push(operateur.id)
@@ -436,7 +436,7 @@ export class FournisseursComponent implements OnInit {
         this.checkContact.splice(i, 1);
       }
     }
-    console.log(this.checkContact.length)
+
     if (this.checkContact.length === 1) {
       this.modifContactToggle = true;
     } else {
@@ -456,7 +456,7 @@ export class FournisseursComponent implements OnInit {
   }
 
   updateSelect(line: InterfaceAdresse) {
-    // console.log(line)
+
     this.checkAdress = line;
   }
 
@@ -486,7 +486,7 @@ export class FournisseursComponent implements OnInit {
             }
             adresse.flags = this.selectFlags(adresse);
           }
-          console.log(adresses)
+
           this.adresses = adresses;
           this.adresseadd = {
             rue: '',
@@ -501,17 +501,17 @@ export class FournisseursComponent implements OnInit {
           this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
             (result) => {
               this.closeResult = `Closed with: ${result}`;
-              console.log(this.closeResult)
+
               if (this.closeResult == 'Closed with: Save click') {
                 if (this.checkAdress) {
                   this.fournisseur.adresse = this.checkAdress;
                   this.fournisseur.adresseId = this.checkAdress.id ? this.checkAdress.id : null;
                 } else {
-                  console.log(this.fournisseur.adresse)
+
                   if (!this.fournisseur.adresse) {
                     this.fournisseurService.createnewadresse(this.fournisseur.adresse).subscribe({
                       next: (adresse: any) => {
-                        console.log(adresse)
+
                         this.fournisseur.adresse = adresse;
                         this.fournisseur.adresseId = adresse.id;
                         this.toggleToast('Nouvelle adresse ajouter')
@@ -523,7 +523,7 @@ export class FournisseursComponent implements OnInit {
             },
             (reason) => {
               this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-              console.log(this.closeResult)
+
 
             },
           );
@@ -540,29 +540,29 @@ export class FournisseursComponent implements OnInit {
             (element: any) => element.exploitationsId === this.exploitation
           )
         );
-        // console.log(filteredArticles)
-        // article.forEach((_article: any) => {
-        //   _article.article.articleexploitation.forEach((element: any) => {
-        //     console.log(element)
-        //   });
-        // });
+
+
+
+
+
+
         this.articleExclude = [0];
         for (const _article of filteredArticles) {
           this.articleExclude.push(_article.articleId)
         }
-        console.log(this.articleExclude);
+
         this.articleFournisseurs = filteredArticles;
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
           (result) => {
             this.closeResult = `Closed with: ${result}`;
-            console.log(this.closeResult)
+
             if (this.closeResult == 'Closed with: Save click') {
 
             }
           },
           (reason) => {
             this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-            console.log(this.closeResult)
+
 
           },
         );
@@ -571,7 +571,7 @@ export class FournisseursComponent implements OnInit {
   }
 
   selectFlags(line: any) {
-    console.log(line)
+
     if (line !== undefined) {
       const pays = line.pays;
       const comparison = this.country.find((i: any) => i.translations.fr === pays);
@@ -583,7 +583,7 @@ export class FournisseursComponent implements OnInit {
   }
 
   selectCountry(line: any) {
-    console.log(line)
+
     this.fournisseur.adresse.pays = line.translations.fr;
     this.fournisseur.adresse.flags = line.alpha2Code.toLowerCase() + '.svg';
   }
@@ -672,15 +672,15 @@ export class FournisseursComponent implements OnInit {
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
           (result) => {
             this.closeResult = `Closed with: ${result}`;
-            console.log(this.closeResult)
+
             if (this.closeResult == 'Closed with: Save click') {
-              // this.addUniteConditionnement();
+
               this.toggleArticle = false;
             }
           },
           (reason) => {
             this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-            console.log(this.closeResult)
+
             this.toggleArticle = false;
           },
         );
@@ -689,7 +689,7 @@ export class FournisseursComponent implements OnInit {
   }
 
   addUniteConditionnement(content: TemplateRef<any>) {
-    console.log(this.conditionnement)
+
     this.articleFournisseur = {
       articleId: this.article.id ? this.article.id : 0,
       fournisseurId: this.fournisseur.id ? this.fournisseur.id : 0,
@@ -705,9 +705,9 @@ export class FournisseursComponent implements OnInit {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
-        console.log(this.closeResult)
+
         if (this.closeResult == 'Closed with: Save click') {
-          console.log(this.articleFournisseur, this.conditionnement)
+
           this.fournisseurService.addArticleFournisseur(this.articleFournisseur).subscribe({
             next: (_articleFournisseur: any) => {
               this.conditionnement.articlefournisseurId = _articleFournisseur.id;
@@ -724,12 +724,12 @@ export class FournisseursComponent implements OnInit {
             }
           });
         } else {
-          // this.toggleToast('annuler')
+
         }
       },
       (reason) => {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        console.log(this.closeResult)
+
 
       },
     );
@@ -757,14 +757,14 @@ export class FournisseursComponent implements OnInit {
   }
 
   updateArticleFournisseur(_articleFournisseur: InterfaceArticlefournisseurs, _conditionnement: IntefaceConditionnement, content: TemplateRef<any>) {
-    console.log(_articleFournisseur, _conditionnement)
+
     this.article = _articleFournisseur.article;
     this.articleFournisseur = _articleFournisseur;
     this.conditionnement = _conditionnement;
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
-        console.log(this.closeResult)
+
         if (this.closeResult == 'Closed with: Save click') {
           this.articleFournisseur = {
             articleId: _articleFournisseur.id ? _articleFournisseur.id : 0,
@@ -778,7 +778,7 @@ export class FournisseursComponent implements OnInit {
             fournisseur: this.fournisseur,
             conditionnement: []
           }
-          console.log(this.articleFournisseur, this.conditionnement)
+
           if (this.conditionnement.articlefournisseurId == 0) {
             this.fournisseurService.addArticleFournisseur(this.articleFournisseur).subscribe({
               next: (_articleFournisseur: any) => {
@@ -821,12 +821,12 @@ export class FournisseursComponent implements OnInit {
             }
           }
         } else {
-          // this.toggleToast('annuler')
+
         }
       },
       (reason) => {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        console.log(this.closeResult)
+
 
       },
     );
@@ -837,7 +837,7 @@ export class FournisseursComponent implements OnInit {
     this.initConditionnement(this.articleFournisseur.article);
     this.articleFournisseur.id = _articlefournisseur.id;
     this.conditionnement.articlefournisseurId = _articlefournisseur.id ? _articlefournisseur.id : 0;
-    console.log(this.articleFournisseur, this.conditionnement)
+
   }
 
   deleteArticleFournisseur(_articleFournisseur: InterfaceArticlefournisseurs, _conditionnement: IntefaceConditionnement) {

@@ -22,7 +22,7 @@ export interface InterfaceFournisseur {
     adresse: Adress;
     operateur: InterfaceOperateur[];
     conditionnement?: IntefaceConditionnement[];
-    // modereglement:
+
 }
 
 export interface InterfaceFournisseurs {

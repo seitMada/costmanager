@@ -160,7 +160,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   listArticleFournisseurs() {
-    // this.dates.today = new Date();
+
     const exploitationId = Number(this.exploitationId);
     this.selectFounisseur(this.fournisseur);
     this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
@@ -192,7 +192,7 @@ export class BonCommandeAchatsComponent implements OnInit {
                 }
                 this.commandes.push(this.commandeDetail);
               }
-              console.log(this.commandes);
+
             }
           })
         } else {
@@ -470,7 +470,7 @@ export class BonCommandeAchatsComponent implements OnInit {
           this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
             (result) => {
               this.closeResult = `Closed with: ${result}`;
-              console.log(this.closeResult)
+
               if (this.closeResult == 'Closed with: Save click') {
                 for (const articlefournisseur of this.articleFournisseurs) {
                   for (const condition of articlefournisseur.conditionnement) {
@@ -500,7 +500,7 @@ export class BonCommandeAchatsComponent implements OnInit {
             },
             (reason) => {
               this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-              console.log(this.closeResult)
+
             },
           );
         },
@@ -520,7 +520,7 @@ export class BonCommandeAchatsComponent implements OnInit {
                 this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
                   (result) => {
                     this.closeResult = `Closed with: ${result}`;
-                    console.log(this.closeResult)
+
                     if (this.closeResult == 'Closed with: Save click') {
                       for (const articlefournisseur of artFournisseur) {
                         for (const condition of articlefournisseur.conditionnement) {
@@ -545,12 +545,12 @@ export class BonCommandeAchatsComponent implements OnInit {
                           }
                         }
                       }
-                      console.log(this.commandes);
+
                     }
                   },
                   (reason) => {
                     this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-                    console.log(this.closeResult)
+
                   },
                 );
               }
@@ -566,7 +566,7 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   generatePDF(commande: InterfaceBonCommande) {
-    console.log(commande);
+
 
     const dataCommande: any[] = [];
     const dateCommande = this.formatDate(commande.dateCommande, 'dd/MM/yyyy');
@@ -653,7 +653,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.commandeService.getDixDernierCommandes(fournisseurId, Number(exploitationId)).subscribe({
       next: (commandeDetail) => {
         this.commandes = commandeDetail;
-        console.log(this.commandes);
+
       },
     })
 

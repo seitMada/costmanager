@@ -153,7 +153,7 @@ export class DashComponent implements OnInit {
   public isarticleFt: boolean = true;
 
   public isstock: boolean = true;
-  // public pertetoggle: boolean = true;
+
 
   public mouvemenstock: {
     article_id: number,
@@ -370,7 +370,7 @@ export class DashComponent implements OnInit {
               }
             }
             this.exploitation = this.exploitations[0];
-            // console.log(this.exploitationsselected)
+
             await this.getMouvementStock(this.exploitationsselected);
 
           }
@@ -387,7 +387,7 @@ export class DashComponent implements OnInit {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-    // console.log(`${year}-${month}-${day} 00:00:00`)
+
     return `${year}-${month}-${day}`;
   }
 
@@ -416,11 +416,11 @@ export class DashComponent implements OnInit {
 
   public periodeperte() {
     this.isperteperiode = !this.isperteperiode;
-    // if (isnowperiode == true) {
-    //   this.perteperiode = 'Période en cours';
-    // } else {
-    //   this.perteperiode = 'Période précédente';
-    // }
+
+
+
+
+
   }
 
   private async getMouvementStock(_idexploitation: number[]) {
@@ -428,7 +428,7 @@ export class DashComponent implements OnInit {
     this.inventaireService.getPeriode(_idexploitation, true).subscribe({
       next: (value: any) => {
         this.periode = value;
-        console.log(this.periode);
+
         if (this.periode.length > 0) {
           this.venteService.getVenteCrDate(this.exploitationsselected, this.getrealdate(this.periode[0].debut), this.getrealdate(this.periode[0].fin), true).subscribe({
             next: (_ventes: any) => {
@@ -441,8 +441,8 @@ export class DashComponent implements OnInit {
               for (const item of _ventes) {
                 _chiffreaffaire += +item.montantttc;
               }
-              console.log(this.getrealdate(this.periode[0].debut), this.getrealdate(this.periode[0].fin))
-              // this.periodeselected = this.periode[0];
+
+
               this.articleService.getMouvementStock({ debut: this.getrealdate(this.periode[0].debut), fin: this.getrealdate(_dateFin), final: this.getrealdate(this.periode[0].fin) }, this.exploitationsselected, true).subscribe({
                 next: (_articles: any) => {
 
@@ -453,7 +453,7 @@ export class DashComponent implements OnInit {
                     debut: this.getrealdate(this.periode[0].debut) !== undefined ? this.getrealdate(this.periode[0].debut) : this.getrealdate(new Date()),
                     fin: this.getrealdate(this.periode[0].fin) !== undefined ? this.getrealdate(this.periode[0].fin) : this.getrealdate(new Date())
                   });
-                  console.log(this.chiffreaffaire)
+
                   let pertevalue = 0;
                   for (const _pertes of _articles) {
                     pertevalue += +_pertes.pertes;
@@ -478,7 +478,7 @@ export class DashComponent implements OnInit {
                   this.perteBack = this.perte
                   this.venteService.getVenteCrDate(this.exploitationsselected, this.getrealdate(this.periode[1].debut), this.getrealdate(new Date()), true).subscribe({
                     next: (_ventes: any) => {
-                      // console.log(_ventes)
+
                       const _dateFin = new Date();
                       _dateFin.setDate(_dateFin.getDate() - 1);
                       this.articleService.getMouvementStock({ debut: this.getrealdate(this.periode[1].debut), fin: this.getrealdate(new Date()), final: this.getrealdate(new Date()) }, this.exploitationsselected, true).subscribe({
@@ -509,7 +509,7 @@ export class DashComponent implements OnInit {
                                 const pertePrecedent = +_pertes.pertes;
                                 const totalPertePrecedent = pertePrecedent * +_perte.cout
                                 const totalPerteEnCours = +_perte.totalPerteEnCours
-                                // const ecart = ((_perte.totalPerteEnCours - +totalPertePrecedent) / _perte.totalPerteEnCours) * 100;
+
                                 const ecartPourcentage = Math.abs(totalPertePrecedent - totalPerteEnCours) / totalPerteEnCours * 100;
 
                                 Object.assign(_perte, {
@@ -519,13 +519,13 @@ export class DashComponent implements OnInit {
                                 })
                               }
                             }
-                            // this.perte.push({
-                            //   articlelibelle: _pertes.libelle,
-                            //   articleId: _pertes.article_id,
-                            //   perte: _pertes.pertes,
-                            //   valorisation: _pertes.cout * _pertes.pertes,
-                            //   periode: 1
-                            // });
+
+
+
+
+
+
+
                           }
 
                           this.perteBack = this.perte
@@ -568,7 +568,7 @@ export class DashComponent implements OnInit {
                             const element = resultArray[index];
                             _data.push(element)
                           }
-                          // console.log(_data)
+
                           this.datasets = [
                             {
                               label: '',
@@ -582,7 +582,7 @@ export class DashComponent implements OnInit {
                             datasets: this.datasets
                           };
                           this.options = this.optionsDefault;
-                          console.log(this.pertes)
+
                         }
                       });
                     }
@@ -633,7 +633,7 @@ export class DashComponent implements OnInit {
     prix: 0,
     ecart: 0
   }[]) {
-    // Objet pour garder la trace du coût le plus bas pour chaque id
+
     const coutMinParId: {
       [key: number]: {
         fichetechnique: InterfaceFichetechnique,
@@ -643,18 +643,18 @@ export class DashComponent implements OnInit {
       }
     } = {};
 
-    // Parcourir chaque vente
+
     _fichetechniques.forEach(fichetechnique => {
       const ftId = fichetechnique.fichetechnique.id;
       const prix = fichetechnique.prix;
 
-      // Si l'id n'est pas encore dans l'objet ou si le coût actuel est inférieur au coût enregistré
+
       if (ftId && (!coutMinParId[ftId] || prix < coutMinParId[ftId].prix)) {
         coutMinParId[ftId] = fichetechnique;
       }
     });
 
-    // Retourner les valeurs de l'objet sous forme de tableau
+
     return Object.values(coutMinParId);
   }
 
@@ -888,7 +888,7 @@ export class DashComponent implements OnInit {
     }
     this.dashService.getVariationArticle(idexploitations).subscribe({
       next: (articles: any) => {
-        // this.articlesvariations = articles;
+
         for (const article of articles) {
           if (article.achatDetail.length == 0) {
             this.articlesvariations.push({
@@ -920,7 +920,7 @@ export class DashComponent implements OnInit {
               article: article
             })
           }
-          // console.log(this.articlesvariations)
+
         }
         this.articlesvariationsBack = this.articlesvariations;
       }
@@ -1038,25 +1038,25 @@ export class DashComponent implements OnInit {
     });
   }
 
-  // private getTableauPerteArticle(event: any,perte:any) {
-  //   console.log(event,perte)
-  //   const article = 
-  //   this.bordercolor = event.point.color;
-  //   let _id: number[] = [];
-  //   // const data = {
-  //   //   date: this.dates,
-  //   //   id: this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected,
-  //   //   isexploitation: this.exploitationsselected.length > 0,
-  //   //   idfamille: event.point.id
-  //   // };
-  //   // this.ppoService.getPpoDetailDataFamille(data).subscribe({
-  //   //   next: (_data: any) => {
-  //   //     this.ppodetailsarticlebyfamille = _data.article;
-  //   //     console.log(this.ppodetailsarticlebyfamille);
 
-  //   //   }
-  //   // });
-  // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   formatDateRange(): string {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -1076,7 +1076,7 @@ export class DashComponent implements OnInit {
     if (article && article.fichetechnique) {
       return article.fichetechnique.map((ft: any) => ft.libelleFt).join('\n');
     }
-    console.log(article);
+
 
     return 'No fichetechnique available';
   }
@@ -1087,7 +1087,7 @@ export class DashComponent implements OnInit {
   }
 
   getValorisationArticleFt() {
-    console.log(this.exploitations)
+
     this.inventaireService.getLastPeriodeInventaire(this.idoperateur, this.exploitations.map(item => item.id ? item.id : 0)).subscribe({
       next: (_periode: any) => {
         this.dates = {
@@ -1138,7 +1138,7 @@ export class DashComponent implements OnInit {
   }
 
   getValorisationStock() {
-    console.log(this.exploitations.map(item => item.id ? item.id : 0))
+
     this.dashService.getValorisationStock(this.operateurId, this.exploitations.map(item => item.id ? item.id : 0)).subscribe({
       next: (_valorisations) => {
         for (const valeur of _valorisations) {
@@ -1192,7 +1192,7 @@ export class DashComponent implements OnInit {
     article: any
   } | null) {
     this.articlevariationtoggle = !this.articlevariationtoggle;
-    console.log(article?.article)
+
 
     this.chartVariationArticle = {
       xAxis: {
@@ -1257,7 +1257,7 @@ export class DashComponent implements OnInit {
     ecart: number,
     article: any
   } | null) {
-    // this.bordercolor = event.point.color;
+
     let _id: number[] = [];
     const data = [];
     const categories = [];
@@ -1276,7 +1276,7 @@ export class DashComponent implements OnInit {
   screenHour(_date: Date) {
     const date = new Date(_date);
     return date.getHours() + ':' + date.getMinutes()
-    // console.log(new Date(date));
+
   }
 
   onSortArticleVariation(event: any, colonne: any, type: string = 'string') {

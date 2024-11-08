@@ -18,8 +18,8 @@ const routes: Routes = [
     data: {
       title: 'Costmanager'
     },
-    canActivate:[loginGuard],
-    canActivateChild:[loginGuard],
+    canActivate: [loginGuard],
+    canActivateChild: [loginGuard],
     children: [
       {
         path: 'donnee_de_base',
@@ -75,7 +75,7 @@ const routes: Routes = [
       title: 'Home'
     }
   },
-  {path: '**', redirectTo: 'dash'}
+  { path: '**', redirectTo: 'dash' }
 ];
 
 @NgModule({
@@ -84,7 +84,7 @@ const routes: Routes = [
       scrollPositionRestoration: 'top',
       anchorScrolling: 'enabled',
       initialNavigation: 'enabledBlocking'
-      // relativeLinkResolution: 'legacy'
+
     })
   ],
   exports: [RouterModule],

@@ -169,7 +169,7 @@ export class FacturesComponent implements OnInit {
             next: (_factures) => {
               this.detailFactures = [];
               this.factures = _factures;
-              console.log(this.factures);
+
 
               this.detailFactures = _factures.map((_facture: any) => _facture.achatDetail);
             },
@@ -179,7 +179,7 @@ export class FacturesComponent implements OnInit {
             next: (_factures) => {
               this.detailFactures = [];
               this.factures = _factures;
-              console.log(this.factures);
+
 
               this.detailFactures = _factures.map((_facture: any) => _facture.achatDetail);
             },
@@ -437,7 +437,7 @@ export class FacturesComponent implements OnInit {
     const exploitationId = this.exploitation.id ? this.exploitation.id : 0;
     this.factureService.getLivraisonByFournisseurExploitationValidate(fournisseurId, exploitationId).subscribe({
       next: (_livraisons) => {
-        console.log(_livraisons)
+
         this.bonLivraisons = _livraisons;
         if (_livraisons.length > 0) {
           this.addBtn = false;
@@ -451,7 +451,7 @@ export class FacturesComponent implements OnInit {
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
           (result) => {
             this.closeResult = `Closed with: ${result}`;
-            console.log(this.closeResult)
+
             if (this.closeResult == 'Closed with: validate click') {
               this.modifToggle = !this.modifToggle;
               this.toggle = (this.toggle === false ? true : false);
@@ -471,7 +471,7 @@ export class FacturesComponent implements OnInit {
                   this.detailFactures = [];
                   for (const livDetail of livraison.livraisonDetail) {
                     const taxe = 0;
-                    console.log(livDetail)
+
                     if (livDetail.valeurTva != 0 || livDetail.valeurTva != null) {
                       const taxe = (((livDetail.quantiteLivree * livDetail.prixarticle) - livDetail.remise) * livDetail.valeurTva) / 100;
                     }
@@ -517,7 +517,7 @@ export class FacturesComponent implements OnInit {
           },
           (reason) => {
             this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-            console.log(this.closeResult)
+
             this.toggle = this.toggle;
             this.addFacture = true;
             this.inputModif = false;
@@ -537,7 +537,7 @@ export class FacturesComponent implements OnInit {
           this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
             (result) => {
               this.closeResult = `Closed with: ${result}`;
-              console.log(this.closeResult)
+
               if (this.closeResult == 'Closed with: Save click') {
                 for (const articlefournisseur of this.articleFournisseurs) {
                   if (articlefournisseur.selected == true) {
@@ -569,7 +569,7 @@ export class FacturesComponent implements OnInit {
             },
             (reason) => {
               this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-              console.log(this.closeResult)
+
             },
           );
         },
@@ -590,7 +590,7 @@ export class FacturesComponent implements OnInit {
                   (result) => {
                     this.closeResult = `Closed with: ${result}`;
 
-                    console.log(this.closeResult)
+
                     if (this.closeResult == 'Closed with: Save click') {
 
                       this.inputModif = this.inputModif;
@@ -619,12 +619,12 @@ export class FacturesComponent implements OnInit {
                           }
                         }
                       }
-                      console.log(this.detailFactures);
+
                     }
                   },
                   (reason) => {
                     this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-                    console.log(this.closeResult)
+
                   },
                 );
               }
@@ -639,18 +639,18 @@ export class FacturesComponent implements OnInit {
 
   public selectArticle(contentLivraisonArticle: TemplateRef<any>, bonLivraison: InterfaceBonLivraisons) {
     this.livraisonDetails = bonLivraison.livraisonDetail;
-    console.log(this.livraisonDetails);
+
 
     this.bonLivraison = bonLivraison;
     this.modalService.open(contentLivraisonArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
-        console.log(this.closeResult)
+
         if (this.closeResult == 'Closed with: Save click') { }
       },
       (reason) => {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        console.log(this.closeResult)
+
       },
     );
   }
@@ -696,7 +696,7 @@ export class FacturesComponent implements OnInit {
       this.showvalidateBtn = !this.showvalidateBtn;
     }
     for (const livraison of this.detailFactures) {
-      console.log(livraison.valeurTva);
+
 
       if (livraison.valeurTva != 0 || livraison.valeurTva != null) {
         const taxe = (((livraison.quantite * livraison.prixArticle) - livraison.remise) * livraison.valeurTva) / 100;

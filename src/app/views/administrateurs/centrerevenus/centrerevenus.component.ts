@@ -244,12 +244,12 @@ export class CentrerevenusComponent implements OnInit {
               }
             }
           }
-          console.log(adresses)
+
           this.adresses = adresses;
           this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
             (result) => {
               this.closeResult = `Closed with: ${result}`;
-              console.log(this.closeResult)
+
               if (this.closeResult == 'Closed with: Save click') {
                 if (this.adresse) {
                   if (this.addExploitation === false) {
@@ -264,7 +264,7 @@ export class CentrerevenusComponent implements OnInit {
             },
             (reason) => {
               this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-              console.log(this.closeResult)
+
 
             },
           );
@@ -448,14 +448,14 @@ export class CentrerevenusComponent implements OnInit {
 
   deleteCentreRevenu() {
     if (this.isAdmin) {
-      // this.centreService.deleteCentreRevenu(this.centre).subscribe({
-      //   next: (value) => {
-      //     this.resetCentre();
-      //     this.toggleToast('Ce centre de revenu a été supprimé avec succès!');
-      //     this.toggle = !this.toggle;
-      //     this.showAllCentreRevenu();
-      //   },
-      // });
+
+
+
+
+
+
+
+
     }
   }
 }

@@ -9,7 +9,7 @@ export class PdfserviceService {
 
   buildTableBody(tableau: any[], cle: any[], entete: { text: string; style: string; }[]) {
     const body = [];
-    console.log(tableau)
+
     body.push(entete);
     tableau.forEach(function (row: { [x: string]: { toString: () => any; }; }) {
       const dataRow: string[] = [];
@@ -18,8 +18,8 @@ export class PdfserviceService {
           const cout = Math.round(Number(row[column]) * 100) / 100;
           dataRow.push(cout.toString() + '€');
         } else {
-          
-          // console.log(row[column])
+
+
           dataRow.push((row[column] ? row[column] : '').toString());
         }
       })

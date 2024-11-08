@@ -13,18 +13,18 @@ import { ZonestockagesService } from 'src/app/shared/service/zonestockages.servi
 @Component({
   selector: 'app-zonestockage',
   standalone: true,
-  imports: [CommonModule, FormsModule,NgbNavModule,NgbDropdownModule,AlertModule,ToasterComponent,ToastComponent,ToastHeaderComponent,ToastBodyComponent],
+  imports: [CommonModule, FormsModule, NgbNavModule, NgbDropdownModule, AlertModule, ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent],
   templateUrl: './zonestockage.component.html',
   styleUrl: './zonestockage.component.scss'
 })
-export class ZonestockageComponent implements OnInit{
+export class ZonestockageComponent implements OnInit {
 
-  public centre:InterfaceCentreRevenu;
-  public centres:InterfaceCentreRevenu[];
-  public lieustockage:InterfaceLieustockages;
-  public lieustockages:InterfaceLieustockages[];
+  public centre: InterfaceCentreRevenu;
+  public centres: InterfaceCentreRevenu[];
+  public lieustockage: InterfaceLieustockages;
+  public lieustockages: InterfaceLieustockages[];
   public zonestockage: InterfaceZonestockages;
-  public zonestockages:InterfaceZonestockages[];
+  public zonestockages: InterfaceZonestockages[];
 
   public lieuForm: FormGroup;
   public zoneStockageForm: FormGroup;
@@ -65,12 +65,12 @@ export class ZonestockageComponent implements OnInit{
   constructor(
     public router: Router,
     public route: ActivatedRoute,
-    public lieustockageService : LieustockageService,
+    public lieustockageService: LieustockageService,
     public zonestockageService: ZonestockagesService,
     private modalService: NgbModal,
     config: NgbModalConfig
   ) {
-    config.backdrop =  'static';
+    config.backdrop = 'static';
     config.keyboard = false;
     this.resetLieuStockage();
     this.resetZonestockage();
@@ -79,44 +79,44 @@ export class ZonestockageComponent implements OnInit{
     this.showAllZoneStockage();
   }
 
-  public resetLieuStockage(){
+  public resetLieuStockage() {
     this.lieustockage = {
-      lieu : '',
-      centreId:0,
-      selected:false,
-      centre:this.centre,
-      zonestockage:[]
+      lieu: '',
+      centreId: 0,
+      selected: false,
+      centre: this.centre,
+      zonestockage: []
     }
   }
 
-  public resetZonestockage(){
+  public resetZonestockage() {
     this.zonestockage = {
-      zone:'',
+      zone: '',
       lieuId: 0,
       selected: false,
       lieu: this.lieustockage,
     }
   }
 
-  showAllZoneStockage(){
+  showAllZoneStockage() {
     this.zonestockageService.getAllZoneDeStockage().subscribe({
-      next:(_zonestockages) =>{
+      next: (_zonestockages) => {
         this.zonestockages = _zonestockages;
-        this.zonestockage =_zonestockages[0];
-        console.log(this.zonestockages);
+        this.zonestockage = _zonestockages[0];
+
 
       },
     })
   }
 
-  findAllLieuStockage(){
+  findAllLieuStockage() {
     this.lieustockageService.getAllLieuStockage().subscribe({
-      next:(_lieuStockages) =>{
+      next: (_lieuStockages) => {
         this.lieustockages = _lieuStockages;
         this.lieustockage = _lieuStockages[0];
         this.zonestockage = {
           zone: '',
-          lieuId: _lieuStockages[0].id ? _lieuStockages[0].id:0,
+          lieuId: _lieuStockages[0].id ? _lieuStockages[0].id : 0,
           selected: false,
           lieu: _lieuStockages[0],
         }
@@ -124,23 +124,23 @@ export class ZonestockageComponent implements OnInit{
     })
   }
 
-  showOnezoneStockage(zonestockage:InterfaceZonestockages){
+  showOnezoneStockage(zonestockage: InterfaceZonestockages) {
     this.resetZonestockage();
     this.resetLieuStockage();
     this.zonestockage = zonestockage;
     this.inputModif = true;
     this.toggle = !this.toggle;
     this.lieustockageService.getAllLieuStockage().subscribe({
-      next:(_lieuStockages) =>{
+      next: (_lieuStockages) => {
         this.lieustockages = [];
         for (const _lieu of _lieuStockages) {
           if (_lieu.id == zonestockage.lieuId) {
             this.lieustockage = {
-              lieu : _lieu.lieu,
+              lieu: _lieu.lieu,
               centreId: _lieu.centreId,
-              selected:false,
+              selected: false,
               centre: _lieu.centre,
-              zonestockage:_lieu.zoneStockage
+              zonestockage: _lieu.zoneStockage
             }
             this.lieustockages.push(this.lieustockage);
           }
@@ -149,37 +149,37 @@ export class ZonestockageComponent implements OnInit{
     })
   }
 
-  saveLieu(){
+  saveLieu() {
     this.zoneId = this.zonestockage.id ? this.zonestockage.id : 0;
-   this.zonestockages = [];
-   if (this.zoneId == 0) {
-    this.lieustockageService.createLieuStockage(this.lieustockage,this.zonestockages).subscribe({
-      next:() =>{
-        this.findAllLieuStockage();
-        this.toggleToast('Nouveau lieu de stockage crée avec succès !');
-        this.addLieu = (this.addLieu === false ? true:false);
-      }
-    })
-   }
-  }
-
-  addFormLieu(){
-    if(this.isAdmin){
-      this.resetLieuStockage();
-      this.addLieu = (this.addLieu === false ? true:false);
+    this.zonestockages = [];
+    if (this.zoneId == 0) {
+      this.lieustockageService.createLieuStockage(this.lieustockage, this.zonestockages).subscribe({
+        next: () => {
+          this.findAllLieuStockage();
+          this.toggleToast('Nouveau lieu de stockage crée avec succès !');
+          this.addLieu = (this.addLieu === false ? true : false);
+        }
+      })
     }
   }
 
-  submit(){
+  addFormLieu() {
+    if (this.isAdmin) {
+      this.resetLieuStockage();
+      this.addLieu = (this.addLieu === false ? true : false);
+    }
+  }
+
+  submit() {
     this.zoneId = this.zonestockage.id ? this.zonestockage.id : 0;
     if (this.zoneId == 0) {
-      const lieuStockagesSelect = this.lieustockages.filter(line =>line.selected);
-      if (lieuStockagesSelect.length >0) {
-        for(const _lieu of lieuStockagesSelect){
+      const lieuStockagesSelect = this.lieustockages.filter(line => line.selected);
+      if (lieuStockagesSelect.length > 0) {
+        for (const _lieu of lieuStockagesSelect) {
           this.zonestockage.lieu = _lieu;
-          this.zonestockage.lieuId = _lieu.id?_lieu.id:0;
+          this.zonestockage.lieuId = _lieu.id ? _lieu.id : 0;
           this.zonestockageService.createZoneDeStockage(this.zonestockage).subscribe({
-            next:(value) =>{
+            next: (value) => {
               this.toggleToast('Nouveau zone de stockage crée avec succès !');
               this.inputModif = !this.inputModif;
               this.modifToggle = true;
@@ -190,13 +190,13 @@ export class ZonestockageComponent implements OnInit{
         alert('Veuillez sélectionner un lieu de stockage');
       }
     } else {
-      const lieuStockagesSelect = this.lieustockages.filter(line =>line.selected);
-      if (lieuStockagesSelect.length >0) {
-        for(const _lieu of lieuStockagesSelect){
+      const lieuStockagesSelect = this.lieustockages.filter(line => line.selected);
+      if (lieuStockagesSelect.length > 0) {
+        for (const _lieu of lieuStockagesSelect) {
           this.zonestockage.lieu = _lieu;
-          this.zonestockage.lieuId = _lieu.id?_lieu.id:0;
+          this.zonestockage.lieuId = _lieu.id ? _lieu.id : 0;
           this.zonestockageService.updateZoneDeStockage(this.zonestockage).subscribe({
-            next:(value) =>{
+            next: (value) => {
               this.toggleToast('Zone de stockage modifié avec succès !');
               this.inputModif = !this.inputModif;
               this.modifToggle = true;
@@ -210,22 +210,22 @@ export class ZonestockageComponent implements OnInit{
   }
 
 
-  cancel(){
+  cancel() {
     this.modifToggle = true;
     this.toggle = !this.toggle;
-    this.inputModif = (this.inputModif === false ? true:false);
+    this.inputModif = (this.inputModif === false ? true : false);
     this.addLieu = false;
     this.resetLieuStockage();
     this.showAllZoneStockage();
   }
 
-  modifZoneStockage(){
-    this.inputModif =!this.inputModif;
+  modifZoneStockage() {
+    this.inputModif = !this.inputModif;
     this.modifToggle = !this.modifToggle;
   }
 
 
-  toggleModal(){
+  toggleModal() {
     if (this.isAdmin) {
       this.resetZonestockage();
       this.modifToggle = !this.modifToggle;
@@ -235,15 +235,15 @@ export class ZonestockageComponent implements OnInit{
     }
   }
 
-  deleteZoneStockage(){
-    // this.zonestockageService.deleteZoneStockage(this.zonestockage).subscribe({
-    //   next:(value) =>{
-    //     this.resetZonestockage();
-    //     this.toggleToast('Ce zone de stocakage a été supprimé avec succès!');
-    //     this.toggle = !this.toggle;
-    //     this.showAllZoneStockage();
-    //   },
-    // });
+  deleteZoneStockage() {
+
+
+
+
+
+
+
+
   }
 
 

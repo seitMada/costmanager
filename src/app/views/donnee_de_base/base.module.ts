@@ -2,7 +2,7 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
-// // views
+
 import { ArticlesComponent } from "./articles/articles.component";
 import { FicheTechniqueComponent } from "./fiche_technique/fiche-technique.component";
 import { FournisseursComponent } from "./fournisseurs/fournisseurs.component";
@@ -15,7 +15,7 @@ import { SyntheseFicheTechniqueComponent } from "./synthese-fiche-technique/synt
 
 import { defineLocale, frLocale } from 'ngx-bootstrap/chronos';
 
-// Components Routing
+
 import { BaseRoutingModule } from './base-routing.module';
 
 defineLocale('fr', frLocale);
@@ -36,7 +36,7 @@ defineLocale('fr', frLocale);
     SyntheseFicheTechniqueComponent,
   ],
   declarations: [
-    
+
   ],
 })
-export class BaseModule {}
+export class BaseModule { }

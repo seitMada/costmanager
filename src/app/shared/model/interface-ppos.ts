@@ -28,12 +28,12 @@ export interface InterfacePpoDetail {
     fichetechniqueId: number | null;
     quantite: number;
     cout: number;
-    uniteId:number;
+    uniteId: number;
     selected?: boolean;
 
     article: InterfaceArticle;
     unite: InterfaceUnite;
     fichetechnique: InterfaceFichetechnique;
     conditionnement?: IntefaceConditionnement;
-    // ppo?: InterfacePpos;
+
 }

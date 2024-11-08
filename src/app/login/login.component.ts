@@ -30,8 +30,8 @@ export class LoginComponent implements OnInit {
     this.loginForm = formBuilder.group({
       email: ["", Validators.required, Validators.email],
       mdp: ["", Validators.required, Validators.minLength(5)],
-      // exploitationId: ["", Validators.required],
-      // centreId: ["", Validators.required]
+
+
     });
   }
 
@@ -64,10 +64,10 @@ export class LoginComponent implements OnInit {
   }
 
   public onLogin(form: NgForm) {
-    // this.loginService.auth(this.operateurData);
-    // sessionStorage.setItem('exploitation', this.operateurData.exploitationId);
-    // sessionStorage.setItem('id', response.id);
-    // sessionStorage.setItem('admin', (response.code === '0000' ? '1' : '0'));
+
+
+
+
     if (this.operateurData.exploitationId) {
       sessionStorage.setItem('exploitation', String(this.operateurData.exploitationId));
       sessionStorage.setItem('id', String(this.operateurData.id));
@@ -103,7 +103,7 @@ export class LoginComponent implements OnInit {
           this.exploitationService.getExploitation().subscribe({
             next: (exploitation) => {
               this.choiceexp = false;
-              console.log(this.operateurData)
+
               this.operateurData.exploitationId = exploitation.filter((obj: { codenaf: string; }) => obj.codenaf === "ADMIN").map((obj: { id: any; }) => obj.id).join(',');
               sessionStorage.setItem('exploitation', String(this.operateurData.exploitationId));
               sessionStorage.setItem('id', String(this.operateurData.id));
@@ -117,8 +117,8 @@ export class LoginComponent implements OnInit {
         } else {
           this.exploitationService.getExploitation().subscribe({
             next: (exploitation) => {
-              // console.log(response.operateur.operateurscentreexploitation);
-              // console.log(exploitation);
+
+
               this.exploitations = exploitation.filter((obj1: { id: any; }) =>
                 response.operateur.operateurscentreexploitation.some((obj2: { exploitationId: any; }) => obj1.id === obj2.exploitationId)
               );

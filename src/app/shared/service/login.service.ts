@@ -24,17 +24,17 @@ export class LoginService {
   operateurId: Pick<InterfaceOperateur, "id">;
 
   public auth(operateurData: any) {
-    // console.log(operateurData)
-    // this.https.post(this.apiAuth, operateurData).subscribe(
-    //   (response: any) => {
-    //     if (response.connect === true) {
-    //       sessionStorage.setItem('exploitation', operateurData.exploitationId);
-    //       sessionStorage.setItem('id', response.id);
-    //       sessionStorage.setItem('admin', (response.code === '0000' ? '1' : '0'));
-    //       this.router.navigate(['dash']);
-    //     }
-    //   }
-    // )
+
+
+
+
+
+
+
+
+
+
+
     return this.https.post(this.apiAuth, operateurData);
   }
 

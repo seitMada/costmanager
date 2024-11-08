@@ -1,4 +1,4 @@
-const endPoint = 'http://localhost:3000/';
+const endPoint = 'https://coutmatiere.jl-dev.fr/';
 
 export const environment = {
     production: false,

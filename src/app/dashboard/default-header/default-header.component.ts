@@ -61,10 +61,10 @@ export class DefaultHeaderComponent extends HeaderComponent {
     super();
     this.exploitationService.getExploitationById(this.idexploitation).subscribe({
       next: (_exploitation) => {
-        // console.log(_exploitation)
+
         this.exploitation = _exploitation;
         this.getstockminimum();
-        // this.refreshdata(150000);
+
       }
     })
   }
@@ -73,7 +73,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
     this.isrefresh = true;
     this.exploitationService.getExploitation().subscribe({
       next: async (_exploitations) => {
-        // console.log("RAFRAICHISSEMENT")
+
         const exploitationid: number[] = [];
         if (this.isAdmin == true) {
           for (const _exploitation of _exploitations) {
@@ -82,7 +82,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
         } else {
           exploitationid.push(this.idexploitation);
         }
-        console.log(exploitationid)
+
         this.inventaireService.getPeriode(exploitationid, true).subscribe({
           next: (value: any) => {
             for (const _date of value) {
@@ -136,7 +136,7 @@ export class DefaultHeaderComponent extends HeaderComponent {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-    // console.log(`${year}-${month}-${day} 00:00:00`)
+
     return `${year}-${month}-${day}`;
   }
 

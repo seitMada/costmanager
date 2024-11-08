@@ -110,7 +110,7 @@ export class ArticlesComponent implements OnInit {
   public zonestockages: InterfaceZonestockages[];
   public zonestockage: InterfaceZonestockages;
 
-  private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
+  public isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
   public exploitation = +(sessionStorage.getItem('exploitation') || 0);
 
   ngOnInit(): void {
@@ -140,7 +140,9 @@ export class ArticlesComponent implements OnInit {
         this.unites = unite;
         this.categories = categorie;
         this.allergenes = allergene;
-        // console.log(this.isAdmin)
+
+        // console.log(this.articles.articles[5].articleexploitation[0].exploitations)
+
         if (this.isAdmin === true) {
           this.exploitations = exploitation.filter((item: any) => item.id !== this.exploitation);
         } else {
@@ -152,7 +154,7 @@ export class ArticlesComponent implements OnInit {
 
   async showArticle(art: any) {
     this.article = art;
-    console.log(this.article)
+
     this.idArticle = art.id;
     this.groupeService.getGroupeAnalytique().subscribe({
       next: (groupe_analytique) => {
@@ -170,8 +172,8 @@ export class ArticlesComponent implements OnInit {
                 this.articleService.getArticleExploitationByArticle(this.idArticle).subscribe({
                   next: (articleExploitation) => {
                     const exploitationId: number[] = [0];
-                    // this.exploitations = articleExploitation;
-                    console.log(articleExploitation)
+
+
                     this.exploitations.forEach((e: any) => {
                       const comparisonItem = articleExploitation.find((i: any) => i.exploitationsId === e.id);
                       if (comparisonItem != undefined) {
@@ -198,7 +200,7 @@ export class ArticlesComponent implements OnInit {
                     })
                     this.allergenes.forEach((a: any) => {
                       const comparisonItem = this.article.allergeneArticle.find((i: any) => i.allergeneId === a.id);
-                      // console.log(comparisonItem)
+
                       if (comparisonItem != undefined) {
                         a.selected = true;
                       } else {
@@ -265,7 +267,7 @@ export class ArticlesComponent implements OnInit {
     this.sousFamilleService.getSousFamilleByFamille(data.id).subscribe({
       next: (sousFamille) => {
         this.sousFamilles = sousFamille;
-        // this.article.sousfamilles = [];
+
       },
     })
   }
@@ -279,7 +281,7 @@ export class ArticlesComponent implements OnInit {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
-        console.log(this.closeResult)
+
         if (this.closeResult == 'Closed with: Save click') {
           const allergene: number[] = [];
           for (const i of this.allergenes) {
@@ -292,14 +294,14 @@ export class ArticlesComponent implements OnInit {
       },
       (reason) => {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        console.log(this.closeResult)
+
         this.allergeneService.getAllAllergene().subscribe({
           next: (allergenes) => {
             this.allergenes = allergenes;
-            // this.modifToggle = !this.modifToggle;
+
             this.allergenes.forEach((a: any) => {
               const comparisonItem = this.article.allergeneArticle.find((i: any) => i.allergeneId === a.id);
-              console.log(comparisonItem)
+
               if (comparisonItem != undefined) {
                 a.selected = true;
               } else {
@@ -349,7 +351,7 @@ export class ArticlesComponent implements OnInit {
   }
 
   showFournisseur(data: any) {
-    console.log(data)
+
   }
 
   private async resetArticle() {
@@ -397,16 +399,16 @@ export class ArticlesComponent implements OnInit {
   }
 
   changeZonestockage() {
-    console.log(this.exploitations);
+
     const exploitationId: number[] = [0];
-    // exploitationId.push(this.exploitation)
+
     this.exploitations.forEach((e: any) => {
       if (e.selected === true) {
         e.selected = true;
         exploitationId.push(e.id)
       }
     });
-    console.log(exploitationId);
+
     this.zonestockageService.getZoneStockageByExploitationId(exploitationId).subscribe({
       next: (_data: any) => {
         this.lieustockages = _data;
@@ -440,7 +442,7 @@ export class ArticlesComponent implements OnInit {
             exploitation.push(this.exploitation);
           }
           const zonestockage: number[] = [];
-          // zonestockage.push(3)
+
           for (const _lieu of this.lieustockages) {
             for (const _zone of _lieu.zonestockage) {
               if (_zone.selected === true) {
@@ -450,7 +452,7 @@ export class ArticlesComponent implements OnInit {
           }
           this.articleService.deleteArticleExploitationByArticle(article.id, exploitation).subscribe({
             next: () => {
-              console.log(zonestockage)
+
               this.zonestockageService.deleteArticleZoneStockage(article.id, zonestockage).subscribe({
                 next: async () => {
                   this.articleService.getArticlesById(article.id, this.exploitation).subscribe({
@@ -482,7 +484,7 @@ export class ArticlesComponent implements OnInit {
           exploitation.push(this.exploitation);
         }
         const zonestockage: number[] = [];
-        // zonestockage.push(3)
+
         for (const _lieu of this.lieustockages) {
           for (const _zone of _lieu.zonestockage) {
             if (_zone.selected === true) {

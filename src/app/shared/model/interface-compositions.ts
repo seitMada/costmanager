@@ -12,7 +12,7 @@ export interface InterfaceComposition {
     cout: number;
 
     article: InterfaceArticle | null;
-    // fichetechnique: InterfaceFichetechnique;
+
     fichetechniqueCompositon: InterfaceFichetechnique | null;
     unite: InterfaceUnite;
 }

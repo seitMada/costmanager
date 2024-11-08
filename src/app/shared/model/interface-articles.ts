@@ -26,7 +26,7 @@ export interface InterfaceArticle {
   stockminimum?: number;
   stock?: number;
 
-  // Champs supplémentaires provenant des relations
+
   allergeneArticle: InterfaceAllergeneArticle[];
   articleexploitation: InterfaceArticleExploitation[];
   articlefournisseur: InterfaceArticlefournisseurs[];

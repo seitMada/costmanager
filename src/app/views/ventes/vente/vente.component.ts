@@ -146,16 +146,16 @@ export class VenteComponent implements OnInit {
                 next: (_exploitation) => {
                   this.exploitations = _exploitation;
                   this.exploitation = _exploitation[0];
-                  // this.resetPpo(new Date());
+
                 }
               })
             } else {
               this.exploitationService.getExploitationById(this.idexploitation).subscribe({
                 next: (_exploitation) => {
-                  console.log(_exploitation)
+
                   this.exploitations.push(_exploitation);
                   this.exploitation = this.exploitations[0];
-                  // this.resetPpo(new Date());
+
                 }
               })
             }
@@ -175,7 +175,7 @@ export class VenteComponent implements OnInit {
     this.idcentrerevenu = _centrerevenu.id ? _centrerevenu.id : 0;
     this.venteService.getVenteCrDate([this.idcentrerevenu], this.formatDate(this.dates.debut), this.formatDate(this.dates.fin, true), false).subscribe({
       next: (_ventes: any) => {
-        console.log(_ventes)
+
         this.ventes = _ventes;
         this.ventesBack = _ventes;
       }
@@ -232,10 +232,10 @@ export class VenteComponent implements OnInit {
   submit() {
     this.vente.montantht = this.calculprix(this.vente.ventedetail).montantht;
     this.vente.montantttc = this.calculprix(this.vente.ventedetail).montantttc;
-    console.log(this.vente)
+
     this.venteService.addVente(this.vente).subscribe({
       next: async (vente) => {
-        // console.log(vente)
+
         alert('Vente enregistrer');
         await this.selectCentreRevenus(this.centrerevenu);
         this.modifToggle = !this.modifToggle;
@@ -273,7 +273,7 @@ export class VenteComponent implements OnInit {
             datevente: this.screenDateFile(item.fichier)
           })
         }
-        console.log(_venteimporter)
+
         this.fichierventesdefaut = _venteimporter;
         this.fichierventes = _venteimporter;
       }
@@ -283,10 +283,10 @@ export class VenteComponent implements OnInit {
   filtreventefichier(isimport: boolean = true) {
     if (isimport == true) {
       this.fichierventes = this.fichierventesdefaut.filter(file => file.isimport == 1)
-      console.log(this.fichierventes, this.fichierventesdefaut)
+
     } else {
       this.fichierventes = this.fichierventesdefaut.filter(file => file.isimport == 0)
-      console.log(this.fichierventes, this.fichierventesdefaut)
+
     }
   }
 
@@ -339,13 +339,13 @@ export class VenteComponent implements OnInit {
                     datevente: this.screenDateFile(item.fichier)
                   })
                 }
-                console.log(_venteimporter)
+
                 this.fichierventesdefaut = _venteimporter;
                 this.fichierventes = _venteimporter;
               }
             })
           }
-          // alert(index);
+
         }
       })
     }
@@ -392,13 +392,13 @@ export class VenteComponent implements OnInit {
     this.fichetetchniqueService.getFichetechniqueByExploitation(this.idexploitation).subscribe({
       next: (_fichetechniques) => {
         this.fichetechniques = _fichetechniques;
-        // this.fichetechniques = this.fichetechniques.filter(ft => {
-        //   return !lieu.inventairedetail.some(fondArticle => fondArticle.articleId === article.articleId);
-        // });
+
+
+
         this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
           (result) => {
             this.closeResult = `Closed with: ${result}`;
-            // console.log(this.closeResult)
+
             if (this.closeResult == 'Closed with: Save click') {
               for (const ft of this.fichetechniques) {
                 if (ft.selected == true) {
@@ -417,7 +417,7 @@ export class VenteComponent implements OnInit {
           },
           (reason) => {
             this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-            console.log(this.closeResult)
+
 
           },
         );

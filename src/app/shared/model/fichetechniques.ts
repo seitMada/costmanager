@@ -47,9 +47,9 @@ export class Composition implements InterfaceComposition {
     quantite: number;
     uniteId: number;
     cout: number;
-    
+
     article: InterfaceArticle | null;
-    // fichetechnique: InterfaceFichetechnique;
+
     fichetechniqueCompositon: InterfaceFichetechnique | null;
     unite: InterfaceUnite;
 
@@ -61,7 +61,7 @@ export class Composition implements InterfaceComposition {
         this.cout = compositionInterface.cout;
         this.uniteId = compositionInterface.uniteId;
         this.article = compositionInterface.article;
-        // this.fichetechnique = compositionInterface.fichetechnique;
+
         this.fichetechniqueCompositon = compositionInterface.fichetechniqueCompositon;
         this.unite = compositionInterface.unite;
     }
@@ -72,11 +72,11 @@ export class Compositions implements InterfaceCompositions {
 
     constructor(compositions: InterfaceComposition[]) {
         this.compositions = compositions;
-      }
-    
-      *[Symbol.iterator]() {
+    }
+
+    *[Symbol.iterator]() {
         for (let composition of this.compositions) {
-          yield composition;
+            yield composition;
         }
-      }
+    }
 }

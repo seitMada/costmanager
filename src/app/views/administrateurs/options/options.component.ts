@@ -49,7 +49,7 @@ export class OptionsComponent implements OnInit {
 
   public lieuStockage: InterfaceLieustockages;
   public lieuSTockages: InterfaceLieustockages[];
-  // public zoneStockage: InterfaceZonestockages;
+
   public zoneStockages: InterfaceZonestockages[];
   public operateur: InterfaceOperateur;
   public operateurs: InterfaceOperateur[];
@@ -116,7 +116,7 @@ export class OptionsComponent implements OnInit {
   public addZone = false;
   selectedExploitationId: number | null = null;
 
-  // public country = PAYS;
+
   public country = PAYS.sort((a, b) => {
     const nameA = a.translations?.fr?.toLowerCase() || '';
     const nameB = b.translations?.fr?.toLowerCase() || '';
@@ -275,7 +275,7 @@ export class OptionsComponent implements OnInit {
     if (this.isAdmin) {
       this.exploitationService.findAllExploitation().subscribe({
         next: async (_exploitations) => {
-          console.log(_exploitations)
+
           for (const _exploitation of _exploitations) {
             if (_exploitation.adresses === null) {
               _exploitation.adresses = {
@@ -406,7 +406,7 @@ export class OptionsComponent implements OnInit {
                 operateur: [],
               }
             } else {
-              // console.log(_exploitation.adresses)
+
               _exploitation[0].adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation[0].adresses.pays })
             }
             this.exploitation = _exploitation[0];
@@ -419,7 +419,7 @@ export class OptionsComponent implements OnInit {
   }
 
   public cancelexploitation() {
-    // console.log(this.exploitation.id)
+
     this.modifToggleExploitation = false;
     this.inputModifExploitation = true;
     this.toggleCentreExploitation = true;
@@ -427,9 +427,9 @@ export class OptionsComponent implements OnInit {
       this.toggleexploitation = !this.toggleexploitation ? true : false;
       this.exploitations = this.exploitations;
       this.addCentre = false;
-      // this.centres = [];
-      // this.resetOperateur();
-      // this.showAllOperateur();
+
+
+
     }
   }
 
@@ -448,7 +448,7 @@ export class OptionsComponent implements OnInit {
             operateur: [],
           }
         } else {
-          // console.log(_exploitation.adresses)
+
           _exploitation[0].adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation[0].adresses.pays })
         }
         this.exploitation = _exploitation[0];
@@ -460,7 +460,7 @@ export class OptionsComponent implements OnInit {
   public getAllExploitation() {
     this.exploitationService.findAllExploitation().subscribe({
       next: (_exploitations) => {
-        console.log(_exploitations.filter((item: { codenaf: string; }) => item.codenaf !== 'ADMIN'))
+
         this.exploitations = _exploitations.filter((item: { codenaf: string; }) => item.codenaf !== 'ADMIN');
       },
     })
@@ -535,7 +535,7 @@ export class OptionsComponent implements OnInit {
 
   public addfichetechnique() {
     this.addfichetechniquetoggle = true;
-    // this.articles = [];
+
     this.fichetechniqueService.getFichetechniques().subscribe({
       next: (_fichetechniques) => {
         _fichetechniques.forEach((_fichetechnique: { selected: boolean; fichetechniqueexploitation: any[] }) => {
@@ -543,11 +543,11 @@ export class OptionsComponent implements OnInit {
             element => element.exploitationsId === this.exploitation.id
           );
         });
-        // _articles.forEach((_article: { selected: boolean; articleexploitation: any[] }) => {
-        //   _article.selected = _article.articleexploitation.some(
-        //     element => element.exploitationsId === this.exploitation.id
-        //   );
-        // });
+
+
+
+
+
         this.fichetechniques = _fichetechniques;
       }
     })
@@ -632,7 +632,7 @@ export class OptionsComponent implements OnInit {
 
   public addarticle() {
     this.addarticletoggle = true;
-    // this.articles = [];
+
     this.articleService.getAllArticle().subscribe({
       next: (_articles) => {
         _articles.forEach((_article: { selected: boolean; articleexploitation: any[] }) => {
@@ -767,14 +767,14 @@ export class OptionsComponent implements OnInit {
   public selectexploitation(_event: any) {
     this.exploitationselected = _event.target.id.split('-')[1];
     if (this.inputModifCentre === false) {
-      // console.log(_event.target.id.split('-')[2])
+
       this.centre.exploitations.libelle = _event.target.id.split('-')[2];
     }
   }
 
   public savecentrerevenuexploitation(_centre: InterfaceCentreRevenu, _save: boolean = true) {
     if (_save) {
-      console.log(_centre)
+
       _centre.exploitationsId = this.exploitationselected;
       this.centreService.updateCentreRevenu(_centre, []).subscribe({
         next: (value) => {
@@ -810,8 +810,8 @@ export class OptionsComponent implements OnInit {
 
   public async showCentreRevenu(centreRevenu: InterfaceCentreRevenu) {
     this.resetCentre();
-    // this.resetExploitation();
-    // this.resetLieuStockage();
+
+
 
     this.centre = centreRevenu;
     this.centreId = centreRevenu.id ? centreRevenu.id : 0;
@@ -855,7 +855,7 @@ export class OptionsComponent implements OnInit {
         this.lieustockageService.getAllLieuStockage().subscribe({
           next: (_lieustocks) => {
             this.lieustockagescentrerevenus = _lieustocks.filter((item: { centreId: number | undefined; }) => item.centreId === this.centre.id);
-            // console.log(this.lieustockagescentrerevenus)
+
           },
         });
       },
@@ -880,7 +880,7 @@ export class OptionsComponent implements OnInit {
         });
         this.lieustockagescentrerevenus = _lieustocks;
         this.modifLieustockageCentre = true;
-        // console.log(this.lieustockagescentrerevenus)
+
       },
     });
   }
@@ -903,8 +903,8 @@ export class OptionsComponent implements OnInit {
         this.modifLieustockageCentre = false;
       },
     });
-    // this.lieustockagescentrerevenus = _lieustockages;
-    // this.modifLieustockageCentre = false;
+
+
   }
 
   public createCentrerevenu() {
@@ -1025,7 +1025,7 @@ export class OptionsComponent implements OnInit {
   }
 
   public deletecentrerevenu() {
-    // console.log(this.centres)
+
     if (this.isAdmin) {
       const listcentrerevenutodelete = [];
       this.centres.forEach(_centre => {
@@ -1037,7 +1037,7 @@ export class OptionsComponent implements OnInit {
         listcentrerevenutodelete.push(this.centre.id)
       }
       if (listcentrerevenutodelete.length > 0) {
-        // console.log(listcentrerevenutodelete)
+
         this.centreService.deleteCentreRevenu(listcentrerevenutodelete).subscribe({
           next: () => {
             this.resetCentre();
@@ -1053,20 +1053,20 @@ export class OptionsComponent implements OnInit {
 
   /*********************LIEU DE STOCKAGE**************************/
 
-  // public findAllLieuStockage() {
-  //   this.lieustockageService.getAllLieuStockage().subscribe({
-  //     next: (_lieuStockages) => {
-  //       this.lieuSTockages = _lieuStockages;
-  //       // this.lieuStockage = _lieuStockages[0];
-  //       // this.zoneStockage = {
-  //       //   zone: '',
-  //       //   lieuId: _lieuStockages[0].id ? _lieuStockages[0].id : 0,
-  //       //   selected: false,
-  //       //   lieu: _lieuStockages[0],
-  //       // }
-  //     },
-  //   })
-  // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   public resetLieuStockage() {
     this.lieuStockage = {
@@ -1092,7 +1092,7 @@ export class OptionsComponent implements OnInit {
 
   public async showOneLieuStockage(lieustockage: InterfaceLieustockages) {
     this.resetLieuStockage();
-    // this.resetCentre();
+
     this.lieuStockage = lieustockage;
 
     this.lieuId = this.lieuStockage.id ? this.lieuStockage.id : 0;
@@ -1138,55 +1138,55 @@ export class OptionsComponent implements OnInit {
         }
       }
     })
-    // this.centreService.getcentrerevenu().subscribe({
-    //   next: (_centres) => {
-    //     this.centres = [];
-    //     this.inputModif = true;
-    //     this.toggle = !this.toggle;
-    //     for (const centre of _centres) {
-    //       if (centre.id == lieustockage.centreId) {
-    //         this.centre = {
-    //           code: centre.code,
-    //           libelle: centre.libelle,
-    //           exploitationsId: centre.exploitationId ? centre.exploitationId : 0,
-    //           adressesId: centre.adresseId ? centre.adresseId : 0,
-    //           email: centre.email,
-    //           telephone: centre.telephone,
-    //           exploitations: centre.exploitation,
-    //           adresses: centre.adresse,
-    //           selected: false,
-    //           lieuStockage: []
-    //         }
-    //         this.centres.push(this.centre);
-    //       }
-    //     }
-    //     this.zonestockageService.getListZoneWithoutLinksByLieuId(this.lieuId).subscribe({
-    //       next: (_zonestockages) => {
 
-    //         for (const zonestock of _zonestockages) {
-    //           let selected = false;
-    //           this.zoneStockages = [];
-    //           for (const _lieustock of this.lieuStockage.zonestockage) {
-    //             if (zonestock.id === _lieustock.id) {
-    //               selected = true;
-    //             }
-    //             this.zoneStockage = {
-    //               zone: _lieustock.zone,
-    //               lieuId: _lieustock.lieuId,
-    //               selected: selected,
-    //               lieu: this.lieuStockage,
-    //             }
-    //             this.zoneStockages.push(this.zoneStockage);
-    //           }
-    //         }
-    //       },
-    //     })
-    //   },
-    // })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   }
 
   public showAllLieuStockage() {
-    // this.resetLieuStockage();
+
     if (this.isAdmin) {
       this.lieustockageService.getAllLieuStockage().subscribe({
         next: (_lieustocks) => {
@@ -1196,7 +1196,7 @@ export class OptionsComponent implements OnInit {
     } else {
       this.lieustockageService.findListLieuStockageByExploitation(this.exploitationid).subscribe({
         next: (_lieustocks) => {
-          console.log(_lieustocks)
+
           this.lieuSTockages = _lieustocks;
         },
       })
@@ -1249,8 +1249,8 @@ export class OptionsComponent implements OnInit {
   public selectcentrerevenulieu(_event: any) {
     this.centrerevenulieustockagesselected = _event.target.id.split('-')[1];
     if (this.inputModifLieu === false) {
-      // console.log(_event.target.id.split('-')[2])
-      // this.centre.exploitations.libelle = _event.target.id.split('-')[2];
+
+
     }
   }
 
@@ -1267,7 +1267,7 @@ export class OptionsComponent implements OnInit {
       } else { /// CREER LIEU DE STOCKAGE
         const _zonestockages = this.zonestockageslieustockages.filter(item => item.selected === true);
         this.lieuStockage.centreId = this.centrerevenulieustockagesselected;
-        // console.log(this.lieuStockage, _zonestockages)
+
         this.lieustockageService.createLieuStockage(this.lieuStockage, _zonestockages).subscribe({
           next: async (value) => {
             await this.showOneLieuStockage(value);
@@ -1283,7 +1283,7 @@ export class OptionsComponent implements OnInit {
 
   public savelieucentrerevenu(_lieu: InterfaceLieustockages, _save: boolean = true) {
     if (_save) {
-      console.log(_lieu)
+
       _lieu.centreId = this.centrerevenulieustockagesselected;
       this.lieustockageService.updateLieuDeStockage(_lieu, []).subscribe({
         next: async (value) => {
@@ -1353,18 +1353,18 @@ export class OptionsComponent implements OnInit {
 
   public listezonestockageforlieustockage(_lieuStockage: any) {
 
-    // this.lieustockageService.getAllLieuStockage().subscribe({
-    //   next: (_lieustocks) => {
-    //     _lieustocks.forEach((element: { selected: boolean; centreId: number | undefined; }) => {
-    //       if (element.centreId === this.centre.id) {
-    //         element.selected = true;
-    //       }
-    //     });
-    //     this.lieustockagescentrerevenus = _lieustocks;
-    //     this.modifLieustockageCentre = true;
-    //     // console.log(this.lieustockagescentrerevenus)
-    //   },
-    // });
+
+
+
+
+
+
+
+
+
+
+
+
   }
 
   public createzonestockage(_lieuStockage: InterfaceLieustockages) {
@@ -1383,7 +1383,7 @@ export class OptionsComponent implements OnInit {
           _lieuStockage.zonestockage.push(element);
           this.zonestockageslieustockages = _lieuStockage.zonestockage;
         }
-        console.log(_lieuStockage)
+
       },
     });
   }
@@ -1434,9 +1434,9 @@ export class OptionsComponent implements OnInit {
   getAllCentreRevenuWithoutLink() {
     this.centreService.getAllCentreRevenuWithoutLinks().subscribe({
       next: (_centres) => {
-        // this.centres = _centres;
+
         this.centresrevenusexploitations = _centres;
-        // console.log(this.centres);
+
         this.exploitation = {
           code_couleur: "...",
           libelle: "...",
@@ -1461,7 +1461,7 @@ export class OptionsComponent implements OnInit {
       next: (_zonestockages) => {
         this.zoneStockages = _zonestockages;
         this.zoneStockage = _zonestockages[0];
-        console.log(this.zoneStockages);
+
 
       },
     })
@@ -1526,23 +1526,23 @@ export class OptionsComponent implements OnInit {
     }
   }
 
-  // deleteZoneStockage() {
-  //   this.zonestockageService.deleteZoneStockage(this.zoneStockage).subscribe({
-  //     next: (value) => {
-  //       this.resetZonestockage();
-  //       this.toggleToast('Ce zone de stocakage a été supprimé avec succès!');
-  //       this.toggle = !this.toggle;
-  //       this.showAllZoneStockage();
-  //     },
-  //   });
-  // }
+
+
+
+
+
+
+
+
+
+
 
 
 
   selectCentreRevenu(centre: InterfaceCentreRevenu) {
     this.exploitation.centreRevenu = [];
     this.exploitation.centreRevenu = this.centres.filter(line => line.selected);
-    console.log(this.exploitation);
+
 
   }
 
@@ -1570,7 +1570,7 @@ export class OptionsComponent implements OnInit {
           this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
             (result) => {
               this.closeResult = `Closed with: ${result}`;
-              console.log(this.closeResult)
+
               if (this.closeResult == 'Closed with: Save click') {
                 if (this.adresse) {
                   if (this.addCentre === false) {
@@ -1585,7 +1585,7 @@ export class OptionsComponent implements OnInit {
             },
             (reason) => {
               this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-              console.log(this.closeResult)
+
             },
           );
         }
@@ -1624,36 +1624,36 @@ export class OptionsComponent implements OnInit {
   }
 
 
-  // submit() {
-  //   if (this.isAdmin) {
-  //     this.exploitationId = this.exploitation.id ? this.exploitation.id : 0;
-  //     if (this.exploitationId == 0) {
-  //       this.exploitation.centreRevenu = this.centres.filter((line: any) => line.selected);
-  //       this.centres = this.exploitation.centreRevenu;
-  //       if (this.exploitation.centreRevenu.length > 0) {
-  //         this.exploitationService.createExploitation(this.exploitation, this.centres).subscribe({
-  //           next: (value) => {
-  //             this.toggleToast('Nouveau exploitation crée avec succès !');
-  //             this.inputModif = !this.inputModif;
-  //             this.modifToggle = true;
-  //           },
-  //         });
-  //       } else {
-  //         alert('Veuiller sélectionner au moins un centre de revenu');
-  //       }
-  //     } else {
-  //       console.log(this.exploitation);
 
-  //       this.exploitationService.updateExploitation(this.exploitation).subscribe({
-  //         next: (value) => {
-  //           this.toggleToast('Cet exploitation a été modifié avec succès !');
-  //           this.inputModif = !this.inputModif;
-  //           this.modifToggle = true;
-  //         },
-  //       });
-  //     }
-  //   }
-  // }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   saveCentre() {
     this.lieuSTockages = this.centre.lieuStockage;
@@ -1666,18 +1666,18 @@ export class OptionsComponent implements OnInit {
     })
   }
 
-  // deleteCentreRevenu() {
-  //   if (this.isAdmin) {
-  //     this.centreService.deleteCentreRevenu(this.centre).subscribe({
-  //       next: (value) => {
-  //         this.resetCentre();
-  //         this.toggleToast('Ce centre de revenu a été supprimé avec succès!');
-  //         this.toggle = !this.toggle;
-  //         this.showAllCentreRevenu();
-  //       },
-  //     });
-  //   }
-  // }
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1752,7 +1752,7 @@ export class OptionsComponent implements OnInit {
         next: (_operateurs) => {
           this.operateurs = _operateurs;
           this.operateur = _operateurs[0];
-          console.log(this.operateurs);
+
         },
       })
     }
@@ -1839,7 +1839,7 @@ export class OptionsComponent implements OnInit {
   }
 
   selectCountry(line: any) {
-    console.log(line)
+
     this.exploitation.adresses.pays = line.translations.fr;
     this.exploitation.adresses.flags = line.alpha2Code.toLowerCase() + '.svg';
   }

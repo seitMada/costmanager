@@ -11,28 +11,28 @@ const routes: Routes = [
     data: {
       title: 'Inventaires',
     },
-    // redirectTo: 'inventaires',
-    // children: [
-    //   {
-    //     path: '',
-    //     pathMatch: 'full',
-    //     redirectTo: 'inventaires',
-    //   },
-    //   {
-    //     path: 'inventaires',
-    //     component: InventairesComponent,
-    //     data: {
-    //       title: 'Inventaires',
-    //     },
-    //   },
-    //   // {
-    //   //   path: 'creations_inventaires',
-    //   //   component: CreationInventairesComponent,
-    //   //   data: {
-    //   //     title: 'Creations inventaires',
-    //   //   },
-    //   // },
-    // ]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   }
 ];
 

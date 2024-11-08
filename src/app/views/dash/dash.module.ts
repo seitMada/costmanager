@@ -2,10 +2,10 @@ import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
 
-// // views
+
 import { DashComponent } from "./dash.component";
 
-// Components Routing
+
 import { DashRoutingModule } from './dash-routing.module';
 import { NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
@@ -18,7 +18,7 @@ import { NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
     NgbTooltipModule,
   ],
   declarations: [
-    
+
   ],
 })
-export class DashModule {}
+export class DashModule { }

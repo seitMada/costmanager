@@ -36,7 +36,7 @@ export class SynthesePposComponent implements OnInit {
   public ppodetailsarticle: InterfacePpoDetail[] = [];
   public pposft: InterfacePpos[] = [];
   public ppodetailsft: InterfacePpoDetail[] = [];
-  // public ppodetails: { libelle: '', id: 0, unite: '', cout: 0, familleColor: '', totalCost: '', totalQuantity: '' }[] = [];
+
   public ppodetails: InterfacePpoDetail[];
   public ppodetails_all: InterfacePpoDetail[];
   public nbarticle = 0;
@@ -182,7 +182,7 @@ export class SynthesePposComponent implements OnInit {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-    // console.log(`${year}-${month}-${day} 00:00:00`)
+
     if (fin == true) {
       return `${year}-${month}-${day} 23:59:59`;
     }
@@ -450,7 +450,7 @@ export class SynthesePposComponent implements OnInit {
       },
       xAxis: {
         categories: [],
-        // crosshair: true,
+
         accessibility: {
           description: 'Familles'
         }
@@ -476,7 +476,7 @@ export class SynthesePposComponent implements OnInit {
           stacking: 'normal',
           dataLabels: {
             enabled: true,
-            // format: '{point.y:.2f} €',
+
             formatter: function () {
               return this.y !== 0 ? this.y : null; // Hide label if y-value is 0
             }
@@ -506,7 +506,7 @@ export class SynthesePposComponent implements OnInit {
       },
       xAxis: {
         categories: [],
-        // crosshair: true,
+
         accessibility: {
           description: 'Familles'
         }
@@ -532,7 +532,7 @@ export class SynthesePposComponent implements OnInit {
           stacking: 'normal',
           dataLabels: {
             enabled: true,
-            // format: '{point.y:.2f} €',
+
             formatter: function () {
               return this.y !== 0 ? this.y : null; // Hide label if y-value is 0
             }
@@ -562,7 +562,7 @@ export class SynthesePposComponent implements OnInit {
       },
       xAxis: {
         categories: [],
-        // crosshair: true,
+
         accessibility: {
           description: 'Familles'
         }
@@ -588,7 +588,7 @@ export class SynthesePposComponent implements OnInit {
           stacking: 'normal',
           dataLabels: {
             enabled: true,
-            // format: '{point.y:.2f} €',
+
             formatter: function () {
               return this.y !== 0 ? this.y : null; // Hide label if y-value is 0
             }
@@ -640,7 +640,7 @@ export class SynthesePposComponent implements OnInit {
           stacking: 'normal',
           dataLabels: {
             enabled: true,
-            // format: '{point.y:.2f} €',
+
             formatter: function () {
               return this.y !== 0 ? this.y : null; // Hide label if y-value is 0
             }
@@ -721,7 +721,7 @@ export class SynthesePposComponent implements OnInit {
   }
 
   public histogramme(ppodetails: InterfacePpoDetail[], familles: string[], type: number = 1) {
-    console.log(ppodetails)
+
 
     this.tranchedatesemaine = this.getWeeklySlices(new Date(this.dates.debut), new Date(this.dates.fin));
     this.tranchedatemois = this.getMonthlySlices(new Date(this.dates.debut), new Date(this.dates.fin));
@@ -756,7 +756,7 @@ export class SynthesePposComponent implements OnInit {
       series: data,
     });
 
-    // HISTOGRAMME SEMAINE ******************************************************************************
+
     this.ppoService.getPpoDetails(this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected, this.formatDate(this.dates.debut), this.formatDate(this.dates.fin, true), this.exploitationsselected.length > 0).subscribe({
       next: (_ppo: any) => {
         data = [];
@@ -787,7 +787,7 @@ export class SynthesePposComponent implements OnInit {
           series: data,
         });
 
-        // HISTOGRAMME MOIS ******************************************************************************
+
         data = [];
         ppodetails_tranche = [];
         for (const _date of this.tranchedatemois) {
@@ -817,7 +817,7 @@ export class SynthesePposComponent implements OnInit {
         });
 
 
-        // HISTOGRAMME ANNEE ******************************************************************************
+
         data = [];
         ppodetails_tranche = [];
         for (const _date of this.tranchedateannee) {
@@ -849,10 +849,10 @@ export class SynthesePposComponent implements OnInit {
     })
   }
 
- 
+
 
   private getTableauPerteArticle(event: any) {
-    console.log(event)
+
     this.bordercolor = event.point.color;
     let _id: number[] = [];
     const data = {
@@ -864,8 +864,8 @@ export class SynthesePposComponent implements OnInit {
     this.ppoService.getPpoDetailDataFamille(data).subscribe({
       next: (_data: any) => {
         this.ppodetailsarticlebyfamille = _data.article;
-        console.log(this.ppodetailsarticlebyfamille);
-        
+
+
       }
     });
   }
@@ -873,8 +873,8 @@ export class SynthesePposComponent implements OnInit {
   private getTableauPerteFtArticle(event: any) {
     this.bordercolor = event.point.color;
     let _id: number[] = [];
-    console.log(this.dates);
-    
+
+
     const data = {
       date: this.dates,
       id: this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected,
@@ -883,7 +883,7 @@ export class SynthesePposComponent implements OnInit {
     };
     this.ppoService.getPpoDetailDataFamille(data).subscribe({
       next: (_data: any) => {
-        console.log(_data);
+
         this.ppodetailsftarticlebyfamille = _data.fichetechniquearticle;
       }
     });
@@ -900,7 +900,7 @@ export class SynthesePposComponent implements OnInit {
     };
     this.ppoService.getPpoDetailDataFamille(data).subscribe({
       next: (_data: any) => {
-        // console.log(_data);
+
         this.ppodetailsftbyfamille = _data.fichetechnique;
       }
     });
@@ -915,7 +915,7 @@ export class SynthesePposComponent implements OnInit {
 
   calculCout(table: { libelle: '', id: 0, familleColor: '', totalCost: '', totalQuantity: '' }[]) {
     let data = { cout: 0, quantite: 0 };
-    // console.log(this.ppodetailsarticlebyfamille)
+
     for (const item of table) {
       data.cout += +item.totalCost;
       data.quantite += +item.totalQuantity;
@@ -1022,7 +1022,7 @@ export class SynthesePposComponent implements OnInit {
     }
     this.ppoService.getPpoDetailData(data).subscribe({
       next: async (_response: any) => {
-        console.log(_response)
+
         this.ppoService.getPpoDetails(this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected, this.formatDate(this.dates.debut), this.formatDate(this.dates.fin, true), this.exploitationsselected.length > 0).subscribe({
           next: (_ppo: any) => {
             let _categories: any[] = [];
@@ -1050,11 +1050,11 @@ export class SynthesePposComponent implements OnInit {
               _dataquantityarticle.push(dataqtyarticle);
               _datacostarticle.push(datacostarticle);
             }
-            console.log(_categories,_datacostarticle);
+
             this.syntheseMontantPerteArticle(_categories, _datacostarticle).then();
-            // this.syntheseQuantitePerteArticle(_categories, _dataquantityarticle).then(() => {
-            //   this.syntheseMontantPerteArticle(_categories, _dataquantityarticle).then(() => { })
-            // })
+
+
+
 
             _categories = [];
             const _dataquantityft = [];
@@ -1081,20 +1081,20 @@ export class SynthesePposComponent implements OnInit {
               _dataquantityft.push(dataqtyft);
               _datacostft.push(datacostft);
               this.syntheseMontantPerteFt(_categories, _datacostft).then();
-              // this.syntheseQuantitePerteFt(_categories, _dataquantityft).then(() => {
-              //   this.syntheseMontantPerteFt(_categories, _datacostft).then(() => {
-              //     // this.syntheseMontantPerteFtArticle(_categories, _datacostft).then()
-              //   })
-              // })
+
+
+
+
+
             }
 
             _categories = [];
             const _dataquantityftarticle = [];
             const _datacostftarticle: { y: number; name: string; color: string; }[] | { y: number; name: any; color: any; id: any; exploitation: boolean; }[] = [];
             for (const _ppodetails of _response.fichetechniquearticle) {
-              // this.ppodetailsft.push(_ppodetails);
+
               _categories.push(_ppodetails.familleLibelle);
-              // this.categoriesfamille.push(_ppodetails.familleLibelle + '  (FT)');
+
               const dataqtyftarticle = {
                 y: +_ppodetails.totalQuantity,
                 name: _ppodetails.familleLibelle,
@@ -1114,8 +1114,8 @@ export class SynthesePposComponent implements OnInit {
               this.syntheseMontantPerteFtArticle(_categories, _datacostftarticle).then()
             }
             this.ppodetails = [];
-            // this.ppodetails_all = _ppo;
-            // for (const iterator of _ppo) {
+
+
             for (const item of _ppo) {
               if (item.article == null) {
                 if (!this.ppodetails.some(existingValue => JSON.stringify(existingValue.fichetechniqueId) === JSON.stringify(item.fichetechniqueId))) {
@@ -1123,7 +1123,7 @@ export class SynthesePposComponent implements OnInit {
                   this.ppodetails.push(item);
                   this.nbft++;
                 } else {
-                  // let valorisation = 0;
+
                   this.ppodetails.forEach(ppodetail => {
                     if (ppodetail.fichetechniqueId === item.fichetechniqueId) {
                       ppodetail.quantite += +item.quantite;
@@ -1138,7 +1138,7 @@ export class SynthesePposComponent implements OnInit {
                   this.ppodetails.push(item);
                   this.nbarticle++;
                 } else {
-                  // let valorisation = 0;
+
                   this.ppodetails.forEach(ppodetail => {
                     if (ppodetail.articleId === item.articleId) {
                       ppodetail.quantite += +item.quantite;
@@ -1147,7 +1147,7 @@ export class SynthesePposComponent implements OnInit {
                   });
                 }
               }
-              // }
+
             }
             this.histogramme(this.ppodetails, this.categoriesfamille, 1);
           }
@@ -1176,7 +1176,7 @@ export class SynthesePposComponent implements OnInit {
   }
 
   private getMonthlySlices(dateDebut: Date, dateFin: Date) {
-    // Validate input (optional)
+
     let debut = new Date(dateDebut);
     let fin = new Date(dateFin);
 

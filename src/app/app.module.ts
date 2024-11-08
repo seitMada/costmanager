@@ -3,23 +3,23 @@ import { DatePipe, HashLocationStrategy, LocationStrategy, PathLocationStrategy 
 import { BrowserModule, Title } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
-import { FormsModule,ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
-// import { FontAwesomeModule } from '@fortawesome/fontawesome-free';
+
 
 import { NgScrollbarModule } from 'ngx-scrollbar';
 
-// Import routing module
+
 import { AppRoutingModule } from './app-routing.module';
 
-// Import app component
+
 import { AppComponent } from './app.component';
 import { ExploitationService } from '../app/shared/service/exploitation.service';
 import { SortFilterSearchService } from '../app/shared/service/sort-filter-search.service';
 
-// Import containers
+
 import { DefaultFooterComponent, DefaultHeaderComponent, DashboardComponent } from './dashboard';
 
 import {

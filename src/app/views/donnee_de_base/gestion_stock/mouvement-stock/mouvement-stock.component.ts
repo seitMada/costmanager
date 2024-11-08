@@ -147,7 +147,7 @@ export class MouvementStockComponent implements OnInit {
             this.inventaireService.getPeriode(this.exploitationsselected, true).subscribe({
               next: (value: any) => {
                 this.periode = value;
-                console.log(value)
+
                 if (this.periode.length > 0) {
                   const _index = this.periode.length - 1;
                   const _periode = this.periode[_index]
@@ -163,11 +163,11 @@ export class MouvementStockComponent implements OnInit {
                   if (this.periodeselected.fin == null) {
                     _dateFin.setDate(_dateFin.getDate() - 1);
                   }
-                  console.log(this.exploitations[0])
+
                   this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, this.exploitationsselected, true).subscribe({
                     next: (_articles: any) => {
                       this.mouvemenstock = _articles;
-                      console.log(this.mouvemenstock);
+
                       this.mouvemenstockback = _articles;
                       this.unitefilter = [];
                       this.dates.debut = new Date(this.getrealdate(_periode.debut));
@@ -202,7 +202,7 @@ export class MouvementStockComponent implements OnInit {
 
   selectPeriode(_periode: { debut: Date, fin: Date }) {
     this.periodeselected = _periode;
-    console.log(_periode)
+
     this.dates.debut = new Date(this.getrealdate(this.periodeselected.debut));
     this.dates.fin = new Date(this.getrealdate(this.periodeselected.fin ? this.periodeselected.fin : new Date()));
   }
@@ -244,7 +244,7 @@ export class MouvementStockComponent implements OnInit {
     }
     this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(_datefinal)) }, this.exploitationsselected.length > 0 ? this.exploitationsselected : this.centrerevenusselected, this.exploitationsselected.length > 0).subscribe({
       next: (_articles: any) => {
-        console.log(this.formatDate(new Date(this.periodeselected.debut)), this.formatDate(new Date(_dateFin)), this.formatDate(new Date(_datefinal)))
+
         this.mouvemenstock = _articles;
         this.mouvemenstockback = _articles;
 
@@ -255,24 +255,24 @@ export class MouvementStockComponent implements OnInit {
         for (const unite of _articles) {
           this.unitefilter.push(unite.unite);
         }
-        // this.isfinperiode = true;
+
         this.unitefilter = this.removeDuplicates(this.unitefilter);
       }
     })
   }
 
-  // private getrealdate(dateString: any) {
-  //   const date = new Date(dateString);
 
-  //   const year = date.getFullYear();
-  //   const month = (date.getMonth() + 1)  < 10 ? '0' + (date.getMonth() + 1) : (date.getMonth() + 1);
-  //   const day = date.getDate();
 
-  //   return (`${year}-${month}-${day}`);
-  // }
+
+
+
+
+
+
+
 
   screenDate(date: Date, format: string = 'dd/MM/yyyy') {
-    // return this.datePipe.transform(date, format);
+
     if (date !== null) {
       date = new Date(date);
     } else {
@@ -281,8 +281,8 @@ export class MouvementStockComponent implements OnInit {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-    // console.log(`${year}-${month}-${day} 00:00:00`)
-    // return `${year}-${month}-${day}`;
+
+
     return `${day}/${month}/${year}`;
   }
 
@@ -290,7 +290,7 @@ export class MouvementStockComponent implements OnInit {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-    // console.log(`${year}-${month}-${day} 00:00:00`)
+
     return `${year}-${month}-${day}`;
   }
 
@@ -350,7 +350,7 @@ export class MouvementStockComponent implements OnInit {
   }
 
   tri(event: any, colonne: any, type: string = 'string') {
-    // console.log(this.mouvemenstock['libelle'])
+
     switch (event.target.id) {
       case 'fa-sort':
         event.target.id = 'fa-sort-up';
@@ -421,11 +421,11 @@ export class MouvementStockComponent implements OnInit {
 
   search(event: any, colonne: any = 'libelle') {
     const value = (event.target.value).toLowerCase();
-    console.log(value)
+
     if (value === '') {
       this.mouvemenstock = this.mouvemenstockback;
     } else {
-      // this.searchCode = '';
+
       const search: any[] = [];
       this.mouvemenstockback.forEach((element: any): any => {
         const rpl = element[colonne].replace(new RegExp(/[èéêë]/g), 'e');

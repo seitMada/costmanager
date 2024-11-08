@@ -72,7 +72,7 @@ export class FicheTechniqueComponent implements OnInit {
     private familleService: FamillesService,
     private articleService: ArticleService,
     private exploitationService: ExploitationService,
-    // private allergeneService: AllergenesService
+
     private sortFilterSearchService: SortFilterSearchService
   ) {
     this.bsConfig = Object.assign({}, { containerClass: 'theme-blue', locale: 'fr', dateInputFormat: 'DD/MM/YYYY' });
@@ -155,7 +155,7 @@ export class FicheTechniqueComponent implements OnInit {
         const { fichetechniqueByExploitation, groupeanalytique, categorie, unite, exploitations, articlesByExploitation } = data;
         this.fichetechniques = fichetechniqueByExploitation;
         this.fichetechniquesBack = fichetechniqueByExploitation;
-        console.log(this.fichetechniques)
+
         this.categories = categorie;
         this.groupeanalytiques = groupeanalytique;
         this.unites = unite;
@@ -173,7 +173,7 @@ export class FicheTechniqueComponent implements OnInit {
     this.idFichetechnique = fichetechnique.id ? fichetechnique.id : 0;
     this.fichetechnique = fichetechnique;
     this.compositions = fichetechnique.composition;
-    // console.log(this.compositions)
+
     const dat = {
       groupeId: this.fichetechnique.groupeanalytiqueId,
       type: 'A'
@@ -187,11 +187,7 @@ export class FicheTechniqueComponent implements OnInit {
         this.addToggle = false;
         this.familles = familles;
         this.exploitations = exploitations;
-        for (const composition of this.compositions) {
-          this.articles = this.articles.filter(row => row.id !== composition.articleId);
-          this.fichetechniques = this.fichetechniques.filter(row => row.id !== composition.ftId);
-          this.fichetechniquesBack = this.fichetechniques.filter(row => row.id !== composition.ftId);
-        }
+
         this.calculCout(this.compositions);
         this.fichetechniqueService.getAllExploitationByFichetechnique(this.idFichetechnique).subscribe({
           next: (fichetechniqueExploitation: any) => {
@@ -203,6 +199,21 @@ export class FicheTechniqueComponent implements OnInit {
                 e.selected = false;
               }
             }
+
+            const articleIds: (number | undefined)[] = [];
+            const fichetechniqueIds: (number | undefined)[] = [];
+            for (const composition of this.compositions) {
+              if (composition.articleId != null) {
+                articleIds.push(composition.articleId);
+              }
+              if (composition.ftId != null) {
+                fichetechniqueIds.push(composition.ftId);
+              }
+            }
+            fichetechniqueIds.push(fichetechnique.id)
+            this.articles = this.articles.filter(row => !articleIds.includes(row.id));
+            this.fichetechniques = this.fichetechniques.filter(row => !fichetechniqueIds.includes(row.id));
+            this.fichetechniquesBack = this.fichetechniques.filter(row => !fichetechniqueIds.includes(row.id));
           }
         })
       }
@@ -213,7 +224,7 @@ export class FicheTechniqueComponent implements OnInit {
     if (this.idFichetechnique === 0) {
       this.fichetechniqueService.addFichetechnique(this.fichetechnique).subscribe({
         next: (fichetechnique: any) => {
-          // this.fichetechnique = fichetechnique;
+
           const exploitation: number[] = [];
           if (this.isAdmin) {
             for (const i of this.exploitations) {
@@ -223,11 +234,11 @@ export class FicheTechniqueComponent implements OnInit {
             }
           } else {
             exploitation.push(this.exploitation)
-            // for (const i of this.exploitations) {
-            //   if (i.selected === true) {
-            //     exploitation.push(i.id ? i.id : 0)
-            //   }
-            // }
+
+
+
+
+
           }
           this.idFichetechnique = fichetechnique;
           this.fichetechniqueService.updateFichetechniqueExploitation(fichetechnique, this.fichetechnique.id || 0, exploitation).subscribe({
@@ -235,7 +246,7 @@ export class FicheTechniqueComponent implements OnInit {
               this.compositions = [];
               this.fichetechniqueService.getFichetechniqueById(fichetechnique).subscribe({
                 next: (fichetechnique) => {
-                  console.log(fichetechnique)
+
                   this.fichetechnique = fichetechnique;
                   this.toggleToast('Fichetechnique ajouter')
                   this.modifToggle = !this.modifToggle;
@@ -257,11 +268,11 @@ export class FicheTechniqueComponent implements OnInit {
           }
         } else {
           exploitation.push(this.exploitation)
-          // for (const i of this.exploitations) {
-          //   if (i.selected === true) {
-          //     exploitation.push(i.id ? i.id : 0)
-          //   }
-          // }
+
+
+
+
+
         }
         if (this.isAdmin) {
           this.fichetechniqueService.updateFichetechniqueExploitation(this.idFichetechnique, this.idFichetechnique, exploitation).subscribe(() => {
@@ -434,7 +445,7 @@ export class FicheTechniqueComponent implements OnInit {
   selectUnite(unite: InterfaceUnite) {
     this.fichetechnique.uniteId = (unite.id ? unite.id : 0);
     this.fichetechnique.unite = unite;
-    console.log(this.fichetechnique.uniteId)
+
   }
 
   selectGroupeanalytique(groupeanalytique: InterfaceGroupeanalytiques) {
@@ -513,7 +524,7 @@ export class FicheTechniqueComponent implements OnInit {
       },
       (reason) => {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        console.log(this.closeResult)
+
         this.compositions = [];
         this.fichetechniqueService.getFichetechniqueById(this.idFichetechnique).subscribe({
           next: async (fichetechnique) => {
@@ -588,7 +599,7 @@ export class FicheTechniqueComponent implements OnInit {
   }
 
   async calculCout(composition: InterfaceComposition[]) {
-    console.log(composition)
+
     let coutAlimentaire = 0;
     let coutEmballage = 0;
     for (const item of composition) {

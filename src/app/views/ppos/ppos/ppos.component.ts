@@ -130,7 +130,7 @@ export class PposComponent implements OnInit {
               this.exploitations.push(_exploitation);
               this.exploitation = this.exploitations[0];
               this.resetPpo(new Date());
-              console.log(this.exploitation)
+
             }
           })
         }
@@ -228,21 +228,21 @@ export class PposComponent implements OnInit {
   }
 
   async addToggleModal() {
-    // this.centrerevenuService.getCrExploitation(this.idexploitation).subscribe({
-    //   next: async (_centrerevenu) => {
-    // this.centrerevenus = _centrerevenu;
-    // await this.resetPpo(new Date());
+
+
+
+
     this.modifToggle = !this.modifToggle;
     this.toggle = (this.toggle === false ? true : false);
     this.addToggle = (this.addToggle === false ? true : false);
-    //   }
-    // })
+
+
   }
 
   delete() {
     this.ppoService.deletePpo(this.idPpo || 0).subscribe({
       next: () => {
-        // this.addToggleModal();
+
         this.centrerevenuService.getCrExploitation(this.idexploitation, this.isAdmin).subscribe({
           next: async (_centrerevenu) => {
             this.centrerevenus = _centrerevenu;
@@ -266,13 +266,13 @@ export class PposComponent implements OnInit {
     }
     this.ppoService.deletePpos(selectedIds).subscribe({
       next: () => {
-        // this.addToggleModal();
+
         this.centrerevenuService.getCrExploitation(this.idexploitation, this.isAdmin).subscribe({
           next: async (_centrerevenu) => {
             this.centrerevenus = _centrerevenu;
             await this.selectCentreRevenus(_centrerevenu[0]);
             await this.resetPpo(new Date());
-            // this.addToggle = (this.addToggle === false ? true : false);
+
             this.toggleToast('Les pertes ont été supprimer');
           }
         })
@@ -284,7 +284,7 @@ export class PposComponent implements OnInit {
     let index = 0;
     for (const _article of this.ppodetailsarticles) {
       if (_article.selected == true) {
-        console.log(index)
+
         this.ppodetailsarticles.splice(index, 1);
       }
       index++;
@@ -292,7 +292,7 @@ export class PposComponent implements OnInit {
     index = 0;
     for (const _fichetechnique of this.ppodetailsfichetechniques) {
       if (_fichetechnique.selected == true) {
-        console.log(index)
+
         this.ppodetailsfichetechniques.splice(index, 1);
       }
       index++;
@@ -303,7 +303,7 @@ export class PposComponent implements OnInit {
     this.ppo = _ppo;
     this.idPpo = _ppo.id;
     this.ppo.date_ppo = new Date(this.ppo.date_ppo);
-    console.log(_ppo);
+
     this.ppodetailsarticles = [];
     this.ppodetailsfichetechniques = [];
     for (const _ppodetail of _ppo.ppodetail) {
@@ -313,8 +313,8 @@ export class PposComponent implements OnInit {
         this.ppodetailsfichetechniques.push(_ppodetail);
       }
     }
-    // console.log(this.ppodetailsarticle)
-    // console.log(this.ppodetailsfichetechnique)
+
+
   }
 
   public truncateWord(word: string, maxLength = 15) {
@@ -342,8 +342,8 @@ export class PposComponent implements OnInit {
     const dataPpoArticle: any[] = [];
     const dataPpoFicheyechnique: any[] = [];
 
-    // let quantite = 0;
-    // let prix = 0;
+
+
     for (const _ppoArticle of this.ppodetailsarticles) {
       const data = {
         'Article': _ppoArticle.article.libelle,
@@ -354,9 +354,9 @@ export class PposComponent implements OnInit {
         'Famille': this.truncateWord(_ppoArticle.article.familles.libelle),
         'SousFamille': this.truncateWord(_ppoArticle.article.sousfamilles.libelle)
       }
-      // quantite += _inv.quantite;
-      // prix += _inv.article.cout;
-      console.log(data)
+
+
+
       dataPpoArticle.push(data);
     }
     for (const _ppoFichetechnique of this.ppodetailsfichetechniques) {
@@ -368,8 +368,8 @@ export class PposComponent implements OnInit {
         'Unite': _ppoFichetechnique.unite.libelle,
         'Famille': this.truncateWord(_ppoFichetechnique.fichetechnique.famille.libelle)
       }
-      // quantite += _inv.quantite;
-      // prix += _inv.article.cout;
+
+
       dataPpoFicheyechnique.push(data);
 
       const docDefinition = {
@@ -390,7 +390,7 @@ export class PposComponent implements OnInit {
               widths: ['*', '*', '*', '*', '*', '*', '*'],
               body: this.pdfService.buildTableBody(dataPpoArticle, ['Article', 'Quantite', 'Cout', 'Valorisation', 'Unite', 'Famille', 'SousFamille'],
                 [
-                  // { text: 'Réf', style: 'subheader' }, // subheader for 'Réf' column
+
                   { text: 'Articles', style: 'tableHeader' },
                   { text: 'Quantité', style: 'tableHeader' },
                   { text: 'Cout', style: 'tableHeader' },
@@ -414,7 +414,7 @@ export class PposComponent implements OnInit {
               widths: ['*', '*', '*', '*', '*', '*'],
               body: this.pdfService.buildTableBody(dataPpoFicheyechnique, ['Article', 'Quantite', 'Cout', 'Valorisation', 'Unite', 'Famille'],
                 [
-                  // { text: 'Réf', style: 'subheader' }, // subheader for 'Réf' column
+
                   { text: 'Articles', style: 'tableHeader' },
                   { text: 'Quantité', style: 'tableHeader' },
                   { text: 'Cout', style: 'tableHeader' },
@@ -451,7 +451,7 @@ export class PposComponent implements OnInit {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
-        // console.log(this.closeResult)
+
         if (this.closeResult == 'Closed with: Save click') {
           this.resetPpo(this.ppo.date_ppo);
           this.addToggleModal();
@@ -459,7 +459,7 @@ export class PposComponent implements OnInit {
       },
       (reason) => {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        console.log(this.closeResult)
+
 
       },
     );
@@ -477,7 +477,7 @@ export class PposComponent implements OnInit {
   }
 
   selectExploitation(_exploitation: InterfaceExploitations) {
-    // this.centrerevenuService.getCrExploitation(_exploitation.id || 0).subscribe({
+
     this.centrerevenuService.getCrExploitation(_exploitation.id || 0, this.isAdmin).subscribe({
       next: (_centrerevenus) => {
         this.exploitation = _exploitation;
@@ -567,13 +567,13 @@ export class PposComponent implements OnInit {
             this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
               (result) => {
                 this.closeResult = `Closed with: ${result}`;
-                // console.log(this.closeResult)
+
                 if (this.closeResult == 'Closed with: Save click') {
                   for (const _article of this.articles) {
                     this.ppodetailsarticle = {
                       article: _article,
                       articleId: _article.id || 0,
-                      // code: null,
+
                       cout: _article.cout,
                       fichetechnique: this.fichetetchniqueService.resetFichetechnique(),
                       fichetechniqueId: null,
@@ -582,7 +582,7 @@ export class PposComponent implements OnInit {
                       unite: _article.unite,
                       uniteId: _article.unite.id || 0,
                       conditionnement: _article.conditionnement
-                      // ppo: this.ppo
+
                     }
                     if (_article.selected === true) {
                       this.ppodetailsarticles.push(this.ppodetailsarticle)
@@ -592,7 +592,7 @@ export class PposComponent implements OnInit {
                     this.ppodetailsfichetechnique = {
                       article: this.articleService.resetArticle(),
                       articleId: null,
-                      // code: null,
+
                       cout: this.calculeCoutComposition(_fichetechnique.composition),
                       fichetechnique: _fichetechnique,
                       fichetechniqueId: _fichetechnique.id || 0,
@@ -600,18 +600,18 @@ export class PposComponent implements OnInit {
                       quantite: 0,
                       unite: _fichetechnique.unite,
                       uniteId: _fichetechnique.unite.id || 0,
-                      // ppo: this.ppo
+
                     }
                     if (_fichetechnique.selected === true) {
                       this.ppodetailsfichetechniques.push(this.ppodetailsfichetechnique)
-                      console.log(this.ppodetailsfichetechnique)
+
                     }
                   }
                 }
               },
               (reason) => {
                 this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-                console.log(this.closeResult)
+
 
               },
             );

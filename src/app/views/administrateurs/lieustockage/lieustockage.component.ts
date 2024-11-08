@@ -230,7 +230,7 @@ export class LieustockageComponent implements OnInit {
         this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
           (result) => {
             this.closeResult = `Closed with: ${result}`;
-            console.log(this.closeResult)
+
             if (this.closeResult == 'Closed with: Save click') {
               if (this.adresse) {
                 this.centre.adresses = this.adresse;
@@ -240,7 +240,7 @@ export class LieustockageComponent implements OnInit {
           },
           (reason) => {
             this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-            console.log(this.closeResult)
+
 
           },
         );
@@ -409,13 +409,13 @@ export class LieustockageComponent implements OnInit {
   }
 
   deleteLieuStockage() {
-    // this.lieuStockageService.deleteOneLieuDeStockage(this.lieustockage).subscribe({
-    //   next:(value) =>{
-    //     this.resetLieuStockage();
-    //     this.toggleToast('Ce lieu de stockage a été supprimé avec succès!');
-    //     this.toggle = !this.toggle;
-    //     this.showAllLieuStockage(); 
-    //   },
-    // })
+
+
+
+
+
+
+
+
   }
 }

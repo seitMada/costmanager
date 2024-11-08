@@ -4,7 +4,7 @@ import { Router, NavigationEnd } from '@angular/router';
 import { IconSetService } from '@coreui/icons-angular';
 import { iconSubset } from './icons/icon-subset';
 import { Title } from '@angular/platform-browser';;
-// import { cilJustifyLeft, cilPlus, cilTrash, brandSet } from '@coreui/icons';
+
 
 @Component({
   selector: 'app-root',
@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
     private iconSetService: IconSetService
   ) {
     titleService.setTitle(this.title);
-    // iconSet singleton
+
     iconSetService.icons = { ...iconSubset };
   }
 

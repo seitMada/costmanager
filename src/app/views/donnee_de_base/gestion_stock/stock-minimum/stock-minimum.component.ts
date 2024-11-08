@@ -130,7 +130,7 @@ export class StockMinimumComponent implements OnInit {
         this.centrerevenus = _centreRevenu;
         this.centrerevenu = _centreRevenu[0];
         this.centrerevenusdefault = _centreRevenu;
-        console.log(this.centrerevenu)
+
 
         this.exploitationService.getExploitation().subscribe({
           next: async (_exploitation) => {
@@ -173,7 +173,7 @@ export class StockMinimumComponent implements OnInit {
                         next: (_values) => {
                           this.articles = _values;
                           this.articlesBack = _values;
-                          console.log(this.articles)
+
                           for (const _article of this.articles) {
                             let _value = 0
                             for (const _mouvement of this.mouvemenstock) {
@@ -198,7 +198,7 @@ export class StockMinimumComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    // setInterval(this.refreshdata, 300000);
+
   }
 
   screenDate(date: Date | string, format: string = 'dd/MM/yyyy') {
@@ -209,7 +209,7 @@ export class StockMinimumComponent implements OnInit {
     const year = date.getFullYear();
     const month = (date.getMonth() + 1).toString().padStart(2, '0');
     const day = date.getDate().toString().padStart(2, '0');
-    // console.log(`${year}-${month}-${day} 00:00:00`)
+
     return `${year}-${month}-${day}`;
   }
 
@@ -263,7 +263,7 @@ export class StockMinimumComponent implements OnInit {
         this.centrerevenus = _centreRevenu;
         this.centrerevenu = _centreRevenu[0];
         this.centrerevenusdefault = _centreRevenu;
-        console.log(this.centrerevenu)
+
 
         this.exploitationService.getExploitation().subscribe({
           next: async (_exploitation) => {
@@ -285,7 +285,7 @@ export class StockMinimumComponent implements OnInit {
                     _date.fin = new Date();
                   }
                 }
-                console.log(this.periode)
+
                 if (this.periode.length > 0) {
                   const _index = this.periode.length - 1;
                   const _periode = this.periode[_index]
@@ -365,7 +365,7 @@ export class StockMinimumComponent implements OnInit {
             });
             _article.cout = cout;
             _article.conditionnement = conditionnements;
-            // console.log(_article)
+
             this.togglestock = false;
             if (this.fournisseur(_article.articlefournisseur, _article.conditionnement?.articlefournisseurId || 0) != undefined) {
               const _articlefournisseur: InterfaceArticlefournisseurs = {
@@ -421,7 +421,7 @@ export class StockMinimumComponent implements OnInit {
             },
             articlefournisseurs: this.articlefournisseurs.filter(_art => _art.fournisseurId == undefined)
           });
-          console.log(this.fournisseurs)
+
 
         }
       })
@@ -473,7 +473,7 @@ export class StockMinimumComponent implements OnInit {
     };
 
     for (const _detail of fournisseurs.articlefournisseurs) {
-      // console.log(_detail)
+
       commandeDetail = {
         commandeId: 0,
         articlefournisseurId: _detail.id ? _detail.id : 0,
@@ -500,7 +500,7 @@ export class StockMinimumComponent implements OnInit {
         this.toggleToast('veuillez réessayer!');
       }
     });
-    console.log(this.boncommande)
+
   }
 
   calculquantiteacommander(_articlefournisseur: InterfaceArticlefournisseurs, _article: InterfaceArticle[]) {
@@ -518,7 +518,7 @@ export class StockMinimumComponent implements OnInit {
         }
         if (article.conditionnement) {
           const _conditionnement = article.conditionnement;
-          // const quantitedefaut = 1;
+
           quantite = quantiteFt / (_conditionnement.coefficientInventaire * _conditionnement.coefficientInventaireAchat * _conditionnement.coefficientAchatCommande);
           quantite = Math.ceil(quantite);
           if (quantite === 0) {

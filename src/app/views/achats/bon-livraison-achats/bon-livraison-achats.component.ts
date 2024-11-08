@@ -176,7 +176,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
           this.livraisonService.getListLivraisons(this.idFournisseur).subscribe({
             next: (_livraisons) => {
               this.bonLivraisons = _livraisons;
-              console.log(this.bonLivraisons);
+
 
             },
           })
@@ -245,7 +245,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
       this.livraisonService.getListLivraisons(this.fournisseur.id).subscribe({
         next: (_livraisons) => {
           this.bonLivraisons = _livraisons;
-          console.log(this.bonLivraisons);
+
 
         },
       })
@@ -407,12 +407,12 @@ export class BonLivraisonAchatsComponent implements OnInit {
     this.modalService.open(contentCommandeArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
       (result) => {
         this.closeResult = `Closed with: ${result}`;
-        console.log(this.closeResult)
+
         if (this.closeResult == 'Closed with: Save click') { }
       },
       (reason) => {
         this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-        console.log(this.closeResult)
+
       },
     );
   }
@@ -428,7 +428,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
           this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
             (result) => {
               this.closeResult = `Closed with: ${result}`;
-              console.log(this.closeResult)
+
               if (this.closeResult == 'Closed with: Save click') {
                 for (const articlefournisseur of this.articleFournisseurs) {
                   for (const condition of articlefournisseur.conditionnement) {
@@ -461,7 +461,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
             },
             (reason) => {
               this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-              console.log(this.closeResult)
+
             },
           );
         },
@@ -470,7 +470,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
     } else {
       const exploitationId = Number(this.exploitationId);
       this.selectFounisseur(this.fournisseur);
-      console.log(exploitationId);
+
 
       this.livraisonService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
         next: (artExploitation) => {
@@ -483,7 +483,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
                 this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
                   (result) => {
                     this.closeResult = `Closed with: ${result}`;
-                    console.log(this.closeResult)
+
                     if (this.closeResult == 'Closed with: Save click') {
                       this.livraisonDetails = [];
                       this.inputModif = this.inputModif;
@@ -518,7 +518,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
                   },
                   (reason) => {
                     this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-                    console.log(this.closeResult)
+
                   },
                 );
               }
@@ -542,7 +542,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
           (result) => {
             this.closeResult = `Closed with: ${result}`;
-            console.log(this.closeResult)
+
             if (this.closeResult == 'Closed with: validate click') {
               this.modifToggle = !this.modifToggle;
               this.toggle = (this.toggle === false ? true : false);
@@ -589,7 +589,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
                             }
 
                             this.livraisonDetails.push(this.livraisonDetail);
-                            // console.log(this.livraisonDetails);
+
 
                           }
                         }
@@ -612,7 +612,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
             } else if (this.closeResult == 'Closed with: Create click') {
               this.modifToggle = !this.modifToggle;
               this.toggle = (this.toggle === false ? true : false);
-              // this.resetLivraison();
+
               this.addBtn = true;
               this.inputModif = false;
               this.livraisonDetails = [];
@@ -622,13 +622,13 @@ export class BonLivraisonAchatsComponent implements OnInit {
           },
           (reason) => {
             this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-            console.log(this.closeResult)
+
             this.toggle = this.toggle;
             this.addLivraison = true;
             this.inputModif = false;
             this.modifToggle = true;
             this.livraisonDetails = [];
-            // console.log(this.livraisonDetails);
+
           },
         );
       },
@@ -700,7 +700,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
   addBonLivraison() {
     if (!this.isAdmin) {
       this.bonLivraison = this.bonLivraison;
-      console.log(this.bonLivraison);
+
 
       this.livraisonDetails = this.livraisonDetails;
       if (this.livraisonDetails.length > 0) {
