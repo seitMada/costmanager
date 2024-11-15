@@ -9,7 +9,7 @@ import { InterfaceCommandeDetail, InterfaceCommandeDetails } from '../model/inte
 })
 export class CommandeService {
 
-  constructor(private https:HttpClient) { }
+  constructor(private https: HttpClient) { }
 
   private apiGetCommandeByFournisseurExploitation = environment.APIGETCOMMANDEBYFOURNISSEUREXPLOITATION;
   private apiCreateCommande = environment.APICREATECOMMANDE;
@@ -22,45 +22,45 @@ export class CommandeService {
   private apiValidateCommande = environment.APIVALIDATECOMMANDE;
   private apiGetListCommande = environment.APIGETCOMMANDE;
 
-  public getCommandeByFournisseurExploitation(fournisseurId:number,exploitationId:number){
-    return this.https.get<any>(this.apiGetCommandeByFournisseurExploitation+fournisseurId,{params : {exploitationId:exploitationId} });
+  public getCommandeByFournisseurExploitation(fournisseurId: number, exploitationId: number) {
+    return this.https.get<any>(this.apiGetCommandeByFournisseurExploitation + fournisseurId, { params: { exploitationId: exploitationId } });
   }
 
-  public getAllCommande(fournisseurId:number){
-    return this.https.get<any>(this.apiGetListCommande+fournisseurId);
+  public getAllCommande(fournisseurId: number) {
+    return this.https.get<any>(this.apiGetListCommande + fournisseurId);
   }
 
-  public createBonCommande(commande:InterfaceBonCommande,commandeDetails:InterfaceCommandeDetail[]){
-    return this.https.post<any>(this.apiCreateCommande,{commande,commandeDetails});
+  public createBonCommande(commande: InterfaceBonCommande, commandeDetails: InterfaceCommandeDetail[]) {
+    return this.https.post<any>(this.apiCreateCommande, { commande, commandeDetails });
   }
 
-  public getArticleExploitaionByExploitationId(exploitationId:number){
-    return this.https.get<any>(this.apiArticleExploitationByExploitationId+exploitationId);
+  public getArticleExploitaionByExploitationId(exploitationId: number) {
+    return this.https.get<any>(this.apiArticleExploitationByExploitationId + exploitationId);
   }
 
-  public getArticleFournisseurByArticleId(fournisseurId:number,articleId:any[]) {
-    return this.https.get<any>(this.apiArticleFournisseurByArticleId+fournisseurId,{ params: { articleId: articleId.join(',') } })
+  public getArticleFournisseurByArticleId(fournisseurId: number, articleId: any[]) {
+    return this.https.get<any>(this.apiArticleFournisseurByArticleId + fournisseurId, { params: { articleId: articleId.join(',') } })
   }
 
-  public getDixDernierCommandes(fournisseurId:number,exploitationId:number){
-    return this.https.get<any>(this.apiDixDernierCommande+fournisseurId,{params: {exploitationId:exploitationId}});
+  public getDixDernierCommandes(fournisseurId: number, centreId: number) {
+    return this.https.get<any>(this.apiDixDernierCommande + fournisseurId, { params: { centreId: centreId } });
   }
 
-  public getArticleFournisseurByArticle(articleId:any[],fournisseurId:number,artExploitation:any[]){
-    return this.https.get<any>(this.apiGetArticleFournisseurByArticle,{ params: { articleId: articleId.join(','),fournisseurId:fournisseurId,artExploitation:artExploitation.join(',') } });
+  public getArticleFournisseurByArticle(articleId: any[], fournisseurId: number, artExploitation: any[]) {
+    return this.https.get<any>(this.apiGetArticleFournisseurByArticle, { params: { articleId: articleId.join(','), fournisseurId: fournisseurId, artExploitation: artExploitation.join(',') } });
   }
 
 
-  public deleteOneCommande(commande:InterfaceBonCommande){
-    return this.https.post<any>(this.apiDeleteCommande,commande);
+  public deleteOneCommande(commande: InterfaceBonCommande) {
+    return this.https.post<any>(this.apiDeleteCommande, commande);
   }
 
-  public getCommandeDetailByCommandeId(commandeId:number){
-    return this.https.get<any>(this.apiGetCommandeDetailByCommandeId+commandeId);
+  public getCommandeDetailByCommandeId(commandeId: number) {
+    return this.https.get<any>(this.apiGetCommandeDetailByCommandeId + commandeId);
   }
 
-  public validateCommande(commande:InterfaceBonCommande){
-    return this.https.post<any>(this.apiValidateCommande,commande);
+  public validateCommande(commande: InterfaceBonCommande) {
+    return this.https.post<any>(this.apiValidateCommande, commande);
   }
 
 }

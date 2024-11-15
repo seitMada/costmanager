@@ -76,7 +76,7 @@ export class ArticlesComponent implements OnInit {
   public addToggle = true;
   public modifToggle = true;
   public exploitationToggle = true;
-  public active_1 = 4;
+  // public active_1 = 4;
   public active_2 = 1;
   public idArticle = 0;
 
@@ -86,6 +86,7 @@ export class ArticlesComponent implements OnInit {
     this.toggle = !this.toggle;
     this.addToggle = this.addToggle == false ? false : true;
     this.initArticle();
+    this.active_2 = 1;
   }
 
   modifToggleModal() {
@@ -135,12 +136,17 @@ export class ArticlesComponent implements OnInit {
     }).subscribe({
       next: (data) => {
         const { unite, categorie, articleByExploitation, exploitation, allergene } = data;
+
+        articleByExploitation.forEach((element: any) => {
+          element.composition = element.composition.filter((item: { fichetechnique: { actif: number; }; }) => item.fichetechnique.actif === 1)
+        });
+        console.log(articleByExploitation)
+
         this.articles = new Article(articleByExploitation);
         this.articlesBack = new Article(articleByExploitation);
         this.unites = unite;
         this.categories = categorie;
         this.allergenes = allergene;
-
         // console.log(this.articles.articles[5].articleexploitation[0].exploitations)
 
         if (this.isAdmin === true) {
@@ -154,7 +160,7 @@ export class ArticlesComponent implements OnInit {
 
   async showArticle(art: any) {
     this.article = art;
-
+    console.log(this.article)
     this.idArticle = art.id;
     this.groupeService.getGroupeAnalytique().subscribe({
       next: (groupe_analytique) => {
@@ -172,8 +178,6 @@ export class ArticlesComponent implements OnInit {
                 this.articleService.getArticleExploitationByArticle(this.idArticle).subscribe({
                   next: (articleExploitation) => {
                     const exploitationId: number[] = [0];
-
-
                     this.exploitations.forEach((e: any) => {
                       const comparisonItem = articleExploitation.find((i: any) => i.exploitationsId === e.id);
                       if (comparisonItem != undefined) {
@@ -186,6 +190,7 @@ export class ArticlesComponent implements OnInit {
                     this.zonestockageService.getZoneStockageByExploitationId(exploitationId).subscribe({
                       next: (_data: any) => {
                         this.lieustockages = _data;
+                        console.log(this.lieustockages)
                         for (const _lieu of this.lieustockages) {
                           for (const _zone of _lieu.zonestockage) {
                             const select = this.article.articlezonestockages.filter(i => i.zonestockagesId === _zone.id)
@@ -198,9 +203,9 @@ export class ArticlesComponent implements OnInit {
                         }
                       }
                     })
+                    // console.log(this.allergenes)
                     this.allergenes.forEach((a: any) => {
                       const comparisonItem = this.article.allergeneArticle.find((i: any) => i.allergeneId === a.id);
-
                       if (comparisonItem != undefined) {
                         a.selected = true;
                       } else {
@@ -218,6 +223,7 @@ export class ArticlesComponent implements OnInit {
   }
 
   cancel() {
+    this.active_2 = 1;
     if (this.idArticle === 0) {
       this.toggle = true;
       this.modifToggle = true;
@@ -279,7 +285,7 @@ export class ArticlesComponent implements OnInit {
 
   open(content: TemplateRef<any>) {
     this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
-      (result) => {
+      async (result) => {
         this.closeResult = `Closed with: ${result}`;
 
         if (this.closeResult == 'Closed with: Save click') {
@@ -289,7 +295,15 @@ export class ArticlesComponent implements OnInit {
               allergene.push(i.id)
             }
           }
-          this.articleService.deleteAllergeneArticle(this.idArticle, allergene).subscribe(() => { });
+          this.articleService.deleteAllergeneArticle(this.idArticle, allergene).subscribe(async () => {
+            // await this.showArticle(this.article);
+            this.articleService.getArticlesById(this.idArticle, this.exploitation).subscribe({
+              next: async (article) => {
+                this.article = article;
+                await this.showArticle(article);
+              },
+            })
+          });
         }
       },
       (reason) => {
@@ -326,9 +340,9 @@ export class ArticlesComponent implements OnInit {
   }
 
   async addToggleModal() {
-    this.modifToggle = !this.modifToggle;
-    this.addToggle = !this.addToggle;
-    this.toggle = (this.toggle === false ? true : false);
+    this.modifToggle = false;
+    this.addToggle = true;
+    this.toggle = false;
     this.idArticle = 0;
     await this.resetArticle()
     const exploitationId: number[] = [];

@@ -106,6 +106,7 @@ export class GestionUtilisateursComponent implements OnInit {
     if (this.isAdmin) {
       this.operateurService.getAllOperateur().subscribe({
         next: (_operateurs) => {
+          console.log(_operateurs)
           this.operateurs = _operateurs;
           this.operateur = _operateurs[0];
 

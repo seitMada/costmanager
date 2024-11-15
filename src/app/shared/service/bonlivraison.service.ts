@@ -10,7 +10,7 @@ import { InterfaceBonCommande } from '../model/interface-bonCommande';
 })
 export class BonlivraisonService {
 
-  constructor(private https:HttpClient) { }
+  constructor(private https: HttpClient) { }
 
   private apiCreateBonLivraison = environment.APICREATEBONLIVRAISON;
   private apiDeleteBonLivraison = environment.DELETEBONLIVRAISON;
@@ -24,53 +24,53 @@ export class BonlivraisonService {
   private apiGetCommandeByFournisseurExploitation = environment.APIGETCOMMANDEBYFOURNISSEUREXPLOITATIONVALIDATE;
   private apiGetArticleFournisseurById = environment.APIGETARTICLEFOURNISSEURBYID;
   private apiGetLivraison = environment.APIGETLIVRAISON;
-  
 
-  public getListLivraisonByFournisseurExploitation(fournisseurId:number,exploitationId:number){
-    return this.https.get<any>(this.apiGetLivraisonByfournisseur+fournisseurId, {params : {exploitationId:exploitationId}});
+
+  public getListLivraisonByFournisseurExploitation(fournisseurId: number, exploitationId: number) {
+    return this.https.get<any>(this.apiGetLivraisonByfournisseur + fournisseurId, { params: { exploitationId: exploitationId } });
   }
 
-  public getListLivraisons(fournisseurId:number){
-    return this.https.get<any>(this.apiGetLivraison+fournisseurId);
-  }
-  
-  public getCommandeByFournisseurExploitationValidate(fournisseurId:number,exploitationId:number){
-    return this.https.get<any>(this.apiGetCommandeByFournisseurExploitation+fournisseurId,{params : {exploitationId:exploitationId} });
+  public getListLivraisons(fournisseurId: number) {
+    return this.https.get<any>(this.apiGetLivraison + fournisseurId);
   }
 
-  public getListDetailCommandeByCommandeId(commandeId:number){
-    return this.https.get<any>(this.apiGetDetailCommandeByCommandeId+commandeId);
+  public getCommandeByFournisseurExploitationValidate(fournisseurId: number, exploitationId: number) {
+    return this.https.get<any>(this.apiGetCommandeByFournisseurExploitation + fournisseurId, { params: { exploitationId: exploitationId } });
   }
 
-  public createNewBonLivraison(livraison:InterfaceBonLivraisons,livraisonDetail:InterfaceLivraisonDetail[],commande:InterfaceBonCommande){
-    return this.https.post<any>(this.apiCreateBonLivraison,{livraison,livraisonDetail,commande});
+  public getListDetailCommandeByCommandeId(commandeId: number) {
+    return this.https.get<any>(this.apiGetDetailCommandeByCommandeId + commandeId);
   }
 
-  public getDetailLivraisonByLivraisonId(livraisonId:number){
-    return this.https.get<any>(this.apiGetDetailLivraisonByLivraisonId+livraisonId);
+  public createNewBonLivraison(livraison: InterfaceBonLivraisons, livraisonDetail: InterfaceLivraisonDetail[], commande: InterfaceBonCommande) {
+    return this.https.post<any>(this.apiCreateBonLivraison, { livraison, livraisonDetail, commande });
   }
 
-  public deleteBonLivraison(livraison:InterfaceBonLivraisons){
-    return this.https.post<any>(this.apiDeleteBonLivraison,livraison);
+  public getDetailLivraisonByLivraisonId(livraisonId: number) {
+    return this.https.get<any>(this.apiGetDetailLivraisonByLivraisonId + livraisonId);
   }
 
-  public getArticleExploitaionByExploitationId(exploitationId:number){
-    return this.https.get<any>(this.apiArticleExploitationByExploitationId+exploitationId);
+  public deleteBonLivraison(livraison: InterfaceBonLivraisons) {
+    return this.https.post<any>(this.apiDeleteBonLivraison, livraison);
   }
 
-  public getArticleFournisseurByArticleId(fournisseurId:number,articleId:any[]) {
-    return this.https.get<any>(this.apiArticleFournisseurByArticleId+fournisseurId,{ params: { articleId: articleId.join(',') } })
+  public getArticleExploitaionByExploitationId(exploitationId: number) {
+    return this.https.get<any>(this.apiArticleExploitationByExploitationId + exploitationId);
   }
 
-  public validateLivraison(livraison:InterfaceBonLivraisons){
-    return this.https.post<any>(this.apiValidateLivraison,livraison)
+  public getArticleFournisseurByArticleId(fournisseurId: number, articleId: any[]) {
+    return this.https.get<any>(this.apiArticleFournisseurByArticleId + fournisseurId, { params: { articleId: articleId.join(',') } })
   }
 
-  public getArticleFournisseurByArticle(articleId:any[],fournisseurId:number,artExploitation:any[]){
-    return this.https.get<any>(this.apiGetArticleFournisseurByArticle,{ params: { articleId: articleId.join(','),fournisseurId:fournisseurId,artExploitation:artExploitation.join(',') } });
+  public validateLivraison(livraison: InterfaceBonLivraisons) {
+    return this.https.post<any>(this.apiValidateLivraison, livraison)
   }
 
-  public getArticleFournisseurById(artFournisseurArticleId:any[]){
-    return this.https.get<any>(this.apiGetArticleFournisseurById,{ params: {artFournisseurArticleId: artFournisseurArticleId.join(',') }});
+  public getArticleFournisseurByArticle(articleId: any[], fournisseurId: number, artExploitation: any[]) {
+    return this.https.get<any>(this.apiGetArticleFournisseurByArticle, { params: { articleId: articleId.join(','), fournisseurId: fournisseurId, artExploitation: artExploitation.join(',') } });
+  }
+
+  public getArticleFournisseurById(artFournisseurArticleId: any[]) {
+    return this.https.get<any>(this.apiGetArticleFournisseurById, { params: { artFournisseurArticleId: artFournisseurArticleId.join(',') } });
   }
 }

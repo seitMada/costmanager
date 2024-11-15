@@ -202,6 +202,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
           next: (_centre) => {
             this.centres = _centre;
             this.centre = _centre[0];
+            console.log(this.centre)
             this.bonLivraison = {
               numLivraison: this.num_livraison,
               dateCommande: this.dates.today,
@@ -535,7 +536,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
     this.livraisonService.getCommandeByFournisseurExploitationValidate(this.fournisseur.id ? this.fournisseur.id : 0, this.exploitation.id ? this.exploitation.id : 0).subscribe({
       next: (commandes) => {
         this.bonCommandes = commandes;
-        this.addLivraison = !this.addLivraison;
+        this.addLivraison = false;
         this.listLivraison = !this.listLivraison;
         this.bonLivraison.fournisseurId = this.fournisseur.id ? this.fournisseur.id : 0;
 
@@ -544,10 +545,15 @@ export class BonLivraisonAchatsComponent implements OnInit {
             this.closeResult = `Closed with: ${result}`;
 
             if (this.closeResult == 'Closed with: validate click') {
-              this.modifToggle = !this.modifToggle;
-              this.toggle = (this.toggle === false ? true : false);
-              this.resetLivraison();
-              this.inputModif = false;
+              // console.log(this.bonCommandes);
+              // let cmdselected = 0;
+              // this.bonCommandes.forEach(element => {
+              //   if (element.selected) {
+              //     if (element.selected) {
+
+              //     }
+              //   }
+              // });
               if (commandes.length) {
                 for (const commande of commandes) {
                   if (commande.selected) {
@@ -559,6 +565,12 @@ export class BonLivraisonAchatsComponent implements OnInit {
                         const numLiv = commande.noPiece;
                         this.newNumLivraison = numLiv.split('-');
                         this.bonLivraison.numLivraison = 'LIV-' + this.newNumLivraison[1];
+
+                        this.modifToggle = false;
+                        this.toggle = (this.toggle === false ? true : false);
+                        this.resetLivraison();
+                        this.inputModif = false;
+                        this.addLivraison = false;
 
                         for (const comm of commandeDetail) {
                           if (comm.articlefournisseur) {
@@ -587,20 +599,21 @@ export class BonLivraisonAchatsComponent implements OnInit {
                             } else {
                               this.montantTTc += (this.livraisonDetail.quantiteLivree * this.livraisonDetail.prixarticle) - this.livraisonDetail.remise;
                             }
-
                             this.livraisonDetails.push(this.livraisonDetail);
-
-
                           }
                         }
                         this.addBtn = false;
                       },
                     })
                   } else {
-                    this.addBtn = true;
-                    this.livraisonDetails = [];
-                    this.bonLivraison.dateCommande = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate());
-                    this.bonLivraison.dateLivraison = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate() + 1);
+                    this.addLivraison = true;
+                    // alert()
+                    // this.addBtn = true;
+                    // this.livraisonDetails = [];
+                    // this.modifToggle = true;
+                    // this.inputModif = false;
+                    // this.bonLivraison.dateCommande = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate());
+                    // this.bonLivraison.dateLivraison = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate() + 1);
                   }
                 }
               } else {
@@ -616,6 +629,16 @@ export class BonLivraisonAchatsComponent implements OnInit {
               this.addBtn = true;
               this.inputModif = false;
               this.livraisonDetails = [];
+
+              // this.adresse = this.adresses.adresses.filter(item => item.id == this.exploitation.adressesId)[0]
+              this.fournisseurService.getAllAdresse().subscribe({
+                next: (adresses) => {
+                  // this.adresses = adresses;
+                  this.adresse = adresses.filter((item: any) => item.id == this.exploitation.adressesId)[0];
+                  // console.log(adresses.filter((item: any) => item.id == this.exploitation.adressesId))
+                },
+              })
+
               this.bonLivraison.dateCommande = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate());
               this.bonLivraison.dateLivraison = new Date(this.today.getFullYear(), this.today.getMonth(), this.today.getDate() + 1);
             }

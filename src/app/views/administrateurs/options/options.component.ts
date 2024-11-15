@@ -420,16 +420,36 @@ export class OptionsComponent implements OnInit {
 
   public cancelexploitation() {
 
-    this.modifToggleExploitation = false;
-    this.inputModifExploitation = true;
-    this.toggleCentreExploitation = true;
     if (!this.exploitation.id) {
       this.toggleexploitation = !this.toggleexploitation ? true : false;
       this.exploitations = this.exploitations;
       this.addCentre = false;
-
-
-
+      this.modifToggleExploitation = false;
+      this.inputModifExploitation = true;
+      this.toggleCentreExploitation = true;
+    } else {
+      this.exploitationService.getAllExploitationById(this.exploitation.id).subscribe({
+        next: (_exploitation) => {
+          if (_exploitation[0].adresses === undefined) {
+            _exploitation[0].adresses = {
+              rue: ' ',
+              ville: ' ',
+              code_postal: ' ',
+              pays: ' ',
+              selected: false,
+              centreRevenu: [],
+              exploitation: [],
+              operateur: [],
+            }
+          } else {
+            _exploitation[0].adresses.flags = this.country.filter((item: any) => { item.translations.fr === _exploitation[0].adresses.pays })
+          }
+          this.exploitation = _exploitation[0];
+          this.modifToggleExploitation = false;
+          this.inputModifExploitation = true;
+          this.toggleCentreExploitation = true;
+        }
+      })
     }
   }
 
@@ -507,6 +527,7 @@ export class OptionsComponent implements OnInit {
         listexploitationtodelete.push(this.exploitation.id)
       }
       if (listexploitationtodelete.length > 0) {
+
         this.exploitationService.deleteExploitation(listexploitationtodelete).subscribe({
           next: () => {
             this.resetExploitation();
@@ -725,7 +746,7 @@ export class OptionsComponent implements OnInit {
 
   /***********************CENTREREVENU****************************/
 
-  public resetCentre() {
+  public async resetCentre() {
     this.adresse = {
       rue: '...',
       ville: '...',
@@ -809,31 +830,30 @@ export class OptionsComponent implements OnInit {
   }
 
   public async showCentreRevenu(centreRevenu: InterfaceCentreRevenu) {
-    this.resetCentre();
-
-
-
-    this.centre = centreRevenu;
-    this.centreId = centreRevenu.id ? centreRevenu.id : 0;
-
-    if (!this.centre.exploitations) {
-      this.centre.exploitations = {
-        code_couleur: '',
-        libelle: '',
-        nbDecimal: 0,
-        commentaire: '',
-        siteWeb: '',
-        codenaf: '',
-        siret: '',
-        logo: '',
-        actif: false,
-        adressesId: 0,
-        adresses: new Adress(),
-        centreRevenu: []
-      }
-    }
+    console.log(centreRevenu)
+    await this.resetCentre();
     this.exploitationService.getExploitation().subscribe({
       next: (_exploitations) => {
+
+        this.centre = centreRevenu;
+        this.centreId = centreRevenu.id ? centreRevenu.id : 0;
+        if (this.centre.exploitationsId == null) {
+          this.centre.exploitations = {
+            code_couleur: '',
+            libelle: '',
+            nbDecimal: 0,
+            commentaire: '',
+            siteWeb: '',
+            codenaf: '',
+            siret: '',
+            logo: '',
+            actif: false,
+            adressesId: 0,
+            adresses: new Adress(),
+            centreRevenu: []
+          }
+        }
+
         _exploitations = _exploitations.filter((item: { codenaf: string; }) => item.codenaf != 'ADMIN');
         _exploitations.forEach((element: { exploitationsId: any; centreRevenu: any[]; }) => {
           const centre = element.centreRevenu.find((_centre: { id: number | undefined; }) => _centre.id == centreRevenu.id)
@@ -1013,7 +1033,19 @@ export class OptionsComponent implements OnInit {
         });
       }
     } else {
-      await this.showCentreRevenu(_centre);
+      this.centreService.getcentrerevenu().subscribe({
+        next: async (_centres) => {
+          // await this.resetCentre();
+          this.centres = _centres;
+          this.centre = _centres.filter((item: any) => item.id == _centre.id)[0]
+          console.log(this.centre)
+          await this.showCentreRevenu(this.centre);
+          // this.toggleCentre = true;
+          this.modifToggleCentre = true;
+          this.showbtnmodifcentreexploitation = true;
+          this.inputModifCentre = true;
+        }
+      });
     }
   }
 
@@ -1052,21 +1084,6 @@ export class OptionsComponent implements OnInit {
   /***************************************************************/
 
   /*********************LIEU DE STOCKAGE**************************/
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   public resetLieuStockage() {
     this.lieuStockage = {
@@ -1138,51 +1155,6 @@ export class OptionsComponent implements OnInit {
         }
       }
     })
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   }
 
   public showAllLieuStockage() {
@@ -1323,7 +1295,15 @@ export class OptionsComponent implements OnInit {
         })
       }
     } else {
-      await this.showOneLieuStockage(_lieu);
+      this.lieustockageService.getAllLieuStockage().subscribe({
+        next: async (_lieustocks) => {
+          this.lieuStockage = _lieustocks.filter((item: any) => item.id == _lieu.id)[0];
+          await this.showOneLieuStockage(this.lieuStockage);
+          this.modifToggleLieu = true;
+          this.showbtnmodiflieucentre = true;
+          this.inputModifLieu = true;
+        },
+      });
     }
   }
 

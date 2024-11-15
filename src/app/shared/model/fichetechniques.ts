@@ -20,6 +20,7 @@ export class Fichetechnique implements InterfaceFichetechnique {
     cout: number;
     image: string;
     groupeanalytiqueId: number;
+    actif?: number | 0;
 
     exploitation: InterfaceExploitations[];
     composition: InterfaceComposition[];

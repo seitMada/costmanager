@@ -205,6 +205,7 @@ export class FournisseursComponent implements OnInit {
     this.idFournisseur = fournisseur.id ? fournisseur.id : 0;
     this.fournisseur = fournisseur;
     this.fournisseur.flags = this.getFlag(fournisseur);
+    console.log(this.fournisseur)
     this.exploitationService.getExploitation().subscribe({
       next: (exploitations) => {
         this.exploitations = exploitations;

@@ -159,10 +159,10 @@ export class BonCommandeAchatsComponent implements OnInit {
     this.showAllFournisseur();
   }
 
-  listArticleFournisseurs() {
+  async listArticleFournisseurs() {
 
     const exploitationId = Number(this.exploitationId);
-    this.selectFounisseur(this.fournisseur);
+    await this.selectFounisseur(this.fournisseur);
     this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
       next: (artExploitation) => {
         if (artExploitation) {
@@ -436,32 +436,34 @@ export class BonCommandeAchatsComponent implements OnInit {
   }
 
   toggleModal() {
-    this.addBtn = false;
+    this.addBtn = true;
     this.idBonCommande = 0;
-    this.toggle = !this.toggle;
-    this.addCommande = !this.addCommande;
-    this.addTogle = !this.addTogle;
-    this.modifToggle = !this.modifToggle;
+    this.toggle = false;
+    this.addCommande = true;
+    this.addTogle = false;
+    this.modifToggle = false;
     this.btnTenRecord = false;
-    this.listArts = !this.listArts;
+    // this.listArts = !this.listArts;
     this.inputModif = false;
     this.resetCommande();
+    this.dates.today = new Date();
   }
 
   addCommandeModal() {
-    this.toggle = !this.toggle;
     this.addBtn = true;
-    this.addCommande = false;
-    this.addTogle = !this.addTogle;
-    this.listArts = !this.listArts;
-    this.modifToggle = !this.modifToggle;
+    this.idBonCommande = 0;
+    this.toggle = false;
+    this.addCommande = true;
+    this.addTogle = false;
+    this.modifToggle = false;
+    this.btnTenRecord = false;
     this.resetCommande();
     this.commandes = [];
     this.inputModif = false;
     this.dates.today = new Date();
   }
 
-  public openModalArticle(content: TemplateRef<any>) {
+  public async openModalArticle(content: TemplateRef<any>) {
     if (this.commandes.length > 0) {
       const articlesId = this.commandes.map((i: any) => i.articlefournisseur.articleId);
       this.commandeService.getArticleFournisseurByArticle(articlesId, this.fournisseur.id ? this.fournisseur.id : 0, this.artExploitationArticleId).subscribe({
@@ -509,7 +511,7 @@ export class BonCommandeAchatsComponent implements OnInit {
     else {
       this.dates.today = new Date();
       const exploitationId = Number(this.exploitationId);
-      this.selectFounisseur(this.fournisseur);
+      await this.selectFounisseur(this.fournisseur);
       this.commandeService.getArticleExploitaionByExploitationId(exploitationId).subscribe({
         next: (artExploitation) => {
           if (artExploitation) {
@@ -647,15 +649,41 @@ export class BonCommandeAchatsComponent implements OnInit {
 
 
   listArticleDixDernierCommande() {
+    this.addCommandeModal();
     this.dates.today = new Date();
     const fournisseurId = this.fournisseur.id ? this.fournisseur.id : 0;
     const exploitationId = this.exploitation.id ? this.exploitation.id : 0;
-    this.commandeService.getDixDernierCommandes(fournisseurId, Number(exploitationId)).subscribe({
-      next: (commandeDetail) => {
-        this.commandes = commandeDetail;
 
+    this.centreRevenuService.getCrExploitation(this.exploitation.id ? this.exploitation.id : 0, this.isAdmin).subscribe({
+      next: (_centre) => {
+        this.centres = _centre;
+        this.centre = _centre[0];
+        this.commandeService.getDixDernierCommandes(fournisseurId, Number(this.centre.id)).subscribe({
+          next: (commandeDetail) => {
+            this.commandes = commandeDetail;
+            this.boncommande = {
+              remise: 0,
+              montantHT: 0,
+              montantTva: 0,
+              noPiece: this.num_commande,
+              validation: 0,
+              commentaire: '',
+              dateCommande: this.dates.today,
+              fournisseurId: this.fournisseur.id ? this.fournisseur.id : 0,
+              exploitationId: this.exploitationId,
+              centreId: this.centre.id ? this.centre.id : 0,
+              fournisseur: this.fournisseur,
+              selected: false,
+              centre: _centre,
+              exploitation: this.exploitation,
+              commandeDetail: this.commandes ? this.commandes : []
+            };
+          },
+        })
       },
-    })
+    });
+
+
 
   }
 
@@ -729,7 +757,7 @@ export class BonCommandeAchatsComponent implements OnInit {
         alert('veuillez sélectionné un article!');
       }
     } else {
-      alert('Il est impossible de créer une commande.!');
+      alert('L\'administrateur ne peut pas créer de commande');
     }
   }
 

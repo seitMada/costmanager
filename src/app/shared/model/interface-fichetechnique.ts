@@ -18,6 +18,7 @@ export interface InterfaceFichetechnique {
     cout: number;
     image: string;
     selected?: boolean;
+    actif?: number;
 
     exploitation: InterfaceExploitations[];
     composition: InterfaceComposition[];

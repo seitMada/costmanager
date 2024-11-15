@@ -85,7 +85,7 @@
               [(ngModel)]="line.selected">
           </td>
           <td class="col-1" (click)="showArticle(line); toggleModal()">{{line.codeArticle}}</td>
-          <td class="col-3  fw-bold" (click)="showArticle(line); toggleModal()">{{line.libelle}}</td>
+          <td class="col-3  fw-bold" (click)="showArticle(line); toggleModal()">{{line.libelle | uppercase}}</td>
           <td class="col-1 " (click)="showArticle(line); toggleModal()">{{line.unite.abreviation}}</td>
           <td class="col-2 " (click)="showArticle(line); toggleModal()">{{truncateWord(line.groupeanalytique.groupe,
             20)}}</td>
@@ -93,9 +93,10 @@
           <td class="col-2 " (click)="showArticle(line); toggleModal()">{{truncateWord(line.sousfamilles.libelle, 20)}}
           </td>
           <td [ngClass]="{'col-1': isAdmin, 'col-2': !isAdmin}" (click)="showArticle(line); toggleModal()">
-            {{line.coefficientPonderation / 100}} %</td>
+            {{line.coefficientPonderation}} %</td>
           <td class="col-1" *ngIf="isAdmin" (click)="showArticle(line); toggleModal()">
-            <p *ngFor="let exploitation of line.articleexploitation"></p></td>
+            <p *ngFor="let exploitation of line.articleexploitation"></p>
+          </td>
         </tr>
       </tbody>
     </table>
@@ -212,14 +213,14 @@
         </div>
       </div>
     </li>
-    <li class="list-group-item" style="height: 420px;">
+    <li class="list-group-item" style="height: 47vh;">
       <ul ngbNav #nav2="ngbNav" [(activeId)]="active_2" class="nav-tabs">
         <li [ngbNavItem]="1">
           <button ngbNavLink>EXPLOITATIONS</button>
           <ng-template ngbNavContent>
             <div class="card col-3">
               <!-- <div class=" text-center fs-7 fw-bold">EXPLOITATIONS</div> -->
-              <div class="card-body overflow-y-scroll" style="height: 340px;">
+              <div class="card-body overflow-y-scroll" style="height: 35vh;">
                 <table class="table table-striped table-hover">
                   <tbody>
                     <tr *ngFor="let line of exploitations">
@@ -249,23 +250,10 @@
                     <th scope="col" class="col-2">Unité fiche technique</th>
                     <th scope="col" class="col-2">Prix en unité FT</th>
                   </tr>
-                  <tr>
-                    <th class="col-3">
-                      <input type="text" class="form-control form-control-sm">
-                    </th>
-                    <th scope="col" class="col-2">
-                    </th>
-                    <th scope="col" class="col-3">
-                    </th>
-                    <th scope="col" class="col-2">
-                    </th>
-                    <th scope="col" class="col-2">
-                    </th>
-                  </tr>
                 </thead>
               </table>
             </div>
-            <div class="overflow-y-scroll" style="height: 280px;">
+            <div class="overflow-y-scroll" style="height: 35vh;">
               <table class="table table-hover table-sm table-striped mt-0">
                 <tbody>
                   <tr *ngFor="let line of article.articlefournisseur">
@@ -301,7 +289,7 @@
           <button ngbNavLink>STOCKAGES</button>
           <ng-template ngbNavContent>
             <div class="d-grid gap-2">
-              <div class="card-body overflow-scroll p-0" style="height: 340px;">
+              <div class="card-body overflow-y-scroll p-0" style="height: 35vh;">
                 <div class="row">
                   <div class="col-3 mb-2" *ngFor="let lieu of lieustockages">
                     <div class="card">
@@ -335,7 +323,7 @@
         <li [ngbNavItem]="5" *ngIf="modifToggle">
           <button ngbNavLink>REFERENCE CROISEE</button>
           <ng-template ngbNavContent>
-            <div class="overflow-y-scroll" style="height: 40vh;">
+            <div class="overflow-y-scroll" style="height: 35vh;">
               <table class="table table-striped">
                 <thead>
                   <tr>
@@ -384,21 +372,26 @@
                   (click)="modal.close('Save click')">Enregistrer les allergenes</button>
               </div>
             </ng-template>
-            <div class="d-grid gap-2" *ngIf="!modifToggle">
+            <!-- <div class="d-grid gap-2" *ngIf="!modifToggle">
               <button type="button" class="btn btn-primary" id="btn_allergene" (click)="open(content)">Liste des
                 allérgenes</button>
-            </div>
+            </div> -->
 
-            <div class="card-body overflow-y-scroll py-1" style="height: 340px;" *ngIf="modifToggle">
+            <div class="card-body overflow-y-scroll py-1" style="height: 35vh;" *ngIf="modifToggle">
               <table class="table table-striped">
                 <thead>
                   <tr>
-                    <th scope="col" class="">Allérgenes</th>
+                    <th scope="col" class="col-11">Allérgenes</th>
+                    <th class="col-1">
+                      <button type="button" class="btn btn-primary btn-sm" id="btn_allergene" (click)="open(content)"><i
+                          class="fas fa-pencil"></i></button>
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   <tr *ngFor="let line of article.allergeneArticle">
-                    <td>{{line.allergene.libelle}}</td>
+                    <td class="col-11">{{line.allergene.libelle}}</td>
+                    <td class="col-1"></td>
                   </tr>
                 </tbody>
               </table>

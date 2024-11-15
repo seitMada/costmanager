@@ -122,7 +122,7 @@
           <div class="col-3">
             <div class="input-group" *ngIf="modifToggle !== true">
               <span class="btn btn-outline-secondary bg-white col-3" data-bs-toggle="dropdown" aria-expanded="false">
-                <img src="../../../../assets/img/flags/{{fournisseur.adresse.flags}}" class="img-flag" alt="">
+                <img src="../../../../assets/img/flags/{{fournisseur.flags}}" class="img-flag" alt="">
                 <span class="visually-hidden">Toggle Dropdown</span>
               </span>
               <span class="end-border input-group-text bg-white col-9 " id="pays">{{fournisseur.adresse.pays}}</span>
@@ -133,40 +133,12 @@
             </div>
             <div class="input-group" *ngIf="modifToggle === true">
               <span class="btn btn-outline-secondary bg-white col-3">
-                <img src="../../../../assets/img/flags/{{fournisseur.adresse.flags}}" class="img-flag" alt="">
+                <img src="../../../../assets/img/flags/{{fournisseur.flags}}" class="img-flag" alt="">
                 <span class="visually-hidden">Toggle Dropdown</span>
               </span>
               <span class="end-border input-group-text bg-white col-9 " id="pays">{{fournisseur.adresse.pays}}</span>
             </div>
           </div>
-          <!-- <div class="col-5">
-            <div class="input-group">
-              <span class="input-group-text col-4" id="adresse">Adresse</span>
-              <span class="input-group-text col-8 bg-white point" id="adress"
-                (click)="changeAdress(content)">{{fournisseur.adresse.rue}}</span>
-            </div>
-          </div>
-          <div class="col-3">
-            <div class="input-group">
-              <span class="input-group-text col-12 bg-white point" id="ville"
-                (click)="changeAdress(content)">{{fournisseur.adresse.ville}}</span>
-            </div>
-          </div>
-          <div class="col-1">
-            <div class="input-group">
-              <span class="input-group-text col-12 bg-white point" id="code_postal"
-                (click)="changeAdress(content)">{{fournisseur.adresse.code_postal}}</span>
-            </div>
-          </div>
-          <div class="col-3">
-            <div class="input-group">
-              <span class="input-group-text col-3 bg-white point">
-                <img src="../../../../assets/img/flags/{{flags}}" class="img-flag" alt="Drapeau">
-              </span>
-              <span class="input-group-text col-9 bg-white point" id="pays"
-                (click)="changeAdress(content)">{{fournisseur.adresse.pays}}</span>
-            </div>
-          </div> -->
         </div>
         <div class="row m-2">
           <div class="col-6">
