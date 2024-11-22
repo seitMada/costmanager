@@ -1,4 +1,5 @@
-const endPoint = 'https://coutmatiere.jl-dev.fr/';
+import { ENV } from '../env'
+const endPoint = ENV.END_POINT;
 
 export const environment = {
     production: false,
@@ -150,6 +151,7 @@ export const environment = {
     APIDELETEZONESTOCKAGE: endPoint + 'zonestockage/delete',
 
     APIDELETEARTICLEZONESTOCKAGE: endPoint + 'articlezonestockage/delete/',
+    APIADDARTICLEZONESTOCKAGE: endPoint + 'articlezonestockage/add',
 
     APIGETPPOBYCRANDDATE: endPoint + 'ppo',
     APICREATEPPO: endPoint + 'ppo/create',

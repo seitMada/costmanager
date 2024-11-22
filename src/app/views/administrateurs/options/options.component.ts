@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, inject } from '@angular/core';
 import { FormGroup, FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertModule, ToastBodyComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
@@ -11,6 +11,7 @@ import { InterfaceArticleExploitation } from 'src/app/shared/model/interface-art
 import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
 import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
 import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
+import { InterfaceFamilles } from 'src/app/shared/model/interface-familles';
 import { InterfaceFichetechnique } from 'src/app/shared/model/interface-fichetechnique';
 import { InterfaceLieustockages } from 'src/app/shared/model/interface-lieustockages';
 import { InterfaceOperateur } from 'src/app/shared/model/interface-operateur';
@@ -63,9 +64,8 @@ export class OptionsComponent implements OnInit {
   public active = 1;
   public active_3 = 1;
 
-  closeResult = '';
   public bsConfig: { containerClass: string; locale: string; dateInputFormat: string; };
-  private isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
+  public isAdmin = sessionStorage.getItem('admin') === '0' ? false : true;
   private exploitationid = sessionStorage.getItem('exploitation') ? Number(sessionStorage.getItem('exploitation')) : 0;
   private operateurid = sessionStorage.getItem('id') ? Number(sessionStorage.getItem('id')) : 0;
 
@@ -104,7 +104,11 @@ export class OptionsComponent implements OnInit {
   public centrerevenulieustockagesselected: number = 0;
   public inputModifZone: boolean = false;
   public zoneStockage: InterfaceZonestockages;
+  public zoneStockageModal: InterfaceZonestockages;
   public zoneStockageselected: number = 0;
+  public articlesZoneStockage: InterfaceArticle[];
+  public articlesZones: InterfaceArticle[];
+  public familleArticlesZones: any[];
 
   public modifToggle: boolean = true;
   public inputModif = false;
@@ -143,6 +147,9 @@ export class OptionsComponent implements OnInit {
   public message = '';
   public color = 'success';
   public textcolor = 'text-light';
+
+  closeResult = '';
+  selectedZoneId: number | undefined;
 
   toggleToast(_message: string) {
     this.message = _message;
@@ -223,6 +230,8 @@ export class OptionsComponent implements OnInit {
       civilite: ''
     }
   }
+
+
 
 
 
@@ -1107,52 +1116,82 @@ export class OptionsComponent implements OnInit {
     }
   }
 
+  private async trierArticlesParFamilleEtLibelle(articles: InterfaceArticle[]) {
+    return articles.sort((a, b) => a.libelle.localeCompare(b.libelle));
+  }
+
+  private async ajouterFamillesSansDoublon(articles: InterfaceArticle[]) {
+    const familles: any[] = [];
+
+    articles.forEach(article => {
+      if (article.familles?.libelle && !familles.includes(article.familles.libelle)) {
+        familles.push(article.familles.libelle);
+      }
+    });
+
+    return familles;
+  }
+
   public async showOneLieuStockage(lieustockage: InterfaceLieustockages) {
     this.resetLieuStockage();
-
     this.lieuStockage = lieustockage;
+    console.log(lieustockage)
+    this.articleService.getArticlesByExploitation(this.lieuStockage.centre.exploitationsId || 0).subscribe({
+      next: async (_articles) => {
+        _articles.forEach((_article: { selected: any; articlezonestockages: any[]; }) => {
+          _article.selected = _article.articlezonestockages?.some(
+            _zone => _zone.zonestockagesId === this.lieuStockage.zonestockage[0].id
+          );
+        });
+        this.articlesZoneStockage = await this.trierArticlesParFamilleEtLibelle(_articles);
+        this.familleArticlesZones = await this.ajouterFamillesSansDoublon(_articles);
+        this.selectedZoneId = this.lieuStockage.zonestockage[0].id;
+        this.articlesZones = _articles.filter((_article: { articlezonestockages: any[] }) =>
+          _article.articlezonestockages.some(_zone => _zone.zonestockagesId === this.lieuStockage.zonestockage[0].id)
+        );
+        this.lieuId = this.lieuStockage.id ? this.lieuStockage.id : 0;
 
-    this.lieuId = this.lieuStockage.id ? this.lieuStockage.id : 0;
+        this.inputModifLieu = true;
+        this.toggleLieu = false;
+        this.modifToggleLieu = false;
+        this.showbtnmodiflieucentre = true;
 
-    this.inputModifLieu = true;
-    this.toggleLieu = false;
-    this.modifToggleLieu = false;
-    this.showbtnmodiflieucentre = true;
-
-    if (!this.lieuStockage.centre) {
-      this.lieuStockage.centre = {
-        code: '',
-        libelle: '',
-        exploitationsId: 0,
-        adressesId: 0,
-        email: '',
-        telephone: '',
-        exploitations: new Exploitation(),
-        adresses: new Adress(),
-        selected: false,
-        lieuStockage: []
-      }
-    }
-
-    this.zonestockageslieustockages = lieustockage.zonestockage.map(_zone => ({
-      ..._zone,
-      selected: false
-    }));
-    this.zoneStockageselected = 0;
-
-    this.lieuSTockages = this.lieuSTockages.map(_lieu => ({
-      ..._lieu,
-      selected: false
-    }));
-
-
-    this.centreService.getcentrerevenu().subscribe({
-      next: (_centre) => {
-        if (this.isAdmin) {
-          this.centrerevenulieustockages = _centre;
-        } else {
-          this.centrerevenulieustockages = _centre.filter((item: { exploitationsId: number; }) => item.exploitationsId === this.exploitationid);
+        if (!this.lieuStockage.centre) {
+          this.lieuStockage.centre = {
+            code: '',
+            libelle: '',
+            exploitationsId: 0,
+            adressesId: 0,
+            email: '',
+            telephone: '',
+            exploitations: new Exploitation(),
+            adresses: new Adress(),
+            selected: false,
+            lieuStockage: []
+          }
         }
+
+        this.zonestockageslieustockages = lieustockage.zonestockage.map(_zone => ({
+          ..._zone,
+          selected: false
+        }));
+        this.zoneStockageselected = 0;
+
+        this.lieuSTockages = this.lieuSTockages.map(_lieu => ({
+          ..._lieu,
+          selected: false
+        }));
+
+
+        this.centreService.getcentrerevenu().subscribe({
+          next: (_centre) => {
+            if (this.isAdmin) {
+              this.centrerevenulieustockages = _centre;
+            } else {
+              this.centrerevenulieustockages = _centre.filter((item: { exploitationsId: number; }) => item.exploitationsId === this.exploitationid);
+            }
+          }
+        })
       }
     })
   }
@@ -1331,21 +1370,7 @@ export class OptionsComponent implements OnInit {
     }
   }
 
-  public listezonestockageforlieustockage(_lieuStockage: any) {
-
-
-
-
-
-
-
-
-
-
-
-
-
-  }
+  public listezonestockageforlieustockage(_lieuStockage: any) { }
 
   public createzonestockage(_lieuStockage: InterfaceLieustockages) {
     this.inputModifZone = true;
@@ -1406,6 +1431,77 @@ export class OptionsComponent implements OnInit {
       selected: false,
       lieu: this.lieuStockage,
     }
+  }
+
+  public selectallarticlezone(_event: any, _id: number) {
+    if (_event.target.checked === true) {
+      this.articlesZoneStockage.forEach(element => {
+        Object.assign(element, { selected: true })
+      });
+    } else {
+      this.articlesZoneStockage.forEach(element => {
+        Object.assign(element, { selected: false })
+      });
+      this.articlesZoneStockage.forEach((_article) => {
+        _article.selected = _article.articlezonestockages?.some(
+          _zone => _zone.zonestockagesId === _id
+        );
+      });
+    }
+  }
+
+  public choosezone(_zoneStockage: InterfaceZonestockages) {
+    this.articlesZones = this.articlesZoneStockage.filter((_article: { articlezonestockages: any[] }) =>
+      _article.articlezonestockages.some(_zone => _zone.zonestockagesId === _zoneStockage.id)
+    );
+    this.selectedZoneId = _zoneStockage.id;
+  }
+
+  public openModalArticle(_zoneStockageModal: InterfaceZonestockages, _content: TemplateRef<any>) {
+    this.articlesZoneStockage = this.articlesZoneStockage.map(_article => ({
+      ..._article,
+      selected: _article.articlezonestockages?.some(
+        _zone => _zone.zonestockagesId === _zoneStockageModal.id
+      ) || false
+    }));
+    this.zoneStockageModal = _zoneStockageModal;
+    this.modalService.open(_content, { size: 'md', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
+      (result) => {
+        this.closeResult = `Closed with: ${result}`;
+        console.log(this.closeResult)
+        if (this.closeResult == 'Closed with: Save click') {
+          const articleid: number[] = [];
+          this.articlesZoneStockage.forEach(element => {
+            if (element.selected === true) {
+              articleid.push(element.id || 0);
+            }
+          });
+          this.zonestockageService.addArticleZoneStockage(articleid, [_zoneStockageModal.id || 0]).subscribe({
+            next: () => {
+              this.articleService.getArticlesByExploitation(this.lieuStockage.centre.exploitationsId || 0).subscribe({
+                next: async (_articles) => {
+                  _articles.forEach((_article: { selected: any; articlezonestockages: any[]; }) => {
+                    _article.selected = _article.articlezonestockages?.some(
+                      _zone => _zone.zonestockagesId === this.lieuStockage.zonestockage[0].id
+                    );
+                  });
+                  this.articlesZoneStockage = await this.trierArticlesParFamilleEtLibelle(_articles);
+                  this.familleArticlesZones = await this.ajouterFamillesSansDoublon(_articles);
+                  this.articlesZones = _articles.filter((_article: { articlezonestockages: any[] }) =>
+                    _article.articlezonestockages.some(_zone => _zone.zonestockagesId === _zoneStockageModal.id)
+                  );
+                  alert('Liste article de la zone de stockage mis à jour');
+                }
+              })
+            }
+          })
+        }
+      },
+      (reason) => {
+        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+        console.log(this.closeResult)
+      },
+    );
   }
 
   /***************************************************************/

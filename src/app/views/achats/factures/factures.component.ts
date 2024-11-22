@@ -472,7 +472,7 @@ export class FacturesComponent implements OnInit {
                   for (const livDetail of livraison.livraisonDetail) {
                     const taxe = 0;
 
-                    if (livDetail.valeurTva != 0 || livDetail.valeurTva != null) {
+                    if (livDetail.valeurTva !== 0 || livDetail.valeurTva !== null) {
                       const taxe = (((livDetail.quantiteLivree * livDetail.prixarticle) - livDetail.remise) * livDetail.valeurTva) / 100;
                     }
                     this.detailFacture = {
@@ -676,9 +676,9 @@ export class FacturesComponent implements OnInit {
   getTotalMontant(): number {
     let montantTTc = 0;
     for (const line of this.detailFactures) {
-      if (line.valeurTva != 0 || line.valeurTva != null) {
+      if (line.valeurTva !== 0 || line.valeurTva !== null) {
         const taxe = (((line.quantite * line.prixArticle) - line.remise) * line.valeurTva) / 100;
-        montantTTc += ((line.quantite * line.prixArticle) - line.remise) + (+taxe);
+        montantTTc += ((line.quantite * line.prixArticle) - line.remise);
       } else {
         montantTTc += ((line.quantite * line.prixArticle) - line.remise);
       }
@@ -696,11 +696,9 @@ export class FacturesComponent implements OnInit {
       this.showvalidateBtn = !this.showvalidateBtn;
     }
     for (const livraison of this.detailFactures) {
-
-
-      if (livraison.valeurTva != 0 || livraison.valeurTva != null) {
+      if (livraison.valeurTva !== 0 || livraison.valeurTva !== null) {
         const taxe = (((livraison.quantite * livraison.prixArticle) - livraison.remise) * livraison.valeurTva) / 100;
-        this.montantTTc += ((livraison.quantite * livraison.prixArticle) - livraison.remise) + (+taxe);
+        this.montantTTc += ((livraison.quantite * livraison.prixArticle) - livraison.remise);
       } else {
         this.montantTTc += (livraison.quantite * livraison.prixArticle) - livraison.remise;
       }

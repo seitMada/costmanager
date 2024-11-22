@@ -15,14 +15,16 @@
               <button class="btn btn-outline-primary btn-sm me-1" (click)="listexploitation()"
                 [disabled]="modifToggleExploitation" *ngIf="!toggleexploitation" title="Liste exploitation"><i
                   class="fas fa-list"></i></button>
-              <button class="btn btn-outline-info btn-sm me-1" [disabled]="modifToggleExploitation"
-                (click)="modifyExploitation()" *ngIf="!toggleexploitation" title="Modifier exploitation"><i
-                  class="fas fa-pencil"></i></button>
-              <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleexploitation"
-                (click)="createExploitations();getAllCentreRevenuWithoutLink();" title="Ajouter exploitation"><i
-                  class="fas fa-plus"></i></button>
-              <button class="btn btn-outline-danger btn-sm me-1" [disabled]="modifToggleExploitation"
-                (click)="deleteExploitation()" title="Supprimer exploitation"><i class="fas fa-trash"></i></button>
+              <div *ngIf="isAdmin">
+                <button class="btn btn-outline-info btn-sm me-1" [disabled]="modifToggleExploitation"
+                  (click)="modifyExploitation()" *ngIf="!toggleexploitation" title="Modifier exploitation"><i
+                    class="fas fa-pencil"></i></button>
+                <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleexploitation"
+                  (click)="createExploitations();getAllCentreRevenuWithoutLink();" title="Ajouter exploitation"><i
+                    class="fas fa-plus"></i></button>
+                <button class="btn btn-outline-danger btn-sm me-1" [disabled]="modifToggleExploitation"
+                  (click)="deleteExploitation()" title="Supprimer exploitation"><i class="fas fa-trash"></i></button>
+              </div>
             </div>
           </div>
         </div>
@@ -290,12 +292,14 @@
               <button class="btn btn-outline-primary btn-sm me-1" (click)="listcentrerevenu()"
                 [disabled]="modifToggleCentre" *ngIf="!toggleCentre" title="Liste centre revenu"><i
                   class="fas fa-list"></i></button>
-              <button class="btn btn-outline-info btn-sm me-1" [disabled]="modifToggleCentre" (click)="modifyCentre()"
-                *ngIf="!toggleCentre" title="Modifier centre revenu"><i class="fas fa-pencil"></i></button>
-              <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleCentre"
-                (click)="createCentrerevenu()" title="Ajouter centre revenu"><i class="fas fa-plus"></i></button>
-              <button class="btn btn-outline-danger btn-sm me-1" [disabled]="modifToggleCentre"
-                (click)="deletecentrerevenu()" title="Supprimer centre revenu"><i class="fas fa-trash"></i></button>
+              <div *ngIf="isAdmin"><button class="btn btn-outline-info btn-sm me-1" [disabled]="modifToggleCentre"
+                  (click)="modifyCentre()" *ngIf="!toggleCentre" title="Modifier centre revenu"><i
+                    class="fas fa-pencil"></i></button>
+                <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleCentre"
+                  (click)="createCentrerevenu()" title="Ajouter centre revenu"><i class="fas fa-plus"></i></button>
+                <button class="btn btn-outline-danger btn-sm me-1" [disabled]="modifToggleCentre"
+                  (click)="deletecentrerevenu()" title="Supprimer centre revenu"><i class="fas fa-trash"></i></button>
+              </div>
             </div>
           </div>
         </div>
@@ -348,7 +352,7 @@
           </div>
 
           <div class="overflow-y-scroll" style="max-height: 60vh;" *ngIf="toggleCentre">
-            <div class="card-body overflow-scroll-y py-1" style="height: 600px;">
+            <div class="card-body overflow-y-scroll py-1" style="height: 600px;">
               <table class="table table-hover table-sm table-striped mb-0">
                 <thead>
                   <tr>
@@ -476,19 +480,20 @@
               <button class="btn btn-outline-primary btn-sm me-1" (click)="listLieuStockage()"
                 [disabled]="modifToggleLieu" *ngIf="!toggleLieu" title="Liste centre revenu"><i
                   class="fas fa-list"></i></button>
-              <button class="btn btn-outline-info btn-sm me-1" [disabled]="modifToggleLieu"
-                (click)="modifyLieuStockage()" *ngIf="!toggleLieu" title="Modifier centre revenu"><i
-                  class="fas fa-pencil"></i></button>
-              <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleLieu"
-                (click)="createLieuStockage()" title="Ajouter centre revenu"><i class="fas fa-plus"></i></button>
-              <button class="btn btn-outline-danger btn-sm me-1" [disabled]="modifToggleLieu"
-                (click)="deleteLieuStockage()" title="Supprimer centre revenu"><i class="fas fa-trash"></i></button>
+              <div *ngIf="isAdmin"><button class="btn btn-outline-info btn-sm me-1" [disabled]="modifToggleLieu"
+                  (click)="modifyLieuStockage()" *ngIf="!toggleLieu" title="Modifier centre revenu"><i
+                    class="fas fa-pencil"></i></button>
+                <button class="btn btn-outline-success btn-sm me-1" [disabled]="!toggleLieu"
+                  (click)="createLieuStockage()" title="Ajouter centre revenu"><i class="fas fa-plus"></i></button>
+                <button class="btn btn-outline-danger btn-sm me-1" [disabled]="modifToggleLieu"
+                  (click)="deleteLieuStockage()" title="Supprimer centre revenu"><i class="fas fa-trash"></i></button>
+              </div>
             </div>
           </div>
         </div>
         <div class="card py-3 mt-2" style="border: none;">
           <div class="overflow-y-scroll" style="max-height: 60vh;" *ngIf="toggleLieu">
-            <div class="card-body overflow-scroll-y py-1" style="height: 600px;">
+            <div class="card-body overflow-y-scroll py-1" style="height: 600px;">
               <table class="table table-hover table-sm table-striped mb-0">
                 <thead>
                   <tr>
@@ -594,17 +599,37 @@
                     </div>
                   </div>
                   <div class="row">
-                    <div class="overflow-y-scroll" [ngClass]="{'col-12': !inputModifZone, 'col-6': inputModifZone}"
+                    <div class="overflow-y-scroll" [ngClass]="{'col-8': !inputModifZone, 'col-6': inputModifZone}"
                       style="height: 30vh;">
                       <table class="table table-hover table-sm table-striped mb-0">
                         <tbody>
-                          <tr *ngFor="let zonestockage of zonestockageslieustockages">
-                            <td>
+                          <tr *ngFor="let zonestockage of zonestockageslieustockages"
+                            [ngClass]="{'selected-row': zonestockage.id === selectedZoneId}">
+                            <td class="col-1">
                               <input *ngIf="!inputModifLieu || inputModifZone" type="checkbox" class="form-check-input"
                                 name="zonestockage-{{zonestockage.id}}" id="zonestockage-{{zonestockage.id}}"
                                 [(ngModel)]="zonestockage.selected" (change)="selectzonestockage()">
                             </td>
-                            <td>{{ zonestockage.zone }}</td>
+                            <td class="col-7">{{ zonestockage.zone }}</td>
+                            <td class="col-4">
+                              <div class="btn-group" role="group" aria-label="Basic example"><button
+                                  class="btn btn-sm btn-outline-primary" *ngIf="!inputModifZone"
+                                  (click)="openModalArticle(zonestockage, content)">Gérer les articles</button>
+                                <button class="btn btn-sm btn-outline-primary" *ngIf="!inputModifZone"
+                                  (click)="choosezone(zonestockage)">
+                                  <i class="fas fa-list"></i>
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                    <div class="overflow-y-scroll col-4" style="height: 30vh;" *ngIf="!inputModifZone">
+                      <table class="table table-hover table-sm table-striped mb-0">
+                        <tbody>
+                          <tr *ngFor="let article of articlesZones">
+                            <td>{{article.libelle}}</td>
                           </tr>
                         </tbody>
                       </table>
@@ -636,3 +661,39 @@
   </ul>
   <div [ngbNavOutlet]="nav" class="mt-2"></div>
 </div>
+
+<ng-template #content let-modal>
+  <div class="modal-header">
+    <h6 class="modal-title text-center" id="modal-basic-title">{{zoneStockageModal.zone}}</h6>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body">
+    <div class="overflow-y-scroll" style="height: 60vh;">
+      <table class="table table-sm table-hover">
+        <!-- Affichez le libellé de la famille -->
+        <tr *ngFor="let famille of familleArticlesZones">
+          <table class="table table-sm table-hover">
+            <thead>
+              <th colspan="2" class="fw-bold">{{ famille | uppercase }}</th>
+            </thead>
+            <tbody>
+              <tr *ngFor="let article of articlesZoneStockage">
+                <ng-container *ngIf="article.familles.libelle === famille">
+                  <td>
+                    <input type="checkbox" class="form-check-input" name="article-{{ article.id }}"
+                      id="article-{{ article.id }}" [(ngModel)]="article.selected">
+                  </td>
+                  <td>{{ article.libelle }}</td>
+                </ng-container>
+              </tr>
+            </tbody>
+          </table>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn btn-sm btn-outline-success"
+      (click)="modal.close('Save click')">Enregistrer</button>
+  </div>
+</ng-template>

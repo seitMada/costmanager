@@ -180,8 +180,8 @@
         <table class="table table-striped">
           <thead>
             <tr>
-              <th class="col-1"></th>
-              <th class="col-4">Designation</th>
+              <th class=""></th>
+              <th class="col-5">Designation</th>
               <th class="col-1">Quantité</th>
               <th class="col-1">Unité</th>
               <th class="col-1">Prix</th>
@@ -192,9 +192,9 @@
           </thead>
           <tbody>
             <tr *ngFor="let itemes of detailFactures">
-              <td class="col-1"><input class="form-check-input" type="checkbox" name="df-{{itemes.id}}"
+              <td class=""><input class="form-check-input" type="checkbox" name="df-{{itemes.id}}" *ngIf="addBtn"
                   id="df-{{itemes.id}}" [(ngModel)]="itemes.selected" (change)="checkSelectedRows()"></td>
-              <td class="col-4">{{itemes.article.libelle }}</td>
+              <td class="col-5">{{itemes.article.libelle }}</td>
               <td class="col-1"><input type="number" class="form-control form-control-sm" [disabled]="inputModif"
                   placeholder="0.00" [step]="itemes.conditionnement.uniteAchat.step" name="quantite[]"
                   [(ngModel)]="itemes.quantite"></td>
@@ -229,7 +229,7 @@
       <div class="card d-flex">
         <div class="d-flex flex-row-reverse bd-highlight fw-bold p-1">
           <span class="col-1"></span>
-          <span class="col-1 ms-2 text-end">{{ montantTTc ? montantTTc : getTotalMontant() | number:'1.2-2'}} €</span>
+          <span class="col-1 ms-2 text-end">{{ (montantTTc ? montantTTc : getTotalMontant()) | number:'1.2-2'}} €</span>
           <span class="me-1">Montant Total</span>
         </div>
       </div>

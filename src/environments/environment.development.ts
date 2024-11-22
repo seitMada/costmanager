@@ -150,6 +150,7 @@ export const environment = {
     APIDELETEZONESTOCKAGE: endPoint + 'zonestockage/delete',
 
     APIDELETEARTICLEZONESTOCKAGE: endPoint + 'articlezonestockage/delete/',
+    APIADDARTICLEZONESTOCKAGE: endPoint + 'articlezonestockage/add',
 
     APIGETPPOBYCRANDDATE: endPoint + 'ppo',
     APICREATEPPO: endPoint + 'ppo/create',

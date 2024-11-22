@@ -30,7 +30,8 @@
           <span class="visually-hidden">Toggle Dropdown</span>
         </button>
         <ul class="dropdown-menu dropdown-menu-end">
-          <li *ngFor="let line of centrerevenusdefault"><span (click)="selectCentreRevenus(line)">{{line.libelle}}</span>
+          <li *ngFor="let line of centrerevenusdefault"><span
+              (click)="selectCentreRevenus(line)">{{line.libelle}}</span>
           </li>
         </ul>
       </div>
@@ -71,26 +72,34 @@
       <thead>
         <tr>
           <th scope="col" class="col-1">#</th>
-          <th scope="col" class="col-3">N°   <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortInventaires($event, 'numero')"></i></th>
-          <th scope="col" class="col-2">Date   <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortInventaires($event, 'date_inventaire','date')"></i></th>
-          <th scope="col" class="col-3">Centre revenu   <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortInventaires($event, 'centre.libelle')"></i></th>
+          <th scope="col" class="col-3">N° <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortInventaires($event, 'numero')"></i></th>
+          <th scope="col" class="col-2">Date <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortInventaires($event, 'date_inventaire','date')"></i></th>
+          <th scope="col" class="col-3">Centre revenu <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortInventaires($event, 'centre.libelle')"></i></th>
           <!-- <th scope="col" class="col-2">Lieu et Zones de stockage</th> -->
           <!-- <th scope="col" class="col-1">Zone de stockage</th> -->
-          <th scope="col" class="col-3">Operateurs <i class="fas fa-sort sort-style" id="fa-sort" (click)="onSortInventaires($event, 'operateur.nom')"></i></th>
+          <th scope="col" class="col-3">Operateurs <i class="fas fa-sort sort-style" id="fa-sort"
+              (click)="onSortInventaires($event, 'operateur.nom')"></i></th>
         </tr>
         <tr>
           <th></th>
-          <th> <input type="search" name="numero" class="form-control form-control-sm"  (input)="onSearchInventaires($event,'numero')" placeholder="Rechercher..."></th>
-          <th><input type="date" name="date_inventaire" class="form-control form-control-sm"  (input)="onSearchInventaires($event,'date_inventaire')" placeholder="Rechercher..."></th>
-          <th><input type="search" name="libelle" class="form-control form-control-sm"  (input)="onSearchInventaires($event,'centre.libelle')" placeholder="Rechercher..."></th>
-          <th><input type="search" name="operateur" class="form-control form-control-sm"  (input)="onSearchInventaires($event,'operateur.nom')" placeholder="Rechercher..."></th>
+          <th> <input type="search" name="numero" class="form-control form-control-sm"
+              (input)="onSearchInventaires($event,'numero')" placeholder="Rechercher..."></th>
+          <th><input type="date" name="date_inventaire" class="form-control form-control-sm"
+              (input)="onSearchInventaires($event,'date_inventaire')" placeholder="Rechercher..."></th>
+          <th><input type="search" name="libelle" class="form-control form-control-sm"
+              (input)="onSearchInventaires($event,'centre.libelle')" placeholder="Rechercher..."></th>
+          <th><input type="search" name="operateur" class="form-control form-control-sm"
+              (input)="onSearchInventaires($event,'operateur.nom')" placeholder="Rechercher..."></th>
         </tr>
       </thead>
       <tbody>
         <tr *ngFor="let line of inventaires" [ngClass]="line.etat === false ? 'table-danger' : 'table-info'">
           <td class="col-1">
-            <input type="checkbox" class="form-check-input" name="inventaire-{{line.date_inventaire}}" id="inventaire-{{line.id}}"
-              [(ngModel)]="line.selected">
+            <input type="checkbox" class="form-check-input" name="inventaire-{{line.date_inventaire}}"
+              id="inventaire-{{line.id}}" [(ngModel)]="line.selected">
           </td>
           <td class="col-3" (click)="toggleModal(line.etat); show(line)">{{line.numero}}</td>
           <td class="col-2" (click)="toggleModal(line.etat); show(line)">{{screenDate(line.date_inventaire)}}</td>
@@ -156,8 +165,8 @@
                   <tbody>
                     <tr *ngFor="let article of lieu.inventairedetail">
                       <td class="col-1">
-                        <input type="checkbox" class="form-check-input" name="inventaire-{{article.articleId}}" id="inventaire-{{article.id}}"
-                          [(ngModel)]="article.selected" *ngIf="!modifToggle">
+                        <input type="checkbox" class="form-check-input" name="inventaire-{{article.articleId}}"
+                          id="inventaire-{{article.id}}" [(ngModel)]="article.selected" *ngIf="!modifToggle">
                       </td>
                       <td class="col-3" cTooltip={{article.article.libelle}} cTooltipPlacement="bottom">
                         {{article.article.libelle}}</td>
@@ -242,7 +251,7 @@
 <ng-template #contentinventaire let-modal>
   <div class="modal-header">
     <h6 class="modal-title text-center" id="modal-basic-title">{{centrerevenu.libelle}} - Inventaire du
-      {{screenDate(inventaire.date_inventaire)}} -</h6>
+      {{screenDate(inventaire.date_inventaire)}}</h6>
     <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
   </div>
   <div class="modal-body">
@@ -274,7 +283,7 @@
                   <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
                     aria-label="Code" aria-describedby="exploitation"
                     [(ngModel)]="inventaire.centre.exploitations.libelle" disabled="true">
-                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                  <!-- <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="visually-hidden">Toggle Dropdown</span>
                   </button>
@@ -282,7 +291,7 @@
                     <li *ngFor="let line of exploitations"><span
                         (click)="selectExploitation(line)">{{line.libelle}}</span>
                     </li>
-                  </ul>
+                  </ul> -->
                 </div>
               </div>
               <div class="col-6">
@@ -290,7 +299,7 @@
                   <input type="text" class="form-control bg-white" [ngClass]="modifToggle ? 'col-6' : 'col-7'"
                     aria-label="Code" aria-describedby="centrerevenu" [(ngModel)]="inventaire.centre.libelle"
                     disabled="true">
-                  <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
+                  <!-- <button type="button" class="btn btn-outline-secondary dropdown-toggle dropdown-toggle-split"
                     data-bs-toggle="dropdown" aria-expanded="false">
                     <span class="visually-hidden">Toggle Dropdown</span>
                   </button>
@@ -298,7 +307,7 @@
                     <li *ngFor="let line of centrerevenus"><span
                         (click)="selectCentreRevenu(line)">{{line.libelle}}</span>
                     </li>
-                  </ul>
+                  </ul> -->
                 </div>
               </div>
             </div>

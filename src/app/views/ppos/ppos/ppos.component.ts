@@ -526,8 +526,11 @@ export class PposComponent implements OnInit {
   calculeCoutComposition(_composition: InterfaceComposition[]) {
     let cout = 0;
     for (const _c of _composition) {
-      if (_c.articleId != null) {
-        cout += (_c.article ? _c.article.cout : 0) * _c.quantite;
+      if (_c.articleId != null && _c.article?.articlefournisseur) {
+        for (const _article of _c.article?.articlefournisseur) {
+          cout += _article.prixReference;
+        }
+        cout = cout * _c.quantite;
       } else {
         cout += (_c.fichetechniqueCompositon ? _c.fichetechniqueCompositon.cout : 0) * _c.quantite;
       }
@@ -589,10 +592,10 @@ export class PposComponent implements OnInit {
                     }
                   }
                   for (const _fichetechnique of this.fichetechniques) {
+                    console.log(_fichetechnique.composition);
                     this.ppodetailsfichetechnique = {
                       article: this.articleService.resetArticle(),
                       articleId: null,
-
                       cout: this.calculeCoutComposition(_fichetechnique.composition),
                       fichetechnique: _fichetechnique,
                       fichetechniqueId: _fichetechnique.id || 0,
@@ -623,6 +626,7 @@ export class PposComponent implements OnInit {
 
   selectFichetechnique(_fichetechnique: InterfaceFichetechnique) {
     this.fichetechnique = _fichetechnique;
+    console.log(_fichetechnique)
   }
 
   onSortPpo(event: any, colonne: any, type: string = 'string') {

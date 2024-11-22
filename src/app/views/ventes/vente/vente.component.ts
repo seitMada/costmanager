@@ -392,7 +392,7 @@ export class VenteComponent implements OnInit {
     this.fichetetchniqueService.getFichetechniqueByExploitation(this.idexploitation).subscribe({
       next: (_fichetechniques) => {
         this.fichetechniques = _fichetechniques;
-
+        console.log(this.fichetechniques)
 
 
         this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(

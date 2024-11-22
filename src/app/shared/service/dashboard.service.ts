@@ -24,7 +24,7 @@ export class DashboardService {
     return this.https.get<any>(this.apiGetPpoByArticle + articleId, { params: { operateurId: operateurId } });
   }
 
-  public getArticlePlusUtilise(dateDebut: any, dateFin: any, exploitationId: number, articleid: number) {
+  public getArticlePlusUtilise(dateDebut: any, dateFin: any, exploitationId: number[], articleid: number) {
     return this.https.post(this.apiGetArticlePlusUtilise, { dateDebut, dateFin, exploitationId, articleid });
   }
 
@@ -32,8 +32,12 @@ export class DashboardService {
     return this.https.get<any>(this.apiGetValorisationStock + operateurId, { params: { exploitationId: exploitationId } });
   }
 
-  public getvaleurStockTheorique(dateInventaire: any, articleId: number) {
-    return this.https.post<any>(this.apiGetValueStockTheorique, { dateInventaire, articleId });
+  // public getvaleurStockTheorique(dateInventaire: any, articleId: number) {
+  //   return this.https.post<any>(this.apiGetValueStockTheorique, { dateInventaire, articleId });
+  // }
+
+  public getvaleurStockTheorique(data: any[]) {
+    return this.https.post<any>(this.apiGetValueStockTheorique, { data });
   }
 
   public getstockArticle(articleId: number, operateurId: number) {

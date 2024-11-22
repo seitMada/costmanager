@@ -98,6 +98,7 @@ export class DashComponent implements OnInit {
     libelle: string,
     quantite: number,
     valorisation: number,
+    unite: string,
     fichetechnique: {
       id: number,
       libelleFt: string,
@@ -244,16 +245,16 @@ export class DashComponent implements OnInit {
   }[] = [];
   public fichetechniques: {
     fichetechnique: InterfaceFichetechnique,
-    cout: 0,
-    prix: 0,
-    ecart: 0,
+    cout: number,
+    prix: number,
+    ecart: number,
   }[] = [];
 
   public fichetechniquesBack: {
     fichetechnique: InterfaceFichetechnique,
-    cout: 0,
-    prix: 0,
-    ecart: 0,
+    cout: number,
+    prix: number,
+    ecart: number,
   }[] = [];
 
 
@@ -428,10 +429,16 @@ export class DashComponent implements OnInit {
     this.inventaireService.getPeriode(_idexploitation, true).subscribe({
       next: (value: any) => {
         this.periode = value;
-
+        console.log(this.periode)
         if (this.periode.length > 0) {
           this.venteService.getVenteCrDate(this.exploitationsselected, this.getrealdate(this.periode[0].debut), this.getrealdate(this.periode[0].fin), true).subscribe({
             next: (_ventes: any) => {
+              if (this.periode[0].fin === null) {
+                const today = new Date();
+                const tomorrow = new Date(today);
+                tomorrow.setDate(today.getDate() + 1);
+                this.periode[0].fin = tomorrow;
+              }
               const _dateFin = new Date(this.periode[0].fin);
 
 
@@ -475,7 +482,10 @@ export class DashComponent implements OnInit {
                       ecart: 0
                     });
                   }
-                  this.perteBack = this.perte
+                  this.perteBack = this.perte;
+                  if (!this.periode[1]) {
+                    this.periode.push({ debut: new Date(), fin: new Date() })
+                  }
                   this.venteService.getVenteCrDate(this.exploitationsselected, this.getrealdate(this.periode[1].debut), this.getrealdate(new Date()), true).subscribe({
                     next: (_ventes: any) => {
 
@@ -519,43 +529,47 @@ export class DashComponent implements OnInit {
                                 })
                               }
                             }
-
-
-
-
-
-
-
                           }
-
                           this.perteBack = this.perte
                           this.nombrevente = _ventes.filter((vente: any) => this.getrealdate(new Date(vente.date_vente)) == this.getrealdate(new Date())).length;
                           this.venteshebdo = _ventes.filter((vente: any) => this.getrealdate(new Date(vente.date_vente)) == this.getrealdate(new Date()));
                           const nbventedate = await this.countSalesByDate(_ventes);
 
-
-                          this.fichetechniqueService.getFichetechniqueByExploitation(this.idexploitation).subscribe({
-                            next: (_fichetechniquesExploitations) => {
-                              for (const vente of _ventes) {
-                                if (this.getrealdate(new Date(vente.date_vente)) == this.getrealdate(new Date('2024-06-06'))) {
-                                  for (const ft of vente.ventedetail) {
-                                    for (const fte of _fichetechniquesExploitations) {
-                                      if (fte.id == ft.fichetechniqueId) {
-                                        this.fichetechniques.push({
-                                          fichetechnique: ft.fichetechnique,
-                                          cout: fte.cout,
-                                          prix: ft.prixttc,
-                                          ecart: ft.prixttc
-                                        })
+                          this.venteService.getVenteCrDate(this.exploitationsselected, this.getrealdate(this.periode[0].debut), this.getrealdate(new Date()), true).subscribe({
+                            next: (_ventesanalyse: any) => {
+                              this.fichetechniqueService.getFichetechniqueByExploitation(this.idexploitation).subscribe({
+                                next: (_fichetechniquesExploitations) => {
+                                  for (const vente of _ventesanalyse) {
+                                    for (const ft of vente.ventedetail) {
+                                      for (const fte of _fichetechniquesExploitations) {
+                                        if (fte.id == ft.fichetechniqueId) {
+                                          // if (ft.fichetechniqueId == 191 && fte.id == 191) {
+                                          // console.log(ft)
+                                          let _cout: number = 0;
+                                          for (const _composition of fte.composition) {
+                                            if (_composition.article?.articlefournisseur.length > 0) {
+                                              for (const _articlefournisseur of _composition.article.articlefournisseur) {
+                                                _cout += _articlefournisseur.prixReference * _composition.quantite;
+                                              }
+                                            }
+                                          }
+                                          this.fichetechniques.push({
+                                            fichetechnique: ft.fichetechnique,
+                                            cout: _cout,
+                                            prix: ft.prixttc,
+                                            ecart: ft.prixttc - _cout
+                                          })
+                                        }
                                       }
                                     }
                                   }
-                                }
-                              }
-                              this.fichetechniques = this.getUniqueFt(this.fichetechniques);
-                              this.fichetechniquesBack = this.fichetechniques;
-                            },
-                          });
+                                  this.fichetechniques = this.getUniqueFt(this.fichetechniques);
+                                  this.fichetechniquesBack = this.fichetechniques;
+                                },
+                              });
+                            }
+                          })
+
 
                           this.labels = nbventedate.labels;
                           const resultArray = [];
@@ -629,17 +643,17 @@ export class DashComponent implements OnInit {
 
   private getUniqueFt(_fichetechniques: {
     fichetechnique: InterfaceFichetechnique,
-    cout: 0,
-    prix: 0,
-    ecart: 0
+    cout: number,
+    prix: number,
+    ecart: number
   }[]) {
 
     const coutMinParId: {
       [key: number]: {
         fichetechnique: InterfaceFichetechnique,
-        cout: 0,
-        prix: 0,
-        ecart: 0
+        cout: number,
+        prix: number,
+        ecart: number
       }
     } = {};
 
@@ -888,7 +902,6 @@ export class DashComponent implements OnInit {
     }
     this.dashService.getVariationArticle(idexploitations).subscribe({
       next: (articles: any) => {
-
         for (const article of articles) {
           if (article.achatDetail.length == 0) {
             this.articlesvariations.push({
@@ -906,7 +919,8 @@ export class DashComponent implements OnInit {
               libelle: article.libelle,
               prixactuel: article.articlefournisseur[0].prixReference,
               prixprecedent: article.articlefournisseur[0].prixReferencePrecedent,
-              ecart: ((article.articlefournisseur[0].prixReference - article.articlefournisseur[0].prixReferencePrecedent) / article.articlefournisseur[0].prixReferencePrecedent) * 100,
+              ecart: article.articlefournisseur[0].prixReferencePrecedent !== 0 ? ((article.articlefournisseur[0].prixReference - article.articlefournisseur[0].prixReferencePrecedent) / article.articlefournisseur[0].prixReferencePrecedent) * 100
+                : 100,
               article: article
             })
           }
@@ -920,7 +934,6 @@ export class DashComponent implements OnInit {
               article: article
             })
           }
-
         }
         this.articlesvariationsBack = this.articlesvariations;
       }
@@ -1038,26 +1051,6 @@ export class DashComponent implements OnInit {
     });
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   formatDateRange(): string {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const debutFormatted = this.dates.debut.toLocaleDateString('fr-FR', options);
@@ -1087,24 +1080,26 @@ export class DashComponent implements OnInit {
   }
 
   getValorisationArticleFt() {
-
-    this.inventaireService.getLastPeriodeInventaire(this.idoperateur, this.exploitations.map(item => item.id ? item.id : 0)).subscribe({
+    this.inventaireService.getPeriode(this.exploitations.map(item => item.id ? item.id : 0), true).subscribe({
       next: (_periode: any) => {
         this.dates = {
-          debut: new Date(this.getrealdate(_periode.debut_inventaire)),
-          fin: new Date(this.getrealdate(_periode.fin_inventaire))
+          debut: new Date(this.getrealdate(_periode[0].debut)),
+          fin: new Date(this.getrealdate(_periode[0].fin))
         }
+        console.log(_periode)
         const articleid = 0;
-        this.dashService.getArticlePlusUtilise(this.getrealdate(_periode.debut_inventaire), this.getrealdate(_periode.fin_inventaire), this.idexploitation, articleid).subscribe({
+        this.dashService.getArticlePlusUtilise(this.getrealdate(_periode[0].debut), _periode[0].fin == null ? this.getrealdate(_periode[0].fin) : this.getrealdate(new Date()), this.exploitations.map(item => item.id ? item.id : 0), articleid).subscribe({
           next: (_articles: any) => {
-            const results = this.getSommeQuantiteEtValorisationArticle(_articles);
-            for (const article of results) {
+            console.log(_articles)
+            // const results = this.getSommeQuantiteEtValorisationArticle(_articles);
+            for (const article of _articles) {
               const articleVendu = {
                 id: article.articleId,
                 libelle: article.libelle,
                 quantite: article.qteArticle,
                 valorisation: article.valorisation,
-                fichetechnique: article.fichetechnique
+                fichetechnique: article.fichetechnique,
+                unite: article.abreviation
               };
               this.valorisationarticlesFT.push(articleVendu);
             }
@@ -1113,6 +1108,7 @@ export class DashComponent implements OnInit {
       },
     });
   }
+
   getSommeQuantiteEtValorisationArticle(data: any) {
     const resultMap: { [key: string]: any } = {};
     data.forEach((item: any) => {
@@ -1130,8 +1126,8 @@ export class DashComponent implements OnInit {
         resultMap[key].fichetechnique.push(fichetechnique);
       }
 
-      resultMap[key].qteArticle = (parseFloat(resultMap[key].qteArticle) + parseFloat(item.qteArticle)).toFixed(2);
-      resultMap[key].valorisation = (parseFloat(resultMap[key].valorisation) + parseFloat(item.valorisation)).toFixed(2);
+      resultMap[key].qteArticle = (parseFloat(resultMap[key].qteArticle || 0) + parseFloat(item.qteArticle || 0)).toFixed(2);
+      resultMap[key].valorisation = (parseFloat(resultMap[key].valorisation || 0) + parseFloat(item.valorisation || 0)).toFixed(2);
 
     });
     return Object.values(resultMap);
@@ -1141,28 +1137,32 @@ export class DashComponent implements OnInit {
 
     this.dashService.getValorisationStock(this.operateurId, this.exploitations.map(item => item.id ? item.id : 0)).subscribe({
       next: (_valorisations) => {
+        const _valeur: any[] = [];
         for (const valeur of _valorisations) {
-          this.dashService.getvaleurStockTheorique(this.getrealdate(valeur.date_inventaire), valeur.articleId).subscribe({
-            next: (_stocks) => {
-              const articles = _stocks.filter((line: any) => line.articleId === valeur.articleId);
-              for (const _article of articles) {
-
-                const inventaire = {
-                  articleId: valeur.articleId,
-                  articleLibelle: valeur.libelle,
-                  stockInventaire: valeur.quantite,
-                  stockTheorique: Number(valeur.quantite) + Number(_article.qteAchat) - Number(_article.qteVente) - Number(_article.qtePerte),
-                  dateInventaire: new Date(valeur.date_inventaire),
-                  valorisationInventaire: valeur.cout * valeur.quantite,
-                  valorisationTechnique: (Number(valeur.quantite) + Number(_article.qteAchat) - Number(_article.qteVente) - Number(_article.qtePerte)) * valeur.cout,
-                  unite: valeur.abreviation,
-                  stockmin: valeur.stockminimum
-                };
-                this.valorisationStock.push(inventaire);
-              }
-            },
-          });
+          _valeur.push({ date: this.getrealdate(valeur.date_inventaire), idarticle: valeur.articleId, idexploitation: this.exploitations.map(item => item.id ? item.id : 0) })
         }
+        this.dashService.getvaleurStockTheorique(_valeur).subscribe({
+          next: (_stocks) => {
+            for (const _articles of _stocks) {
+              for (const valeur of _valorisations) {
+                if (valeur.articleId === _articles.articleId) {
+                  const inventaire = {
+                    articleId: valeur.articleId,
+                    articleLibelle: valeur.libelle,
+                    stockInventaire: _articles.quantite,
+                    stockTheorique: Number(valeur.quantite) + Number(_articles.qteAchat) - Number(_articles.qteVente) - Number(_articles.qtePerte),
+                    dateInventaire: new Date(valeur.date_inventaire),
+                    valorisationInventaire: valeur.cout * valeur.quantite,
+                    valorisationTechnique: (Number(valeur.quantite) + Number(_articles.qteAchat) - Number(_articles.qteVente) - Number(_articles.qtePerte)) * valeur.cout,
+                    unite: valeur.abreviation,
+                    stockmin: valeur.stockminimum
+                  };
+                  this.valorisationStock.push(inventaire);
+                }
+              }
+            }
+          },
+        });
       },
     })
   }
@@ -1266,6 +1266,7 @@ export class DashComponent implements OnInit {
       const date = item.achat.dateAchat.split('-')[2].substring(0, 2) + '/' + item.achat.dateAchat.split('-')[1] + '/' + item.achat.dateAchat.split('-')[0];
       categories.push(date)
     }
+    console.log(article)
     return { data: data, categories: categories }
   }
 

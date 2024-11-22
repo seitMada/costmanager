@@ -694,7 +694,7 @@ export class InventairesComponent {
     exploitationId.push(this.inventaire.centre.exploitations.id || 0);
     this.zonelieuService.getZoneStockageByExploitationId(exploitationId).subscribe({
       next: (_data: any) => {
-        this.lieustockageszones = _data;
+        this.lieustockageszones = _data.filter((item: { centreId: number | undefined; }) => item.centreId === this.inventaire.centre.id);
         for (const _lieu of this.lieustockageszones) {
           for (const _zone of _lieu.zonestockage) {
             _zone.selected = true;
@@ -719,7 +719,7 @@ export class InventairesComponent {
           }
           this.articleService.getArticlesByZone(zonestockageId).subscribe({
             next: (_article: any) => {
-
+              console.log(_article)
               this.inventaire.inventairedetail = [];
               this.inventairesDetailsZone = [];
               let _inventairesDetailsZone: InterfaceInventairesDetailsZone;

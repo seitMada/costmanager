@@ -3,7 +3,7 @@ export interface InterfaceOperateur {
     nom: string;
     prenom: string;
     email: string;
-    mdp:  string;
+    mdp: string;
     compteConnecte: boolean;
     actif: boolean;
     login_count: number;
@@ -13,8 +13,9 @@ export interface InterfaceOperateur {
     centreId?: number;
     telephone: string;
     civilite: string;
-    selected?:boolean;
+    selected?: boolean;
     isAdmin?: boolean;
+    exploitation?: string;
 }
 
 export interface InterfaceOperateurs {

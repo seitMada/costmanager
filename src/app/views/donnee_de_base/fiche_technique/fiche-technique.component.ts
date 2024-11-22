@@ -211,9 +211,30 @@ export class FicheTechniqueComponent implements OnInit {
               }
             }
             fichetechniqueIds.push(fichetechnique.id)
-            this.articles = this.articles.filter(row => !articleIds.includes(row.id));
+            this.articles = this.articles.filter(row => !articleIds.includes(row.id) && row.articlefournisseur.length > 0);
+            this.articles.forEach(_article => {
+              _article.cout = _article.articlefournisseur.length ? _article.articlefournisseur[0].prixReference : 0;
+            });
             this.fichetechniques = this.fichetechniques.filter(row => !fichetechniqueIds.includes(row.id));
+            this.fichetechniques.forEach(_ft => {
+              _ft.composition.forEach(_composition => {
+                if (_composition.articleId !== null) {
+                  _composition.article?.articlefournisseur.forEach(_artfournisseur => {
+                    _composition.cout = _artfournisseur.prixReference;
+                  });
+                }
+              });
+            });
             this.fichetechniquesBack = this.fichetechniques.filter(row => !fichetechniqueIds.includes(row.id));
+            this.fichetechniquesBack.forEach(_ft => {
+              _ft.composition.forEach(_composition => {
+                if (_composition.articleId !== null) {
+                  _composition.article?.articlefournisseur.forEach(_artfournisseur => {
+                    _composition.cout = _artfournisseur.prixReference;
+                  });
+                }
+              });
+            });
           }
         })
       }
@@ -489,6 +510,11 @@ export class FicheTechniqueComponent implements OnInit {
       (result) => {
         this.closeResult = `Closed with: ${result}`;
         if (this.closeResult == 'Closed with: Save click') {
+          let _cout = 0;
+          for (const _composition of this.compositions) {
+            _cout += _composition.cout;
+          }
+          this.fichetechnique.cout = _cout;
           this.fichetechniqueService.addFichetechnique(this.fichetechnique).subscribe({
             next: (idfichetechnique: any) => {
               this.idFichetechnique = idfichetechnique;
@@ -543,12 +569,17 @@ export class FicheTechniqueComponent implements OnInit {
       ftId: null,
       quantite: 0,
       uniteId: article.uniteId,
-      cout: article.cout + (article.cout * (article.coefficientPonderation / 100)),
+      // cout: article.cout + (article.cout * (article.coefficientPonderation / 100)),
+      cout: article.articlefournisseur.reduce((max, item) => {
+        const prixUniteFT = item.prixReference / ((item.conditionnement[0]?.coefficientAchatCommande * item.conditionnement[0]?.coefficientInventaireAchat * item.conditionnement[0]?.coefficientInventaire) || 1);
 
+        return prixUniteFT > max ? prixUniteFT : max;
+      }, 0),
       article: article,
       fichetechniqueCompositon: null,
       unite: article.unite,
     };
+    console.log(composition)
     this.compositions.push(composition);
     for (const composition of this.compositions) {
       this.articles = this.articles.filter(row => row.id !== composition.articleId);

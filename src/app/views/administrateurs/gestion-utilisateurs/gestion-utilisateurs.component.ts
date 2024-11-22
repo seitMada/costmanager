@@ -106,10 +106,22 @@ export class GestionUtilisateursComponent implements OnInit {
     if (this.isAdmin) {
       this.operateurService.getAllOperateur().subscribe({
         next: (_operateurs) => {
-          console.log(_operateurs)
+          _operateurs.forEach((_operateur: { exploitation: any; operateurscentreexploitation: any[]; }) => {
+            const _exploitations = new Set<string>();
+            _operateur.operateurscentreexploitation.forEach(_exploitation => {
+              _exploitations.add(_exploitation.exploitation.libelle);
+            });
+            const _exploitation = Array.from(_exploitations)
+              .map((libelle: string) => {
+                return libelle;
+              })
+              .join(', ');
+            _operateur.exploitation = _exploitation;
+            // console.log(_exploitation);
+          });
+          // console.log(_operateurs)
           this.operateurs = _operateurs;
           this.operateur = _operateurs[0];
-
         },
       })
     } else {
@@ -121,6 +133,10 @@ export class GestionUtilisateursComponent implements OnInit {
         },
       })
     }
+  }
+
+  public getExploitationNames(line: any): string {
+    return line.zonestockage.map((lines: any) => lines.zone).join(', ');
   }
 
   public resetOperateur() {

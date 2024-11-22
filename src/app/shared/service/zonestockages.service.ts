@@ -13,6 +13,7 @@ export class ZonestockagesService {
   private apiGetZoneStockageByExploitationId = environment.APIGETZONESTOCKAGEBYEXPLOITATIONID;
 
   private apiDeleteArticleZonestockage = environment.APIDELETEARTICLEZONESTOCKAGE;
+  private apiAddArticleZonestockage = environment.APIADDARTICLEZONESTOCKAGE;
   private apiGetAllZoneStockageWithoutLinks = environment.APIGETALLZONESTOCKAGEWITHOUTLINKS;
   private apiCreateZoneDeStockage = environment.APICREATEZONEDESTOCKAGE;
   private apiGetListZoneWithoutLinks = environment.APIGETLISTZONEWITHOUTLINKSBYLIEUID;
@@ -44,6 +45,10 @@ export class ZonestockagesService {
 
   deleteArticleZoneStockage(articleId: number, zonestockageId: number[]) {
     return this.https.post(this.apiDeleteArticleZonestockage + articleId, zonestockageId);
+  }
+
+  addArticleZoneStockage(articleId: number[], zonestockageId: number[]) {
+    return this.https.post(this.apiAddArticleZonestockage, { id: articleId, zoneid: zonestockageId });
   }
 
   createZoneDeStockage(zone: InterfaceZonestockages) {
