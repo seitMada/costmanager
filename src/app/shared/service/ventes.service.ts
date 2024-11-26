@@ -15,11 +15,8 @@ export class VentesService {
 
   constructor(private https: HttpClient) { }
 
-
-
-
-
   public getVenteCrDate(id: number[], dateDebut: string, dateFin: string, exploitation: boolean = false) {
+    console.log(dateDebut)
     return this.https.post(this.apiGetVenteCrDate, { id: id, dateDebut: dateDebut, dateFin: dateFin, exploitation: exploitation });
   }
 

@@ -424,14 +424,27 @@ export class DashComponent implements OnInit {
 
   }
 
+  private transformDate = (inputDate: Date): string => {
+    const date = new Date(inputDate);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+    const seconds = String(date.getSeconds()).padStart(2, '0');
+    return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  };
+
   private async getMouvementStock(_idexploitation: number[]) {
 
     this.inventaireService.getPeriode(_idexploitation, true).subscribe({
       next: (value: any) => {
         this.periode = value;
-        console.log(this.periode)
         if (this.periode.length > 0) {
-          this.venteService.getVenteCrDate(this.exploitationsselected, this.getrealdate(this.periode[0].debut), this.getrealdate(this.periode[0].fin), true).subscribe({
+          if (!this.periode[0].fin) {
+            this.periode[0].fin = new Date();
+          }
+          this.venteService.getVenteCrDate(this.exploitationsselected, this.transformDate(this.periode[0].debut), this.transformDate(this.periode[0].fin), true).subscribe({
             next: (_ventes: any) => {
               if (this.periode[0].fin === null) {
                 const today = new Date();
@@ -450,7 +463,7 @@ export class DashComponent implements OnInit {
               }
 
 
-              this.articleService.getMouvementStock({ debut: this.getrealdate(this.periode[0].debut), fin: this.getrealdate(_dateFin), final: this.getrealdate(this.periode[0].fin) }, this.exploitationsselected, true).subscribe({
+              this.articleService.getMouvementStock({ debut: this.transformDate(this.periode[0].debut), fin: this.transformDate(_dateFin), final: this.transformDate(this.periode[0].fin) }, this.exploitationsselected, true).subscribe({
                 next: (_articles: any) => {
 
                   this.chiffreaffaire.push({
@@ -460,6 +473,8 @@ export class DashComponent implements OnInit {
                     debut: this.getrealdate(this.periode[0].debut) !== undefined ? this.getrealdate(this.periode[0].debut) : this.getrealdate(new Date()),
                     fin: this.getrealdate(this.periode[0].fin) !== undefined ? this.getrealdate(this.periode[0].fin) : this.getrealdate(new Date())
                   });
+
+                  console.log(this.chiffreaffaire)
 
                   let pertevalue = 0;
                   for (const _pertes of _articles) {
@@ -486,12 +501,15 @@ export class DashComponent implements OnInit {
                   if (!this.periode[1]) {
                     this.periode.push({ debut: new Date(), fin: new Date() })
                   }
-                  this.venteService.getVenteCrDate(this.exploitationsselected, this.getrealdate(this.periode[1].debut), this.getrealdate(new Date()), true).subscribe({
+                  this.venteService.getVenteCrDate(this.exploitationsselected, this.transformDate(this.periode[1].debut), this.transformDate(new Date()), true).subscribe({
                     next: (_ventes: any) => {
 
                       const _dateFin = new Date();
                       _dateFin.setDate(_dateFin.getDate() - 1);
-                      this.articleService.getMouvementStock({ debut: this.getrealdate(this.periode[1].debut), fin: this.getrealdate(new Date()), final: this.getrealdate(new Date()) }, this.exploitationsselected, true).subscribe({
+                      if (new Date(_dateFin) > new Date(this.periode[1].debut)) {
+                        _dateFin.setDate(_dateFin.getDate());
+                      }
+                      this.articleService.getMouvementStock({ debut: this.transformDate(this.periode[1].debut), fin: this.transformDate(_dateFin), final: this.transformDate(new Date()) }, this.exploitationsselected, true).subscribe({
                         next: async (_articles: any) => {
                           _chiffreaffaire = 0;
                           for (const item of _ventes) {
@@ -501,7 +519,7 @@ export class DashComponent implements OnInit {
                             ca: _chiffreaffaire,
                             cmr: this.getcout(_articles, 1),
                             cmt: this.getcout(_articles, 2),
-                            debut: this.getrealdate(this.periode[0].debut) !== undefined ? this.getrealdate(this.periode[0].debut) : this.getrealdate(new Date()),
+                            debut: this.getrealdate(this.periode[1].debut) !== undefined ? this.getrealdate(this.periode[1].debut) : this.getrealdate(new Date()),
                             fin: this.getrealdate(new Date())
                           })
 
@@ -535,7 +553,7 @@ export class DashComponent implements OnInit {
                           this.venteshebdo = _ventes.filter((vente: any) => this.getrealdate(new Date(vente.date_vente)) == this.getrealdate(new Date()));
                           const nbventedate = await this.countSalesByDate(_ventes);
 
-                          this.venteService.getVenteCrDate(this.exploitationsselected, this.getrealdate(this.periode[0].debut), this.getrealdate(new Date()), true).subscribe({
+                          this.venteService.getVenteCrDate(this.exploitationsselected, this.transformDate(this.periode[0].debut), this.transformDate(new Date()), true).subscribe({
                             next: (_ventesanalyse: any) => {
                               this.fichetechniqueService.getFichetechniqueByExploitation(this.idexploitation).subscribe({
                                 next: (_fichetechniquesExploitations) => {
@@ -1051,7 +1069,7 @@ export class DashComponent implements OnInit {
     });
   }
 
-  formatDateRange(): string {
+  public formatDateRange(): string {
     const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
     const debutFormatted = this.dates.debut.toLocaleDateString('fr-FR', options);
     const finFormatted = this.dates.fin.toLocaleDateString('fr-FR', options);
@@ -1059,6 +1077,16 @@ export class DashComponent implements OnInit {
     return this.dates.debut.getTime() === this.dates.fin.getTime()
       ? `depuis l'inventaire du ${debutFormatted}`
       : `entre l'inventaire du ${debutFormatted} au ${finFormatted}`;
+  }
+
+  public formatDateRangeVente(): string {
+    const options: Intl.DateTimeFormatOptions = { year: 'numeric', month: '2-digit', day: '2-digit' };
+    const debutFormatted = this.dates.debut.toLocaleDateString('fr-FR', options);
+    const finFormatted = this.dates.fin.toLocaleDateString('fr-FR', options);
+
+    return this.dates.debut.getTime() === this.dates.fin.getTime()
+      ? `depuis le ${debutFormatted}`
+      : `entre ${debutFormatted} et ${finFormatted}`;
   }
 
   showFicheTechniques(article: any) {
@@ -1088,7 +1116,7 @@ export class DashComponent implements OnInit {
         }
         console.log(_periode)
         const articleid = 0;
-        this.dashService.getArticlePlusUtilise(this.getrealdate(_periode[0].debut), _periode[0].fin == null ? this.getrealdate(_periode[0].fin) : this.getrealdate(new Date()), this.exploitations.map(item => item.id ? item.id : 0), articleid).subscribe({
+        this.dashService.getArticlePlusUtilise(this.transformDate(_periode[0].debut), _periode[0].fin == null ? this.transformDate(_periode[0].fin) : this.transformDate(new Date()), this.exploitations.map(item => item.id ? item.id : 0), articleid).subscribe({
           next: (_articles: any) => {
             console.log(_articles)
             // const results = this.getSommeQuantiteEtValorisationArticle(_articles);
