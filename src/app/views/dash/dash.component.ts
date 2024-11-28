@@ -40,6 +40,7 @@ import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-sear
 import { Observable } from 'rxjs';
 import { PpoService } from 'src/app/shared/service/ppo.service';
 import { FichetechniqueService } from 'src/app/shared/service/fichetechnique.service';
+import { InterfaceVentes } from 'src/app/shared/model/interface-ventes';
 
 @Component({
   selector: 'app-dash',
@@ -105,6 +106,10 @@ export class DashComponent implements OnInit {
       articleId: number
     }
   }[] = [];
+
+  public centreRevenuVenteC0: { centreRevenu: InterfaceCentreRevenu, ventes: InterfaceVentes[], total: number }[];
+  public centreRevenuVenteC1: { centreRevenu: InterfaceCentreRevenu, ventes: InterfaceVentes[], total: number }[];
+
 
   public centrerevenus: InterfaceCentreRevenu[];
   public centrerevenusdefault: InterfaceCentreRevenu[];
@@ -446,6 +451,49 @@ export class DashComponent implements OnInit {
           }
           this.venteService.getVenteCrDate(this.exploitationsselected, this.transformDate(this.periode[0].debut), this.transformDate(this.periode[0].fin), true).subscribe({
             next: (_ventes: any) => {
+              _ventes.forEach((_vente: any) => {
+                let _total = 0;
+                if (!this.centreRevenuVenteC1) {
+                  this.centreRevenuVenteC1 = [];
+                }
+
+                const centreIndex = this.centreRevenuVenteC1.findIndex(
+                  (item) => item.centreRevenu.id === _vente.centre.id
+                );
+
+                if (centreIndex !== -1) {
+                  // Ajoute la vente au centre existant
+                  this.centreRevenuVenteC1[centreIndex].total += _vente.montantttc;
+                  this.centreRevenuVenteC1[centreIndex].ventes.push({
+                    id: _vente.id,
+                    date_vente: _vente.date_vente,
+                    montantht: _vente.montantht,
+                    montantttc: _vente.montantttc,
+                    num_ticket: _vente.num_ticket,
+                    operateurId: _vente.operateurId,
+                    centreId: _vente.centreId,
+                    ventedetail: _vente.ventedetail
+                  });
+                } else {
+                  _total += _vente.montantttc;
+                  this.centreRevenuVenteC1.push({
+                    centreRevenu: _vente.centre,
+                    ventes: [
+                      {
+                        id: _vente.id,
+                        date_vente: _vente.date_vente,
+                        montantht: _vente.montantht,
+                        montantttc: _vente.montantttc,
+                        num_ticket: _vente.num_ticket,
+                        operateurId: _vente.operateurId,
+                        centreId: _vente.centreId,
+                        ventedetail: _vente.ventedetail
+                      },
+                    ],
+                    total: _total
+                  });
+                }
+              });
               if (this.periode[0].fin === null) {
                 const today = new Date();
                 const tomorrow = new Date(today);
@@ -463,7 +511,7 @@ export class DashComponent implements OnInit {
               }
 
 
-              this.articleService.getMouvementStock({ debut: this.transformDate(this.periode[0].debut), fin: this.transformDate(_dateFin), final: this.transformDate(this.periode[0].fin) }, this.exploitationsselected, true).subscribe({
+              this.articleService.getMouvementStock({ debut: this.transformDate(this.periode[0].debut), fin: this.transformDate(this.periode[0].fin), final: this.transformDate(this.periode[0].fin) }, this.exploitationsselected, true).subscribe({
                 next: (_articles: any) => {
 
                   this.chiffreaffaire.push({
@@ -501,15 +549,57 @@ export class DashComponent implements OnInit {
                   if (!this.periode[1]) {
                     this.periode.push({ debut: new Date(), fin: new Date() })
                   }
-                  this.venteService.getVenteCrDate(this.exploitationsselected, this.transformDate(this.periode[1].debut), this.transformDate(new Date()), true).subscribe({
+                  this.venteService.getVenteCrDate(this.exploitationsselected, this.transformDate(this.periode[1].debut), this.transformDate(this.periode[1].fin), true).subscribe({
                     next: (_ventes: any) => {
+                      _ventes.forEach((_vente: any) => {
+                        let _total = 0;
+                        if (!this.centreRevenuVenteC0) {
+                          this.centreRevenuVenteC0 = [];
+                        }
 
+                        const centreIndex = this.centreRevenuVenteC0.findIndex(
+                          (item) => item.centreRevenu.id === _vente.centre.id
+                        );
+
+                        if (centreIndex !== -1) {
+                          // Ajoute la vente au centre existant
+                          this.centreRevenuVenteC0[centreIndex].total += _vente.montantttc;
+                          this.centreRevenuVenteC0[centreIndex].ventes.push({
+                            id: _vente.id,
+                            date_vente: _vente.date_vente,
+                            montantht: _vente.montantht,
+                            montantttc: _vente.montantttc,
+                            num_ticket: _vente.num_ticket,
+                            operateurId: _vente.operateurId,
+                            centreId: _vente.centreId,
+                            ventedetail: _vente.ventedetail
+                          });
+                        } else {
+                          _total += _vente.montantttc;
+                          this.centreRevenuVenteC0.push({
+                            centreRevenu: _vente.centre,
+                            ventes: [
+                              {
+                                id: _vente.id,
+                                date_vente: _vente.date_vente,
+                                montantht: _vente.montantht,
+                                montantttc: _vente.montantttc,
+                                num_ticket: _vente.num_ticket,
+                                operateurId: _vente.operateurId,
+                                centreId: _vente.centreId,
+                                ventedetail: _vente.ventedetail
+                              },
+                            ],
+                            total: _total
+                          });
+                        }
+                      });
                       const _dateFin = new Date();
                       _dateFin.setDate(_dateFin.getDate() - 1);
                       if (new Date(_dateFin) > new Date(this.periode[1].debut)) {
                         _dateFin.setDate(_dateFin.getDate());
                       }
-                      this.articleService.getMouvementStock({ debut: this.transformDate(this.periode[1].debut), fin: this.transformDate(_dateFin), final: this.transformDate(new Date()) }, this.exploitationsselected, true).subscribe({
+                      this.articleService.getMouvementStock({ debut: this.transformDate(this.periode[1].debut), fin: this.transformDate(this.periode[1].fin), final: this.transformDate(this.periode[1].fin) }, this.exploitationsselected, true).subscribe({
                         next: async (_articles: any) => {
                           _chiffreaffaire = 0;
                           for (const item of _ventes) {
@@ -520,7 +610,7 @@ export class DashComponent implements OnInit {
                             cmr: this.getcout(_articles, 1),
                             cmt: this.getcout(_articles, 2),
                             debut: this.getrealdate(this.periode[1].debut) !== undefined ? this.getrealdate(this.periode[1].debut) : this.getrealdate(new Date()),
-                            fin: this.getrealdate(new Date())
+                            fin: this.getrealdate(this.periode[1].fin) !== undefined ? this.getrealdate(this.periode[1].fin) : this.getrealdate(new Date()),
                           })
 
                           let pertevalue = 0;

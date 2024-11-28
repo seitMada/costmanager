@@ -58,7 +58,7 @@
     <div class="card shadow">
       <div class="d-flex bd-highlight">
         <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Analyses ventes / Cout
-            matiéres {{ formatDateRange() }}</span></div>
+            matiéres {{ formatDateRangeVente() }}</span></div>
       </div>
       <div class="overflow-y-scroll m-2" style="height: 100%;" style="height: 400px;">
         <table class="table table-sm table-striped table-hover">
@@ -264,19 +264,30 @@
     <div class="card bg-warning text-white shadow h-100 py-2">
       <div class="d-flex bd-highlight">
         <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Chiffre d'affaire
-            ({{(chiffreaffaire[0] ? chiffreaffaire[0].debut : '2000-01-01') | date:'dd/MM/yyyy'}} - {{
-            (chiffreaffaire[0] ? chiffreaffaire[0].fin: '2000-01-01') | date:'dd/MM/yyyy' }})</span></div>
+            ({{(chiffreaffaire[1] ? chiffreaffaire[1].debut : '2000-01-01') | date:'dd/MM/yyyy'}} - {{
+            (chiffreaffaire[1] ? chiffreaffaire[1].fin: '2000-01-01') | date:'dd/MM/yyyy' }})</span></div>
         <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-dark" style="border: none;">
             <i class="fas fa-ellipsis-vertical"></i></button>
         </div>
       </div>
       <div class="card-body">
-        <span class="h1">{{(chiffreaffaire[0] ? chiffreaffaire[0].ca : 0) | number: '1.2-2'}} €</span>
-        <br>
+        <div class="row">
+          <span class="h1 col-6">{{(chiffreaffaire[1] ? chiffreaffaire[1].ca : 0) | number: '1.2-2'}} €</span>
+        </div>
+        <div class="col-12">
+          <table class="table table-sm table-borderless">
+            <tbody>
+              <tr *ngFor="let item of centreRevenuVenteC0">
+                <td class="col-6 h6">{{item.centreRevenu.libelle}}</td>
+                <td class="col-6 h6">{{item.total}} €</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div class="row mt-5">
-          <div class="col-6"><span class="h6" title="Cout matiére théorique">CMT {{(chiffreaffaire[0] ?
-              chiffreaffaire[0].cmt : 0) | number: '1.2-2'}} €</span></div>
-          <div class="col-6"><span class="h6" title="Cout matiére réél">CMR {{(chiffreaffaire[0] ? chiffreaffaire[0].cmr
+          <div class="col-6"><span class="h6" title="Cout matiére théorique">CMT {{(chiffreaffaire[1] ?
+              chiffreaffaire[1].cmt : 0) | number: '1.2-2'}} €</span></div>
+          <div class="col-6"><span class="h6" title="Cout matiére réél">CMR {{(chiffreaffaire[1] ? chiffreaffaire[1].cmr
               : 0) | number: '1.2-2'}} €</span></div>
         </div>
       </div>
@@ -286,20 +297,31 @@
     <div class="card bg-info text-white shadow h-100 py-2">
       <div class="d-flex bd-highlight">
         <div class="p-1 flex-grow-1 bd-highlight text-center"><span class="col-12 fw-bold">Chiffre d'affaire
-            ({{(chiffreaffaire[1] ? chiffreaffaire[1].debut : '2000-01-01') | date:'dd/MM/yyyy' }} - {{
-            (chiffreaffaire[1] ? chiffreaffaire[1].fin : '2000-01-01') | date:'dd/MM/yyyy' }})</span></div>
+            ({{(chiffreaffaire[0] ? chiffreaffaire[0].debut : '2000-01-01') | date:'dd/MM/yyyy' }} - {{
+            (chiffreaffaire[0] ? chiffreaffaire[0].fin : '2000-01-01') | date:'dd/MM/yyyy' }})</span></div>
         <div class="p-1 bd-highlight"><button class="btn btn-sm btn-outline-dark" style="border: none;">
             <i class="fas fa-ellipsis-vertical"></i></button>
         </div>
       </div>
       <div class="card-body">
-        <span class="h1">{{(chiffreaffaire[1] ? chiffreaffaire[1].ca : 0) | number: '1.2-2'}} € <i
-            *ngIf="chiffreaffaire[0] && chiffreaffaire[1]"
-            [ngClass]="(chiffreaffaire[0].ca - chiffreaffaire[1].ca) > 0 ? 'fas fa-chevron-down text-danger':'fas fa-chevron-up text-success'"></i></span>
-        <br>
+        <div class="row">
+          <span class="h1 col-12">{{(chiffreaffaire[0] ? chiffreaffaire[0].ca : 0) | number: '1.2-2'}} € <i
+              *ngIf="chiffreaffaire[0] && chiffreaffaire[1]"
+              [ngClass]="(chiffreaffaire[1].ca - chiffreaffaire[0].ca) > 0 ? 'fas fa-chevron-down text-danger':'fas fa-chevron-up text-success'"></i></span>
+        </div>
+        <div class="col-12">
+          <table class="table table-sm table-borderless">
+            <tbody>
+              <tr *ngFor="let item of centreRevenuVenteC1">
+                <td class="col-6 h6">{{item.centreRevenu.libelle}}</td>
+                <td class="col-6 h6">{{item.total}} €</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
         <div class="row mt-5">
-          <div class="col-6"><span class="h6" title="Cout matiére théorique">CMT {{(chiffreaffaire[1] ?
-              chiffreaffaire[1].cmt : 0) | number: '1.2-2'}} €</span></div>
+          <div class="col-6"><span class="h6" title="Cout matiére théorique">CMT {{(chiffreaffaire[0] ?
+              chiffreaffaire[0].cmt : 0) | number: '1.2-2'}} €</span></div>
         </div>
       </div>
     </div>
