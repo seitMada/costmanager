@@ -505,6 +505,10 @@ export class FicheTechniqueComponent implements OnInit {
     }
   }
 
+  public formatNumber(value: number): string {
+    return value ? value.toFixed(2) : '0.00';
+  }
+
   open(content: TemplateRef<any>) {
     this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
       (result) => {
@@ -512,7 +516,7 @@ export class FicheTechniqueComponent implements OnInit {
         if (this.closeResult == 'Closed with: Save click') {
           let _cout = 0;
           for (const _composition of this.compositions) {
-            _cout += _composition.cout;
+            _cout += _composition.cout * _composition.quantite;
           }
           this.fichetechnique.cout = _cout;
           this.fichetechniqueService.addFichetechnique(this.fichetechnique).subscribe({
