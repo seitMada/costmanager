@@ -541,18 +541,11 @@ export class FournisseursComponent implements OnInit {
             (element: any) => element.exploitationsId === this.exploitation
           )
         );
-
-
-
-
-
-
         this.articleExclude = [0];
         for (const _article of filteredArticles) {
           this.articleExclude.push(_article.articleId)
         }
-
-        this.articleFournisseurs = filteredArticles;
+        this.articleFournisseurs = filteredArticles.filter((_item: any) => _item.conditionnement.length > 0).sort((a: { article: { libelle: string; }; }, b: { article: { libelle: any; }; }) => a.article?.libelle.localeCompare(b.article?.libelle));
         this.modalService.open(content, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
           (result) => {
             this.closeResult = `Closed with: ${result}`;
@@ -716,7 +709,7 @@ export class FournisseursComponent implements OnInit {
                 next: () => {
                   this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
                     next: (_article) => {
-                      this.articleFournisseurs = _article;
+                      this.articleFournisseurs = _article.filter((_item: any) => _item.conditionnement.length > 0).sort((a: { article: { libelle: string; }; }, b: { article: { libelle: any; }; }) => a.article?.libelle.localeCompare(b.article?.libelle));
                     }
                   })
                   this.toggleToast('Article fournisseur ajouter')
@@ -788,7 +781,7 @@ export class FournisseursComponent implements OnInit {
                   next: () => {
                     this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
                       next: (_article) => {
-                        this.articleFournisseurs = _article;
+                        this.articleFournisseurs = _article.filter((_item: any) => _item.conditionnement.length > 0).sort((a: { article: { libelle: string; }; }, b: { article: { libelle: any; }; }) => a.article?.libelle.localeCompare(b.article?.libelle));
                       }
                     })
                     this.toggleToast('Article fournisseur ajouter')
@@ -802,7 +795,7 @@ export class FournisseursComponent implements OnInit {
                 next: () => {
                   this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
                     next: (_article) => {
-                      this.articleFournisseurs = _article;
+                      this.articleFournisseurs = _article.filter((_item: any) => _item.conditionnement.length > 0).sort((a: { article: { libelle: string; }; }, b: { article: { libelle: any; }; }) => a.article?.libelle.localeCompare(b.article?.libelle));
                     }
                   })
                   this.toggleToast('Conditionnement ajouter')
@@ -813,7 +806,7 @@ export class FournisseursComponent implements OnInit {
                 next: () => {
                   this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
                     next: (_article) => {
-                      this.articleFournisseurs = _article;
+                      this.articleFournisseurs = _article.filter((_item: any) => _item.conditionnement.length > 0).sort((a: { article: { libelle: string; }; }, b: { article: { libelle: any; }; }) => a.article?.libelle.localeCompare(b.article?.libelle));
                     }
                   })
                   this.toggleToast('Conditionnement Modifier')
@@ -846,14 +839,14 @@ export class FournisseursComponent implements OnInit {
       next: () => {
         this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
           next: (_article) => {
-            this.articleFournisseurs = _article;
+            this.articleFournisseurs = _article.filter((_item: any) => _item.conditionnement.length > 0).sort((a: { article: { libelle: string; }; }, b: { article: { libelle: any; }; }) => a.article?.libelle.localeCompare(b.article?.libelle));
             for (const _af of this.articleFournisseurs) {
               if (_articleFournisseur.id == _af.id && _af.conditionnement.length == 0) {
                 this.fournisseurService.deleteArticleFournisseur(_af.id ? _af.id : 0).subscribe({
                   next: () => {
                     this.articleService.getArticlesByFournisseur(this.idFournisseur).subscribe({
                       next: (_article) => {
-                        this.articleFournisseurs = _article;
+                        this.articleFournisseurs = _article.filter((_item: any) => _item.conditionnement.length > 0).sort((a: { article: { libelle: string; }; }, b: { article: { libelle: any; }; }) => a.article?.libelle.localeCompare(b.article?.libelle));
                         this.toggleToast('Article fournisseur supprimer');
                       }
                     })
