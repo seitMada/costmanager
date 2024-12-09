@@ -451,7 +451,7 @@
                     [(ngModel)]="line.quantite" min="0" [step]="line.unite.step">
                 </td>
                 <td class="col-2">{{line.unite.libelle}}</td>
-                <td class="col-2">{{ line.cout * line.quantite }} €</td>
+                <td class="col-2">{{ line.cout * line.quantite | number: '1.2-2' }} €</td>
               </tr>
             </tbody>
           </table>
