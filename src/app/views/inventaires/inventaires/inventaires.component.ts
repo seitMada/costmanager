@@ -395,6 +395,7 @@ export class InventairesComponent {
         this.inventaire.zonestockageId = +(_lieu.zoneId || 0);
         inventairetable.push(this.inventaire);
       }
+      
 
       this.inventaireService.createInventaire(inventairetable).subscribe({
         next: async (value) => {
@@ -614,6 +615,8 @@ export class InventairesComponent {
     this.articleService.getArticlesByExploitation(this.idexploitation).subscribe({
       next: (_articles) => {
         this.articles = _articles;
+        console.log(_articles);
+        
         this.inventaireArticles = [];
         for (const _a of this.articles) {
 
@@ -639,9 +642,11 @@ export class InventairesComponent {
             if (this.closeResult == 'Closed with: Save click') {
               for (const _a of this.inventaireArticles) {
                 if (_a.selected === true) {
+                  console.log(_a);
+                  
                   _a.selected = false;
                   lieu.inventairedetail.push(_a);
-
+                 
                 }
               }
 
@@ -719,7 +724,7 @@ export class InventairesComponent {
           }
           this.articleService.getArticlesByZone(zonestockageId).subscribe({
             next: (_article: any) => {
-              console.log(_article)
+              // console.log(_article);
               this.inventaire.inventairedetail = [];
               this.inventairesDetailsZone = [];
               let _inventairesDetailsZone: InterfaceInventairesDetailsZone;
@@ -744,14 +749,16 @@ export class InventairesComponent {
                       numero: '',
 
                       article: _article.articles,
+                      
                     }
                     _inventairesDetailsZone.inventairedetail.push(this.inventaireArticle);
-
                   }
                   this.inventairesDetailsZone.push(_inventairesDetailsZone)
                 }
               }
               this.addToggleModal()
+              console.log();
+              
 
             }
           })

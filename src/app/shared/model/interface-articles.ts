@@ -26,7 +26,6 @@ export interface InterfaceArticle {
   stockminimum?: number;
   stock?: number;
 
-
   allergeneArticle: InterfaceAllergeneArticle[];
   articleexploitation: InterfaceArticleExploitation[];
   articlefournisseur: InterfaceArticlefournisseurs[];
