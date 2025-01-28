@@ -724,7 +724,7 @@ export class InventairesComponent {
           }
           this.articleService.getArticlesByZone(zonestockageId).subscribe({
             next: (_article: any) => {
-              // console.log(_article);
+              console.log(_article);
               this.inventaire.inventairedetail = [];
               this.inventairesDetailsZone = [];
               let _inventairesDetailsZone: InterfaceInventairesDetailsZone;
@@ -747,7 +747,6 @@ export class InventairesComponent {
                       inventaireId: 0,
                       selected: false,
                       numero: '',
-
                       article: _article.articles,
                       
                     }

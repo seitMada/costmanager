@@ -167,6 +167,8 @@ export class MouvementStockComponent implements OnInit {
                   this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, this.exploitationsselected, true).subscribe({
                     next: (_articles: any) => {
                       this.mouvemenstock = _articles;
+                      console.log(this.mouvemenstock);
+                      
 
                       this.mouvemenstockback = _articles;
                       this.unitefilter = [];

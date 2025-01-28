@@ -661,11 +661,12 @@ export class DashComponent implements OnInit {
                                               }
                                             }
                                           }
+                                          
                                           this.fichetechniques.push({
                                             fichetechnique: ft.fichetechnique,
-                                            cout: ft.fichetechnique.prix,
+                                            cout: ft.fichetechnique.cout,
                                             prix: ft.prixttc,
-                                            ecart: ft.prixttc - ft.fichetechnique.prix
+                                            ecart: ft.prixttc - ft.fichetechnique.cout
                                           })
                                         }
                                       }
