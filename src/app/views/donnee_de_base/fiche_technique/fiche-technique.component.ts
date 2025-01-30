@@ -30,7 +30,7 @@ import { InterfaceComposition } from '../../../shared/model/interface-compositio
 import { InterfaceArticle } from '../../../shared/model/interface-articles';
 import { TooltipModule } from '@coreui/angular';
 import { ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderComponent } from '@coreui/angular';
-import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
+import { SortFilterSearchService } from '../../../shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-fiche-technique',

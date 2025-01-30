@@ -4,19 +4,19 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AlertModule, ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderComponent, TooltipModule } from '@coreui/angular';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
-import { Adress } from 'src/app/shared/model/adresse';
-import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
-import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
-import { ArticleService } from 'src/app/shared/service/article.service';
-import { InventairesService } from 'src/app/shared/service/inventaires.service';
-import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
-import { ExploitationService } from 'src/app/shared/service/exploitation.service';
-import { PdfserviceService } from 'src/app/shared/service/pdfservice.service';
-import { ZonestockagesService } from 'src/app/shared/service/zonestockages.service';
+import { Adress } from '../../../../shared/model/adresse';
+import { InterfaceCentreRevenu } from '../../../../shared/model/interface-centrerevenu';
+import { InterfaceExploitations } from '../../../../shared/model/interface-exploitations';
+import { ArticleService } from '../../../../shared/service/article.service';
+import { InventairesService } from '../../../../shared/service/inventaires.service';
+import { CentreRevenuService } from '../../../../shared/service/centre-revenu.service';
+import { ExploitationService } from '../../../../shared/service/exploitation.service';
+import { PdfserviceService } from '../../../../shared/service/pdfservice.service';
+import { ZonestockagesService } from '../../../../shared/service/zonestockages.service';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-import { InterfaceBonCommande } from 'src/app/shared/model/interface-bonCommande';
-import { InterfaceCommandeDetail } from 'src/app/shared/model/interface-commandedetail';
-import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
+import { InterfaceBonCommande } from '../../../../shared/model/interface-bonCommande';
+import { InterfaceCommandeDetail } from '../../../../shared/model/interface-commandedetail';
+import { SortFilterSearchService } from '../../../../shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-mouvement-stock',
@@ -152,6 +152,7 @@ export class MouvementStockComponent implements OnInit {
                   const _index = this.periode.length - 1;
                   const _periode = this.periode[_index]
                   this.periodeselected = this.periode[_index];
+                  console.log(this.periodeselected);
                   if (this.periodeselected.fin == null) {
                     this.periodeselected.fin = new Date();
                     this.isfinperiode = false;
@@ -167,9 +168,6 @@ export class MouvementStockComponent implements OnInit {
                   this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, this.exploitationsselected, true).subscribe({
                     next: (_articles: any) => {
                       this.mouvemenstock = _articles;
-                      console.log(this.mouvemenstock);
-                      
-
                       this.mouvemenstockback = _articles;
                       this.unitefilter = [];
                       this.dates.debut = new Date(this.getrealdate(_periode.debut));

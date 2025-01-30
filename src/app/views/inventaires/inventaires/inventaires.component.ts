@@ -29,7 +29,7 @@ import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
 
 import { ToastBodyComponent, ToastComponent, ToasterComponent, ToastHeaderComponent } from '@coreui/angular';
-import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
+import { SortFilterSearchService } from '../../../shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-inventaires',
@@ -385,17 +385,28 @@ export class InventairesComponent {
     }
   }
 
+  getPrixAchat(article: any): number {
+    const fournisseur = article?.article?.articlefournisseur?.[0];
+    const conditionnement = fournisseur?.conditionnement?.[0];
+
+    if (!conditionnement?.prixAchat || conditionnement.prixAchat <= 0) {
+      return 0;
+    }
+
+    return conditionnement.prixAchat / conditionnement.coefficientAchatCommande / conditionnement.coefficientInventaireAchat;
+  }
+
   async submit() {
     if (this.idinventaire == 0) {
       this.inventaire.operateurId = this.idoperateur;
-      const inventairetable = [];
+      const inventairetable: any[] = [];
       for (const _lieu of this.inventairesDetailsZone) {
         await this.resetinventaire(this.inventaire.date_inventaire);
         this.inventaire.inventairedetail = _lieu.inventairedetail;
         this.inventaire.zonestockageId = +(_lieu.zoneId || 0);
         inventairetable.push(this.inventaire);
       }
-      
+
 
       this.inventaireService.createInventaire(inventairetable).subscribe({
         next: async (value) => {
@@ -616,7 +627,7 @@ export class InventairesComponent {
       next: (_articles) => {
         this.articles = _articles;
         console.log(_articles);
-        
+
         this.inventaireArticles = [];
         for (const _a of this.articles) {
 
@@ -643,10 +654,10 @@ export class InventairesComponent {
               for (const _a of this.inventaireArticles) {
                 if (_a.selected === true) {
                   console.log(_a);
-                  
+
                   _a.selected = false;
                   lieu.inventairedetail.push(_a);
-                 
+
                 }
               }
 
@@ -748,7 +759,7 @@ export class InventairesComponent {
                       selected: false,
                       numero: '',
                       article: _article.articles,
-                      
+
                     }
                     _inventairesDetailsZone.inventairedetail.push(this.inventaireArticle);
                   }
@@ -757,7 +768,7 @@ export class InventairesComponent {
               }
               this.addToggleModal()
               console.log();
-              
+
 
             }
           })

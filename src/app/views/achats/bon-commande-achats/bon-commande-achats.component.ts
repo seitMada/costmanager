@@ -9,7 +9,7 @@ import { FournisseurService } from "../../../shared/service/fournisseur.service"
 import { CommandeService } from "../../../shared/service/commande.service";
 import { ExploitationService } from '../../../shared/service/exploitation.service';
 import { CentreRevenuService } from '../../../shared/service/centre-revenu.service';
-import { PdfserviceService } from 'src/app/shared/service/pdfservice.service';
+import { PdfserviceService } from '../../../shared/service/pdfservice.service';
 
 import { Article } from '../../../shared/model/articles';
 import { InterfaceArticle } from '../../../shared/model/interface-articles';
@@ -30,14 +30,14 @@ import { InterfaceCommandeDetail, InterfaceCommandeDetails } from '../../../shar
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 import { AlertModule, ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
-import { Conditionnement } from 'src/app/shared/model/conditionnements';
+import { Conditionnement } from '../../../shared/model/conditionnements';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { Categorie } from 'src/app/shared/model/categories';
-import { Famille } from 'src/app/shared/model/familles';
-import { Unite, Unites } from 'src/app/shared/model/unite';
-import { Groupeanalytique } from 'src/app/shared/model/groupeanalytiques';
-import { SousFamille } from 'src/app/shared/model/sousfamilles';
-import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
+import { Categorie } from '../../../shared/model/categories';
+import { Famille } from '../../../shared/model/familles';
+import { Unite, Unites } from '../../../shared/model/unite';
+import { Groupeanalytique } from '../../../shared/model/groupeanalytiques';
+import { SousFamille } from '../../../shared/model/sousfamilles';
+import { SortFilterSearchService } from '../../../shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-bon-commande-achats',
@@ -476,7 +476,7 @@ export class BonCommandeAchatsComponent implements OnInit {
               if (this.closeResult == 'Closed with: Save click') {
                 for (const articlefournisseur of this.articleFournisseurs) {
                   for (const condition of articlefournisseur.conditionnement) {
-                    if (condition.selected !== undefined) {
+                    if (condition.selected !== undefined && condition.selected) {
                       this.commandeDetail = {
                         commandeId: 0,
                         articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
@@ -493,7 +493,7 @@ export class BonCommandeAchatsComponent implements OnInit {
                         article: articlefournisseur.article
                       }
                       this.commandes.push(this.commandeDetail);
-                      this.addBtn = false;
+                      // this.addBtn = false;
                     }
                   }
                 }
@@ -526,7 +526,7 @@ export class BonCommandeAchatsComponent implements OnInit {
                     if (this.closeResult == 'Closed with: Save click') {
                       for (const articlefournisseur of artFournisseur) {
                         for (const condition of articlefournisseur.conditionnement) {
-                          if (condition.selected !== undefined) {
+                          if (condition.selected !== undefined && condition.selected) {
                             this.commandeDetail = {
                               commandeId: 0,
                               articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
@@ -543,11 +543,10 @@ export class BonCommandeAchatsComponent implements OnInit {
                               article: articlefournisseur.article
                             }
                             this.commandes.push(this.commandeDetail);
-                            this.addBtn = false;
+                            // this.addBtn = false;
                           }
                         }
                       }
-
                     }
                   },
                   (reason) => {

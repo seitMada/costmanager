@@ -176,7 +176,10 @@
                           [disabled]="modifToggle">
                       </td>
                       <td class="col-1">{{article.article.unite.libelle}}</td>
-                      <td class="col-1">{{ article.article.articlefournisseur[0].conditionnement[0].prixAchat / article.article.articlefournisseur[0].conditionnement[0].coefficientAchatCommande / article.article.articlefournisseur[0].conditionnement[0].coefficientInventaireAchat | number: '1.2-2'}} €</td>
+                      <!-- <td class="col-1">{{ (article.article.articlefournisseur[0].conditionnement[0].prixAchat !== undefined || article.article.articlefournisseur[0].conditionnement[0].prixAchat > 0) ? (article.article.articlefournisseur[0].conditionnement[0].prixAchat/ article.article.articlefournisseur[0].conditionnement[0].coefficientAchatCommande / article.article.articlefournisseur[0].conditionnement[0].coefficientInventaireAchat) : 0  | number: '1.2-2'}} €</td> -->
+                      <td class="col-1">
+                        {{ getPrixAchat(article) | number: '1.2-2' }} €
+                      </td>
                       <td class="col-1">{{article.article.cout * article.quantite | number: '1.2-2'}} €</td>
                       <td class="col-2 text-truncate" cTooltip={{article.article.familles.libelle}}
                         cTooltipPlacement="bottom">{{ truncateWord(article.article.familles.libelle, 25)}}</td>

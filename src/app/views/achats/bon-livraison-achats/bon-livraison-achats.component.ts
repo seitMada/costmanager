@@ -5,31 +5,31 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ModalDismissReasons, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
-import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
-import { ExploitationService } from 'src/app/shared/service/exploitation.service';
-import { FournisseurService } from 'src/app/shared/service/fournisseur.service';
-import { BonlivraisonService } from 'src/app/shared/service/bonlivraison.service';
+import { CentreRevenuService } from '../../../shared/service/centre-revenu.service';
+import { ExploitationService } from '../../../shared/service/exploitation.service';
+import { FournisseurService } from '../../../shared/service/fournisseur.service';
+import { BonlivraisonService } from '../../../shared/service/bonlivraison.service';
 
-import { Adress, Adresse } from 'src/app/shared/model/adresse';
-import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
-import { Centrerevenu, Centrerevenus } from 'src/app/shared/model/centrerevenu';
-import { Fournisseur, Fournisseurs } from 'src/app/shared/model/fournisseurs';
-import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
-import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
-import { InterfaceFournisseur } from 'src/app/shared/model/interface-fournisseurs';
-import { InterfaceBonLivraisons } from 'src/app/shared/model/interface-bonLivraison';
-import { InterfaceLivraisonDetail } from 'src/app/shared/model/interface-livraisondetail';
-import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-articlefournisseurs';
-import { InterfaceArticleExploitation, InterfaceArticleExploitations } from 'src/app/shared/model/interface-articleexploitations';
-import { InterfaceBonCommande, InterfaceBonCommandes } from 'src/app/shared/model/interface-bonCommande';
-import { InterfaceCommandeDetail, InterfaceCommandeDetails } from 'src/app/shared/model/interface-commandedetail';
-import { CommandeService } from 'src/app/shared/service/commande.service';
+import { Adress, Adresse } from '../../../shared/model/adresse';
+import { InterfaceArticle } from '../../../shared/model/interface-articles';
+import { Centrerevenu, Centrerevenus } from '../../../shared/model/centrerevenu';
+import { Fournisseur, Fournisseurs } from '../../../shared/model/fournisseurs';
+import { InterfaceCentreRevenu } from '../../../shared/model/interface-centrerevenu';
+import { InterfaceExploitations } from '../../../shared/model/interface-exploitations';
+import { InterfaceFournisseur } from '../../../shared/model/interface-fournisseurs';
+import { InterfaceBonLivraisons } from '../../../shared/model/interface-bonLivraison';
+import { InterfaceLivraisonDetail } from '../../../shared/model/interface-livraisondetail';
+import { InterfaceArticlefournisseurs } from '../../../shared/model/interface-articlefournisseurs';
+import { InterfaceArticleExploitation, InterfaceArticleExploitations } from '../../../shared/model/interface-articleexploitations';
+import { InterfaceBonCommande, InterfaceBonCommandes } from '../../../shared/model/interface-bonCommande';
+import { InterfaceCommandeDetail, InterfaceCommandeDetails } from '../../../shared/model/interface-commandedetail';
+import { CommandeService } from '../../../shared/service/commande.service';
 import { AlertModule, ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
-import { PAYS } from 'src/assets/pays';
-import { Conditionnement } from 'src/app/shared/model/conditionnements';
-import { IntefaceConditionnement } from 'src/app/shared/model/inteface-conditionnements';
+import { PAYS } from '../../../../assets/pays';
+import { Conditionnement } from '../../../shared/model/conditionnements';
+import { IntefaceConditionnement } from '../../../shared/model/inteface-conditionnements';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
+import { SortFilterSearchService } from '../../../shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-bon-livraison-achats',
@@ -433,7 +433,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
               if (this.closeResult == 'Closed with: Save click') {
                 for (const articlefournisseur of this.articleFournisseurs) {
                   for (const condition of articlefournisseur.conditionnement) {
-                    if (condition.selected != undefined) {
+                    if (condition.selected != undefined && condition.selected) {
                       this.livraisonDetail = {
                         articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
                         articleId: articlefournisseur.articleId,
@@ -457,7 +457,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
                     }
                   }
                 }
-                this.addBtn = false;
+                // this.addBtn = false;
               }
             },
             (reason) => {
@@ -490,7 +490,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
                       this.inputModif = this.inputModif;
                       for (const articlefournisseur of this.articleFournisseurs) {
                         for (const condition of articlefournisseur.conditionnement) {
-                          if (condition.selected != undefined) {
+                          if (condition.selected != undefined && condition.selected) {
                             this.livraisonDetail = {
                               articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
                               articleId: articlefournisseur.articleId,
@@ -511,7 +511,7 @@ export class BonLivraisonAchatsComponent implements OnInit {
                               article: articlefournisseur.article
                             }
                             this.livraisonDetails.push(this.livraisonDetail);
-                            this.addBtn = false;
+                            // this.addBtn = false;
                           }
                         }
                       }

@@ -5,33 +5,33 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ModalDismissReasons, NgbModal, NgbModalConfig } from '@ng-bootstrap/ng-bootstrap';
 import { BsDatepickerModule } from 'ngx-bootstrap/datepicker';
 
-import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
-import { ExploitationService } from 'src/app/shared/service/exploitation.service';
-import { FournisseurService } from 'src/app/shared/service/fournisseur.service';
-import { FactureService } from 'src/app/shared/service/facture.service';
-import { BonlivraisonService } from 'src/app/shared/service/bonlivraison.service';
-import { PdfserviceService } from 'src/app/shared/service/pdfservice.service';
+import { CentreRevenuService } from '../../../shared/service/centre-revenu.service';
+import { ExploitationService } from '../../../shared/service/exploitation.service';
+import { FournisseurService } from '../../../shared/service/fournisseur.service';
+import { FactureService } from '../../../shared/service/facture.service';
+import { BonlivraisonService } from '../../../shared/service/bonlivraison.service';
+import { PdfserviceService } from '../../../shared/service/pdfservice.service';
 
-import { Fournisseur, Fournisseurs } from 'src/app/shared/model/fournisseurs';
-import { InterfaceFournisseur } from 'src/app/shared/model/interface-fournisseurs';
-import { Centrerevenu, Centrerevenus } from 'src/app/shared/model/centrerevenu';
-import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
-import { Adress, Adresse } from 'src/app/shared/model/adresse';
-import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
-import { InterfaceAchat } from 'src/app/shared/model/interface-achats';
-import { InterfaceAchatDetail } from 'src/app/shared/model/interface-achatdetail';
-import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-articlefournisseurs';
-import { InterfaceArticleExploitation, InterfaceArticleExploitations } from 'src/app/shared/model/interface-articleexploitations';
-import { InterfaceLivraisonDetail } from 'src/app/shared/model/interface-livraisondetail';
-import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
-import { InterfaceBonLivraisons } from 'src/app/shared/model/interface-bonLivraison';
+import { Fournisseur, Fournisseurs } from '../../../shared/model/fournisseurs';
+import { InterfaceFournisseur } from '../../../shared/model/interface-fournisseurs';
+import { Centrerevenu, Centrerevenus } from '../../../shared/model/centrerevenu';
+import { InterfaceExploitations } from '../../../shared/model/interface-exploitations';
+import { Adress, Adresse } from '../../../shared/model/adresse';
+import { InterfaceCentreRevenu } from '../../../shared/model/interface-centrerevenu';
+import { InterfaceAchat } from '../../../shared/model/interface-achats';
+import { InterfaceAchatDetail } from '../../../shared/model/interface-achatdetail';
+import { InterfaceArticlefournisseurs } from '../../../shared/model/interface-articlefournisseurs';
+import { InterfaceArticleExploitation, InterfaceArticleExploitations } from '../../../shared/model/interface-articleexploitations';
+import { InterfaceLivraisonDetail } from '../../../shared/model/interface-livraisondetail';
+import { InterfaceArticle } from '../../../shared/model/interface-articles';
+import { InterfaceBonLivraisons } from '../../../shared/model/interface-bonLivraison';
 
 import { ToastBodyComponent, ToastComponent, ToastHeaderComponent, ToasterComponent } from '@coreui/angular';
-import { Conditionnement } from 'src/app/shared/model/conditionnements';
-import { IntefaceConditionnement } from 'src/app/shared/model/inteface-conditionnements';
+import { Conditionnement } from '../../../shared/model/conditionnements';
+import { IntefaceConditionnement } from '../../../shared/model/inteface-conditionnements';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
-import { Article } from 'src/app/shared/model/articles';
-import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
+import { Article } from '../../../shared/model/articles';
+import { SortFilterSearchService } from '../../../shared/service/sort-filter-search.service';
 
 @Component({
   selector: 'app-factures',
@@ -461,7 +461,7 @@ export class FacturesComponent implements OnInit {
               for (const livraison of _livraisons) {
                 this.bonLivraison = livraison;
                 if (livraison.selected) {
-                  this.addBtn = false;
+                  // this.addBtn = false;
                   this.facture.dateAchat = new Date();
                   this.facture.dateFacture = new Date();
                   this.facture.dateLivraison = new Date(livraison.dateLivraison);
@@ -537,34 +537,34 @@ export class FacturesComponent implements OnInit {
           this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
             (result) => {
               this.closeResult = `Closed with: ${result}`;
-
               if (this.closeResult == 'Closed with: Save click') {
                 for (const articlefournisseur of this.articleFournisseurs) {
-                  if (articlefournisseur.selected == true) {
-                    const conditionnement = articlefournisseur.conditionnement.reduce((min: any, current: any) => {
-                      return current.prixAchat < min.prixAchat ? current : min;
-                    });
-                    this.detailFacture = {
-                      achatId: 0,
-                      articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
-                      articleId: articlefournisseur.articleId ? articlefournisseur.articleId : 0,
-                      quantite: 0,
-                      prixArticle: conditionnement.prixAchat ? conditionnement.prixAchat : 0,
-                      remise: 0,
-                      valeurTva: 0,
-                      conditionnementId: conditionnement.id ? conditionnement.id : 0,
-                      qteFTAchat: 0,
-                      selected: false,
-                      achat: this.facture,
-                      articlefournisseur: articlefournisseur,
-                      conditionnement: conditionnement,
-                      article: articlefournisseur.article
+                  for (const condition of articlefournisseur.conditionnement) {
+                    if (condition.selected !== undefined && condition.selected == true) {
+                      const conditionnement = articlefournisseur.conditionnement.reduce((min: any, current: any) => {
+                        return current.prixAchat < min.prixAchat ? current : min;
+                      });
+                      this.detailFacture = {
+                        achatId: 0,
+                        articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
+                        articleId: articlefournisseur.articleId ? articlefournisseur.articleId : 0,
+                        quantite: 0,
+                        prixArticle: conditionnement.prixAchat ? conditionnement.prixAchat : 0,
+                        remise: 0,
+                        valeurTva: 0,
+                        conditionnementId: conditionnement.id ? conditionnement.id : 0,
+                        qteFTAchat: 0,
+                        selected: false,
+                        achat: this.facture,
+                        articlefournisseur: articlefournisseur,
+                        conditionnement: conditionnement,
+                        article: articlefournisseur.article
+                      }
+                      this.detailFactures.push(this.detailFacture);
+                      // this.addBtn = false;
                     }
-                    this.detailFactures.push(this.detailFacture);
-                    this.addBtn = false;
                   }
                 }
-
               }
             },
             (reason) => {
@@ -585,6 +585,7 @@ export class FacturesComponent implements OnInit {
               next: (artFournisseurs: any) => {
                 this.detailFactures = [];
                 this.articleFournisseurs = artFournisseurs;
+                console.log(artFournisseurs)
 
                 this.modalService.open(contentArticle, { ariaLabelledBy: 'modal-basic-title-article', backdropClass: 'light-dark-backdrop', centered: true, size: 'xl' }).result.then(
                   (result) => {
@@ -597,7 +598,7 @@ export class FacturesComponent implements OnInit {
                       this.detailFactures = [];
                       for (const articlefournisseur of this.articleFournisseurs) {
                         for (const condition of articlefournisseur.conditionnement) {
-                          if (condition.selected !== undefined) {
+                          if (condition.selected !== undefined && condition.selected) {
                             this.detailFacture = {
                               achatId: 0,
                               articlefournisseurId: articlefournisseur.id ? articlefournisseur.id : 0,
@@ -615,7 +616,7 @@ export class FacturesComponent implements OnInit {
                               article: articlefournisseur.article
                             }
                             this.detailFactures.push(this.detailFacture);
-                            this.addBtn = false;
+                            // this.addBtn = false;
                           }
                         }
                       }

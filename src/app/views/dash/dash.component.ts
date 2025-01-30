@@ -7,20 +7,20 @@ import { map } from 'rxjs/operators';
 
 import { ToasterComponent, ToastComponent, ToastHeaderComponent, ToastBodyComponent, TooltipDirective } from '@coreui/angular';
 import { NgbNavModule, NgbDropdownModule, NgbTooltipModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { ArticleService } from 'src/app/shared/service/article.service';
-import { ExploitationService } from 'src/app/shared/service/exploitation.service';
-import { UnitesService } from 'src/app/shared/service/unites.service';
-import { DashboardService } from 'src/app/shared/service/dashboard.service';
-import { CentreRevenuService } from 'src/app/shared/service/centre-revenu.service';
-import { InterfaceCentreRevenu } from 'src/app/shared/model/interface-centrerevenu';
-import { InterfaceExploitations } from 'src/app/shared/model/interface-exploitations';
+import { ArticleService } from '../../shared/service/article.service';
+import { ExploitationService } from '../../shared/service/exploitation.service';
+import { UnitesService } from '../../shared/service/unites.service';
+import { DashboardService } from '../../shared/service/dashboard.service';
+import { CentreRevenuService } from '../../shared/service/centre-revenu.service';
+import { InterfaceCentreRevenu } from '../../shared/model/interface-centrerevenu';
+import { InterfaceExploitations } from '../../shared/model/interface-exploitations';
 
 import { HighchartsChartModule } from 'highcharts-angular';
 import * as Highcharts from 'highcharts';
-import { InterfaceAchatDetail } from 'src/app/shared/model/interface-achatdetail';
-import { InterfaceArticlefournisseurs } from 'src/app/shared/model/interface-articlefournisseurs';
-import { InventairesService } from 'src/app/shared/service/inventaires.service';
-import { VentesService } from 'src/app/shared/service/ventes.service';
+import { InterfaceAchatDetail } from '../../shared/model/interface-achatdetail';
+import { InterfaceArticlefournisseurs } from '../../shared/model/interface-articlefournisseurs';
+import { InventairesService } from '../../shared/service/inventaires.service';
+import { VentesService } from '../../shared/service/ventes.service';
 import { ChartjsComponent } from '@coreui/angular-chartjs';
 import {
   ButtonDirective,
@@ -34,13 +34,13 @@ import {
   WidgetStatAComponent
 } from '@coreui/angular';
 import { IconDirective } from '@coreui/icons-angular';
-import { InterfaceFichetechnique } from 'src/app/shared/model/interface-fichetechnique';
-import { InterfaceArticle } from 'src/app/shared/model/interface-articles';
-import { SortFilterSearchService } from 'src/app/shared/service/sort-filter-search.service';
+import { InterfaceFichetechnique } from '../../shared/model/interface-fichetechnique';
+import { InterfaceArticle } from '../../shared/model/interface-articles';
+import { SortFilterSearchService } from '../../shared/service/sort-filter-search.service';
 import { Observable } from 'rxjs';
-import { PpoService } from 'src/app/shared/service/ppo.service';
-import { FichetechniqueService } from 'src/app/shared/service/fichetechnique.service';
-import { InterfaceVentes } from 'src/app/shared/model/interface-ventes';
+import { PpoService } from '../../shared/service/ppo.service';
+import { FichetechniqueService } from '../../shared/service/fichetechnique.service';
+import { InterfaceVentes } from '../../shared/model/interface-ventes';
 
 @Component({
   selector: 'app-dash',
@@ -661,7 +661,7 @@ export class DashComponent implements OnInit {
                                               }
                                             }
                                           }
-                                          
+
                                           this.fichetechniques.push({
                                             fichetechnique: ft.fichetechnique,
                                             cout: ft.fichetechnique.cout,
@@ -673,8 +673,8 @@ export class DashComponent implements OnInit {
                                     }
                                   }
                                   this.fichetechniques = this.getUniqueFt(this.fichetechniques);
-                                
-                                  
+
+
                                   this.fichetechniquesBack = this.fichetechniques;
                                 },
                               });
@@ -683,12 +683,12 @@ export class DashComponent implements OnInit {
 
 
                           this.labels = nbventedate.labels;
-                          const resultArray = [];
+                          const resultArray: number[] = [];
                           for (const property in nbventedate.ventes) {
-                            const value = nbventedate.ventes[property];
+                            const value: number = nbventedate.ventes[property] ? nbventedate.ventes[property] : 0;
                             resultArray.push(value);
                           }
-                          const _data = [];
+                          const _data: any[] = [];
                           for (let index = resultArray.length - 1; index >= 0; index--) {
                             const element = resultArray[index];
                             _data.push(element)
@@ -878,9 +878,9 @@ export class DashComponent implements OnInit {
   getDataStock(articleId: number) {
     return this.dashService.getstockArticle(articleId, this.operateurId).pipe(
       map(_articleinventaire => {
-        const data = [];
-        const categories = [];
-        const unite = [];
+        const data: any[] = [];
+        const categories: any[] = [];
+        const unite: any[] = [];
         if (_articleinventaire.length > 0) {
           for (const _article of _articleinventaire) {
             data.push(_article.quantite);
@@ -1035,6 +1035,7 @@ export class DashComponent implements OnInit {
               article: article
             })
           }
+          console.log(article.achatDetail)
           if (article.achatDetail.length > 1) {
             this.articlesvariations.push({
               id: article.id,
@@ -1123,7 +1124,7 @@ export class DashComponent implements OnInit {
           next: async (_response: any) => {
             let _categories: any[] = [];
             const _dataquantityarticle: { y: number; name: any; color: any; id: any; exploitation: boolean; }[] | { y: number; name: string; color: string; }[] = [];
-            const _datacostarticle = [];
+            const _datacostarticle: any[] = [];
             for (const _ppodetails of _response.article) {
               _categories.push(_ppodetails.familleLibelle);
               const dataqtyarticle = {
@@ -1380,8 +1381,8 @@ export class DashComponent implements OnInit {
   } | null) {
 
     let _id: number[] = [];
-    const data = [];
-    const categories = [];
+    const data: any[] = [];
+    const categories: any[] = [];
     for (const item of article?.article.achatDetail) {
       data.push(item.prixArticle)
       const date = item.achat.dateAchat.split('-')[2].substring(0, 2) + '/' + item.achat.dateAchat.split('-')[1] + '/' + item.achat.dateAchat.split('-')[0];
