@@ -124,6 +124,8 @@ export class MouvementStockComponent implements OnInit {
 
     this.centrerevenuService.getCrExploitation(this.idexploitation, this.isAdmin).subscribe({
       next: async (_centreRevenu) => {
+        
+        
         this.headerchoice = '';
         this.centrerevenus = _centreRevenu;
         this.centrerevenusdefault = _centreRevenu;
@@ -141,13 +143,16 @@ export class MouvementStockComponent implements OnInit {
               this.centrerevenus = this.centrerevenus.filter(c => c.exploitationsId == this.idexploitation);
             }
             this.exploitations[0].selected = true;
+            
             this.exploitationsselected = [this.exploitations[0].id || 0];
             this.headerchoice = this.exploitations[0].libelle;
             this.exploitation = this.exploitations[0];
+            
             this.inventaireService.getPeriode(this.exploitationsselected, true).subscribe({
               next: (value: any) => {
                 this.periode = value;
-
+                
+                
                 if (this.periode.length > 0) {
                   const _index = this.periode.length - 1;
                   const _periode = this.periode[_index]
@@ -163,6 +168,10 @@ export class MouvementStockComponent implements OnInit {
                   if (this.periodeselected.fin == null) {
                     _dateFin.setDate(_dateFin.getDate() - 1);
                   }
+
+                  console.log(this.exploitationsselected);
+                  console.log(_dateFin);
+                  
 
                   this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.periodeselected.debut)), fin: this.formatDate(new Date(_dateFin)), final: this.formatDate(new Date(this.periodeselected.fin)) }, this.exploitationsselected, true).subscribe({
                     next: (_articles: any) => {

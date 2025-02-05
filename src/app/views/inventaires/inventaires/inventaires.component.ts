@@ -47,6 +47,8 @@ export class InventairesComponent {
   public color = 'success';
   public textcolor = 'text-light';
 
+  public periode: { debut: Date, fin: Date }[] = []
+
   toggleToast(_message: string) {
     this.message = _message;
     this.visible = !this.visible;
@@ -697,6 +699,9 @@ export class InventairesComponent {
     this.selectCentreRevenu(this.centrerevenu);
     const exploitationId: number[] = [];
     exploitationId.push(this.inventaire.centre.exploitations.id || 0);
+    const dateFin = new Date(this.dates.fin);
+    
+    console.log(this.inventaire.centre.exploitations.id);
     this.zonelieuService.getZoneStockageByExploitationId(exploitationId).subscribe({
       next: (_data: any) => {
         this.lieustockageszones = _data.filter((item: { centreId: number | undefined; }) => item.centreId === this.inventaire.centre.id);
@@ -708,67 +713,68 @@ export class InventairesComponent {
       }
     })
 
-    this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
-      (result) => {
-        this.closeResult = `Closed with: ${result}`;
-
-
-        const zonestockageId: number[] = [0];
-        if (this.closeResult == 'Closed with: Save click') {
-          for (const _lieu of this.lieustockageszones) {
-            for (const _zone of _lieu.zonestockage) {
-              if (_zone.selected === true) {
-                zonestockageId.push(_zone.id || 0);
-              }
-            }
-          }
-          this.articleService.getArticlesByZone(zonestockageId).subscribe({
-            next: (_article: any) => {
-              console.log(_article);
-              this.inventaire.inventairedetail = [];
-              this.inventairesDetailsZone = [];
-              let _inventairesDetailsZone: InterfaceInventairesDetailsZone;
-              for (const _lieu of _article) {
-                for (const _zone of _lieu.zonestockage) {
-                  _inventairesDetailsZone = {
-                    lieu: _lieu.lieu,
-                    lieuId: _lieu.id,
-                    zone: _zone.zone,
-                    zoneId: _zone.id,
-                    etat: _lieu.etat,
-
-                    inventairedetail: [],
-                  }
-                  for (const _article of _zone.articlezonestockages) {
-                    this.inventaireArticle = {
-                      articleId: _article.articlesId || 0,
-                      quantite: 0,
-                      uniteId: _article.articles.uniteId,
-                      inventaireId: 0,
-                      selected: false,
-                      numero: '',
-                      article: _article.articles,
-                      
+    this.articleService.getMouvementStock({ debut: this.formatDate(new Date(this.dates.debut)), fin: this.formatDate(new Date(dateFin)), final: this.formatDate(new Date(this.dates.fin)) }, exploitationId,true ).subscribe({
+        next:(_articles:any) => {
+          this.modalService.open(content, { size: 'xl', ariaLabelledBy: 'modal-basic-title', backdropClass: 'light-dark-backdrop', centered: true }).result.then(
+            (result) => {
+              this.closeResult = `Closed with: ${result}`;
+              const zonestockageId: number[] = [0];
+              if (this.closeResult == 'Closed with: Save click') {
+                for (const _lieu of this.lieustockageszones) {
+                  for (const _zone of _lieu.zonestockage) {
+                    if (_zone.selected === true) {
+                      zonestockageId.push(_zone.id || 0);
                     }
-                    _inventairesDetailsZone.inventairedetail.push(this.inventaireArticle);
                   }
-                  this.inventairesDetailsZone.push(_inventairesDetailsZone)
                 }
+                this.articleService.getArticlesByZone(zonestockageId).subscribe({
+                  next: (_article: any) => {
+                    this.inventaire.inventairedetail = [];
+                    this.inventairesDetailsZone = [];
+                    let _inventairesDetailsZone: InterfaceInventairesDetailsZone;
+                    for (const _lieu of _article) {
+                      for (const _zone of _lieu.zonestockage) {
+                        _inventairesDetailsZone = {
+                          lieu: _lieu.lieu,
+                          lieuId: _lieu.id,
+                          zone: _zone.zone,
+                          zoneId: _zone.id,
+                          etat: _lieu.etat,
+    
+                          inventairedetail: [],
+                        }
+                        for (const _article of _zone.articlezonestockages) {
+                          const articleinventaire = _articles.filter((line:any) => line.article_id == _article.articlesId);
+                          // console.log(articleinventaire);
+                          
+                          this.inventaireArticle = {
+                            articleId: _article.articlesId || 0,
+                            quantite: articleinventaire.inventaires + articleinventaire.achats - articleinventaire.pertes - articleinventaire.ventes,
+                            uniteId: _article.articles.uniteId,
+                            inventaireId: 0,
+                            selected: false,
+                            numero: '',
+                            article: _article.articles,
+                            
+                          }
+                          _inventairesDetailsZone.inventairedetail.push(this.inventaireArticle);
+                        }
+                        this.inventairesDetailsZone.push(_inventairesDetailsZone)
+                      }
+                    }
+                    this.addToggleModal()
+
+                  }
+                })
               }
-              this.addToggleModal()
-              console.log();
-              
-
-            }
-          })
-        }
-      },
-      (reason) => {
-        this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
-
-
-      },
-    );
+            },
+            (reason) => {
+              this.closeResult = `Dismissed ${this.getDismissReason(reason)}`;
+            },
+          );
+        },
+    });
+    
   }
 
   calculsoustotal(_datas: InterfaceInventairesDetails[]) {
